@@ -1,10 +1,14 @@
+import java.util.Properties
+
+val localProperties = Properties()
+localProperties.load(rootProject.file("local.properties").inputStream())
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
-    id("kotlin-kapt")
 }
 
 android {
@@ -21,6 +25,18 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField(
+            "String",
+            "SPOTIFY_CLIENT_ID",
+            "\"${localProperties["spotify.client_id"]}\""
+        )
+
+        buildConfigField(
+            "String",
+            "SPOTIFY_REDIRECT_URI",
+            "\"${localProperties["spotify.redirect_uri"]}\""
+        )
     }
 
     buildTypes {
@@ -41,6 +57,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
