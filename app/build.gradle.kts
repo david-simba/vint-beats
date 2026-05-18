@@ -82,6 +82,7 @@ dependencies {
     implementation(libs.okhttp.logging)
     implementation(libs.gson)
     implementation(libs.datastore.preferences)
+    implementation(libs.androidx.browser)
     implementation(libs.security.crypto)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
