@@ -1,8 +1,6 @@
-package com.davidsimba.vintbeats.core.di
+package com.davidsimba.vintbeats.core.datastore
 
 import android.content.Context
-import com.davidsimba.vintbeats.core.datastore.TokenStorage
-import com.davidsimba.vintbeats.core.datastore.TokenStorageImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

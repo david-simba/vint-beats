@@ -37,6 +37,9 @@ android {
             "SPOTIFY_REDIRECT_URI",
             "\"${localProperties["spotify.redirect_uri"]}\""
         )
+
+        manifestPlaceholders["redirectSchemeName"] = "vintbeats"
+        manifestPlaceholders["redirectHostName"] = "callback"
     }
 
     buildTypes {
