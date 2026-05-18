@@ -83,6 +83,8 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     implementation(libs.coil.compose)
+    implementation(files("libs/spotify-app-remote-release-0.8.0.aar"))
+    implementation(files("libs/spotify-auth-release-2.1.0.aar"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
