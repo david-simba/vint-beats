@@ -22,8 +22,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.davidsimba.vintbeats.navigation.Screen
 import com.davidsimba.vintbeats.shared.theme.VintageBlackMid
-import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
-import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
+import com.davidsimba.vintbeats.shared.theme.VintageGrayCool
+import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
 
 data class BottomNavBarItem(
     val screen: Screen,
@@ -74,10 +74,10 @@ fun BottomNavBar(navController: NavController) {
                     }
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = VintageWhiteWarm,
-                    selectedTextColor = VintageWhiteWarm,
-                    unselectedIconColor = VintageGrayMid,
-                    unselectedTextColor = VintageGrayMid,
+                    selectedIconColor = VintageWhitePure,
+                    selectedTextColor = VintageWhitePure,
+                    unselectedIconColor = VintageGrayCool,
+                    unselectedTextColor = VintageGrayCool,
                     indicatorColor = Color.Transparent,
                 )
             )

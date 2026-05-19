@@ -7,25 +7,30 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.davidsimba.vintbeats.shared.components.background.Background
 import com.davidsimba.vintbeats.shared.components.cassette.CassetteView
 
 @Composable
 fun HomeScreen() {
     val pagerState = rememberPagerState(pageCount = { 4 })
 
-    HorizontalPager(
-        state = pagerState,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+    Box(modifier = Modifier.fillMaxSize()) {
+        Background(modifier = Modifier.fillMaxSize())
+
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxSize()
         ) {
-            CassetteView(
-                isPlaying = true,
-                rotationDegrees = 270f,
-                isFloating = true,
-            )
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CassetteView(
+                    isPlaying = true,
+                    rotationDegrees = 270f,
+                    isFloating = true,
+                )
+            }
         }
     }
 }
