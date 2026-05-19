@@ -1,8 +1,3 @@
-import java.util.Properties
-
-val localProperties = Properties()
-localProperties.load(rootProject.file("local.properties").inputStream())
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -25,21 +20,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        buildConfigField(
-            "String",
-            "SPOTIFY_CLIENT_ID",
-            "\"${localProperties["spotify.client_id"]}\""
-        )
-
-        buildConfigField(
-            "String",
-            "SPOTIFY_REDIRECT_URI",
-            "\"${localProperties["spotify.redirect_uri"]}\""
-        )
-
-        manifestPlaceholders["redirectSchemeName"] = "vintbeats"
-        manifestPlaceholders["redirectHostName"] = "callback"
     }
 
     buildTypes {
@@ -60,7 +40,6 @@ android {
     }
     buildFeatures {
         compose = true
-        buildConfig = true
     }
 }
 
@@ -83,13 +62,10 @@ dependencies {
     implementation(libs.okhttp.logging)
     implementation(libs.gson)
     implementation(libs.datastore.preferences)
-    implementation(libs.androidx.browser)
     implementation(libs.security.crypto)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     implementation(libs.coil.compose)
-    implementation(files("libs/spotify-app-remote-release-0.8.0.aar"))
-    implementation(files("libs/spotify-auth-release-2.1.0.aar"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

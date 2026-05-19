@@ -14,7 +14,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.davidsimba.vintbeats.feature.auth.ui.AuthScreen
 import com.davidsimba.vintbeats.feature.cassette.ui.CassetteSharedViewModel
 import com.davidsimba.vintbeats.feature.cassette.ui.CustomizeCassetteScreen
 import com.davidsimba.vintbeats.feature.home.ui.HomeScreen
@@ -50,15 +49,6 @@ fun NavGraph(
                 startDestination = startDestination,
                 modifier = Modifier.padding(innerPadding)
             ) {
-                composable(Screen.Auth.route) {
-                    AuthScreen(
-                        onLoginSuccess = {
-                            navController.navigate(Screen.Home.route) {
-                                popUpTo(Screen.Auth.route) { inclusive = true }
-                            }
-                        }
-                    )
-                }
                 composable(Screen.Home.route) { HomeScreen() }
                 composable(Screen.Search.route) { entry ->
                     val sharedViewModel: CassetteSharedViewModel = hiltViewModel(

@@ -46,7 +46,6 @@ val VintageBgBase = Color(0xFF2A2A2A)
 val VintageBgAccent = Color(0xFFC8A87A)
 val VintageBgDark = Color(0xFF1A1A1A)
 
-val SpotifyGreen = Color(0xFF1DB954)
 val ErrorRed = Color(0xFFE53935)
 val VintageWhitePure = Color(0xFFFFFFFF)
 val VintageGrayCool = Color(0xFFA1A1AA)

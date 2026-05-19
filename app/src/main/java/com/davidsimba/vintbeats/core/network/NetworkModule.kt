@@ -15,7 +15,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private const val SPOTIFY_URL = "https://api.spotify.com/v1/"
+    private const val BASE_URL = "https://placeholder.api/"
 
     @Provides
     @Singleton
@@ -43,7 +43,7 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient) = Retrofit.Builder()
-        .baseUrl(SPOTIFY_URL)
+        .baseUrl(BASE_URL)
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
