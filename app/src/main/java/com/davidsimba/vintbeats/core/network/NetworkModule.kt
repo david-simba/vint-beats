@@ -1,5 +1,6 @@
 package com.davidsimba.vintbeats.core.network
 
+import com.davidsimba.vintbeats.core.datastore.TokenStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,9 +19,15 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideAuthInterceptor(
+        tokenStorage: TokenStorage
+    ): Interceptor = AuthInterceptor(tokenStorage)
+
+    @Provides
+    @Singleton
     fun provideLoggingInterceptor(): HttpLoggingInterceptor =
         HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.NONE
+            level = HttpLoggingInterceptor.Level.BODY
         }
 
     @Provides
