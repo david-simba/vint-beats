@@ -1,5 +1,6 @@
 package com.davidsimba.vintbeats.feature.search.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,13 +42,16 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
 
 @Composable
 fun SearchScreen(
+    onTrackSelected: (Track) -> Unit,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val query by viewModel.query.collectAsStateWithLifecycle()
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
+        Column(
+            modifier = Modifier.fillMaxSize().statusBarsPadding()
+        ) {
             TextField(
                 value = query,
                 onValueChange = viewModel::onQueryChange,
@@ -96,7 +100,10 @@ fun SearchScreen(
                 is SearchUiState.Success -> {
                     LazyColumn {
                         items(state.tracks) { track ->
-                            TrackItem(track = track)
+                            TrackItem(
+                                track = track,
+                                onClick = { onTrackSelected(track) }
+                            )
                         }
                     }
                 }
@@ -106,10 +113,14 @@ fun SearchScreen(
 }
 
 @Composable
-private fun TrackItem(track: Track) {
+private fun TrackItem(
+    track: Track,
+    onClick: () -> Unit,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable { onClick() }
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

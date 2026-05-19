@@ -7,12 +7,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.davidsimba.vintbeats.feature.auth.ui.AuthScreen
+import com.davidsimba.vintbeats.feature.cassette.ui.CassetteSharedViewModel
+import com.davidsimba.vintbeats.feature.cassette.ui.CustomizeCassetteScreen
 import com.davidsimba.vintbeats.feature.home.ui.HomeScreen
 import com.davidsimba.vintbeats.feature.search.ui.SearchScreen
 import com.davidsimba.vintbeats.shared.components.background.Background
@@ -56,7 +60,30 @@ fun NavGraph(
                     )
                 }
                 composable(Screen.Home.route) { HomeScreen() }
-                composable(Screen.Search.route) { SearchScreen() }
+                composable(Screen.Search.route) { entry ->
+                    val sharedViewModel: CassetteSharedViewModel = hiltViewModel(
+                        remember(entry) { navController.getBackStackEntry(Screen.Search.route) }
+                    )
+                    SearchScreen(
+                        onTrackSelected = { track ->
+                            sharedViewModel.selectTrack(track)
+                            navController.navigate(Screen.CustomizeCassette.route)
+                        }
+                    )
+                }
+                composable(Screen.CustomizeCassette.route) { entry ->
+                    val searchEntry = remember(entry) { navController.getBackStackEntry(Screen.Search.route) }
+                    val sharedViewModel: CassetteSharedViewModel = hiltViewModel(searchEntry)
+                    CustomizeCassetteScreen(
+                        viewModel = sharedViewModel,
+                        onBack = { navController.popBackStack() },
+                        onSave = {
+                            navController.navigate(Screen.Home.route) {
+                                popUpTo(Screen.Home.route) { inclusive = true }
+                            }
+                        }
+                    )
+                }
                 composable(Screen.Profile.route) { }
             }
         }
