@@ -14,9 +14,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.davidsimba.vintbeats.shared.theme.VintageBlackMid
+import com.davidsimba.vintbeats.shared.theme.VintageRedLight
 
 @Composable
 fun CassetteView(
@@ -24,6 +27,9 @@ fun CassetteView(
     isPlaying: Boolean = false,
     rotationDegrees: Float = 0f,
     isFloating: Boolean = false,
+    cassetteColor: Color = VintageBlackMid,
+    lineColor: Color = VintageRedLight,
+    drawRainbow: Boolean = false
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "reel")
     val reelAngle by infiniteTransition.animateFloat(
@@ -60,10 +66,11 @@ fun CassetteView(
         val w = size.width
         val h = size.height
 
-        drawCassetteBody(w, h)
+        drawCassetteBody(w, h, cassetteColor)
         drawLabel(w, h)
-        drawStripes(w, h)
-        drawTapeWindow(w, h)
+        if (drawRainbow) drawStripes(w, h)
+        else drawSeparatorLine(w * 0.88f, h * 0.14f, lineColor)
+        drawTapeWindow(w, h, cassetteColor)
         drawReel(centerX = w * 0.33f, centerY = h * 0.48f, radius = h * 0.1f, angle = currentAngle)
         drawReel(centerX = w * 0.67f, centerY = h * 0.48f, radius = h * 0.1f, angle = currentAngle)
         drawBottomDetail(w, h)
@@ -75,6 +82,6 @@ fun CassetteView(
 fun CassetteViewPreview() {
     CassetteView(
         isPlaying = true,
-        modifier = Modifier.padding(16.dp)
+        modifier = Modifier.padding(16.dp),
     )
 }

@@ -5,11 +5,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.unit.dp
-import com.davidsimba.vintbeats.shared.theme.VintageBlack
 import com.davidsimba.vintbeats.shared.theme.VintageBlackMid
 import com.davidsimba.vintbeats.shared.theme.VintageBrownLight
 import com.davidsimba.vintbeats.shared.theme.VintageBrownMid
@@ -24,7 +24,7 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhite
 import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
 import com.davidsimba.vintbeats.shared.theme.VintageYellowLight
 
-internal fun DrawScope.drawCassetteBody(w: Float, h: Float) {
+internal fun DrawScope.drawCassetteBody(w: Float, h: Float, color: Color) {
     val path = Path().apply {
         addRoundRect(
             RoundRect(
@@ -33,7 +33,7 @@ internal fun DrawScope.drawCassetteBody(w: Float, h: Float) {
             )
         )
     }
-    drawPath(path, VintageBlackMid)
+    drawPath(path, color)
 }
 
 internal fun DrawScope.drawLabel(w: Float, h: Float) {
@@ -64,9 +64,9 @@ internal fun DrawScope.drawStripes(w: Float, h: Float) {
     }
 }
 
-internal fun DrawScope.drawTapeWindow(w: Float, h: Float) {
+internal fun DrawScope.drawTapeWindow(w: Float, h: Float, color: Color) {
     drawRoundRect(
-        color = VintageBlack,
+        color = color,
         topLeft = Offset(w * 0.2f, h * 0.32f),
         size = Size(w * 0.6f, h * 0.3f),
         cornerRadius = CornerRadius(h * 0.06f)
@@ -138,4 +138,13 @@ internal fun DrawScope.drawScrews(w: Float, h: Float) {
         drawCircle(color = VintageGray, radius = h * 0.03f, center = pos)
         drawCircle(color = VintageGrayDeep, radius = h * 0.015f, center = pos)
     }
+}
+
+internal fun DrawScope.drawSeparatorLine(lineWidth: Float, y: Float, color: Color) {
+    val startX = (size.width - lineWidth) / 2f
+    drawRect(
+        color = color,
+        topLeft = Offset(startX, y),
+        size = Size(lineWidth, 24.dp.toPx())
+    )
 }
