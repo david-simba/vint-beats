@@ -1,5 +1,6 @@
 package com.davidsimba.vintbeats.shared.components.cassette
 
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -22,6 +23,7 @@ fun CassetteView(
     modifier: Modifier = Modifier,
     isPlaying: Boolean = false,
     rotationDegrees: Float = 0f,
+    isFloating: Boolean = false,
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "reel")
     val reelAngle by infiniteTransition.animateFloat(
@@ -34,6 +36,16 @@ fun CassetteView(
         label = "reelAngle"
     )
 
+    val floatOffset by infiniteTransition.animateFloat(
+        initialValue = -20f,
+        targetValue = 20f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 2500, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "floatOffset"
+    )
+
     val currentAngle = if (isPlaying) reelAngle else 0f
 
     Canvas(
@@ -42,6 +54,7 @@ fun CassetteView(
             .aspectRatio(1.6f)
             .graphicsLayer {
                 rotationZ = rotationDegrees
+                translationY = if (isFloating) floatOffset else 0f
             }
     ) {
         val w = size.width
@@ -57,7 +70,6 @@ fun CassetteView(
         drawScrews(w, h)
     }
 }
-
 @Preview(showBackground = true, backgroundColor = 0xFFF7F3EC)
 @Composable
 fun CassetteViewPreview() {
