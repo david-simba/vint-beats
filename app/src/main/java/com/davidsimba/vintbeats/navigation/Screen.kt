@@ -3,4 +3,6 @@ package com.davidsimba.vintbeats.navigation
 sealed class Screen(val route: String) {
     data object Auth: Screen("auth")
     data object Home: Screen("home")
+    data object Search: Screen("search")
+    data object Profile: Screen("profile")
 }
