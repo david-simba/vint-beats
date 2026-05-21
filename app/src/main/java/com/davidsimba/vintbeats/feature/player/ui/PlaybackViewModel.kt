@@ -53,6 +53,9 @@ class PlaybackViewModel @Inject constructor(
     private val _durationMs = MutableStateFlow(0L)
     val durationMs: StateFlow<Long> = _durationMs.asStateFlow()
 
+    private val _lyrics = MutableStateFlow<String?>(null)
+    val lyrics: StateFlow<String?> = _lyrics.asStateFlow()
+
     private var progressJob: Job? = null
 
     fun playTrack(track: Track) {
@@ -61,6 +64,8 @@ class PlaybackViewModel @Inject constructor(
         _currentCassette.value = null
         _isSaved.value = false
         currentStreamUrl = null
+        _lyrics.value = null
+        viewModelScope.launch { _lyrics.value = youTubeMusic.getLyrics(track.id) }
         viewModelScope.launch {
             _playerState.value = PlayerState.Loading
             val streamUrl = youTubeMusic.getAudioStreamUrl(track.id) ?: run {
@@ -85,6 +90,7 @@ class PlaybackViewModel @Inject constructor(
         _unsavedTrack.value = null
         _isSaved.value = true
         currentStreamUrl = null
+        _lyrics.value = null
         viewModelScope.launch {
             _playerState.value = PlayerState.Loading
             val cassette = repository.getCassette(cassetteId) ?: run {
@@ -92,6 +98,7 @@ class PlaybackViewModel @Inject constructor(
                 return@launch
             }
             _currentCassette.value = cassette
+            viewModelScope.launch { _lyrics.value = youTubeMusic.getLyrics(cassette.trackId) }
 
             val uri = if (!cassette.audioFilePath.isNullOrEmpty() && File(cassette.audioFilePath).exists()) {
                 Log.d(TAG, "Playing local file: ${cassette.audioFilePath}")
