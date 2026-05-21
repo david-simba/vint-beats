@@ -59,31 +59,108 @@ class YouTubeMusicService @Inject constructor(
         }
     }
 
-    // Returns audio-only stream URL using NewPipeExtractor (handles nsig cipher, client selection).
     suspend fun getAudioStreamUrl(videoId: String): String? = withContext(Dispatchers.IO) {
-        try {
-            val ytUrl = "https://www.youtube.com/watch?v=$videoId"
+        for (attempt in 1..2) {
+            val url = tryNewPipe(videoId, attempt)
+            if (url != null) return@withContext url
+        }
+        Log.d(TAG, "[$videoId] NewPipe exhausted, trying InnerTube ANDROID fallback")
+        tryInnerTube(videoId)
+    }
+
+    private fun tryNewPipe(videoId: String, attempt: Int): String? {
+        return try {
             val streamInfo = org.schabi.newpipe.extractor.stream.StreamInfo.getInfo(
                 org.schabi.newpipe.extractor.NewPipe.getService(0),
-                ytUrl
+                "https://www.youtube.com/watch?v=$videoId"
             )
             val best = streamInfo.audioStreams
                 .filter { !it.content.isNullOrEmpty() }
                 .maxByOrNull { it.averageBitrate }
-
-            if (best == null) {
-                Log.e(TAG, "[$videoId] NewPipe → no audio streams available")
-                return@withContext null
+            if (best != null) {
+                Log.d(TAG, "[$videoId] NewPipe attempt $attempt → ${streamInfo.audioStreams.size} streams, ${best.averageBitrate}bps")
+                best.content
+            } else {
+                Log.w(TAG, "[$videoId] NewPipe attempt $attempt → no audio streams")
+                null
             }
-            Log.d(TAG, "[$videoId] NewPipe → ${streamInfo.audioStreams.size} streams, picked ${best.averageBitrate}bps")
-            best.content
         } catch (e: Exception) {
-            Log.e(TAG, "[$videoId] NewPipe → ${e::class.simpleName}: ${e.message}")
+            Log.w(TAG, "[$videoId] NewPipe attempt $attempt → ${e::class.simpleName}: ${e.message}")
             null
         }
     }
 
-    // Headers for WEB_REMIX client (search)
+    private fun tryInnerTube(videoId: String): String? {
+        return try {
+            val body = """
+                {
+                  "context": {
+                    "client": {
+                      "clientName": "ANDROID",
+                      "clientVersion": "17.31.35",
+                      "androidSdkVersion": 30,
+                      "hl": "en",
+                      "gl": "US"
+                    }
+                  },
+                  "videoId": "$videoId"
+                }
+            """.trimIndent().toRequestBody("application/json".toMediaType())
+
+            val request = Request.Builder()
+                .url("https://www.youtube.com/youtubei/v1/player?prettyPrint=false")
+                .post(body)
+                .headers(buildAndroidHeaders())
+                .build()
+
+            client.newCall(request).execute().use { response ->
+                if (!response.isSuccessful) {
+                    Log.e(TAG, "[$videoId] InnerTube → HTTP ${response.code}")
+                    return null
+                }
+                val json = JsonParser.parseString(response.body?.string() ?: return null).asJsonObject
+                val status = json.obj("playabilityStatus")?.str("status")
+                if (status != "OK") {
+                    Log.e(TAG, "[$videoId] InnerTube → playability=$status")
+                    return null
+                }
+                val formats = json.obj("streamingData")?.arr("adaptiveFormats") ?: run {
+                    Log.e(TAG, "[$videoId] InnerTube → no adaptiveFormats")
+                    return null
+                }
+                var bestBitrate = 0
+                var bestUrl: String? = null
+                for (el in formats) {
+                    val fmt = el.asJsonObject
+                    if (!fmt.has("audioQuality") || fmt.has("qualityLabel")) continue
+                    val url = fmt.str("url") ?: continue
+                    val bitrate = fmt.get("bitrate")?.asInt ?: 0
+                    if (bitrate > bestBitrate) {
+                        bestBitrate = bitrate
+                        bestUrl = url
+                    }
+                }
+                if (bestUrl != null) {
+                    Log.d(TAG, "[$videoId] InnerTube → audio stream ${bestBitrate}bps")
+                } else {
+                    Log.e(TAG, "[$videoId] InnerTube → no plain audio streams found")
+                }
+                bestUrl
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "[$videoId] InnerTube → ${e::class.simpleName}: ${e.message}")
+            null
+        }
+    }
+
+    private fun buildAndroidHeaders() = Headers.Builder()
+        .add("User-Agent", "com.google.android.youtube/17.31.35 (Linux; U; Android 11) gzip")
+        .add("Content-Type", "application/json")
+        .add("Accept-Language", "en-US,en;q=0.5")
+        .add("X-YouTube-Client-Name", "3")
+        .add("X-YouTube-Client-Version", "17.31.35")
+        .build()
+
     private fun buildHeaders(referer: String) = Headers.Builder()
         .add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
         .add("Accept", "*/*")

@@ -58,9 +58,15 @@ class CassetteSharedViewModel @Inject constructor(
     }
 
     fun onScreenResume() {
-        if (player.mediaItemCount > 0 && _playerState.value !is PlayerState.Loading) {
-            player.play()
-            _playerState.value = PlayerState.Playing
+        when {
+            _playerState.value is PlayerState.Error -> {
+                val videoId = _cassetteConfig.value.track.id
+                if (videoId.isNotEmpty()) startPlayback(videoId)
+            }
+            player.mediaItemCount > 0 && _playerState.value !is PlayerState.Loading -> {
+                player.play()
+                _playerState.value = PlayerState.Playing
+            }
         }
     }
 
