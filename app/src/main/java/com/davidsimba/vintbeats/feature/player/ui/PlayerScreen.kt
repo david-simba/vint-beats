@@ -71,41 +71,47 @@ fun PlayerScreen(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 24.dp),
+                .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             PlayerTopBar(isSaved = isSaved, onBack = onBack, onSave = onSave)
 
-            Spacer(Modifier.height(16.dp))
+            Column(
+                modifier = Modifier.padding(
+                    top = 16.dp,
+                    end = 24.dp,
+                    bottom = 32.dp,
+                    start = 24.dp
+                )
+            ) {
+                CassetteView(
+                    isPlaying = isPlaying,
+                    isFloating = true,
+                    cassetteColor = cassette?.cassetteColor ?: VintageBlackMid,
+                    lineColor = cassette?.lineColor ?: VintageRedLight,
+                    drawRainbow = cassette?.isRainbow ?: true
+                )
 
-            CassetteView(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                isPlaying = isPlaying,
-                isFloating = true,
-                cassetteColor = cassette?.cassetteColor ?: VintageBlackMid,
-                lineColor = cassette?.lineColor ?: VintageRedLight,
-                drawRainbow = cassette?.isRainbow ?: true
-            )
+                Spacer(Modifier.height(32.dp))
 
-            Spacer(Modifier.height(32.dp))
+                trackForCard?.let {
+                    TrackCard(track = it)
+                }
 
-            trackForCard?.let { TrackCard(track = it) }
+                Spacer(Modifier.height(32.dp))
 
-            Spacer(Modifier.height(32.dp))
-
-            PlayerControls(
-                isPlaying = isPlaying,
-                isLoading = isLoading,
-                positionMs = positionMs,
-                durationMs = durationMs,
-                onSeek = viewModel::seekTo,
-                onTogglePlayPause = viewModel::togglePlayPause
-            )
+                PlayerControls(
+                    isPlaying = isPlaying,
+                    isLoading = isLoading,
+                    positionMs = positionMs,
+                    durationMs = durationMs,
+                    onSeek = viewModel::seekTo,
+                    onTogglePlayPause = viewModel::togglePlayPause
+                )
+            }
         }
 
         lyrics?.let {
-            Spacer(Modifier.height(32.dp))
             LyricsCard(lyrics = it)
             Spacer(Modifier.height(32.dp))
         }

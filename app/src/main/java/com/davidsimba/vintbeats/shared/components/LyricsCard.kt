@@ -24,16 +24,16 @@ fun LyricsCard(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(16.dp))
             .background(Color.White.copy(alpha = 0.08f))
-            .padding(horizontal =  20.dp, vertical = 24.dp)
+            .padding(horizontal =  20.dp, vertical = 28.dp)
     ) {
         Text(
             text = "Lyrics",
             color = VintageWhiteWarm,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(bottom = 12.dp)
+            modifier = Modifier.padding(bottom = 16.dp)
         )
         Text(
             text = lyrics,
