@@ -14,6 +14,9 @@ interface CassetteDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(cassette: SavedCassetteEntity)
 
+    @Query("SELECT * FROM saved_cassettes WHERE id = :id")
+    suspend fun getById(id: Int): SavedCassetteEntity?
+
     @Query("DELETE FROM saved_cassettes WHERE id = :id")
     suspend fun deleteById(id: Int)
 }

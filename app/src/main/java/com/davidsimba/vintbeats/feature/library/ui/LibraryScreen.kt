@@ -1,6 +1,7 @@
 package com.davidsimba.vintbeats.feature.library.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,7 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
 
 @Composable
 fun LibraryScreen(
+    onCassetteClick: (Int) -> Unit = {},
     viewModel: LibraryViewModel = hiltViewModel()
 ) {
     val cassettes by viewModel.cassettes.collectAsStateWithLifecycle()
@@ -68,7 +70,10 @@ fun LibraryScreen(
         } else {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(cassettes, key = { it.id }) { cassette ->
-                    CassetteListItem(cassette = cassette)
+                    CassetteListItem(
+                        cassette = cassette,
+                        onClick = { onCassetteClick(cassette.id) }
+                    )
                     HorizontalDivider(
                         color = VintageGrayDeep.copy(alpha = 0.4f),
                         thickness = 0.5.dp
@@ -81,10 +86,11 @@ fun LibraryScreen(
 }
 
 @Composable
-private fun CassetteListItem(cassette: SavedCassette) {
+private fun CassetteListItem(cassette: SavedCassette, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(14.dp)

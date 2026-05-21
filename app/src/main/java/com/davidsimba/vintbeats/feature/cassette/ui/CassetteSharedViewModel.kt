@@ -38,6 +38,8 @@ class CassetteSharedViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val player = ExoPlayer.Builder(context).build()
+    private var currentStreamUrl: String? = null
+    private val filesDir = context.filesDir
 
     private val _cassetteConfig = MutableStateFlow(
         CassetteConfig(
@@ -90,7 +92,12 @@ class CassetteSharedViewModel @Inject constructor(
         viewModelScope.launch {
             val config = _cassetteConfig.value
             if (config.track.id.isEmpty()) return@launch
-            repository.saveCassette(config)
+            _playerState.value = PlayerState.Loading
+            val streamUrl = currentStreamUrl ?: youTubeMusic.getAudioStreamUrl(config.track.id)
+            val audioFilePath = if (streamUrl != null) {
+                youTubeMusic.downloadAudio(config.track.id, streamUrl, filesDir)
+            } else null
+            repository.saveCassette(config, audioFilePath)
             player.pause()
             _playerState.value = PlayerState.Idle
             withContext(Dispatchers.Main) { onSaved() }
@@ -109,6 +116,7 @@ class CassetteSharedViewModel @Inject constructor(
                 return@launch
             }
 
+            currentStreamUrl = url
             Log.d(TAG, "Stream URL obtained, starting ExoPlayer")
             withContext(Dispatchers.Main) {
                 player.stop()

@@ -16,7 +16,8 @@ data class SavedCassetteEntity(
     val cassetteColorArgb: Int,
     val lineColorArgb: Int,
     val isRainbow: Boolean,
-    val savedAt: Long = System.currentTimeMillis()
+    val savedAt: Long = System.currentTimeMillis(),
+    val audioFilePath: String? = null
 ) {
     fun toDomain() = SavedCassette(
         id = id,
@@ -28,6 +29,7 @@ data class SavedCassetteEntity(
         cassetteColor = Color(cassetteColorArgb),
         lineColor = Color(lineColorArgb),
         isRainbow = isRainbow,
-        savedAt = savedAt
+        savedAt = savedAt,
+        audioFilePath = audioFilePath
     )
 }

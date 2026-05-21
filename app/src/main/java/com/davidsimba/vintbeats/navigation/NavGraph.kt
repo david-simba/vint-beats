@@ -14,10 +14,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.davidsimba.vintbeats.feature.cassette.ui.CassetteSharedViewModel
 import com.davidsimba.vintbeats.feature.cassette.ui.CustomizeCassetteScreen
 import com.davidsimba.vintbeats.feature.home.ui.HomeScreen
 import com.davidsimba.vintbeats.feature.library.ui.LibraryScreen
+import com.davidsimba.vintbeats.feature.player.ui.PlayerScreen
 import com.davidsimba.vintbeats.feature.search.ui.SearchScreen
 import com.davidsimba.vintbeats.shared.components.background.Background
 import com.davidsimba.vintbeats.shared.components.navbar.BottomNavBar
@@ -83,8 +86,19 @@ fun NavGraph(
                         }
                     )
                 }
-                composable(Screen.Library.route) { LibraryScreen() }
-
+                composable(Screen.Library.route) {
+                    LibraryScreen(
+                        onCassetteClick = { id ->
+                            navController.navigate(Screen.Player.route(id))
+                        }
+                    )
+                }
+                composable(
+                    route = Screen.Player.route,
+                    arguments = listOf(navArgument("cassetteId") { type = NavType.IntType })
+                ) {
+                    PlayerScreen(onBack = { navController.popBackStack() })
+                }
             }
         }
     }

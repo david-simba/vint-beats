@@ -16,9 +16,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ChevronLeft
 import androidx.compose.material.icons.rounded.Gradient
 import androidx.compose.material.icons.rounded.LinearScale
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.ui.unit.Dp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -32,6 +34,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.shared.components.ColorDot
@@ -112,17 +116,30 @@ fun CustomizeCassetteScreen(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold
                 )
-                val canSave = config.track.id.isNotEmpty()
-                Text(
-                    text = "Save",
-                    color = if (canSave) VintageWhiteWarm else VintageWhiteWarm.copy(alpha = 0.3f),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
+                val isSaving = playerState is PlayerState.Loading
+                val canSave = config.track.id.isNotEmpty() && !isSaving
+                Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(20.dp))
                         .clickable(enabled = canSave) { viewModel.saveCassette(onSave) }
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                )
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (isSaving) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            color = VintageWhiteWarm,
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text(
+                            text = "Save",
+                            color = if (canSave) VintageWhiteWarm else VintageWhiteWarm.copy(alpha = 0.3f),
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
             }
 
             Box(

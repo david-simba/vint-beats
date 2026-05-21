@@ -12,5 +12,6 @@ data class SavedCassette(
     val cassetteColor: Color,
     val lineColor: Color,
     val isRainbow: Boolean,
-    val savedAt: Long
+    val savedAt: Long,
+    val audioFilePath: String?
 )

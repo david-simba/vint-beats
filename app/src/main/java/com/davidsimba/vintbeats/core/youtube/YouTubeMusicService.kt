@@ -12,6 +12,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -152,6 +153,32 @@ class YouTubeMusicService @Inject constructor(
             null
         }
     }
+
+    suspend fun downloadAudio(videoId: String, streamUrl: String, destDir: File): String? =
+        withContext(Dispatchers.IO) {
+            try {
+                val dir = File(destDir, "audio").also { it.mkdirs() }
+                val file = File(dir, "$videoId.m4a")
+                if (file.exists()) {
+                    Log.d(TAG, "[$videoId] Already cached at ${file.path}")
+                    return@withContext file.path
+                }
+                val request = Request.Builder().url(streamUrl).build()
+                client.newCall(request).execute().use { response ->
+                    if (!response.isSuccessful) {
+                        Log.e(TAG, "[$videoId] Download failed HTTP ${response.code}")
+                        return@withContext null
+                    }
+                    val bytes = response.body?.bytes() ?: return@withContext null
+                    file.writeBytes(bytes)
+                    Log.d(TAG, "[$videoId] Downloaded ${bytes.size / 1024}KB → ${file.path}")
+                    file.path
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "[$videoId] Download error: ${e.message}")
+                null
+            }
+        }
 
     private fun buildAndroidHeaders() = Headers.Builder()
         .add("User-Agent", "com.google.android.youtube/17.31.35 (Linux; U; Android 11) gzip")

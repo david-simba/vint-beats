@@ -5,4 +5,7 @@ sealed class Screen(val route: String) {
     data object Search : Screen("search")
     data object CustomizeCassette : Screen("customize_cassette")
     data object Library : Screen("library")
+    data object Player : Screen("player/{cassetteId}") {
+        fun route(id: Int) = "player/$id"
+    }
 }

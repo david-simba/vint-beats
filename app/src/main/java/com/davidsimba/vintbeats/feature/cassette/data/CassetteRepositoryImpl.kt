@@ -15,7 +15,10 @@ class CassetteRepositoryImpl @Inject constructor(
     override fun getAllCassettes(): Flow<List<SavedCassette>> =
         dao.getAllCassettes().map { it.map(SavedCassetteEntity::toDomain) }
 
-    override suspend fun saveCassette(config: CassetteConfig) {
+    override suspend fun getCassette(id: Int): SavedCassette? =
+        dao.getById(id)?.toDomain()
+
+    override suspend fun saveCassette(config: CassetteConfig, audioFilePath: String?) {
         dao.insert(
             SavedCassetteEntity(
                 trackId = config.track.id,
@@ -25,7 +28,8 @@ class CassetteRepositoryImpl @Inject constructor(
                 trackDurationText = config.track.durationText,
                 cassetteColorArgb = config.cassetteColor.toArgb(),
                 lineColorArgb = config.lineColor.toArgb(),
-                isRainbow = config.isRainbow
+                isRainbow = config.isRainbow,
+                audioFilePath = audioFilePath
             )
         )
     }

@@ -17,7 +17,9 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): VintBeatsDatabase =
-        Room.databaseBuilder(context, VintBeatsDatabase::class.java, "vintbeats.db").build()
+        Room.databaseBuilder(context, VintBeatsDatabase::class.java, "vintbeats.db")
+            .addMigrations(VintBeatsDatabase.MIGRATION_1_2)
+            .build()
 
     @Provides
     fun provideCassetteDao(db: VintBeatsDatabase): CassetteDao = db.cassetteDao()
