@@ -17,6 +17,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.davidsimba.vintbeats.feature.cassette.ui.CassetteSharedViewModel
 import com.davidsimba.vintbeats.feature.cassette.ui.CustomizeCassetteScreen
 import com.davidsimba.vintbeats.feature.home.ui.HomeScreen
+import com.davidsimba.vintbeats.feature.library.ui.LibraryScreen
 import com.davidsimba.vintbeats.feature.search.ui.SearchScreen
 import com.davidsimba.vintbeats.shared.components.background.Background
 import com.davidsimba.vintbeats.shared.components.navbar.BottomNavBar
@@ -24,7 +25,7 @@ import com.davidsimba.vintbeats.shared.components.navbar.BottomNavBar
 private val bottomNavRoutes = setOf(
     Screen.Home.route,
     Screen.Search.route,
-    Screen.Profile.route
+    Screen.Library.route
 )
 
 @Composable
@@ -76,13 +77,14 @@ fun NavGraph(
                         viewModel = sharedViewModel,
                         onBack = { navController.popBackStack() },
                         onSave = {
-                            navController.navigate(Screen.Home.route) {
-                                popUpTo(Screen.Home.route) { inclusive = true }
+                            navController.navigate(Screen.Library.route) {
+                                popUpTo(Screen.Home.route) { inclusive = false }
                             }
                         }
                     )
                 }
-                composable(Screen.Profile.route) { }
+                composable(Screen.Library.route) { LibraryScreen() }
+
             }
         }
     }

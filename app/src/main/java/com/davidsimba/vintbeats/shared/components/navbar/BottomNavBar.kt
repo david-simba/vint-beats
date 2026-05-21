@@ -3,8 +3,8 @@ package com.davidsimba.vintbeats.shared.components.navbar
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Home
-import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material.icons.rounded.Headset
+import androidx.compose.material.icons.rounded.LibraryMusic
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -33,9 +33,9 @@ data class BottomNavBarItem(
 )
 
 val bottomNavItems = listOf(
-    BottomNavBarItem(Screen.Home, "Home", Icons.Rounded.Home),
+    BottomNavBarItem(Screen.Home, "Home", Icons.Rounded.Headset),
     BottomNavBarItem(Screen.Search, "Search", Icons.Rounded.Search),
-    BottomNavBarItem(Screen.Profile, "Profile", Icons.Rounded.Person)
+    BottomNavBarItem(Screen.Library, "Library", Icons.Rounded.LibraryMusic)
 )
 
 @Composable
