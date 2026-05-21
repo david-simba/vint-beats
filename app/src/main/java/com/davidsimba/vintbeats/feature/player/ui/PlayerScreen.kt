@@ -29,15 +29,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
-import com.davidsimba.vintbeats.shared.theme.VintageBgBase
-import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.feature.cassette.ui.PlayerState
 import com.davidsimba.vintbeats.feature.search.domain.Track
 import com.davidsimba.vintbeats.shared.components.TrackCard
 import com.davidsimba.vintbeats.shared.components.cassette.CassetteView
+import com.davidsimba.vintbeats.shared.theme.VintageBgBase
+import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
@@ -47,9 +46,9 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
 @Composable
 fun PlayerScreen(
     onBack: () -> Unit,
-    viewModel: PlayerViewModel = hiltViewModel()
+    viewModel: PlaybackViewModel
 ) {
-    val cassette by viewModel.cassette.collectAsStateWithLifecycle()
+    val cassette by viewModel.currentCassette.collectAsStateWithLifecycle()
     val playerState by viewModel.playerState.collectAsStateWithLifecycle()
     val positionMs by viewModel.positionMs.collectAsStateWithLifecycle()
     val durationMs by viewModel.durationMs.collectAsStateWithLifecycle()
@@ -60,9 +59,7 @@ fun PlayerScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(colors = listOf(VintageBgDark, VintageBgBase))
-            )
+            .background(Brush.verticalGradient(colors = listOf(VintageBgDark, VintageBgBase)))
     )
 
     Column(
@@ -133,16 +130,8 @@ fun PlayerScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(
-                    text = formatMs(positionMs),
-                    color = VintageGrayMid,
-                    fontSize = 12.sp
-                )
-                Text(
-                    text = formatMs(durationMs),
-                    color = VintageGrayMid,
-                    fontSize = 12.sp
-                )
+                Text(text = formatMs(positionMs), color = VintageGrayMid, fontSize = 12.sp)
+                Text(text = formatMs(durationMs), color = VintageGrayMid, fontSize = 12.sp)
             }
         }
 

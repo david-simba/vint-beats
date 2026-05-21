@@ -1,6 +1,7 @@
 package com.davidsimba.vintbeats.navigation
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -11,17 +12,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.feature.cassette.ui.CassetteSharedViewModel
 import com.davidsimba.vintbeats.feature.cassette.ui.CustomizeCassetteScreen
 import com.davidsimba.vintbeats.feature.home.ui.HomeScreen
 import com.davidsimba.vintbeats.feature.library.ui.LibraryScreen
+import com.davidsimba.vintbeats.feature.player.ui.PlaybackViewModel
 import com.davidsimba.vintbeats.feature.player.ui.PlayerScreen
 import com.davidsimba.vintbeats.feature.search.ui.SearchScreen
+import com.davidsimba.vintbeats.shared.components.MiniPlayer
 import com.davidsimba.vintbeats.shared.components.background.Background
 import com.davidsimba.vintbeats.shared.components.navbar.BottomNavBar
 
@@ -40,10 +44,30 @@ fun NavGraph(
     val currentRoute = currentEntry?.destination?.route
     val showBottomBar = currentRoute in bottomNavRoutes
 
+    val playbackViewModel: PlaybackViewModel = hiltViewModel()
+    val currentCassette by playbackViewModel.currentCassette.collectAsStateWithLifecycle()
+    val playbackState by playbackViewModel.playerState.collectAsStateWithLifecycle()
+
+    val showMiniPlayer = currentCassette != null && currentRoute != Screen.Player.route
+
     Scaffold(
         contentWindowInsets = WindowInsets(0),
         bottomBar = {
-            if (showBottomBar) BottomNavBar(navController)
+            Column {
+                if (showMiniPlayer) {
+                    MiniPlayer(
+                        cassette = currentCassette!!,
+                        playerState = playbackState,
+                        onTogglePlayPause = playbackViewModel::togglePlayPause,
+                        onTap = {
+                            navController.navigate(Screen.Player.route(currentCassette!!.id)) {
+                                launchSingleTop = true
+                            }
+                        }
+                    )
+                }
+                if (showBottomBar) BottomNavBar(navController)
+            }
         }
     ) { innerPadding ->
         Box(modifier = Modifier.fillMaxSize()) {
@@ -89,7 +113,10 @@ fun NavGraph(
                 composable(Screen.Library.route) {
                     LibraryScreen(
                         onCassetteClick = { id ->
-                            navController.navigate(Screen.Player.route(id))
+                            playbackViewModel.play(id)
+                            navController.navigate(Screen.Player.route(id)) {
+                                launchSingleTop = true
+                            }
                         }
                     )
                 }
@@ -97,7 +124,10 @@ fun NavGraph(
                     route = Screen.Player.route,
                     arguments = listOf(navArgument("cassetteId") { type = NavType.IntType })
                 ) {
-                    PlayerScreen(onBack = { navController.popBackStack() })
+                    PlayerScreen(
+                        onBack = { navController.popBackStack() },
+                        viewModel = playbackViewModel
+                    )
                 }
             }
         }
