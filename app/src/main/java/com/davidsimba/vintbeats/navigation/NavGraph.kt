@@ -51,7 +51,11 @@ fun NavGraph(
             ) {
                 composable(Screen.Home.route) {
                     HomeScreen(
-                        onCreateCassette = { navController.navigate(Screen.Search.route) }
+                        onCreateCassette = {
+                            navController.navigate(Screen.Search.route) {
+                                launchSingleTop = true
+                            }
+                        }
                     )
                 }
                 composable(Screen.Search.route) { entry ->

@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -65,6 +66,16 @@ fun CassetteView(
     ) {
         val w = size.width
         val h = size.height
+
+        val dx = w * 0.022f
+        val dy = h * 0.048f
+        val sideColor = Color(
+            red = (cassetteColor.red * 0.45f).coerceIn(0f, 1f),
+            green = (cassetteColor.green * 0.45f).coerceIn(0f, 1f),
+            blue = (cassetteColor.blue * 0.45f).coerceIn(0f, 1f),
+        )
+        withTransform({ translate(dx, dy) }) { drawCassetteBody(w, h, sideColor.copy(alpha = 0.5f)) }
+        withTransform({ translate(dx, dy) })  { drawCassetteBody(w, h, sideColor) }
 
         drawCassetteBody(w, h, cassetteColor)
         drawLabel(w, h)

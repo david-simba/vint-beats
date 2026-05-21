@@ -12,6 +12,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,7 +40,8 @@ val bottomNavItems = listOf(
 
 @Composable
 fun BottomNavBar(navController: NavController) {
-    val currentRoute =  navController.currentBackStackEntryAsState().value?.destination?.route
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
 
     NavigationBar(
         containerColor = VintageBlackMid
@@ -50,13 +52,16 @@ fun BottomNavBar(navController: NavController) {
                 selected = selected,
                 onClick = {
                     if (currentRoute != item.screen.route) {
-                        navController.navigate(item.screen.route) {
-                            popUpTo(Screen.Home.route) {
-                                saveState = true
-                                inclusive = item.screen == Screen.Home
+                        if (item.screen == Screen.Home) {
+                            navController.popBackStack(Screen.Home.route, inclusive = false)
+                        } else {
+                            navController.navigate(item.screen.route) {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
                             }
-                            launchSingleTop = true
-                            restoreState = true
                         }
                     }
                 },
