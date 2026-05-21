@@ -61,8 +61,10 @@ fun TrackCard(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
+            val subtitle = if (track.durationText.isNotEmpty()) "${track.artist} • ${track.durationText}"
+                           else track.artist
             Text(
-                text = track.artist,
+                text = subtitle,
                 color = VintageGrayMid,
                 fontSize = 12.sp,
                 maxLines = 1,
