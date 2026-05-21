@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,28 +17,27 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ChevronLeft
 import androidx.compose.material.icons.rounded.Gradient
 import androidx.compose.material.icons.rounded.LinearScale
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
-import androidx.compose.ui.unit.Dp
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.clickable
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.size
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.davidsimba.vintbeats.feature.cassette.domain.CassetteConfig
+import com.davidsimba.vintbeats.feature.player.ui.PlaybackViewModel
+import com.davidsimba.vintbeats.feature.player.ui.PlayerState
 import com.davidsimba.vintbeats.shared.components.ColorDot
 import com.davidsimba.vintbeats.shared.components.SectionLabel
 import com.davidsimba.vintbeats.shared.components.StyleToggle
@@ -72,36 +72,31 @@ private val lineColors = listOf(
 fun CustomizeCassetteScreen(
     onBack: () -> Unit,
     onSave: () -> Unit,
-    viewModel: CassetteSharedViewModel = hiltViewModel(),
+    playbackViewModel: PlaybackViewModel,
+    configViewModel: CassetteConfigViewModel = hiltViewModel()
 ) {
-    val config by viewModel.cassetteConfig.collectAsStateWithLifecycle()
-    val playerState by viewModel.playerState.collectAsStateWithLifecycle()
+    val unsavedTrack by playbackViewModel.unsavedTrack.collectAsStateWithLifecycle()
+    val playerState by playbackViewModel.playerState.collectAsStateWithLifecycle()
+    val cassetteColor by configViewModel.cassetteColor.collectAsStateWithLifecycle()
+    val lineColor by configViewModel.lineColor.collectAsStateWithLifecycle()
+    val isRainbow by configViewModel.isRainbow.collectAsStateWithLifecycle()
 
-    DisposableEffect(Unit) {
-        viewModel.onScreenResume()
-        onDispose { viewModel.onScreenPause() }
-    }
+    val isSaving = playerState is PlayerState.Loading
+    val canSave = unsavedTrack != null && !isSaving
 
     Box(modifier = Modifier.fillMaxSize()) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(VintageBgDark, VintageBgBase)
-                    )
-                )
+                .background(Brush.verticalGradient(colors = listOf(VintageBgDark, VintageBgBase)))
         )
 
-        Column(
-            modifier = Modifier.fillMaxSize().statusBarsPadding()
-        ) {
+        Column(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBack) {
                     Icon(
@@ -114,31 +109,13 @@ fun CustomizeCassetteScreen(
                     text = "Your cassette",
                     color = VintageWhiteWarm,
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(1f)
                 )
-                val isSaving = playerState is PlayerState.Loading
-                val canSave = config.track.id.isNotEmpty() && !isSaving
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(20.dp))
-                        .clickable(enabled = canSave) { viewModel.saveCassette(onSave) }
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (isSaving) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(16.dp),
-                            color = VintageWhiteWarm,
-                            strokeWidth = 2.dp
-                        )
-                    } else {
-                        Text(
-                            text = "Save",
-                            color = if (canSave) VintageWhiteWarm else VintageWhiteWarm.copy(alpha = 0.3f),
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
+                // balance spacer
+                Box(modifier = Modifier.padding(horizontal = 12.dp).alpha(0f)) {
+                    Icon(Icons.Rounded.ChevronLeft, contentDescription = null)
                 }
             }
 
@@ -154,15 +131,15 @@ fun CustomizeCassetteScreen(
                 CassetteView(
                     isPlaying = playerState is PlayerState.Playing,
                     isFloating = true,
-                    cassetteColor = config.cassetteColor,
-                    lineColor = config.lineColor,
-                    drawRainbow = config.isRainbow,
+                    cassetteColor = cassetteColor,
+                    lineColor = lineColor,
+                    drawRainbow = isRainbow,
                 )
             }
 
-            if (config.track.title.isNotEmpty()) {
+            unsavedTrack?.let { track ->
                 TrackCard(
-                    track = config.track,
+                    track = track,
                     modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 8.dp)
                 )
             }
@@ -177,8 +154,8 @@ fun CustomizeCassetteScreen(
                 cassetteColors.forEach { color ->
                     ColorDot(
                         color = color,
-                        selected = config.cassetteColor == color,
-                        onClick = { viewModel.updateCassetteColor(color) }
+                        selected = cassetteColor == color,
+                        onClick = { configViewModel.updateCassetteColor(color) }
                     )
                 }
             }
@@ -192,14 +169,14 @@ fun CustomizeCassetteScreen(
             ) {
                 StyleToggle(
                     label = "Rainbow",
-                    selected = config.isRainbow,
-                    onClick = { viewModel.updateStyle(true) },
+                    selected = isRainbow,
+                    onClick = { configViewModel.updateStyle(true) },
                     icon = Icons.Rounded.Gradient
                 )
                 StyleToggle(
                     label = "Line",
-                    selected = !config.isRainbow,
-                    onClick = { viewModel.updateStyle(false) },
+                    selected = !isRainbow,
+                    onClick = { configViewModel.updateStyle(false) },
                     icon = Icons.Rounded.LinearScale
                 )
             }
@@ -208,22 +185,65 @@ fun CustomizeCassetteScreen(
 
             SectionLabel(
                 text = "Line color",
-                modifier = Modifier.alpha(if (config.isRainbow) 0.3f else 1f)
+                modifier = Modifier.alpha(if (isRainbow) 0.3f else 1f)
             )
             Row(
                 modifier = Modifier
                     .padding(horizontal = 24.dp)
-                    .alpha(if (config.isRainbow) 0.3f else 1f),
+                    .alpha(if (isRainbow) 0.3f else 1f),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 lineColors.forEach { color ->
                     ColorDot(
                         color = color,
-                        selected = config.lineColor == color,
-                        onClick = { if (!config.isRainbow) viewModel.updateLineColor(color) }
+                        selected = lineColor == color,
+                        onClick = { if (!isRainbow) configViewModel.updateLineColor(color) }
                     )
                 }
             }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp)
+                    .height(52.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(
+                        if (canSave || isSaving) VintageWhiteWarm
+                        else VintageWhiteWarm.copy(alpha = 0.3f)
+                    )
+                    .clickable(enabled = canSave) {
+                        val track = unsavedTrack ?: return@clickable
+                        playbackViewModel.saveCassette(
+                            CassetteConfig(
+                                track = track,
+                                cassetteColor = cassetteColor,
+                                lineColor = lineColor,
+                                isRainbow = isRainbow
+                            ),
+                            onSave
+                        )
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                if (isSaving) {
+                    LinearProgressIndicator(
+                        modifier = Modifier.matchParentSize(),
+                        color = VintageWhiteWarm.copy(alpha = 0.55f),
+                        trackColor = VintageWhiteWarm
+                    )
+                }
+                Text(
+                    text = if (isSaving) "Downloading..." else "Save cassette",
+                    color = VintageBgDark,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }

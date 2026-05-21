@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.feature.cassette.domain.SavedCassette
-import com.davidsimba.vintbeats.feature.cassette.ui.PlayerState
+import com.davidsimba.vintbeats.feature.player.ui.PlayerState
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
@@ -37,6 +37,48 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
 @Composable
 fun MiniPlayer(
     cassette: SavedCassette,
+    playerState: PlayerState,
+    onTogglePlayPause: () -> Unit,
+    onTap: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    MiniPlayerContent(
+        title = cassette.trackTitle,
+        artist = cassette.trackArtist,
+        thumbnailUrl = cassette.trackThumbnailUrl,
+        playerState = playerState,
+        onTogglePlayPause = onTogglePlayPause,
+        onTap = onTap,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun MiniPlayerTrack(
+    trackTitle: String,
+    trackArtist: String,
+    thumbnailUrl: String?,
+    playerState: PlayerState,
+    onTogglePlayPause: () -> Unit,
+    onTap: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    MiniPlayerContent(
+        title = trackTitle,
+        artist = trackArtist,
+        thumbnailUrl = thumbnailUrl,
+        playerState = playerState,
+        onTogglePlayPause = onTogglePlayPause,
+        onTap = onTap,
+        modifier = modifier
+    )
+}
+
+@Composable
+private fun MiniPlayerContent(
+    title: String,
+    artist: String,
+    thumbnailUrl: String?,
     playerState: PlayerState,
     onTogglePlayPause: () -> Unit,
     onTap: () -> Unit,
@@ -62,7 +104,7 @@ fun MiniPlayer(
                     .background(VintageGrayDeep)
             ) {
                 AsyncImage(
-                    model = cassette.trackThumbnailUrl,
+                    model = thumbnailUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.matchParentSize()
@@ -71,7 +113,7 @@ fun MiniPlayer(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = cassette.trackTitle,
+                    text = title,
                     color = VintageWhitePure,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -79,7 +121,7 @@ fun MiniPlayer(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = cassette.trackArtist,
+                    text = artist,
                     color = VintageGrayMid,
                     fontSize = 11.sp,
                     maxLines = 1,

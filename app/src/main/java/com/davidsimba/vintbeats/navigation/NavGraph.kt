@@ -8,31 +8,33 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.navArgument
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.davidsimba.vintbeats.feature.cassette.ui.CassetteSharedViewModel
 import com.davidsimba.vintbeats.feature.cassette.ui.CustomizeCassetteScreen
 import com.davidsimba.vintbeats.feature.home.ui.HomeScreen
 import com.davidsimba.vintbeats.feature.library.ui.LibraryScreen
 import com.davidsimba.vintbeats.feature.player.ui.PlaybackViewModel
 import com.davidsimba.vintbeats.feature.player.ui.PlayerScreen
 import com.davidsimba.vintbeats.feature.search.ui.SearchScreen
-import com.davidsimba.vintbeats.shared.components.MiniPlayer
 import com.davidsimba.vintbeats.shared.components.background.Background
+import com.davidsimba.vintbeats.shared.components.MiniPlayer
+import com.davidsimba.vintbeats.shared.components.MiniPlayerTrack
 import com.davidsimba.vintbeats.shared.components.navbar.BottomNavBar
 
 private val bottomNavRoutes = setOf(
     Screen.Home.route,
     Screen.Search.route,
     Screen.Library.route
+)
+
+private val creationRoutes = setOf(
+    Screen.Player.route,
+    Screen.CustomizeCassette.route
 )
 
 @Composable
@@ -46,25 +48,38 @@ fun NavGraph(
 
     val playbackViewModel: PlaybackViewModel = hiltViewModel()
     val currentCassette by playbackViewModel.currentCassette.collectAsStateWithLifecycle()
+    val isSaved by playbackViewModel.isSaved.collectAsStateWithLifecycle()
+    val unsavedTrack by playbackViewModel.unsavedTrack.collectAsStateWithLifecycle()
     val playbackState by playbackViewModel.playerState.collectAsStateWithLifecycle()
 
-    val showMiniPlayer = currentCassette != null && currentRoute != Screen.Player.route
+    val hasActivePlayback = (isSaved && currentCassette != null) || (!isSaved && unsavedTrack != null)
+    val showMiniPlayer = hasActivePlayback
+        && currentRoute !in creationRoutes
+        && currentRoute != Screen.Player.route
 
     Scaffold(
         contentWindowInsets = WindowInsets(0),
         bottomBar = {
             Column {
                 if (showMiniPlayer) {
-                    MiniPlayer(
-                        cassette = currentCassette!!,
-                        playerState = playbackState,
-                        onTogglePlayPause = playbackViewModel::togglePlayPause,
-                        onTap = {
-                            navController.navigate(Screen.Player.route(currentCassette!!.id)) {
-                                launchSingleTop = true
-                            }
-                        }
-                    )
+                    val miniCassette = currentCassette
+                    val miniTrack = unsavedTrack
+                    when {
+                        miniCassette != null -> MiniPlayer(
+                            cassette = miniCassette,
+                            playerState = playbackState,
+                            onTogglePlayPause = playbackViewModel::togglePlayPause,
+                            onTap = { navController.navigate(Screen.Player.route) { launchSingleTop = true } }
+                        )
+                        miniTrack != null -> MiniPlayerTrack(
+                            trackTitle = miniTrack.title,
+                            trackArtist = miniTrack.artist,
+                            thumbnailUrl = miniTrack.albumImageUrl,
+                            playerState = playbackState,
+                            onTogglePlayPause = playbackViewModel::togglePlayPause,
+                            onTap = { navController.navigate(Screen.Player.route) { launchSingleTop = true } }
+                        )
+                    }
                 }
                 if (showBottomBar) BottomNavBar(navController)
             }
@@ -80,53 +95,42 @@ fun NavGraph(
                 composable(Screen.Home.route) {
                     HomeScreen(
                         onCreateCassette = {
-                            navController.navigate(Screen.Search.route) {
-                                launchSingleTop = true
-                            }
+                            navController.navigate(Screen.Search.route) { launchSingleTop = true }
                         }
                     )
                 }
-                composable(Screen.Search.route) { entry ->
-                    val sharedViewModel: CassetteSharedViewModel = hiltViewModel(
-                        remember(entry) { navController.getBackStackEntry(Screen.Search.route) }
-                    )
+                composable(Screen.Search.route) {
                     SearchScreen(
                         onTrackSelected = { track ->
-                            sharedViewModel.selectTrack(track)
-                            navController.navigate(Screen.CustomizeCassette.route)
+                            playbackViewModel.playTrack(track)
+                            navController.navigate(Screen.Player.route) { launchSingleTop = true }
                         }
                     )
                 }
-                composable(Screen.CustomizeCassette.route) { entry ->
-                    val searchEntry = remember(entry) { navController.getBackStackEntry(Screen.Search.route) }
-                    val sharedViewModel: CassetteSharedViewModel = hiltViewModel(searchEntry)
+                composable(Screen.Player.route) {
+                    PlayerScreen(
+                        onBack = { navController.popBackStack() },
+                        onSave = { navController.navigate(Screen.CustomizeCassette.route) },
+                        viewModel = playbackViewModel
+                    )
+                }
+                composable(Screen.CustomizeCassette.route) {
                     CustomizeCassetteScreen(
-                        viewModel = sharedViewModel,
                         onBack = { navController.popBackStack() },
                         onSave = {
                             navController.navigate(Screen.Library.route) {
                                 popUpTo(Screen.Home.route) { inclusive = false }
                             }
-                        }
+                        },
+                        playbackViewModel = playbackViewModel
                     )
                 }
                 composable(Screen.Library.route) {
                     LibraryScreen(
                         onCassetteClick = { id ->
                             playbackViewModel.play(id)
-                            navController.navigate(Screen.Player.route(id)) {
-                                launchSingleTop = true
-                            }
+                            navController.navigate(Screen.Player.route) { launchSingleTop = true }
                         }
-                    )
-                }
-                composable(
-                    route = Screen.Player.route,
-                    arguments = listOf(navArgument("cassetteId") { type = NavType.IntType })
-                ) {
-                    PlayerScreen(
-                        onBack = { navController.popBackStack() },
-                        viewModel = playbackViewModel
                     )
                 }
             }

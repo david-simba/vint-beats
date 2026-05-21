@@ -8,9 +8,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import com.davidsimba.vintbeats.core.youtube.YouTubeMusicService
+import com.davidsimba.vintbeats.feature.cassette.domain.CassetteConfig
 import com.davidsimba.vintbeats.feature.cassette.domain.CassetteRepository
 import com.davidsimba.vintbeats.feature.cassette.domain.SavedCassette
-import com.davidsimba.vintbeats.feature.cassette.ui.PlayerState
+import com.davidsimba.vintbeats.feature.search.domain.Track
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -32,9 +33,16 @@ class PlaybackViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val player = ExoPlayer.Builder(context).build()
+    private var currentStreamUrl: String? = null
 
     private val _currentCassette = MutableStateFlow<SavedCassette?>(null)
     val currentCassette: StateFlow<SavedCassette?> = _currentCassette.asStateFlow()
+
+    private val _unsavedTrack = MutableStateFlow<Track?>(null)
+    val unsavedTrack: StateFlow<Track?> = _unsavedTrack.asStateFlow()
+
+    private val _isSaved = MutableStateFlow(true)
+    val isSaved: StateFlow<Boolean> = _isSaved.asStateFlow()
 
     private val _playerState = MutableStateFlow<PlayerState>(PlayerState.Idle)
     val playerState: StateFlow<PlayerState> = _playerState.asStateFlow()
@@ -47,8 +55,36 @@ class PlaybackViewModel @Inject constructor(
 
     private var progressJob: Job? = null
 
+    fun playTrack(track: Track) {
+        if (_unsavedTrack.value?.id == track.id && player.isPlaying) return
+        _unsavedTrack.value = track
+        _currentCassette.value = null
+        _isSaved.value = false
+        currentStreamUrl = null
+        viewModelScope.launch {
+            _playerState.value = PlayerState.Loading
+            val streamUrl = youTubeMusic.getAudioStreamUrl(track.id) ?: run {
+                Log.e(TAG, "No stream for ${track.id}")
+                _playerState.value = PlayerState.Error("Stream not available")
+                return@launch
+            }
+            currentStreamUrl = streamUrl
+            withContext(Dispatchers.Main) {
+                player.stop()
+                player.setMediaItem(MediaItem.fromUri(streamUrl))
+                player.prepare()
+                player.play()
+                _playerState.value = PlayerState.Playing
+                startProgressUpdates()
+            }
+        }
+    }
+
     fun play(cassetteId: Int) {
         if (_currentCassette.value?.id == cassetteId && player.isPlaying) return
+        _unsavedTrack.value = null
+        _isSaved.value = true
+        currentStreamUrl = null
         viewModelScope.launch {
             _playerState.value = PlayerState.Loading
             val cassette = repository.getCassette(cassetteId) ?: run {
@@ -58,14 +94,15 @@ class PlaybackViewModel @Inject constructor(
             _currentCassette.value = cassette
 
             val uri = if (!cassette.audioFilePath.isNullOrEmpty() && File(cassette.audioFilePath).exists()) {
-                Log.d(TAG, "Playing from local file: ${cassette.audioFilePath}")
+                Log.d(TAG, "Playing local file: ${cassette.audioFilePath}")
                 Uri.fromFile(File(cassette.audioFilePath))
             } else {
-                Log.d(TAG, "Local file missing, streaming ${cassette.trackId}")
+                Log.d(TAG, "Streaming ${cassette.trackId}")
                 val streamUrl = youTubeMusic.getAudioStreamUrl(cassette.trackId) ?: run {
                     _playerState.value = PlayerState.Error("Audio not available")
                     return@launch
                 }
+                currentStreamUrl = streamUrl
                 Uri.parse(streamUrl)
             }
 
@@ -77,6 +114,21 @@ class PlaybackViewModel @Inject constructor(
                 _playerState.value = PlayerState.Playing
                 startProgressUpdates()
             }
+        }
+    }
+
+    fun saveCassette(config: CassetteConfig, onSaved: () -> Unit) {
+        val track = _unsavedTrack.value ?: return
+        viewModelScope.launch {
+            _playerState.value = PlayerState.Loading
+            val streamUrl = currentStreamUrl ?: youTubeMusic.getAudioStreamUrl(track.id)
+            val audioFilePath = streamUrl?.let {
+                youTubeMusic.downloadAudio(track.id, it, context.filesDir)
+            }
+            repository.saveCassette(config, audioFilePath)
+            _isSaved.value = true
+            _playerState.value = PlayerState.Idle
+            withContext(Dispatchers.Main) { onSaved() }
         }
     }
 
