@@ -1,5 +1,6 @@
 package com.davidsimba.vintbeats.core.youtube
 
+import android.util.Log
 import com.davidsimba.vintbeats.feature.search.domain.Track
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
@@ -18,8 +19,8 @@ class YouTubeMusicService @Inject constructor(
     @Named("youtube") private val client: OkHttpClient
 ) {
     companion object {
+        private const val TAG = "YTMusicService"
         private const val BASE_URL = "https://music.youtube.com/youtubei/v1"
-        // Protobuf param that filters results to Songs only
         private const val SONGS_FILTER = "EgWKAQIIAWoKEAkQBRAKEAMQBA=="
         private val CLIENT_CONTEXT = """
             "context": {
@@ -58,34 +59,31 @@ class YouTubeMusicService @Inject constructor(
         }
     }
 
-    // Returns audio-only stream URL for a given videoId, ready for ExoPlayer
+    // Returns audio-only stream URL using NewPipeExtractor (handles nsig cipher, client selection).
     suspend fun getAudioStreamUrl(videoId: String): String? = withContext(Dispatchers.IO) {
         try {
-            val body = """
-                {
-                  $CLIENT_CONTEXT,
-                  "videoId": "$videoId",
-                  "playbackContext": {
-                    "contentPlaybackContext": { "signatureTimestamp": 0 }
-                  }
-                }
-            """.trimIndent().toRequestBody("application/json".toMediaType())
+            val ytUrl = "https://www.youtube.com/watch?v=$videoId"
+            val streamInfo = org.schabi.newpipe.extractor.stream.StreamInfo.getInfo(
+                org.schabi.newpipe.extractor.NewPipe.getService(0),
+                ytUrl
+            )
+            val best = streamInfo.audioStreams
+                .filter { !it.content.isNullOrEmpty() }
+                .maxByOrNull { it.averageBitrate }
 
-            val request = Request.Builder()
-                .url("$BASE_URL/player?prettyPrint=false")
-                .post(body)
-                .headers(buildHeaders("https://music.youtube.com/watch?v=$videoId"))
-                .build()
-
-            client.newCall(request).execute().use { response ->
-                if (!response.isSuccessful) return@withContext null
-                parseAudioStreamUrl(response.body?.string() ?: return@withContext null)
+            if (best == null) {
+                Log.e(TAG, "[$videoId] NewPipe → no audio streams available")
+                return@withContext null
             }
+            Log.d(TAG, "[$videoId] NewPipe → ${streamInfo.audioStreams.size} streams, picked ${best.averageBitrate}bps")
+            best.content
         } catch (e: Exception) {
+            Log.e(TAG, "[$videoId] NewPipe → ${e::class.simpleName}: ${e.message}")
             null
         }
     }
 
+    // Headers for WEB_REMIX client (search)
     private fun buildHeaders(referer: String) = Headers.Builder()
         .add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
         .add("Accept", "*/*")
@@ -160,31 +158,6 @@ class YouTubeMusicService @Inject constructor(
         )
     }
 
-    // --- Player parsing ---
-
-    private fun parseAudioStreamUrl(json: String): String? {
-        val root = runCatching { JsonParser.parseString(json).asJsonObject }.getOrNull()
-            ?: return null
-
-        val formats = root.obj("streamingData")?.arr("adaptiveFormats") ?: return null
-
-        // Pick highest-bitrate audio-only format (mimetype starts with "audio/")
-        var bestUrl: String? = null
-        var bestBitrate = 0
-
-        for (format in formats) {
-            val f = format.asJsonObject
-            val mimeType = f.str("mimeType") ?: continue
-            if (!mimeType.startsWith("audio/")) continue
-            val bitrate = f.get("bitrate")?.asInt ?: 0
-            if (bitrate > bestBitrate) {
-                bestBitrate = bitrate
-                bestUrl = f.str("url")
-            }
-        }
-
-        return bestUrl
-    }
 
     // Safe JSON navigation helpers
     private fun JsonObject.obj(key: String): JsonObject? =

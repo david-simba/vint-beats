@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -69,6 +70,12 @@ fun CustomizeCassetteScreen(
     viewModel: CassetteSharedViewModel = hiltViewModel(),
 ) {
     val config by viewModel.cassetteConfig.collectAsStateWithLifecycle()
+    val playerState by viewModel.playerState.collectAsStateWithLifecycle()
+
+    DisposableEffect(Unit) {
+        viewModel.onScreenResume()
+        onDispose { viewModel.onScreenPause() }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Box(
@@ -125,7 +132,7 @@ fun CustomizeCassetteScreen(
                 contentAlignment = Alignment.Center
             ) {
                 CassetteView(
-                    isPlaying = true,
+                    isPlaying = playerState is PlayerState.Playing,
                     isFloating = true,
                     cassetteColor = config.cassetteColor,
                     lineColor = config.lineColor,
