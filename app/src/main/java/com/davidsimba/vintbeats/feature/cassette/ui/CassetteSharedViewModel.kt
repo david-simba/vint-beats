@@ -9,6 +9,7 @@ import androidx.media3.common.MediaItem
 import androidx.compose.ui.graphics.Color
 import com.davidsimba.vintbeats.core.youtube.YouTubeMusicService
 import com.davidsimba.vintbeats.feature.cassette.domain.CassetteConfig
+import com.davidsimba.vintbeats.feature.cassette.domain.CassetteRepository
 import com.davidsimba.vintbeats.feature.search.domain.Track
 import com.davidsimba.vintbeats.shared.theme.VintageBlackMid
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
@@ -32,6 +33,7 @@ sealed interface PlayerState {
 @HiltViewModel
 class CassetteSharedViewModel @Inject constructor(
     private val youTubeMusic: YouTubeMusicService,
+    private val repository: CassetteRepository,
     @ApplicationContext context: Context
 ) : ViewModel() {
 
@@ -76,6 +78,17 @@ class CassetteSharedViewModel @Inject constructor(
 
     fun updateStyle(isRainbow: Boolean) {
         _cassetteConfig.value = _cassetteConfig.value.copy(isRainbow = isRainbow)
+    }
+
+    fun saveCassette(onSaved: () -> Unit) {
+        viewModelScope.launch {
+            val config = _cassetteConfig.value
+            if (config.track.id.isEmpty()) return@launch
+            repository.saveCassette(config)
+            player.pause()
+            _playerState.value = PlayerState.Idle
+            withContext(Dispatchers.Main) { onSaved() }
+        }
     }
 
     private fun startPlayback(videoId: String) {

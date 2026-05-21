@@ -49,7 +49,11 @@ fun NavGraph(
                 startDestination = startDestination,
                 modifier = Modifier.padding(innerPadding)
             ) {
-                composable(Screen.Home.route) { HomeScreen() }
+                composable(Screen.Home.route) {
+                    HomeScreen(
+                        onCreateCassette = { navController.navigate(Screen.Search.route) }
+                    )
+                }
                 composable(Screen.Search.route) { entry ->
                     val sharedViewModel: CassetteSharedViewModel = hiltViewModel(
                         remember(entry) { navController.getBackStackEntry(Screen.Search.route) }

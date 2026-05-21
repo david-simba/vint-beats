@@ -24,6 +24,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.clickable
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
@@ -111,13 +112,15 @@ fun CustomizeCassetteScreen(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold
                 )
+                val canSave = config.track.id.isNotEmpty()
                 Text(
                     text = "Save",
-                    color = VintageWhiteWarm,
+                    color = if (canSave) VintageWhiteWarm else VintageWhiteWarm.copy(alpha = 0.3f),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier
                         .clip(RoundedCornerShape(20.dp))
+                        .clickable(enabled = canSave) { viewModel.saveCassette(onSave) }
                         .padding(horizontal = 16.dp, vertical = 8.dp)
                 )
             }
