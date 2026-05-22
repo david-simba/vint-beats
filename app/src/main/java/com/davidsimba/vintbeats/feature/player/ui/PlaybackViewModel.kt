@@ -8,7 +8,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
-import com.davidsimba.vintbeats.core.youtube.YouTubeMusicService
+import com.davidsimba.vintbeats.core.youtube.YouTubeLyricsService
+import com.davidsimba.vintbeats.core.youtube.YouTubeQueueService
+import com.davidsimba.vintbeats.core.youtube.YouTubeStreamService
 import com.davidsimba.vintbeats.feature.cassette.domain.CassetteConfig
 import com.davidsimba.vintbeats.feature.cassette.domain.CassetteRepository
 import com.davidsimba.vintbeats.feature.cassette.domain.SavedCassette
@@ -30,7 +32,9 @@ import javax.inject.Inject
 @HiltViewModel
 class PlaybackViewModel @Inject constructor(
     private val repository: CassetteRepository,
-    private val youTubeMusic: YouTubeMusicService,
+    private val streamService: YouTubeStreamService,
+    private val queueService: YouTubeQueueService,
+    private val lyricsService: YouTubeLyricsService,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -85,12 +89,12 @@ class PlaybackViewModel @Inject constructor(
         currentStreamUrl = null
         _lyrics.value = null
         _queue.value = emptyList()
-        viewModelScope.launch { _lyrics.value = youTubeMusic.getLyrics(track.id) }
-        viewModelScope.launch { _queue.value = youTubeMusic.getUpNextTracks(track.id) }
+        viewModelScope.launch { _lyrics.value = lyricsService.getLyrics(track.id) }
+        viewModelScope.launch { _queue.value = queueService.getUpNextTracks(track.id) }
         viewModelScope.launch {
             _playerState.value = PlayerState.Loading
             Log.d(TAG, "playTrack: fetching stream for ${track.id}")
-            val streamUrl = youTubeMusic.getAudioStreamUrl(track.id) ?: run {
+            val streamUrl = streamService.getAudioStreamUrl(track.id) ?: run {
                 Log.e(TAG, "playTrack: no stream for ${track.id}")
                 _playerState.value = PlayerState.Error("Stream not available")
                 return@launch
@@ -122,7 +126,7 @@ class PlaybackViewModel @Inject constructor(
                 return@launch
             }
             _currentCassette.value = cassette
-            viewModelScope.launch { _lyrics.value = youTubeMusic.getLyrics(cassette.trackId) }
+            viewModelScope.launch { _lyrics.value = lyricsService.getLyrics(cassette.trackId) }
             viewModelScope.launch {
                 _queue.value = repository.getAllCassettes().first()
                     .filter { it.id != cassetteId }
@@ -134,7 +138,7 @@ class PlaybackViewModel @Inject constructor(
                 Uri.fromFile(File(cassette.audioFilePath))
             } else {
                 Log.d(TAG, "Streaming ${cassette.trackId}")
-                val streamUrl = youTubeMusic.getAudioStreamUrl(cassette.trackId) ?: run {
+                val streamUrl = streamService.getAudioStreamUrl(cassette.trackId) ?: run {
                     _playerState.value = PlayerState.Error("Audio not available")
                     return@launch
                 }
@@ -165,9 +169,9 @@ class PlaybackViewModel @Inject constructor(
         val track = _unsavedTrack.value ?: return
         viewModelScope.launch {
             _playerState.value = PlayerState.Loading
-            val streamUrl = currentStreamUrl ?: youTubeMusic.getAudioStreamUrl(track.id)
+            val streamUrl = currentStreamUrl ?: streamService.getAudioStreamUrl(track.id)
             val audioFilePath = streamUrl?.let {
-                youTubeMusic.downloadAudio(track.id, it, context.filesDir)
+                streamService.downloadAudio(track.id, it, context.filesDir)
             }
             repository.saveCassette(config, audioFilePath)
             _isSaved.value = true
