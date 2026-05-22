@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.davidsimba.vintbeats.core.youtube.YouTubeMusicService
 import com.davidsimba.vintbeats.feature.cassette.domain.CassetteConfig
@@ -20,6 +21,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -56,23 +58,44 @@ class PlaybackViewModel @Inject constructor(
     private val _lyrics = MutableStateFlow<String?>(null)
     val lyrics: StateFlow<String?> = _lyrics.asStateFlow()
 
+    private val _queue = MutableStateFlow<List<Track>>(emptyList())
+    val queue: StateFlow<List<Track>> = _queue.asStateFlow()
+
     private var progressJob: Job? = null
 
+    init {
+        player.addListener(object : Player.Listener {
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                if (playbackState == Player.STATE_ENDED) {
+                    viewModelScope.launch(Dispatchers.Main) { playNextInQueue() }
+                }
+            }
+        })
+    }
+
     fun playTrack(track: Track) {
-        if (_unsavedTrack.value?.id == track.id && player.isPlaying) return
+        Log.d(TAG, "playTrack: ${track.id} '${track.title}'")
+        if (_unsavedTrack.value?.id == track.id && player.isPlaying) {
+            Log.d(TAG, "playTrack: skipped (already playing)")
+            return
+        }
         _unsavedTrack.value = track
         _currentCassette.value = null
         _isSaved.value = false
         currentStreamUrl = null
         _lyrics.value = null
+        _queue.value = emptyList()
         viewModelScope.launch { _lyrics.value = youTubeMusic.getLyrics(track.id) }
+        viewModelScope.launch { _queue.value = youTubeMusic.getUpNextTracks(track.id) }
         viewModelScope.launch {
             _playerState.value = PlayerState.Loading
+            Log.d(TAG, "playTrack: fetching stream for ${track.id}")
             val streamUrl = youTubeMusic.getAudioStreamUrl(track.id) ?: run {
-                Log.e(TAG, "No stream for ${track.id}")
+                Log.e(TAG, "playTrack: no stream for ${track.id}")
                 _playerState.value = PlayerState.Error("Stream not available")
                 return@launch
             }
+            Log.d(TAG, "playTrack: got stream, starting playback for ${track.id}")
             currentStreamUrl = streamUrl
             withContext(Dispatchers.Main) {
                 player.stop()
@@ -91,6 +114,7 @@ class PlaybackViewModel @Inject constructor(
         _isSaved.value = true
         currentStreamUrl = null
         _lyrics.value = null
+        _queue.value = emptyList()
         viewModelScope.launch {
             _playerState.value = PlayerState.Loading
             val cassette = repository.getCassette(cassetteId) ?: run {
@@ -99,6 +123,11 @@ class PlaybackViewModel @Inject constructor(
             }
             _currentCassette.value = cassette
             viewModelScope.launch { _lyrics.value = youTubeMusic.getLyrics(cassette.trackId) }
+            viewModelScope.launch {
+                _queue.value = repository.getAllCassettes().first()
+                    .filter { it.id != cassetteId }
+                    .map { Track(id = it.trackId, title = it.trackTitle, artist = it.trackArtist, albumImageUrl = it.trackThumbnailUrl, previewUrl = null, durationText = it.trackDurationText) }
+            }
 
             val uri = if (!cassette.audioFilePath.isNullOrEmpty() && File(cassette.audioFilePath).exists()) {
                 Log.d(TAG, "Playing local file: ${cassette.audioFilePath}")
@@ -121,6 +150,14 @@ class PlaybackViewModel @Inject constructor(
                 _playerState.value = PlayerState.Playing
                 startProgressUpdates()
             }
+        }
+    }
+
+    fun skipToQueueTrack(track: Track) {
+        val index = _queue.value.indexOf(track)
+        if (index >= 0) {
+            _queue.value = _queue.value.drop(index + 1)
+            playTrack(track)
         }
     }
 
@@ -154,6 +191,21 @@ class PlaybackViewModel @Inject constructor(
     fun seekTo(positionMs: Long) {
         player.seekTo(positionMs)
         _positionMs.value = positionMs
+    }
+
+    private fun playNextInQueue() {
+        val queue = _queue.value
+        Log.d(TAG, "playNextInQueue: queue size=${queue.size}, playerState=${_playerState.value}")
+        if (queue.isEmpty()) {
+            Log.d(TAG, "playNextInQueue: queue exhausted → Idle")
+            _playerState.value = PlayerState.Idle
+            progressJob?.cancel()
+            return
+        }
+        val next = queue.first()
+        Log.d(TAG, "playNextInQueue: playing next → ${next.id} '${next.title}'")
+        _queue.value = queue.drop(1)
+        playTrack(next)
     }
 
     private fun startProgressUpdates() {

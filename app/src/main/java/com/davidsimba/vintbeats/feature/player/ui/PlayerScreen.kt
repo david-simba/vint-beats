@@ -53,6 +53,7 @@ fun PlayerScreen(
     val positionMs by viewModel.positionMs.collectAsStateWithLifecycle()
     val durationMs by viewModel.durationMs.collectAsStateWithLifecycle()
     val lyrics by viewModel.lyrics.collectAsStateWithLifecycle()
+    val queue by viewModel.queue.collectAsStateWithLifecycle()
 
     var selectedTab by remember { mutableStateOf(PlayerTab.Lyrics) }
     var topContentHeightPx by remember { mutableIntStateOf(0) }
@@ -141,7 +142,11 @@ fun PlayerScreen(
             when (selectedTab) {
                 PlayerTab.Lyrics -> LyricsCard(lyrics = lyrics, modifier = tabCardModifier)
                 PlayerTab.Player -> PlayerEffectsCard(modifier = tabCardModifier)
-                PlayerTab.Queue -> QueueCard(modifier = tabCardModifier)
+                PlayerTab.Queue -> QueueCard(
+                    queue = queue,
+                    onTrackClick = viewModel::skipToQueueTrack,
+                    modifier = tabCardModifier
+                )
             }
 
             Spacer(Modifier.height(navBarHeight))
