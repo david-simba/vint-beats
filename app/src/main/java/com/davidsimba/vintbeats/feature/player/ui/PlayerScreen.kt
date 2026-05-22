@@ -112,7 +112,7 @@ fun PlayerScreen(
                         isFloating = true,
                         cassetteColor = cassette?.cassetteColor ?: VintageBlackMid,
                         lineColor = cassette?.lineColor ?: VintageRedLight,
-                        drawRainbow = cassette?.isRainbow ?: true,
+                        drawRainbow = cassette?.isRainbow ?: false,
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
 

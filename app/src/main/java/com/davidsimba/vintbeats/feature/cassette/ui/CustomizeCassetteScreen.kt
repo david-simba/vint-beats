@@ -168,16 +168,16 @@ fun CustomizeCassetteScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 StyleToggle(
-                    label = "Rainbow",
-                    selected = isRainbow,
-                    onClick = { configViewModel.updateStyle(true) },
-                    icon = Icons.Rounded.Gradient
-                )
-                StyleToggle(
                     label = "Line",
                     selected = !isRainbow,
                     onClick = { configViewModel.updateStyle(false) },
                     icon = Icons.Rounded.LinearScale
+                )
+                StyleToggle(
+                    label = "Rainbow",
+                    selected = isRainbow,
+                    onClick = { configViewModel.updateStyle(true) },
+                    icon = Icons.Rounded.Gradient
                 )
             }
 

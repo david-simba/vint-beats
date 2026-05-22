@@ -19,7 +19,7 @@ class CassetteConfigViewModel @Inject constructor() : ViewModel() {
     private val _lineColor = MutableStateFlow(VintageRedLight)
     val lineColor: StateFlow<Color> = _lineColor.asStateFlow()
 
-    private val _isRainbow = MutableStateFlow(true)
+    private val _isRainbow = MutableStateFlow(false)
     val isRainbow: StateFlow<Boolean> = _isRainbow.asStateFlow()
 
     fun updateCassetteColor(color: Color) { _cassetteColor.value = color }
