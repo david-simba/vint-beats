@@ -31,7 +31,7 @@ import com.davidsimba.vintbeats.feature.player.components.PlayerBottomNav
 import com.davidsimba.vintbeats.feature.player.components.PlayerControls
 import com.davidsimba.vintbeats.feature.player.components.PlayerEffectsCard
 import com.davidsimba.vintbeats.feature.player.components.PlayerTopBar
-import com.davidsimba.vintbeats.feature.player.components.QueueCard
+import com.davidsimba.vintbeats.feature.player.components.PlayerQueueCard
 import com.davidsimba.vintbeats.feature.search.domain.Track
 import com.davidsimba.vintbeats.shared.components.TrackCard
 import com.davidsimba.vintbeats.shared.components.cassette.CassetteView
@@ -142,7 +142,7 @@ fun PlayerScreen(
             when (selectedTab) {
                 PlayerTab.Lyrics -> LyricsCard(lyrics = lyrics, modifier = tabCardModifier)
                 PlayerTab.Player -> PlayerEffectsCard(modifier = tabCardModifier)
-                PlayerTab.Queue -> QueueCard(
+                PlayerTab.Queue -> PlayerQueueCard(
                     queue = queue,
                     onTrackClick = viewModel::skipToQueueTrack,
                     modifier = tabCardModifier
