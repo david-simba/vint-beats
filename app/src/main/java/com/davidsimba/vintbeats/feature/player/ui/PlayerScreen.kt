@@ -66,6 +66,7 @@ fun PlayerScreen(
 
     val isPlaying = playerState is PlayerState.Playing
     val isLoading = playerState is PlayerState.Loading
+    val accentColor = if (cassette?.isRainbow != false) VintageRedLight else cassette!!.lineColor
 
     val trackForCard: Track? = if (isSaved) {
         cassette?.let {
@@ -151,9 +152,12 @@ fun PlayerScreen(
                         isLoading = isLoading,
                         positionMs = positionMs,
                         durationMs = durationMs,
+                        accentColor = accentColor,
                         onSeek = viewModel::seekTo,
                         onTogglePlayPause = viewModel::togglePlayPause
                     )
+
+                    Spacer(Modifier.height(16.dp))
                 }
             }
 
