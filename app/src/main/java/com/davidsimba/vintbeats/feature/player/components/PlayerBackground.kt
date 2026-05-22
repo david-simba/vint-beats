@@ -1,6 +1,7 @@
 package com.davidsimba.vintbeats.feature.player.components
 
 import android.graphics.drawable.BitmapDrawable
+import androidx.core.graphics.ColorUtils
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -35,8 +36,14 @@ fun PlayerBackground(thumbnailUrl: String?, modifier: Modifier = Modifier) {
         val result = context.imageLoader.execute(request) as? SuccessResult ?: return@produceState
         val bitmap = (result.drawable as? BitmapDrawable)?.bitmap ?: return@produceState
         val palette = withContext(Dispatchers.Default) { Palette.from(bitmap).generate() }
-        val swatch = palette.darkVibrantSwatch ?: palette.darkMutedSwatch ?: palette.dominantSwatch
-        value = swatch?.let { Color(it.rgb) } ?: VintageBgDark
+        val swatch = palette.darkVibrantSwatch ?: palette.darkMutedSwatch
+            ?: palette.vibrantSwatch ?: palette.mutedSwatch ?: palette.dominantSwatch
+        val rgb = swatch?.rgb ?: return@produceState
+        val hsl = FloatArray(3)
+        ColorUtils.colorToHSL(rgb, hsl)
+        hsl[1] = hsl[1].coerceAtMost(0.45f)
+        hsl[2] = 0.14f
+        value = Color(ColorUtils.HSLToColor(hsl))
     }
 
     val animatedBgColor by animateColorAsState(
