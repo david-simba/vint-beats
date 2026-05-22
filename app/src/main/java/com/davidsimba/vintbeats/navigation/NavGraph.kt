@@ -1,5 +1,10 @@
 package com.davidsimba.vintbeats.navigation
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -21,9 +26,9 @@ import com.davidsimba.vintbeats.feature.library.ui.LibraryScreen
 import com.davidsimba.vintbeats.feature.player.ui.PlaybackViewModel
 import com.davidsimba.vintbeats.feature.player.ui.PlayerScreen
 import com.davidsimba.vintbeats.feature.search.ui.SearchScreen
-import com.davidsimba.vintbeats.shared.components.background.Background
 import com.davidsimba.vintbeats.shared.components.MiniPlayer
 import com.davidsimba.vintbeats.shared.components.MiniPlayerTrack
+import com.davidsimba.vintbeats.shared.components.background.Background
 import com.davidsimba.vintbeats.shared.components.navbar.BottomNavBar
 
 private val bottomNavRoutes = setOf(
@@ -90,7 +95,11 @@ fun NavGraph(
             NavHost(
                 navController = navController,
                 startDestination = startDestination,
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier.padding(innerPadding),
+                enterTransition = { EnterTransition.None },
+                exitTransition = { ExitTransition.None },
+                popEnterTransition = { EnterTransition.None },
+                popExitTransition = { ExitTransition.None }
             ) {
                 composable(Screen.Home.route) {
                     HomeScreen(
@@ -107,7 +116,13 @@ fun NavGraph(
                         }
                     )
                 }
-                composable(Screen.Player.route) {
+                composable(
+                    route = Screen.Player.route,
+                    enterTransition = { slideInVertically(animationSpec = tween(200), initialOffsetY = { it }) },
+                    exitTransition = { ExitTransition.None },
+                    popEnterTransition = { EnterTransition.None },
+                    popExitTransition = { slideOutVertically(animationSpec = tween(200), targetOffsetY = { it }) }
+                ) {
                     PlayerScreen(
                         onBack = { navController.popBackStack() },
                         onSave = { navController.navigate(Screen.CustomizeCassette.route) },
