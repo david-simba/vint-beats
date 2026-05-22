@@ -1,7 +1,5 @@
 package com.davidsimba.vintbeats.feature.player.ui
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -21,30 +20,27 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.davidsimba.vintbeats.feature.player.components.LyricsCard
-import com.davidsimba.vintbeats.feature.player.components.PlayerBottomNav
-import com.davidsimba.vintbeats.feature.player.components.PlayerControls
-import com.davidsimba.vintbeats.feature.player.components.PlayerEffectsCard
-import com.davidsimba.vintbeats.feature.player.components.PlayerTopBar
-import com.davidsimba.vintbeats.feature.player.components.PlayerQueueCard
-import androidx.compose.material3.Text
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.davidsimba.vintbeats.feature.player.components.LyricsCard
+import com.davidsimba.vintbeats.feature.player.components.PlayerBackground
+import com.davidsimba.vintbeats.feature.player.components.PlayerBottomNav
+import com.davidsimba.vintbeats.feature.player.components.PlayerControls
+import com.davidsimba.vintbeats.feature.player.components.PlayerEffectsCard
+import com.davidsimba.vintbeats.feature.player.components.PlayerQueueCard
+import com.davidsimba.vintbeats.feature.player.components.PlayerTopBar
 import com.davidsimba.vintbeats.feature.search.domain.Track
 import com.davidsimba.vintbeats.shared.components.cassette.CassetteView
-import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
-import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
-import com.davidsimba.vintbeats.shared.theme.VintageBgBase
-import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageBlackMid
+import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
+import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
 
 @Composable
 fun PlayerScreen(
@@ -82,10 +78,9 @@ fun PlayerScreen(
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val availableHeight = maxHeight
 
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Brush.verticalGradient(colors = listOf(VintageBgDark, VintageBgBase)))
+        PlayerBackground(
+            thumbnailUrl = trackForCard?.albumImageUrl,
+            modifier = Modifier.fillMaxSize()
         )
 
         Column(
@@ -117,7 +112,8 @@ fun PlayerScreen(
                         isFloating = true,
                         cassetteColor = cassette?.cassetteColor ?: VintageBlackMid,
                         lineColor = cassette?.lineColor ?: VintageRedLight,
-                        drawRainbow = cassette?.isRainbow ?: true
+                        drawRainbow = cassette?.isRainbow ?: true,
+                        modifier = Modifier.padding(horizontal = 16.dp)
                     )
 
                     Spacer(Modifier.height(32.dp))

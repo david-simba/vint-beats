@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.reorderable)
+    implementation(libs.androidx.palette)
     implementation("com.github.TeamNewPipe:NewPipeExtractor:dev-SNAPSHOT")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
