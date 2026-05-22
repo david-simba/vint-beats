@@ -1,7 +1,7 @@
 package com.davidsimba.vintbeats.feature.player.ui
 
 enum class PlayerTab(val label: String) {
-    Lyrics("Lyrics"),
+    Queue("Queue"),
     Player("Player"),
-    Queue("Queue")
+    Lyrics("Lyrics")
 }

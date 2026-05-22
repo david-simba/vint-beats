@@ -1,24 +1,26 @@
 package com.davidsimba.vintbeats.shared.components.navbar
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Headset
 import androidx.compose.material.icons.rounded.LibraryMusic
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.davidsimba.vintbeats.navigation.Screen
@@ -43,51 +45,40 @@ fun BottomNavBar(navController: NavController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    NavigationBar(
-        containerColor = VintageBlackMid
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(VintageBlackMid)
+            .navigationBarsPadding()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         bottomNavItems.forEach { item ->
             val selected = currentRoute == item.screen.route
-            NavigationBarItem(
-                selected = selected,
-                onClick = {
-                    if (currentRoute != item.screen.route) {
-                        if (item.screen == Screen.Home) {
-                            navController.popBackStack(Screen.Home.route, inclusive = false)
-                        } else {
-                            navController.navigate(item.screen.route) {
-                                popUpTo(navController.graph.startDestinationId) {
-                                    saveState = true
+            Icon(
+                imageVector = item.icon,
+                contentDescription = item.label,
+                tint = if (selected) VintageWhitePure else VintageGrayCool,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(12.dp))
+                    .clickable {
+                        if (currentRoute != item.screen.route) {
+                            if (item.screen == Screen.Home) {
+                                navController.popBackStack(Screen.Home.route, inclusive = false)
+                            } else {
+                                navController.navigate(item.screen.route) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
                             }
                         }
                     }
-                },
-                icon = {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Icon(
-                            imageVector = item.icon,
-                            contentDescription = item.label,
-                            modifier = Modifier.size(24.dp)
-                        )
-
-                        Text(
-                            text = item.label,
-                            fontSize = 12.sp
-                        )
-                    }
-                },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = VintageWhitePure,
-                    selectedTextColor = VintageWhitePure,
-                    unselectedIconColor = VintageGrayCool,
-                    unselectedTextColor = VintageGrayCool,
-                    indicatorColor = Color.Transparent,
-                )
+                    .padding(horizontal = 24.dp, vertical = 8.dp)
+                    .size(24.dp)
             )
         }
     }

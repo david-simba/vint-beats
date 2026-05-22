@@ -25,13 +25,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.feature.cassette.domain.SavedCassette
+import com.davidsimba.vintbeats.shared.components.TrackInfo
 import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
@@ -109,26 +109,15 @@ private fun CassetteListItem(cassette: SavedCassette, onClick: () -> Unit) {
             )
         }
 
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = cassette.trackTitle,
-                color = VintageWhitePure,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Spacer(Modifier.height(2.dp))
-            val subtitle = if (cassette.trackDurationText.isNotEmpty())
-                "${cassette.trackArtist} • ${cassette.trackDurationText}"
-            else cassette.trackArtist
-            Text(
-                text = subtitle,
-                color = VintageGrayMid,
-                fontSize = 12.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
+        val subtitle = if (cassette.trackDurationText.isNotEmpty())
+            "${cassette.trackArtist} • ${cassette.trackDurationText}"
+        else cassette.trackArtist
+        TrackInfo(
+            title = cassette.trackTitle,
+            artist = subtitle,
+            modifier = Modifier.weight(1f),
+            titleSize = 14.sp,
+            artistSize = 12.sp
+        )
     }
 }

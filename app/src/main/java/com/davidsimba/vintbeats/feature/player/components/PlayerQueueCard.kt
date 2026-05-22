@@ -2,18 +2,16 @@ package com.davidsimba.vintbeats.feature.player.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.DragIndicator
-import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -28,11 +26,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.feature.search.domain.Track
+import com.davidsimba.vintbeats.shared.components.TrackInfo
 import com.davidsimba.vintbeats.shared.components.VintCard
 import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
@@ -57,7 +55,7 @@ fun PlayerQueueCard(
 
     VintCard(modifier = modifier) {
         Text(
-            text = "Queue",
+            text = "Up Next",
             color = VintageWhiteWarm,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
@@ -125,7 +123,7 @@ private fun QueueTrackRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            imageVector = if (isCurrentTrack) Icons.Default.VolumeUp else Icons.Default.DragIndicator,
+            imageVector = if (isCurrentTrack) Icons.AutoMirrored.Filled.VolumeUp else Icons.Default.DragIndicator,
             contentDescription = null,
             tint = if (isCurrentTrack) VintageRedLight else VintageGrayMid,
             modifier = modifier
@@ -145,24 +143,13 @@ private fun QueueTrackRow(
 
         Spacer(Modifier.width(12.dp))
 
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = track.title,
-                color = if (isCurrentTrack) VintageWhiteWarm else VintageWhitePure,
-                fontSize = 13.sp,
-                fontWeight = if (isCurrentTrack) FontWeight.SemiBold else FontWeight.Medium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Spacer(Modifier.height(2.dp))
-            Text(
-                text = track.artist,
-                color = VintageGrayMid,
-                fontSize = 11.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
+        TrackInfo(
+            title = track.title,
+            artist = track.artist,
+            modifier = Modifier.weight(1f),
+            titleWeight = if (isCurrentTrack) FontWeight.SemiBold else FontWeight.Medium,
+            titleColor = if (isCurrentTrack) VintageWhiteWarm else VintageWhitePure
+        )
 
         Spacer(Modifier.width(8.dp))
 

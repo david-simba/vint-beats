@@ -9,8 +9,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.davidsimba.vintbeats.shared.theme.VintageBgBase
 
 @Composable
 fun VintCard(
@@ -21,7 +21,7 @@ fun VintCard(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .background(Color.White.copy(alpha = 0.08f))
+            .background(VintageBgBase)
             .padding(start = 20.dp, top = 24.dp, end = 20.dp, bottom = 32.dp),
         content = content
     )

@@ -32,9 +32,15 @@ import com.davidsimba.vintbeats.feature.player.components.PlayerControls
 import com.davidsimba.vintbeats.feature.player.components.PlayerEffectsCard
 import com.davidsimba.vintbeats.feature.player.components.PlayerTopBar
 import com.davidsimba.vintbeats.feature.player.components.PlayerQueueCard
+import androidx.compose.material3.Text
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.sp
 import com.davidsimba.vintbeats.feature.search.domain.Track
-import com.davidsimba.vintbeats.shared.components.TrackCard
 import com.davidsimba.vintbeats.shared.components.cassette.CassetteView
+import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
+import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
 import com.davidsimba.vintbeats.shared.theme.VintageBgBase
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageBlackMid
@@ -55,7 +61,7 @@ fun PlayerScreen(
     val lyrics by viewModel.lyrics.collectAsStateWithLifecycle()
     val queue by viewModel.queue.collectAsStateWithLifecycle()
 
-    var selectedTab by remember { mutableStateOf(PlayerTab.Lyrics) }
+    var selectedTab by remember { mutableStateOf(PlayerTab.Queue) }
     var topContentHeightPx by remember { mutableIntStateOf(0) }
 
     val isPlaying = playerState is PlayerState.Playing
@@ -100,7 +106,7 @@ fun PlayerScreen(
                     modifier = Modifier.padding(
                         top = 16.dp,
                         end = 24.dp,
-                        bottom = 32.dp,
+                        bottom = 16.dp,
                         start = 24.dp
                     ),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -116,7 +122,26 @@ fun PlayerScreen(
                     Spacer(Modifier.height(32.dp))
 
                     trackForCard?.let {
-                        TrackCard(track = it)
+                        Text(
+                            text = it.title,
+                            color = VintageWhitePure,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            text = it.artist,
+                            color = VintageGrayMid,
+                            fontSize = 14.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
                     }
 
                     Spacer(Modifier.height(32.dp))

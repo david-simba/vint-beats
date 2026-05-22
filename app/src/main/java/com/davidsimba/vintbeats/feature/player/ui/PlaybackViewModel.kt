@@ -28,6 +28,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
+import androidx.core.net.toUri
 
 @HiltViewModel
 class PlaybackViewModel @Inject constructor(
@@ -77,7 +78,7 @@ class PlaybackViewModel @Inject constructor(
         })
     }
 
-    fun playTrack(track: Track) {
+    fun playTrack(track: Track, newQueue: List<Track>? = null) {
         Log.d(TAG, "playTrack: ${track.id} '${track.title}'")
         if (_unsavedTrack.value?.id == track.id && player.isPlaying) {
             Log.d(TAG, "playTrack: skipped (already playing)")
@@ -88,9 +89,11 @@ class PlaybackViewModel @Inject constructor(
         _isSaved.value = false
         currentStreamUrl = null
         _lyrics.value = null
-        _queue.value = emptyList()
+        _queue.value = newQueue ?: emptyList()
         viewModelScope.launch { _lyrics.value = lyricsService.getLyrics(track.id) }
-        viewModelScope.launch { _queue.value = queueService.getUpNextTracks(track.id) }
+        if (newQueue == null) {
+            viewModelScope.launch { _queue.value = queueService.getUpNextTracks(track.id) }
+        }
         viewModelScope.launch {
             _playerState.value = PlayerState.Loading
             Log.d(TAG, "playTrack: fetching stream for ${track.id}")
@@ -143,7 +146,7 @@ class PlaybackViewModel @Inject constructor(
                     return@launch
                 }
                 currentStreamUrl = streamUrl
-                Uri.parse(streamUrl)
+                streamUrl.toUri()
             }
 
             withContext(Dispatchers.Main) {
@@ -164,8 +167,7 @@ class PlaybackViewModel @Inject constructor(
     fun skipToQueueTrack(track: Track) {
         val index = _queue.value.indexOf(track)
         if (index >= 0) {
-            _queue.value = _queue.value.drop(index + 1)
-            playTrack(track)
+            playTrack(track, newQueue = _queue.value.drop(index + 1))
         }
     }
 
@@ -212,8 +214,7 @@ class PlaybackViewModel @Inject constructor(
         }
         val next = queue.first()
         Log.d(TAG, "playNextInQueue: playing next → ${next.id} '${next.title}'")
-        _queue.value = queue.drop(1)
-        playTrack(next)
+        playTrack(next, newQueue = queue.drop(1))
     }
 
     private fun startProgressUpdates() {

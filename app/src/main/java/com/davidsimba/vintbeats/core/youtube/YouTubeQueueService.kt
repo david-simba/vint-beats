@@ -55,14 +55,16 @@ class YouTubeQueueService @Inject constructor(
                         val id = r.str("videoId") ?: continue
                         if (id == videoId) continue
                         val title = r.obj("title")?.arr("runs")?.idx(0)?.asJsonObject?.str("text") ?: continue
-                        val artist = r.obj("longByLineText")?.arr("runs")?.idx(0)?.asJsonObject?.str("text") ?: ""
+                        val artist = r.obj("shortBylineText")?.arr("runs")?.idx(0)?.asJsonObject?.str("text")
+                            ?: r.obj("longByLineText")?.arr("runs")?.idx(0)?.asJsonObject?.str("text")
+                            ?: ""
                         val duration = r.obj("lengthText")?.arr("runs")?.idx(0)?.asJsonObject?.str("text") ?: ""
                         val thumb = r.obj("thumbnail")?.arr("thumbnails")?.last()?.asJsonObject?.str("url")
                         add(Track(id = id, title = title, artist = artist, albumImageUrl = thumb, previewUrl = null, durationText = duration))
                     }
                 }
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             emptyList()
         }
     }
