@@ -22,7 +22,7 @@ fun VintCard(
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .background(Color.White.copy(alpha = 0.08f))
-            .padding(start = 20.dp, top = 24.dp, end = 20.dp, bottom = 48.dp),
+            .padding(start = 20.dp, top = 24.dp, end = 20.dp, bottom = 32.dp),
         content = content
     )
 }

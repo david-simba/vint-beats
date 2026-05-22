@@ -15,15 +15,12 @@ import androidx.compose.material.icons.automirrored.filled.QueueMusic
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.davidsimba.vintbeats.feature.player.ui.PlayerTab
 import com.davidsimba.vintbeats.shared.theme.VintageBlackMid
 import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
@@ -79,12 +76,6 @@ private fun NavTabItem(
             contentDescription = tab.label,
             tint = if (isSelected) VintageWhiteWarm else VintageWhitePure.copy(alpha = 0.4f),
             modifier = Modifier.size(22.dp)
-        )
-        Text(
-            text = tab.label,
-            color = if (isSelected) VintageWhiteWarm else VintageWhitePure.copy(alpha = 0.4f),
-            fontSize = 12.sp,
-            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
         )
     }
 }

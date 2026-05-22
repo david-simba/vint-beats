@@ -143,8 +143,10 @@ fun PlayerScreen(
                 PlayerTab.Lyrics -> LyricsCard(lyrics = lyrics, modifier = tabCardModifier)
                 PlayerTab.Player -> PlayerEffectsCard(modifier = tabCardModifier)
                 PlayerTab.Queue -> PlayerQueueCard(
+                    currentTrack = trackForCard,
                     queue = queue,
                     onTrackClick = viewModel::skipToQueueTrack,
+                    onReorder = viewModel::reorderQueue,
                     modifier = tabCardModifier
                 )
             }

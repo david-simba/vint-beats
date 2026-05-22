@@ -157,6 +157,10 @@ class PlaybackViewModel @Inject constructor(
         }
     }
 
+    fun reorderQueue(from: Int, to: Int) {
+        _queue.value = _queue.value.toMutableList().apply { add(to, removeAt(from)) }
+    }
+
     fun skipToQueueTrack(track: Track) {
         val index = _queue.value.indexOf(track)
         if (index >= 0) {
