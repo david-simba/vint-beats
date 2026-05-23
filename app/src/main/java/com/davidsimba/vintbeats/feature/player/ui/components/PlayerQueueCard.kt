@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.shared.components.TrackInfo
-import com.davidsimba.vintbeats.shared.components.VintCard
+import com.davidsimba.vintbeats.shared.components.cards.Card
 import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
@@ -53,7 +53,7 @@ fun PlayerQueueCard(
         localQueue = queue
     }
 
-    VintCard(modifier = modifier) {
+    Card(modifier = modifier) {
         Text(
             text = "Up Next",
             color = VintageWhiteWarm,

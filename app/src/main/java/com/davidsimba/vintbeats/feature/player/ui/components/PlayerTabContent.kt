@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.davidsimba.vintbeats.shared.components.VintCard
+import com.davidsimba.vintbeats.shared.components.cards.Card
 import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
 import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
@@ -18,7 +18,7 @@ fun LyricsCard(
     lyrics: String?,
     modifier: Modifier = Modifier
 ) {
-    VintCard(modifier = modifier) {
+    Card(modifier = modifier) {
         Text(
             text = "Lyrics",
             color = VintageWhiteWarm,
@@ -43,7 +43,7 @@ fun LyricsCard(
 
 @Composable
 fun PlayerEffectsCard(modifier: Modifier = Modifier) {
-    VintCard(modifier = modifier) {
+    Card(modifier = modifier) {
         Text(
             text = "Player",
             color = VintageWhiteWarm,

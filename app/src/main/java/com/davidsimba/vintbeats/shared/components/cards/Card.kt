@@ -1,4 +1,4 @@
-package com.davidsimba.vintbeats.shared.components
+package com.davidsimba.vintbeats.shared.components.cards
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -13,10 +13,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.davidsimba.vintbeats.shared.theme.VintageBgBase
 import com.davidsimba.vintbeats.shared.theme.VintageWhiteMid
-import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
 
 @Composable
-fun VintCard(
+fun Card(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
 ) {

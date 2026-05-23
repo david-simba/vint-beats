@@ -25,7 +25,7 @@ import com.davidsimba.vintbeats.feature.library.ui.LibraryScreen
 import com.davidsimba.vintbeats.feature.player.ui.PlaybackViewModel
 import com.davidsimba.vintbeats.feature.player.ui.PlayerScreen
 import com.davidsimba.vintbeats.feature.search.ui.SearchScreen
-import com.davidsimba.vintbeats.shared.components.MiniPlayer
+import com.davidsimba.vintbeats.feature.player.ui.components.MiniPlayer
 import com.davidsimba.vintbeats.shared.components.background.Background
 import com.davidsimba.vintbeats.shared.components.navbar.BottomNavBar
 
