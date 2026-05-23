@@ -25,11 +25,13 @@ import kotlinx.coroutines.withContext
 @Composable
 fun Background(
     modifier: Modifier = Modifier,
-    thumbnailUrl: String? = null
+    thumbnailUrl: String? = null,
+    horizontal: Boolean = false,
+    artColorsOnly: Boolean = false
 ) {
     val context = LocalContext.current
 
-    val dominantColor by produceState<Color>(VintageBgDark, thumbnailUrl) {
+    val colors by produceState(listOf(VintageBgDark, VintageBgBase), thumbnailUrl, artColorsOnly) {
         val url = thumbnailUrl ?: return@produceState
         val request = ImageRequest.Builder(context)
             .data(url)
@@ -39,25 +41,33 @@ fun Background(
         val result = context.imageLoader.execute(request) as? SuccessResult ?: return@produceState
         val bitmap = (result.drawable as? BitmapDrawable)?.bitmap ?: return@produceState
         val palette = withContext(Dispatchers.Default) { Palette.from(bitmap).generate() }
-        val swatch = palette.darkVibrantSwatch ?: palette.darkMutedSwatch
-            ?: palette.vibrantSwatch ?: palette.mutedSwatch ?: palette.dominantSwatch
-        val rgb = swatch?.rgb ?: return@produceState
-        val hsl = FloatArray(3)
-        ColorUtils.colorToHSL(rgb, hsl)
-        hsl[1] = hsl[1].coerceAtMost(0.45f)
-        hsl[2] = 0.25f
-        value = Color(ColorUtils.HSLToColor(hsl))
+
+        if (artColorsOnly) {
+            // Two darkest swatches from the art
+            val c1 = (palette.darkVibrantSwatch ?: palette.darkMutedSwatch
+                ?: palette.dominantSwatch)?.rgb?.let { Color(it) } ?: VintageBgDark
+            val c2 = (palette.darkMutedSwatch ?: palette.darkVibrantSwatch
+                ?: palette.dominantSwatch)?.rgb?.let { Color(it) } ?: VintageBgBase
+            value = listOf(c1, c2)
+        } else {
+            val swatch = palette.darkVibrantSwatch ?: palette.darkMutedSwatch
+                ?: palette.vibrantSwatch ?: palette.mutedSwatch ?: palette.dominantSwatch
+            val rgb = swatch?.rgb ?: return@produceState
+            val hsl = FloatArray(3)
+            ColorUtils.colorToHSL(rgb, hsl)
+            hsl[1] = hsl[1].coerceAtMost(0.45f)
+            hsl[2] = 0.25f
+            value = listOf(Color(ColorUtils.HSLToColor(hsl)), VintageBgBase)
+        }
     }
 
-    val animatedColor by animateColorAsState(
-        targetValue = dominantColor,
-        animationSpec = tween(600),
-        label = "bgColor"
-    )
+    val c1 by animateColorAsState(colors[0], animationSpec = tween(600), label = "bgColor1")
+    val c2 by animateColorAsState(colors[1], animationSpec = tween(600), label = "bgColor2")
 
-    Box(
-        modifier = modifier.background(
-            Brush.verticalGradient(colors = listOf(animatedColor, VintageBgBase))
-        )
-    )
+    val brush = if (horizontal)
+        Brush.horizontalGradient(listOf(c1, c2))
+    else
+        Brush.verticalGradient(listOf(c1, c2))
+
+    Box(modifier = modifier.background(brush))
 }
