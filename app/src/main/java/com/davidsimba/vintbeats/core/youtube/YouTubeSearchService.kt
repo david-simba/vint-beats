@@ -92,7 +92,7 @@ class YouTubeSearchService @Inject constructor(
 
         val thumbnailUrl = r.obj("thumbnail")?.obj("musicThumbnailRenderer")
             ?.obj("thumbnail")?.arr("thumbnails")
-            ?.last()?.asJsonObject?.str("url")
+            ?.last()?.asJsonObject?.str("url")?.upscaleThumbnail()
 
         return Track(
             id = videoId,

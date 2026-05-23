@@ -59,7 +59,7 @@ class YouTubeQueueService @Inject constructor(
                             ?: r.obj("longByLineText")?.arr("runs")?.idx(0)?.asJsonObject?.str("text")
                             ?: ""
                         val duration = r.obj("lengthText")?.arr("runs")?.idx(0)?.asJsonObject?.str("text") ?: ""
-                        val thumb = r.obj("thumbnail")?.arr("thumbnails")?.last()?.asJsonObject?.str("url")
+                        val thumb = r.obj("thumbnail")?.arr("thumbnails")?.last()?.asJsonObject?.str("url")?.upscaleThumbnail()
                         add(Track(id = id, title = title, artist = artist, albumImageUrl = thumb, previewUrl = null, durationText = duration))
                     }
                 }

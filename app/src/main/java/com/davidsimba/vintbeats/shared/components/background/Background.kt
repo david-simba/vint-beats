@@ -1,95 +1,63 @@
 package com.davidsimba.vintbeats.shared.components.background
 
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.fillMaxSize
+import android.graphics.drawable.BitmapDrawable
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
-import com.davidsimba.vintbeats.shared.theme.VintageBgAccent
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.graphics.ColorUtils
+import androidx.palette.graphics.Palette
+import coil.imageLoader
+import coil.request.ImageRequest
+import coil.request.SuccessResult
 import com.davidsimba.vintbeats.shared.theme.VintageBgBase
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
-import kotlin.math.sin
-import kotlin.math.sqrt
-import kotlin.random.Random
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
-fun Background(modifier: Modifier = Modifier) {
-    val grainPoints = remember {
-        List(300) {
-            Triple(Random.nextFloat(), Random.nextFloat(), Random.nextFloat() * 0.8f + 0.2f)
-        }
+fun Background(
+    modifier: Modifier = Modifier,
+    thumbnailUrl: String? = null
+) {
+    val context = LocalContext.current
+
+    val dominantColor by produceState<Color>(VintageBgDark, thumbnailUrl) {
+        val url = thumbnailUrl ?: return@produceState
+        val request = ImageRequest.Builder(context)
+            .data(url)
+            .allowHardware(false)
+            .size(100, 100)
+            .build()
+        val result = context.imageLoader.execute(request) as? SuccessResult ?: return@produceState
+        val bitmap = (result.drawable as? BitmapDrawable)?.bitmap ?: return@produceState
+        val palette = withContext(Dispatchers.Default) { Palette.from(bitmap).generate() }
+        val swatch = palette.darkVibrantSwatch ?: palette.darkMutedSwatch
+            ?: palette.vibrantSwatch ?: palette.mutedSwatch ?: palette.dominantSwatch
+        val rgb = swatch?.rgb ?: return@produceState
+        val hsl = FloatArray(3)
+        ColorUtils.colorToHSL(rgb, hsl)
+        hsl[1] = hsl[1].coerceAtMost(0.45f)
+        hsl[2] = 0.25f
+        value = Color(ColorUtils.HSLToColor(hsl))
     }
 
-    Canvas(modifier = modifier.fillMaxSize()) {
-        val w = size.width
-        val h = size.height
+    val animatedColor by animateColorAsState(
+        targetValue = dominantColor,
+        animationSpec = tween(600),
+        label = "bgColor"
+    )
 
-        drawRect(color = VintageBgBase)
-
-        drawRect(
-            brush = Brush.verticalGradient(
-                colors = listOf(
-                    VintageBgDark.copy(alpha = 0.7f),
-                    Color.Transparent,
-                    Color.Transparent,
-                    VintageBgDark.copy(alpha = 0.9f),
-                ),
-                startY = 0f,
-                endY = h
-            )
+    Box(
+        modifier = modifier.background(
+            Brush.verticalGradient(colors = listOf(animatedColor, VintageBgBase))
         )
-
-        grainPoints.forEach { (rx, ry, alpha) ->
-            drawCircle(
-                color = VintageBgAccent.copy(alpha = alpha * 0.15f),
-                radius = 1.2f,
-                center = Offset(rx * w, ry * h)
-            )
-        }
-
-        for (i in 1..7) {
-            drawCircle(
-                color = VintageBgAccent.copy(alpha = 0.18f),
-                radius = i * 80f,
-                center = Offset(w, 0f),
-                style = Stroke(width = 1f)
-            )
-        }
-
-        val spacing = w * 0.055f
-        val cols = (w / spacing).toInt() + 1
-        val rows = (h / spacing).toInt() + 1
-        val waveAmplitude = spacing * 0.4f
-
-        for (row in 0 until rows) {
-            for (col in 0 until cols) {
-                val baseX = col * spacing
-                val baseY = row * spacing
-
-                val waveOffset = sin(col * 0.4f + row * 0.3f) * waveAmplitude
-
-                val x = baseX
-                val y = baseY + waveOffset
-
-                val distFromBottomLeft = sqrt(
-                    (x / w) * (x / w) +
-                            ((h - y) / h) * ((h - y) / h)
-                )
-                val alpha = (1f - distFromBottomLeft * 1.1f).coerceIn(0f, 0.65f)
-
-                if (alpha > 0.02f) {
-                    val radius = alpha * 3.5f + 0.8f
-                    drawCircle(
-                        color = VintageBgAccent.copy(alpha = alpha),
-                        radius = radius,
-                        center = Offset(x, y)
-                    )
-                }
-            }
-        }
-    }
+    )
 }

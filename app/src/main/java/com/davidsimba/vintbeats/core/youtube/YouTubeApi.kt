@@ -50,3 +50,6 @@ internal fun JsonArray.idx(i: Int) = if (i < size()) get(i) else null
 internal fun JsonArray.last() = if (size() > 0) get(size() - 1) else null
 
 internal fun String.escapeJson() = replace("\\", "\\\\").replace("\"", "\\\"")
+
+internal fun String.upscaleThumbnail(): String =
+    replace(Regex("=w\\d+-h\\d+"), "=w720-h720")

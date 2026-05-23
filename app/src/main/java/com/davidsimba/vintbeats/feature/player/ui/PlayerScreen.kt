@@ -45,7 +45,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import com.davidsimba.vintbeats.feature.player.ui.components.LyricsCard
-import com.davidsimba.vintbeats.feature.player.ui.components.PlayerBackground
+import com.davidsimba.vintbeats.shared.components.background.Background
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerBottomNav
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerControls
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerEffectsCard
@@ -77,6 +77,8 @@ fun PlayerScreen(
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
 
+    val isDownloading by viewModel.isDownloading.collectAsStateWithLifecycle()
+
     val isPlaying = playerState is PlayerState.Playing
     val isLoading = playerState is PlayerState.Loading
 
@@ -94,7 +96,7 @@ fun PlayerScreen(
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val availableHeight = maxHeight
 
-        PlayerBackground(
+        Background(
             thumbnailUrl = trackForCard?.albumImageUrl,
             modifier = Modifier.fillMaxSize()
         )
@@ -208,24 +210,27 @@ fun PlayerScreen(
                 onDismissRequest = { showOptionsSheet = false },
                 sheetState = sheetState
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            scope.launch { sheetState.hide() }.invokeOnCompletion {
-                                showOptionsSheet = false
+                if (!isSaved) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable(enabled = !isDownloading) {
+                                scope.launch { sheetState.hide() }.invokeOnCompletion {
+                                    showOptionsSheet = false
+                                    viewModel.downloadCurrentTrack()
+                                }
                             }
-                        }
-                        .padding(horizontal = 24.dp, vertical = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.Download,
-                        contentDescription = null,
-                        modifier = Modifier.size(22.dp)
-                    )
-                    Spacer(Modifier.width(16.dp))
-                    Text(text = "Download", fontSize = 16.sp)
+                            .padding(horizontal = 24.dp, vertical = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Download,
+                            contentDescription = null,
+                            modifier = Modifier.size(22.dp)
+                        )
+                        Spacer(Modifier.width(16.dp))
+                        Text(text = "Download", fontSize = 16.sp)
+                    }
                 }
                 Spacer(Modifier.navigationBarsPadding())
             }

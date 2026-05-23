@@ -65,6 +65,9 @@ class PlaybackViewModel @Inject constructor(
     private val _queue = MutableStateFlow<List<Track>>(emptyList())
     val queue: StateFlow<List<Track>> = _queue.asStateFlow()
 
+    private val _isDownloading = MutableStateFlow(false)
+    val isDownloading: StateFlow<Boolean> = _isDownloading.asStateFlow()
+
     private var progressJob: Job? = null
 
     init {
@@ -173,6 +176,24 @@ class PlaybackViewModel @Inject constructor(
         val index = _queue.value.indexOf(track)
         if (index >= 0) {
             playTrack(track, newQueue = _queue.value.drop(index + 1))
+        }
+    }
+
+    fun downloadCurrentTrack() {
+        val track = _unsavedTrack.value ?: return
+        if (_isDownloading.value) return
+        viewModelScope.launch {
+            _isDownloading.value = true
+            val streamUrl = currentStreamUrl ?: streamService.getAudioStreamUrl(track.id)
+            val audioFilePath = streamUrl?.let {
+                streamService.downloadAudio(track.id, it, context.filesDir)
+            }
+            repository.saveTrack(track, audioFilePath)
+            val saved = repository.getAllTracks().first().find { it.trackId == track.id }
+            _currentSavedTrack.value = saved
+            _unsavedTrack.value = null
+            _isSaved.value = true
+            _isDownloading.value = false
         }
     }
 
