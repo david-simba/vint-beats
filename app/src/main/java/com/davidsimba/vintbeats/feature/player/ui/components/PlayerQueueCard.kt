@@ -1,4 +1,4 @@
-package com.davidsimba.vintbeats.feature.player.components
+package com.davidsimba.vintbeats.feature.player.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,7 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.davidsimba.vintbeats.feature.search.domain.Track
+import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.shared.components.TrackInfo
 import com.davidsimba.vintbeats.shared.components.VintCard
 import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep

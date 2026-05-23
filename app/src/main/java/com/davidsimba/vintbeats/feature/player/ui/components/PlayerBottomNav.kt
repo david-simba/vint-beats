@@ -1,4 +1,4 @@
-package com.davidsimba.vintbeats.feature.player.components
+package com.davidsimba.vintbeats.feature.player.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

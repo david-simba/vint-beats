@@ -11,10 +11,9 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.davidsimba.vintbeats.core.youtube.YouTubeLyricsService
 import com.davidsimba.vintbeats.core.youtube.YouTubeQueueService
 import com.davidsimba.vintbeats.core.youtube.YouTubeStreamService
-import com.davidsimba.vintbeats.feature.cassette.domain.CassetteConfig
-import com.davidsimba.vintbeats.feature.cassette.domain.CassetteRepository
-import com.davidsimba.vintbeats.feature.cassette.domain.SavedCassette
-import com.davidsimba.vintbeats.feature.search.domain.Track
+import com.davidsimba.vintbeats.feature.library.domain.SavedTrack
+import com.davidsimba.vintbeats.feature.library.domain.TrackRepository
+import com.davidsimba.vintbeats.core.model.Track
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +31,7 @@ import androidx.core.net.toUri
 
 @HiltViewModel
 class PlaybackViewModel @Inject constructor(
-    private val repository: CassetteRepository,
+    private val repository: TrackRepository,
     private val streamService: YouTubeStreamService,
     private val queueService: YouTubeQueueService,
     private val lyricsService: YouTubeLyricsService,
@@ -42,8 +41,8 @@ class PlaybackViewModel @Inject constructor(
     private val player = ExoPlayer.Builder(context).build()
     private var currentStreamUrl: String? = null
 
-    private val _currentCassette = MutableStateFlow<SavedCassette?>(null)
-    val currentCassette: StateFlow<SavedCassette?> = _currentCassette.asStateFlow()
+    private val _currentSavedTrack = MutableStateFlow<SavedTrack?>(null)
+    val currentSavedTrack: StateFlow<SavedTrack?> = _currentSavedTrack.asStateFlow()
 
     private val _unsavedTrack = MutableStateFlow<Track?>(null)
     val unsavedTrack: StateFlow<Track?> = _unsavedTrack.asStateFlow()
@@ -85,7 +84,7 @@ class PlaybackViewModel @Inject constructor(
             return
         }
         _unsavedTrack.value = track
-        _currentCassette.value = null
+        _currentSavedTrack.value = null
         _isSaved.value = false
         currentStreamUrl = null
         _lyrics.value = null
@@ -115,8 +114,8 @@ class PlaybackViewModel @Inject constructor(
         }
     }
 
-    fun play(cassetteId: Int) {
-        if (_currentCassette.value?.id == cassetteId && player.isPlaying) return
+    fun play(savedTrackId: Int) {
+        if (_currentSavedTrack.value?.id == savedTrackId && player.isPlaying) return
         _unsavedTrack.value = null
         _isSaved.value = true
         currentStreamUrl = null
@@ -124,24 +123,30 @@ class PlaybackViewModel @Inject constructor(
         _queue.value = emptyList()
         viewModelScope.launch {
             _playerState.value = PlayerState.Loading
-            val cassette = repository.getCassette(cassetteId) ?: run {
+            val saved = repository.getTrack(savedTrackId) ?: run {
                 _playerState.value = PlayerState.Error("Not found")
                 return@launch
             }
-            _currentCassette.value = cassette
-            viewModelScope.launch { _lyrics.value = lyricsService.getLyrics(cassette.trackId) }
+            _currentSavedTrack.value = saved
+            viewModelScope.launch { _lyrics.value = lyricsService.getLyrics(saved.trackId) }
             viewModelScope.launch {
-                _queue.value = repository.getAllCassettes().first()
-                    .filter { it.id != cassetteId }
-                    .map { Track(id = it.trackId, title = it.trackTitle, artist = it.trackArtist, albumImageUrl = it.trackThumbnailUrl, previewUrl = null, durationText = it.trackDurationText) }
+                _queue.value = repository.getAllTracks().first()
+                    .filter { it.id != savedTrackId }
+                    .map {
+                        Track(
+                            id = it.trackId, title = it.trackTitle, artist = it.trackArtist,
+                            albumImageUrl = it.trackThumbnailUrl, previewUrl = null,
+                            durationText = it.trackDurationText
+                        )
+                    }
             }
 
-            val uri = if (!cassette.audioFilePath.isNullOrEmpty() && File(cassette.audioFilePath).exists()) {
-                Log.d(TAG, "Playing local file: ${cassette.audioFilePath}")
-                Uri.fromFile(File(cassette.audioFilePath))
+            val uri = if (!saved.audioFilePath.isNullOrEmpty() && File(saved.audioFilePath).exists()) {
+                Log.d(TAG, "Playing local file: ${saved.audioFilePath}")
+                Uri.fromFile(File(saved.audioFilePath))
             } else {
-                Log.d(TAG, "Streaming ${cassette.trackId}")
-                val streamUrl = streamService.getAudioStreamUrl(cassette.trackId) ?: run {
+                Log.d(TAG, "Streaming ${saved.trackId}")
+                val streamUrl = streamService.getAudioStreamUrl(saved.trackId) ?: run {
                     _playerState.value = PlayerState.Error("Audio not available")
                     return@launch
                 }
@@ -168,21 +173,6 @@ class PlaybackViewModel @Inject constructor(
         val index = _queue.value.indexOf(track)
         if (index >= 0) {
             playTrack(track, newQueue = _queue.value.drop(index + 1))
-        }
-    }
-
-    fun saveCassette(config: CassetteConfig, onSaved: () -> Unit) {
-        val track = _unsavedTrack.value ?: return
-        viewModelScope.launch {
-            _playerState.value = PlayerState.Loading
-            val streamUrl = currentStreamUrl ?: streamService.getAudioStreamUrl(track.id)
-            val audioFilePath = streamUrl?.let {
-                streamService.downloadAudio(track.id, it, context.filesDir)
-            }
-            repository.saveCassette(config, audioFilePath)
-            _isSaved.value = true
-            _playerState.value = PlayerState.Idle
-            withContext(Dispatchers.Main) { onSaved() }
         }
     }
 

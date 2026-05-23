@@ -1,6 +1,6 @@
 package com.davidsimba.vintbeats.core.youtube
 
-import com.davidsimba.vintbeats.feature.search.domain.Track
+import com.davidsimba.vintbeats.core.model.Track
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import okhttp3.MediaType.Companion.toMediaType

@@ -1,4 +1,4 @@
-package com.davidsimba.vintbeats.feature.search.domain
+package com.davidsimba.vintbeats.core.model
 
 data class Track(
     val id: String,

@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import com.davidsimba.vintbeats.feature.cassette.domain.SavedCassette
+import com.davidsimba.vintbeats.feature.library.domain.SavedTrack
 import com.davidsimba.vintbeats.shared.components.TrackInfo
 import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
@@ -38,10 +38,10 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
 
 @Composable
 fun LibraryScreen(
-    onCassetteClick: (Int) -> Unit = {},
+    onTrackClick: (Int) -> Unit = {},
     viewModel: LibraryViewModel = hiltViewModel()
 ) {
-    val cassettes by viewModel.cassettes.collectAsStateWithLifecycle()
+    val tracks by viewModel.tracks.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -56,7 +56,7 @@ fun LibraryScreen(
             modifier = Modifier.padding(start = 24.dp, top = 8.dp, bottom = 8.dp, end = 24.dp)
         )
 
-        if (cassettes.isEmpty()) {
+        if (tracks.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -69,10 +69,10 @@ fun LibraryScreen(
             }
         } else {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(cassettes, key = { it.id }) { cassette ->
-                    CassetteListItem(
-                        cassette = cassette,
-                        onClick = { onCassetteClick(cassette.id) }
+                items(tracks, key = { it.id }) { track ->
+                    TrackListItem(
+                        track = track,
+                        onClick = { onTrackClick(track.id) }
                     )
                     HorizontalDivider(
                         color = VintageGrayDeep.copy(alpha = 0.4f),
@@ -86,7 +86,7 @@ fun LibraryScreen(
 }
 
 @Composable
-private fun CassetteListItem(cassette: SavedCassette, onClick: () -> Unit) {
+private fun TrackListItem(track: SavedTrack, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -102,18 +102,19 @@ private fun CassetteListItem(cassette: SavedCassette, onClick: () -> Unit) {
                 .background(VintageGrayDeep)
         ) {
             AsyncImage(
-                model = cassette.trackThumbnailUrl,
-                contentDescription = cassette.trackTitle,
+                model = track.trackThumbnailUrl,
+                contentDescription = track.trackTitle,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.matchParentSize()
             )
         }
 
-        val subtitle = if (cassette.trackDurationText.isNotEmpty())
-            "${cassette.trackArtist} • ${cassette.trackDurationText}"
-        else cassette.trackArtist
+        val subtitle = if (track.trackDurationText.isNotEmpty())
+            "${track.trackArtist} • ${track.trackDurationText}"
+        else track.trackArtist
+
         TrackInfo(
-            title = cassette.trackTitle,
+            title = track.trackTitle,
             artist = subtitle,
             modifier = Modifier.weight(1f),
             titleSize = 14.sp,

@@ -2,7 +2,7 @@ package com.davidsimba.vintbeats.core.database
 
 import android.content.Context
 import androidx.room.Room
-import com.davidsimba.vintbeats.feature.cassette.data.CassetteDao
+import com.davidsimba.vintbeats.feature.library.data.TrackDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,9 +18,9 @@ object DatabaseModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): VintBeatsDatabase =
         Room.databaseBuilder(context, VintBeatsDatabase::class.java, "vintbeats.db")
-            .addMigrations(VintBeatsDatabase.MIGRATION_1_2)
+            .addMigrations(VintBeatsDatabase.MIGRATION_1_2, VintBeatsDatabase.MIGRATION_2_3)
             .build()
 
     @Provides
-    fun provideCassetteDao(db: VintBeatsDatabase): CassetteDao = db.cassetteDao()
+    fun provideTrackDao(db: VintBeatsDatabase): TrackDao = db.trackDao()
 }

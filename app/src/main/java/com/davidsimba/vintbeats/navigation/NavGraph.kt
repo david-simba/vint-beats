@@ -20,14 +20,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.davidsimba.vintbeats.feature.cassette.ui.CustomizeCassetteScreen
 import com.davidsimba.vintbeats.feature.home.ui.HomeScreen
 import com.davidsimba.vintbeats.feature.library.ui.LibraryScreen
 import com.davidsimba.vintbeats.feature.player.ui.PlaybackViewModel
 import com.davidsimba.vintbeats.feature.player.ui.PlayerScreen
 import com.davidsimba.vintbeats.feature.search.ui.SearchScreen
 import com.davidsimba.vintbeats.shared.components.MiniPlayer
-import com.davidsimba.vintbeats.shared.components.MiniPlayerTrack
 import com.davidsimba.vintbeats.shared.components.background.Background
 import com.davidsimba.vintbeats.shared.components.navbar.BottomNavBar
 
@@ -35,11 +33,6 @@ private val bottomNavRoutes = setOf(
     Screen.Home.route,
     Screen.Search.route,
     Screen.Library.route
-)
-
-private val creationRoutes = setOf(
-    Screen.Player.route,
-    Screen.CustomizeCassette.route
 )
 
 @Composable
@@ -52,39 +45,48 @@ fun NavGraph(
     val showBottomBar = currentRoute in bottomNavRoutes
 
     val playbackViewModel: PlaybackViewModel = hiltViewModel()
-    val currentCassette by playbackViewModel.currentCassette.collectAsStateWithLifecycle()
+    val currentSavedTrack by playbackViewModel.currentSavedTrack.collectAsStateWithLifecycle()
     val isSaved by playbackViewModel.isSaved.collectAsStateWithLifecycle()
     val unsavedTrack by playbackViewModel.unsavedTrack.collectAsStateWithLifecycle()
     val playbackState by playbackViewModel.playerState.collectAsStateWithLifecycle()
 
-    val hasActivePlayback = (isSaved && currentCassette != null) || (!isSaved && unsavedTrack != null)
-    val showMiniPlayer = hasActivePlayback
-        && currentRoute !in creationRoutes
-        && currentRoute != Screen.Player.route
+    val hasActivePlayback = (isSaved && currentSavedTrack != null) || (!isSaved && unsavedTrack != null)
+    val showMiniPlayer = hasActivePlayback && currentRoute != Screen.Player.route
+
+    val miniTitle: String?
+    val miniArtist: String
+    val miniThumbnail: String?
+    when {
+        isSaved && currentSavedTrack != null -> {
+            miniTitle = currentSavedTrack!!.trackTitle
+            miniArtist = currentSavedTrack!!.trackArtist
+            miniThumbnail = currentSavedTrack!!.trackThumbnailUrl
+        }
+        !isSaved && unsavedTrack != null -> {
+            miniTitle = unsavedTrack!!.title
+            miniArtist = unsavedTrack!!.artist
+            miniThumbnail = unsavedTrack!!.albumImageUrl
+        }
+        else -> {
+            miniTitle = null
+            miniArtist = ""
+            miniThumbnail = null
+        }
+    }
 
     Scaffold(
         contentWindowInsets = WindowInsets(0),
         bottomBar = {
             Column {
-                if (showMiniPlayer) {
-                    val miniCassette = currentCassette
-                    val miniTrack = unsavedTrack
-                    when {
-                        miniCassette != null -> MiniPlayer(
-                            cassette = miniCassette,
-                            playerState = playbackState,
-                            onTogglePlayPause = playbackViewModel::togglePlayPause,
-                            onTap = { navController.navigate(Screen.Player.route) { launchSingleTop = true } }
-                        )
-                        miniTrack != null -> MiniPlayerTrack(
-                            trackTitle = miniTrack.title,
-                            trackArtist = miniTrack.artist,
-                            thumbnailUrl = miniTrack.albumImageUrl,
-                            playerState = playbackState,
-                            onTogglePlayPause = playbackViewModel::togglePlayPause,
-                            onTap = { navController.navigate(Screen.Player.route) { launchSingleTop = true } }
-                        )
-                    }
+                if (showMiniPlayer && miniTitle != null) {
+                    MiniPlayer(
+                        title = miniTitle,
+                        artist = miniArtist,
+                        thumbnailUrl = miniThumbnail,
+                        playerState = playbackState,
+                        onTogglePlayPause = playbackViewModel::togglePlayPause,
+                        onTap = { navController.navigate(Screen.Player.route) { launchSingleTop = true } }
+                    )
                 }
                 if (showBottomBar) BottomNavBar(navController)
             }
@@ -102,11 +104,7 @@ fun NavGraph(
                 popExitTransition = { ExitTransition.None }
             ) {
                 composable(Screen.Home.route) {
-                    HomeScreen(
-                        onCreateCassette = {
-                            navController.navigate(Screen.Search.route) { launchSingleTop = true }
-                        }
-                    )
+                    HomeScreen()
                 }
                 composable(Screen.Search.route) {
                     SearchScreen(
@@ -125,24 +123,12 @@ fun NavGraph(
                 ) {
                     PlayerScreen(
                         onBack = { navController.popBackStack() },
-                        onSave = { navController.navigate(Screen.CustomizeCassette.route) },
                         viewModel = playbackViewModel
-                    )
-                }
-                composable(Screen.CustomizeCassette.route) {
-                    CustomizeCassetteScreen(
-                        onBack = { navController.popBackStack() },
-                        onSave = {
-                            navController.navigate(Screen.Library.route) {
-                                popUpTo(Screen.Home.route) { inclusive = false }
-                            }
-                        },
-                        playbackViewModel = playbackViewModel
                     )
                 }
                 composable(Screen.Library.route) {
                     LibraryScreen(
-                        onCassetteClick = { id ->
+                        onTrackClick = { id ->
                             playbackViewModel.play(id)
                             navController.navigate(Screen.Player.route) { launchSingleTop = true }
                         }

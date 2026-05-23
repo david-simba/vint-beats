@@ -1,4 +1,4 @@
-package com.davidsimba.vintbeats.feature.player.components
+package com.davidsimba.vintbeats.feature.player.ui.components
 
 import android.graphics.drawable.BitmapDrawable
 import androidx.core.graphics.ColorUtils

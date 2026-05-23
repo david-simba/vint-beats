@@ -23,7 +23,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.davidsimba.vintbeats.feature.cassette.domain.SavedCassette
 import com.davidsimba.vintbeats.feature.player.ui.PlayerState
 import com.davidsimba.vintbeats.shared.theme.VintageBgBase
 import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
@@ -31,46 +30,6 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
 
 @Composable
 fun MiniPlayer(
-    cassette: SavedCassette,
-    playerState: PlayerState,
-    onTogglePlayPause: () -> Unit,
-    onTap: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    MiniPlayerContent(
-        title = cassette.trackTitle,
-        artist = cassette.trackArtist,
-        thumbnailUrl = cassette.trackThumbnailUrl,
-        playerState = playerState,
-        onTogglePlayPause = onTogglePlayPause,
-        onTap = onTap,
-        modifier = modifier
-    )
-}
-
-@Composable
-fun MiniPlayerTrack(
-    trackTitle: String,
-    trackArtist: String,
-    thumbnailUrl: String?,
-    playerState: PlayerState,
-    onTogglePlayPause: () -> Unit,
-    onTap: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    MiniPlayerContent(
-        title = trackTitle,
-        artist = trackArtist,
-        thumbnailUrl = thumbnailUrl,
-        playerState = playerState,
-        onTogglePlayPause = onTogglePlayPause,
-        onTap = onTap,
-        modifier = modifier
-    )
-}
-
-@Composable
-private fun MiniPlayerContent(
     title: String,
     artist: String,
     thumbnailUrl: String?,

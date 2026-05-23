@@ -1,6 +1,7 @@
 package com.davidsimba.vintbeats.shared.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.davidsimba.vintbeats.shared.theme.VintageBgBase
+import com.davidsimba.vintbeats.shared.theme.VintageWhiteMid
+import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
 
 @Composable
 fun VintCard(
@@ -21,6 +24,7 @@ fun VintCard(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
+            .border(1.dp, VintageWhiteMid.copy(alpha = 0.08f), RoundedCornerShape(16.dp))
             .background(VintageBgBase)
             .padding(start = 20.dp, top = 24.dp, end = 20.dp, bottom = 32.dp),
         content = content

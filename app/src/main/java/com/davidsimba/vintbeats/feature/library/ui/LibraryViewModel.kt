@@ -2,8 +2,8 @@ package com.davidsimba.vintbeats.feature.library.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.davidsimba.vintbeats.feature.cassette.domain.CassetteRepository
-import com.davidsimba.vintbeats.feature.cassette.domain.SavedCassette
+import com.davidsimba.vintbeats.feature.library.domain.SavedTrack
+import com.davidsimba.vintbeats.feature.library.domain.TrackRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -12,9 +12,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LibraryViewModel @Inject constructor(
-    repository: CassetteRepository
+    repository: TrackRepository
 ) : ViewModel() {
 
-    val cassettes: StateFlow<List<SavedCassette>> = repository.getAllCassettes()
+    val tracks: StateFlow<List<SavedTrack>> = repository.getAllTracks()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 }

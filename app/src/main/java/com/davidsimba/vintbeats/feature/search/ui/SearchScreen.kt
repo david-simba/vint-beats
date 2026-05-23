@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import com.davidsimba.vintbeats.feature.search.domain.Track
+import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.shared.theme.VintageBlackMid
 import com.davidsimba.vintbeats.shared.theme.VintageGrayCool
 import com.davidsimba.vintbeats.shared.theme.VintageWhite
