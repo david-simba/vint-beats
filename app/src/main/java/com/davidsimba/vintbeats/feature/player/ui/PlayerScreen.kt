@@ -36,6 +36,7 @@ import com.davidsimba.vintbeats.shared.components.BottomSheet
 import kotlinx.coroutines.launch
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerControls
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerTopBar
+import com.davidsimba.vintbeats.shared.components.EqualizerBars
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
@@ -135,7 +136,14 @@ fun PlayerScreen(
                 }
             }
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(12.dp))
+
+            EqualizerBars(
+                isPlaying = isPlaying,
+                color = VintageRedLight.copy(alpha = 0.8f),
+                maxHeight = 18.dp,
+                modifier = Modifier.padding(horizontal = 24.dp)
+            )
 
             PlayerControls(
                 isPlaying = isPlaying,
