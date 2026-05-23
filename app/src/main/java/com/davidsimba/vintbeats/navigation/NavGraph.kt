@@ -49,6 +49,8 @@ fun NavGraph(
     val isSaved by playbackViewModel.isSaved.collectAsStateWithLifecycle()
     val unsavedTrack by playbackViewModel.unsavedTrack.collectAsStateWithLifecycle()
     val playbackState by playbackViewModel.playerState.collectAsStateWithLifecycle()
+    val positionMs by playbackViewModel.positionMs.collectAsStateWithLifecycle()
+    val durationMs by playbackViewModel.durationMs.collectAsStateWithLifecycle()
 
     val hasActivePlayback = (isSaved && currentSavedTrack != null) || (!isSaved && unsavedTrack != null)
     val showMiniPlayer = hasActivePlayback && currentRoute != Screen.Player.route
@@ -84,6 +86,8 @@ fun NavGraph(
                         artist = miniArtist,
                         thumbnailUrl = miniThumbnail,
                         playerState = playbackState,
+                        positionMs = positionMs,
+                        durationMs = durationMs,
                         onTogglePlayPause = playbackViewModel::togglePlayPause,
                         onTap = { navController.navigate(Screen.Player.route) { launchSingleTop = true } }
                     )

@@ -45,19 +45,18 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
 
 @Composable
 fun PlayerControls(
+    modifier: Modifier = Modifier,
     isPlaying: Boolean,
     isLoading: Boolean,
     positionMs: Long,
     durationMs: Long,
     accentColor: Color = VintageRedLight,
     onSeek: (Long) -> Unit,
-    onTogglePlayPause: () -> Unit,
-    modifier: Modifier = Modifier
+    onTogglePlayPause: () -> Unit
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         if (durationMs > 0) {
             Column(
