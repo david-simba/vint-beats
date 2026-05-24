@@ -1,23 +1,26 @@
 package com.davidsimba.vintbeats.feature.player.ui
 
-import androidx.compose.foundation.background
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -26,28 +29,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.shared.components.BottomSheetMenuItem
 import com.davidsimba.vintbeats.shared.components.BottomSheet
 import kotlinx.coroutines.launch
+import com.davidsimba.vintbeats.feature.player.ui.components.PlayerBackground
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerControls
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerQueueSheet
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerTopBar
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerTrackInfo
 import com.davidsimba.vintbeats.shared.components.EqualizerBars
 import com.davidsimba.vintbeats.core.model.Track
-import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
-import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,18 +61,18 @@ fun PlayerScreen(
     val lyrics by viewModel.lyrics.collectAsStateWithLifecycle()
     val queue by viewModel.queue.collectAsStateWithLifecycle()
 
-    var selectedTab by remember { mutableStateOf(PlayerTab.Queue) }
     var showOptionsSheet by remember { mutableStateOf(false) }
     var showQueueSheet by remember { mutableStateOf(false) }
     var isFavorite by remember { mutableStateOf(false) }
 
-    val swipeThresholdPx = with(LocalDensity.current) { 80.dp.toPx() }
     val sheetState = rememberModalBottomSheetState()
     val queueSheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
 
-    val isDownloading by viewModel.isDownloading.collectAsStateWithLifecycle()
+    val offsetX = remember { Animatable(0f) }
+    var componentWidth by remember { mutableFloatStateOf(0f) }
 
+    val isDownloading by viewModel.isDownloading.collectAsStateWithLifecycle()
     val isPlaying = playerState is PlayerState.Playing
     val isLoading = playerState is PlayerState.Loading
 
@@ -90,52 +87,55 @@ fun PlayerScreen(
         unsavedTrack
     }
 
+    val nextTrack = queue.firstOrNull()
+
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .onSizeChanged { componentWidth = it.width.toFloat() }
             .pointerInput(Unit) {
                 awaitEachGesture {
                     val down = awaitFirstDown(requireUnconsumed = false)
-                    var totalDrag = 0f
-                    var triggered = false
                     while (true) {
                         val event = awaitPointerEvent(PointerEventPass.Initial)
                         val change = event.changes.firstOrNull { it.id == down.id } ?: break
                         if (!change.pressed) {
-                            if (triggered) change.consume()
+                            if (offsetX.value < -(componentWidth * 0.4f)) {
+                                change.consume()
+                                scope.launch {
+                                    offsetX.animateTo(-componentWidth, tween(150))
+                                    viewModel.skipToNext()
+                                    offsetX.snapTo(0f)
+                                }
+                            } else {
+                                scope.launch {
+                                    offsetX.animateTo(
+                                        0f,
+                                        spring(
+                                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                                            stiffness = Spring.StiffnessMedium
+                                        )
+                                    )
+                                }
+                            }
                             break
                         }
-                        totalDrag += change.position.x - change.previousPosition.x
-                        if (!triggered && totalDrag < -swipeThresholdPx) {
-                            triggered = true
-                            change.consume()
-                            viewModel.skipToNext()
-                        } else if (triggered) {
+                        val delta = change.position.x - change.previousPosition.x
+                        val newOffset = (offsetX.value + delta).coerceAtMost(0f)
+                        scope.launch { offsetX.snapTo(newOffset) }
+                        if (offsetX.value < -viewConfiguration.touchSlop) {
                             change.consume()
                         }
                     }
                 }
             }
     ) {
-        // Album art as full-screen background
-        AsyncImage(
-            model = trackForCard?.albumImageUrl,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
+        PlayerBackground(
+            currentImageUrl = trackForCard?.albumImageUrl,
+            nextImageUrl = nextTrack?.albumImageUrl,
+            offsetX = offsetX.value,
+            componentWidth = componentWidth,
             modifier = Modifier.fillMaxSize()
-        )
-
-        // Subtle gradient overlay — keeps image clear, text readable
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        0f to Color.Black.copy(alpha = 0.35f),
-                        0.6f to Color.Black.copy(alpha = 0.5f),
-                        1f to Color.Black.copy(alpha = 0.85f)
-                    )
-                )
         )
 
         Column(
@@ -183,24 +183,6 @@ fun PlayerScreen(
             )
 
             Spacer(Modifier.height(32.dp))
-
-            // TODO: bottom nav + cards (logic ready, UI coming)
-            /*
-            PlayerBottomNav(
-                selectedTab = selectedTab,
-                onTabSelected = { selectedTab = it }
-            )
-            when (selectedTab) {
-                PlayerTab.Lyrics -> LyricsCard(lyrics = lyrics)
-                PlayerTab.Player -> PlayerEffectsCard()
-                PlayerTab.Queue -> PlayerQueueSheet(
-                    currentTrack = trackForCard,
-                    queue = queue,
-                    onTrackClick = viewModel::skipToQueueTrack,
-                    onReorder = viewModel::reorderQueue
-                )
-            }
-            */
         }
 
         if (showOptionsSheet) {

@@ -46,7 +46,7 @@ fun PlayerTrackInfo(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-            Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(2.dp))
             Text(
                 text = artist,
                 color = VintageWhitePure.copy(alpha = 0.7f),
