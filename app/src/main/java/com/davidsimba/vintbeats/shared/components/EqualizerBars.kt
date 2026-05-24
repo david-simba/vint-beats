@@ -42,11 +42,12 @@ fun EqualizerBars(
     modifier: Modifier = Modifier,
     color: Color = Color.White,
     maxHeight: Dp = 16.dp,
-    spacing: Dp = 2.dp
+    spacing: Dp = 2.dp,
+    barCount: Int = barConfig.size
 ) {
     val transition = rememberInfiniteTransition(label = "eq")
 
-    val fractions = barConfig.map { (duration, peak) ->
+    val fractions = barConfig.take(barCount).map { (duration, peak) ->
         val fraction by transition.animateFloat(
             initialValue = 0.15f,
             targetValue = if (isPlaying) peak else 0.15f,

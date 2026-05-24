@@ -35,6 +35,7 @@ import com.davidsimba.vintbeats.shared.components.BottomSheetMenuItem
 import com.davidsimba.vintbeats.shared.components.BottomSheet
 import kotlinx.coroutines.launch
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerControls
+import com.davidsimba.vintbeats.feature.player.ui.components.PlayerQueueSheet
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerTopBar
 import com.davidsimba.vintbeats.shared.components.EqualizerBars
 import com.davidsimba.vintbeats.core.model.Track
@@ -59,7 +60,9 @@ fun PlayerScreen(
 
     var selectedTab by remember { mutableStateOf(PlayerTab.Queue) }
     var showOptionsSheet by remember { mutableStateOf(false) }
+    var showQueueSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
+    val queueSheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
 
     val isDownloading by viewModel.isDownloading.collectAsStateWithLifecycle()
@@ -106,7 +109,11 @@ fun PlayerScreen(
                 .statusBarsPadding(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            PlayerTopBar(onBack = onBack, onMoreOptions = { showOptionsSheet = true })
+            PlayerTopBar(
+                onBack = onBack,
+                onQueueOpen = { showQueueSheet = true },
+                onMoreOptions = { showOptionsSheet = true }
+            )
 
             Spacer(Modifier.weight(1f))
 
@@ -167,7 +174,7 @@ fun PlayerScreen(
             when (selectedTab) {
                 PlayerTab.Lyrics -> LyricsCard(lyrics = lyrics)
                 PlayerTab.Player -> PlayerEffectsCard()
-                PlayerTab.Queue -> PlayerQueueCard(
+                PlayerTab.Queue -> PlayerQueueSheet(
                     currentTrack = trackForCard,
                     queue = queue,
                     onTrackClick = viewModel::skipToQueueTrack,
@@ -194,6 +201,26 @@ fun PlayerScreen(
                         }
                     )
                 }
+            }
+        }
+
+        if (showQueueSheet) {
+            BottomSheet(
+                onDismiss = { showQueueSheet = false },
+                sheetState = queueSheetState
+            ) {
+                PlayerQueueSheet(
+                    currentTrack = trackForCard,
+                    queue = queue,
+                    isPlaying = isPlaying,
+                    onTrackClick = { track ->
+                        scope.launch { queueSheetState.hide() }.invokeOnCompletion {
+                            showQueueSheet = false
+                            viewModel.skipToQueueTrack(track)
+                        }
+                    },
+                    onReorder = viewModel::reorderQueue
+                )
             }
         }
     }

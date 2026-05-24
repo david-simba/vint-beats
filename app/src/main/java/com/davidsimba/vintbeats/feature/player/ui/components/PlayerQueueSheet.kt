@@ -2,12 +2,15 @@ package com.davidsimba.vintbeats.feature.player.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
@@ -30,8 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.core.model.Track
+import com.davidsimba.vintbeats.shared.components.EqualizerBars
 import com.davidsimba.vintbeats.shared.components.TrackInfo
-import com.davidsimba.vintbeats.shared.components.cards.Card
 import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
@@ -40,20 +43,27 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
 import sh.calvin.reorderable.ReorderableColumn
 
 @Composable
-fun PlayerQueueCard(
+fun PlayerQueueSheet(
     currentTrack: Track?,
     queue: List<Track>,
+    isPlaying: Boolean,
     onTrackClick: (Track) -> Unit,
     onReorder: (from: Int, to: Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var localQueue by remember { mutableStateOf(queue) }
+    val scrollState = rememberScrollState()
 
     LaunchedEffect(queue) {
         localQueue = queue
     }
 
-    Card(modifier = modifier) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .verticalScroll(scrollState)
+            .padding(horizontal = 20.dp)
+    ) {
         Text(
             text = "Up Next",
             color = VintageWhiteWarm,
@@ -71,10 +81,10 @@ fun PlayerQueueCard(
             QueueTrackRow(
                 track = it,
                 isCurrentTrack = true,
+                isPlaying = isPlaying,
                 modifier = Modifier,
                 onClick = null
             )
-
         }
 
         if (localQueue.isEmpty()) {
@@ -113,7 +123,8 @@ private fun QueueTrackRow(
     track: Track,
     isCurrentTrack: Boolean,
     modifier: Modifier,
-    onClick: (() -> Unit)?
+    onClick: (() -> Unit)?,
+    isPlaying: Boolean = false
 ) {
     Row(
         modifier = Modifier
@@ -153,10 +164,20 @@ private fun QueueTrackRow(
 
         Spacer(Modifier.width(8.dp))
 
-        Text(
-            text = track.durationText,
-            color = VintageGrayMid,
-            fontSize = 11.sp
-        )
+        if (isCurrentTrack) {
+            EqualizerBars(
+                isPlaying = isPlaying,
+                color = VintageRedLight,
+                maxHeight = 12.dp,
+                barCount = 4,
+                modifier = Modifier.width(24.dp)
+            )
+        } else {
+            Text(
+                text = track.durationText,
+                color = VintageGrayMid,
+                fontSize = 11.sp
+            )
+        }
     }
 }

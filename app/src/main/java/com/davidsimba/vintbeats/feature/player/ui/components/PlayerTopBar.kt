@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.QueueMusic
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -16,6 +17,7 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
 @Composable
 fun PlayerTopBar(
     onBack: () -> Unit,
+    onQueueOpen: () -> Unit,
     onMoreOptions: () -> Unit
 ) {
     Row(
@@ -30,6 +32,13 @@ fun PlayerTopBar(
             )
         }
         Spacer(Modifier.weight(1f))
+        IconButton(onClick = onQueueOpen) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Rounded.QueueMusic,
+                contentDescription = "Queue",
+                tint = VintageWhitePure
+            )
+        }
         IconButton(onClick = onMoreOptions) {
             Icon(
                 imageVector = Icons.Rounded.MoreVert,
