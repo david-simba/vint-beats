@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.SkipNext
@@ -27,11 +29,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
@@ -47,6 +51,7 @@ import com.davidsimba.vintbeats.feature.player.ui.PlayerState
 import com.davidsimba.vintbeats.shared.components.TrackInfo
 import com.davidsimba.vintbeats.shared.components.background.Background
 import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
+import com.davidsimba.vintbeats.shared.theme.VintageRedLight
 import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -72,6 +77,7 @@ fun MiniPlayer(
     val offsetX = remember { Animatable(0f) }
     var componentWidth by remember { mutableFloatStateOf(0f) }
     var textZoneWidth by remember { mutableFloatStateOf(0f) }
+    var isFavorite by remember { mutableStateOf(false) }
 
     Box(
         modifier = modifier
@@ -153,6 +159,7 @@ fun MiniPlayer(
                 // exactly in sync with the swipe distance, regardless of zone width.
                 val scale = if (componentWidth > 0f) textZoneWidth / componentWidth else 1f
                 val textOffset = (offsetX.value * scale).roundToInt()
+                val swipeFraction = if (componentWidth > 0f) (-offsetX.value / componentWidth).coerceIn(0f, 1f) else 0f
 
                 Box(
                     modifier = Modifier
@@ -166,6 +173,7 @@ fun MiniPlayer(
                         modifier = Modifier
                             .fillMaxWidth()
                             .offset { IntOffset(textOffset, 0) }
+                            .alpha(1f - swipeFraction)
                     )
                     if (nextTrack != null) {
                         TrackInfo(
@@ -174,20 +182,38 @@ fun MiniPlayer(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .offset { IntOffset(textZoneWidth.roundToInt() + textOffset, 0) }
+                                .alpha(swipeFraction)
                         )
                     }
                 }
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(onClick = onTogglePlayPause) {
+                    IconButton(
+                        onClick = { isFavorite = !isFavorite },
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(
+                            imageVector = if (isFavorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+                            contentDescription = "Favorite",
+                            tint = if (isFavorite) VintageRedLight else VintageWhitePure,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                    IconButton(
+                        onClick = onTogglePlayPause,
+                        modifier = Modifier.size(36.dp)
+                    ) {
                         Icon(
                             imageVector = if (isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
                             contentDescription = if (isPlaying) "Pause" else "Play",
                             tint = VintageWhitePure,
-                            modifier = Modifier.size(28.dp)
+                            modifier = Modifier.size(26.dp)
                         )
                     }
-                    IconButton(onClick = onSkipNext) {
+                    IconButton(
+                        onClick = onSkipNext,
+                        modifier = Modifier.size(36.dp)
+                    ) {
                         Icon(
                             imageVector = Icons.Rounded.SkipNext,
                             contentDescription = "Next",
