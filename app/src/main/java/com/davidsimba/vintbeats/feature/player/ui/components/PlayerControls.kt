@@ -1,5 +1,11 @@
 package com.davidsimba.vintbeats.feature.player.ui.components
 
+import androidx.compose.animation.core.InfiniteRepeatableSpec
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -19,7 +25,6 @@ import androidx.compose.material.icons.rounded.Repeat
 import androidx.compose.material.icons.rounded.Shuffle
 import androidx.compose.material.icons.rounded.SkipNext
 import androidx.compose.material.icons.rounded.SkipPrevious
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -58,25 +63,32 @@ fun PlayerControls(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        if (durationMs > 0) {
-            Column(
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            SeekBar(
+                positionMs = positionMs,
+                durationMs = durationMs,
+                isLoading = isLoading,
+                accentColor = accentColor,
+                onSeek = onSeek,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                SeekBar(
-                    positionMs = positionMs,
-                    durationMs = durationMs,
-                    accentColor = accentColor,
-                    onSeek = onSeek,
-                    modifier = Modifier.fillMaxWidth()
+                Text(
+                    text = if (isLoading) "--:--" else formatMs(positionMs),
+                    color = VintageGrayMid,
+                    fontSize = 12.sp
                 )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(text = formatMs(positionMs), color = VintageGrayMid, fontSize = 12.sp)
-                    Text(text = formatMs(durationMs), color = VintageGrayMid, fontSize = 12.sp)
-                }
+                Text(
+                    text = if (isLoading) "--:--" else formatMs(durationMs),
+                    color = VintageGrayMid,
+                    fontSize = 12.sp
+                )
             }
         }
 
@@ -109,24 +121,16 @@ fun PlayerControls(
                     .size(72.dp)
                     .border(1.5.dp, VintageWhitePure.copy(alpha = 0.3f), CircleShape)
             ) {
-                if (isLoading) {
-                    CircularProgressIndicator(
-                        color = accentColor,
-                        modifier = Modifier.size(36.dp),
-                        strokeWidth = 2.dp
+                IconButton(
+                    onClick = onTogglePlayPause,
+                    modifier = Modifier.size(72.dp)
+                ) {
+                    Icon(
+                        imageVector = if (isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
+                        contentDescription = if (isPlaying) "Pause" else "Play",
+                        tint = VintageWhitePure,
+                        modifier = Modifier.size(40.dp)
                     )
-                } else {
-                    IconButton(
-                        onClick = onTogglePlayPause,
-                        modifier = Modifier.size(72.dp)
-                    ) {
-                        Icon(
-                            imageVector = if (isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
-                            contentDescription = if (isPlaying) "Pause" else "Play",
-                            tint = VintageWhitePure,
-                            modifier = Modifier.size(40.dp)
-                        )
-                    }
                 }
             }
 
@@ -155,6 +159,7 @@ fun PlayerControls(
 private fun SeekBar(
     positionMs: Long,
     durationMs: Long,
+    isLoading: Boolean,
     accentColor: Color,
     onSeek: (Long) -> Unit,
     modifier: Modifier = Modifier
@@ -165,10 +170,22 @@ private fun SeekBar(
     val fraction = if (durationMs > 0) (positionMs.toFloat() / durationMs).coerceIn(0f, 1f) else 0f
     val displayFraction = if (isDragging) dragFraction else fraction
 
+    val shimmerTransition = rememberInfiniteTransition(label = "seekbar_shimmer")
+    val shimmerOffset by shimmerTransition.animateFloat(
+        initialValue = -0.4f,
+        targetValue = 1.1f,
+        animationSpec = InfiniteRepeatableSpec(
+            animation = tween(durationMillis = 1200, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "shimmer_offset"
+    )
+
     Canvas(
         modifier = modifier
             .height(20.dp)
-            .pointerInput(durationMs) {
+            .pointerInput(durationMs, isLoading) {
+                if (isLoading) return@pointerInput
                 awaitEachGesture {
                     val down = awaitFirstDown(requireUnconsumed = false)
                     isDragging = true
@@ -190,9 +207,7 @@ private fun SeekBar(
         val cy = size.height / 2f
         val trackH = 3.dp.toPx()
         val thumbR = 5.dp.toPx()
-        val thumbX = (w * displayFraction).coerceIn(thumbR, w - thumbR)
 
-        // Background track
         drawRoundRect(
             color = VintageGrayDeep,
             topLeft = Offset(0f, cy - trackH / 2),
@@ -200,18 +215,32 @@ private fun SeekBar(
             cornerRadius = CornerRadius(trackH / 2)
         )
 
-        // Active track up to thumb center
-        if (displayFraction > 0f) {
-            drawRoundRect(
-                color = accentColor,
-                topLeft = Offset(0f, cy - trackH / 2),
-                size = Size(thumbX, trackH),
-                cornerRadius = CornerRadius(trackH / 2)
-            )
+        if (isLoading) {
+            val segmentW = w * 0.35f
+            val segmentStart = w * shimmerOffset
+            val drawStart = maxOf(segmentStart, 0f)
+            val drawEnd = minOf(segmentStart + segmentW, w)
+            val drawWidth = drawEnd - drawStart
+            if (drawWidth > 0f) {
+                drawRoundRect(
+                    color = VintageGrayMid.copy(alpha = 0.55f),
+                    topLeft = Offset(drawStart, cy - trackH / 2),
+                    size = Size(drawWidth, trackH),
+                    cornerRadius = CornerRadius(trackH / 2)
+                )
+            }
+        } else {
+            val thumbX = (w * displayFraction).coerceIn(thumbR, w - thumbR)
+            if (displayFraction > 0f) {
+                drawRoundRect(
+                    color = accentColor,
+                    topLeft = Offset(0f, cy - trackH / 2),
+                    size = Size(thumbX, trackH),
+                    cornerRadius = CornerRadius(trackH / 2)
+                )
+            }
+            drawCircle(color = accentColor, radius = thumbR, center = Offset(thumbX, cy))
         }
-
-        // Thumb circle
-        drawCircle(color = accentColor, radius = thumbR, center = Offset(thumbX, cy))
     }
 }
 
