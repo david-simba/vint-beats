@@ -37,6 +37,7 @@ import kotlinx.coroutines.launch
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerControls
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerQueueSheet
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerTopBar
+import com.davidsimba.vintbeats.feature.player.ui.components.PlayerTrackInfo
 import com.davidsimba.vintbeats.shared.components.EqualizerBars
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
@@ -61,6 +62,7 @@ fun PlayerScreen(
     var selectedTab by remember { mutableStateOf(PlayerTab.Queue) }
     var showOptionsSheet by remember { mutableStateOf(false) }
     var showQueueSheet by remember { mutableStateOf(false) }
+    var isFavorite by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     val queueSheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
@@ -117,30 +119,13 @@ fun PlayerScreen(
 
             Spacer(Modifier.weight(1f))
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 24.dp, end = 24.dp, bottom = 8.dp),
-                horizontalAlignment = Alignment.Start
-            ) {
-                trackForCard?.let {
-                    Text(
-                        text = it.title,
-                        color = VintageWhitePure,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        text = it.artist,
-                        color = VintageWhitePure.copy(alpha = 0.7f),
-                        fontSize = 14.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+            trackForCard?.let {
+                PlayerTrackInfo(
+                    title = it.title,
+                    artist = it.artist,
+                    isFavorite = isFavorite,
+                    onToggleFavorite = { isFavorite = !isFavorite }
+                )
             }
 
             Spacer(Modifier.height(12.dp))

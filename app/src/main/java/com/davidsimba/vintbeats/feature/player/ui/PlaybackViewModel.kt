@@ -69,6 +69,7 @@ class PlaybackViewModel @Inject constructor(
     val isDownloading: StateFlow<Boolean> = _isDownloading.asStateFlow()
 
     private var progressJob: Job? = null
+    private var playbackJob: Job? = null
 
     init {
         player.addListener(object : Player.Listener {
@@ -86,17 +87,21 @@ class PlaybackViewModel @Inject constructor(
             Log.d(TAG, "playTrack: skipped (already playing)")
             return
         }
+        playbackJob?.cancel()
+        progressJob?.cancel()
         _unsavedTrack.value = track
         _currentSavedTrack.value = null
         _isSaved.value = false
         currentStreamUrl = null
         _lyrics.value = null
+        _positionMs.value = 0L
+        _durationMs.value = 0L
         _queue.value = newQueue ?: emptyList()
         viewModelScope.launch { _lyrics.value = lyricsService.getLyrics(track.id) }
         if (newQueue == null) {
             viewModelScope.launch { _queue.value = queueService.getUpNextTracks(track.id) }
         }
-        viewModelScope.launch {
+        playbackJob = viewModelScope.launch {
             _playerState.value = PlayerState.Loading
             Log.d(TAG, "playTrack: fetching stream for ${track.id}")
             val streamUrl = streamService.getAudioStreamUrl(track.id) ?: run {
@@ -119,12 +124,16 @@ class PlaybackViewModel @Inject constructor(
 
     fun play(savedTrackId: Int) {
         if (_currentSavedTrack.value?.id == savedTrackId && player.isPlaying) return
+        playbackJob?.cancel()
+        progressJob?.cancel()
         _unsavedTrack.value = null
         _isSaved.value = true
         currentStreamUrl = null
         _lyrics.value = null
+        _positionMs.value = 0L
+        _durationMs.value = 0L
         _queue.value = emptyList()
-        viewModelScope.launch {
+        playbackJob = viewModelScope.launch {
             _playerState.value = PlayerState.Loading
             val saved = repository.getTrack(savedTrackId) ?: run {
                 _playerState.value = PlayerState.Error("Not found")
@@ -241,6 +250,7 @@ class PlaybackViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
+        playbackJob?.cancel()
         progressJob?.cancel()
         player.release()
     }
