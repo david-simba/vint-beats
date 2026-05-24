@@ -89,6 +89,7 @@ fun NavGraph(
                         positionMs = positionMs,
                         durationMs = durationMs,
                         onTogglePlayPause = playbackViewModel::togglePlayPause,
+                        onSkipNext = playbackViewModel::skipToNext,
                         onTap = { navController.navigate(Screen.Player.route) { launchSingleTop = true } }
                     )
                 }

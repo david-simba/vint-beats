@@ -1,6 +1,8 @@
 package com.davidsimba.vintbeats.feature.player.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +24,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -63,6 +68,8 @@ fun PlayerScreen(
     var showOptionsSheet by remember { mutableStateOf(false) }
     var showQueueSheet by remember { mutableStateOf(false) }
     var isFavorite by remember { mutableStateOf(false) }
+
+    val swipeThresholdPx = with(LocalDensity.current) { 80.dp.toPx() }
     val sheetState = rememberModalBottomSheetState()
     val queueSheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
@@ -83,7 +90,33 @@ fun PlayerScreen(
         unsavedTrack
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .pointerInput(Unit) {
+                awaitEachGesture {
+                    val down = awaitFirstDown(requireUnconsumed = false)
+                    var totalDrag = 0f
+                    var triggered = false
+                    while (true) {
+                        val event = awaitPointerEvent(PointerEventPass.Initial)
+                        val change = event.changes.firstOrNull { it.id == down.id } ?: break
+                        if (!change.pressed) {
+                            if (triggered) change.consume()
+                            break
+                        }
+                        totalDrag += change.position.x - change.previousPosition.x
+                        if (!triggered && totalDrag < -swipeThresholdPx) {
+                            triggered = true
+                            change.consume()
+                            viewModel.skipToNext()
+                        } else if (triggered) {
+                            change.consume()
+                        }
+                    }
+                }
+            }
+    ) {
         // Album art as full-screen background
         AsyncImage(
             model = trackForCard?.albumImageUrl,
