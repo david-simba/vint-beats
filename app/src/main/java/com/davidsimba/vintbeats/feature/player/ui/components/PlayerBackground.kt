@@ -17,6 +17,7 @@ import kotlin.math.roundToInt
 fun PlayerBackground(
     currentImageUrl: String?,
     nextImageUrl: String?,
+    previousImageUrl: String?,
     offsetX: Float,
     componentWidth: Float,
     modifier: Modifier = Modifier
@@ -28,6 +29,21 @@ fun PlayerBackground(
     )
 
     Box(modifier = modifier) {
+        AsyncImage(
+            model = previousImageUrl,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxSize()
+                .offset { IntOffset((-componentWidth + offsetX).roundToInt(), 0) }
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .offset { IntOffset((-componentWidth + offsetX).roundToInt(), 0) }
+                .background(gradient)
+        )
+
         AsyncImage(
             model = nextImageUrl,
             contentDescription = null,

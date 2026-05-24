@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
@@ -24,13 +23,13 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.shared.components.BottomSheetMenuItem
@@ -44,7 +43,6 @@ import com.davidsimba.vintbeats.feature.player.ui.components.PlayerTrackInfo
 import com.davidsimba.vintbeats.shared.components.EqualizerBars
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
-import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,6 +58,7 @@ fun PlayerScreen(
     val durationMs by viewModel.durationMs.collectAsStateWithLifecycle()
     val lyrics by viewModel.lyrics.collectAsStateWithLifecycle()
     val queue by viewModel.queue.collectAsStateWithLifecycle()
+    val history by viewModel.history.collectAsStateWithLifecycle()
 
     var showOptionsSheet by remember { mutableStateOf(false) }
     var showQueueSheet by remember { mutableStateOf(false) }
@@ -88,6 +87,8 @@ fun PlayerScreen(
     }
 
     val nextTrack = queue.firstOrNull()
+    val previousTrack = history.lastOrNull()
+    val hasPrevious by rememberUpdatedState(previousTrack != null)
 
     Box(
         modifier = Modifier
@@ -100,30 +101,41 @@ fun PlayerScreen(
                         val event = awaitPointerEvent(PointerEventPass.Initial)
                         val change = event.changes.firstOrNull { it.id == down.id } ?: break
                         if (!change.pressed) {
-                            if (offsetX.value < -(componentWidth * 0.4f)) {
-                                change.consume()
-                                scope.launch {
-                                    offsetX.animateTo(-componentWidth, tween(150))
-                                    viewModel.skipToNext()
-                                    offsetX.snapTo(0f)
+                            when {
+                                offsetX.value < -(componentWidth * 0.4f) -> {
+                                    change.consume()
+                                    scope.launch {
+                                        offsetX.animateTo(-componentWidth, tween(150))
+                                        viewModel.skipToNext()
+                                        offsetX.snapTo(0f)
+                                    }
                                 }
-                            } else {
-                                scope.launch {
-                                    offsetX.animateTo(
-                                        0f,
-                                        spring(
-                                            dampingRatio = Spring.DampingRatioMediumBouncy,
-                                            stiffness = Spring.StiffnessMedium
+                                offsetX.value > (componentWidth * 0.4f) -> {
+                                    change.consume()
+                                    scope.launch {
+                                        offsetX.animateTo(componentWidth, tween(150))
+                                        viewModel.skipToPrevious()
+                                        offsetX.snapTo(0f)
+                                    }
+                                }
+                                else -> {
+                                    scope.launch {
+                                        offsetX.animateTo(
+                                            0f,
+                                            spring(
+                                                dampingRatio = Spring.DampingRatioMediumBouncy,
+                                                stiffness = Spring.StiffnessMedium
+                                            )
                                         )
-                                    )
+                                    }
                                 }
                             }
                             break
                         }
                         val delta = change.position.x - change.previousPosition.x
-                        val newOffset = (offsetX.value + delta).coerceAtMost(0f)
+                        val newOffset = (offsetX.value + delta).coerceIn(-componentWidth, if (hasPrevious) componentWidth else 0f)
                         scope.launch { offsetX.snapTo(newOffset) }
-                        if (offsetX.value < -viewConfiguration.touchSlop) {
+                        if (kotlin.math.abs(offsetX.value) > viewConfiguration.touchSlop) {
                             change.consume()
                         }
                     }
@@ -133,6 +145,7 @@ fun PlayerScreen(
         PlayerBackground(
             currentImageUrl = trackForCard?.albumImageUrl,
             nextImageUrl = nextTrack?.albumImageUrl,
+            previousImageUrl = previousTrack?.albumImageUrl,
             offsetX = offsetX.value,
             componentWidth = componentWidth,
             modifier = Modifier.fillMaxSize()
@@ -178,6 +191,7 @@ fun PlayerScreen(
                 accentColor = VintageRedLight,
                 onSeek = viewModel::seekTo,
                 onTogglePlayPause = viewModel::togglePlayPause,
+                onSkipPrevious = viewModel::skipToPrevious,
                 onSkipNext = viewModel::skipToNext,
                 modifier = Modifier.padding(horizontal = 24.dp)
             )

@@ -32,6 +32,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,11 +64,13 @@ fun MiniPlayer(
     artist: String,
     thumbnailUrl: String?,
     nextTrack: Track?,
+    previousTrack: Track?,
     playerState: PlayerState,
     positionMs: Long = 0L,
     durationMs: Long = 0L,
     onTogglePlayPause: () -> Unit,
     onSkipNext: () -> Unit,
+    onSkipPrevious: () -> Unit,
     onTap: () -> Unit
 ) {
     val isPlaying = playerState is PlayerState.Playing
@@ -78,6 +81,7 @@ fun MiniPlayer(
     var componentWidth by remember { mutableFloatStateOf(0f) }
     var textZoneWidth by remember { mutableFloatStateOf(0f) }
     var isFavorite by remember { mutableStateOf(false) }
+    val hasPrevious by rememberUpdatedState(previousTrack != null)
 
     Box(
         modifier = modifier
@@ -90,30 +94,41 @@ fun MiniPlayer(
                         val event = awaitPointerEvent(PointerEventPass.Initial)
                         val change = event.changes.firstOrNull { it.id == down.id } ?: break
                         if (!change.pressed) {
-                            if (offsetX.value < -(componentWidth * 0.4f)) {
-                                change.consume()
-                                coroutineScope.launch {
-                                    offsetX.animateTo(-componentWidth, tween(150))
-                                    onSkipNext()
-                                    offsetX.snapTo(0f)
+                            when {
+                                offsetX.value < -(componentWidth * 0.4f) -> {
+                                    change.consume()
+                                    coroutineScope.launch {
+                                        offsetX.animateTo(-componentWidth, tween(150))
+                                        onSkipNext()
+                                        offsetX.snapTo(0f)
+                                    }
                                 }
-                            } else {
-                                coroutineScope.launch {
-                                    offsetX.animateTo(
-                                        0f,
-                                        spring(
-                                            dampingRatio = Spring.DampingRatioMediumBouncy,
-                                            stiffness = Spring.StiffnessMedium
+                                offsetX.value > (componentWidth * 0.4f) -> {
+                                    change.consume()
+                                    coroutineScope.launch {
+                                        offsetX.animateTo(componentWidth, tween(150))
+                                        onSkipPrevious()
+                                        offsetX.snapTo(0f)
+                                    }
+                                }
+                                else -> {
+                                    coroutineScope.launch {
+                                        offsetX.animateTo(
+                                            0f,
+                                            spring(
+                                                dampingRatio = Spring.DampingRatioMediumBouncy,
+                                                stiffness = Spring.StiffnessMedium
+                                            )
                                         )
-                                    )
+                                    }
                                 }
                             }
                             break
                         }
                         val delta = change.position.x - change.previousPosition.x
-                        val newOffset = (offsetX.value + delta).coerceAtMost(0f)
+                        val newOffset = (offsetX.value + delta).coerceIn(-componentWidth, if (hasPrevious) componentWidth else 0f)
                         coroutineScope.launch { offsetX.snapTo(newOffset) }
-                        if (offsetX.value < -viewConfiguration.touchSlop) {
+                        if (kotlin.math.abs(offsetX.value) > viewConfiguration.touchSlop) {
                             change.consume()
                         }
                     }
@@ -159,7 +174,9 @@ fun MiniPlayer(
                 // exactly in sync with the swipe distance, regardless of zone width.
                 val scale = if (componentWidth > 0f) textZoneWidth / componentWidth else 1f
                 val textOffset = (offsetX.value * scale).roundToInt()
-                val swipeFraction = if (componentWidth > 0f) (-offsetX.value / componentWidth).coerceIn(0f, 1f) else 0f
+                val overallFraction = if (componentWidth > 0f) (kotlin.math.abs(offsetX.value) / componentWidth).coerceIn(0f, 1f) else 0f
+                val nextFraction = if (componentWidth > 0f) (-offsetX.value / componentWidth).coerceIn(0f, 1f) else 0f
+                val prevFraction = if (componentWidth > 0f) (offsetX.value / componentWidth).coerceIn(0f, 1f) else 0f
 
                 Box(
                     modifier = Modifier
@@ -173,7 +190,7 @@ fun MiniPlayer(
                         modifier = Modifier
                             .fillMaxWidth()
                             .offset { IntOffset(textOffset, 0) }
-                            .alpha(1f - swipeFraction)
+                            .alpha(1f - overallFraction)
                     )
                     if (nextTrack != null) {
                         TrackInfo(
@@ -182,7 +199,17 @@ fun MiniPlayer(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .offset { IntOffset(textZoneWidth.roundToInt() + textOffset, 0) }
-                                .alpha(swipeFraction)
+                                .alpha(nextFraction)
+                        )
+                    }
+                    if (previousTrack != null) {
+                        TrackInfo(
+                            title = previousTrack.title,
+                            artist = previousTrack.artist,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .offset { IntOffset(-textZoneWidth.roundToInt() + textOffset, 0) }
+                                .alpha(prevFraction)
                         )
                     }
                 }
@@ -233,9 +260,9 @@ fun MiniPlayer(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(progress)
-                        .height(4.dp)
+                        .height(2.dp)
                         .align(Alignment.CenterStart)
-                        .background(VintageWhitePure.copy(alpha = 0.85f))
+                        .background(VintageRedLight)
                 )
             }
         }

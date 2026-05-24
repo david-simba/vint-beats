@@ -58,6 +58,7 @@ fun PlayerControls(
     accentColor: Color = VintageRedLight,
     onSeek: (Long) -> Unit,
     onTogglePlayPause: () -> Unit,
+    onSkipPrevious: () -> Unit,
     onSkipNext: () -> Unit
 ) {
     Column(
@@ -107,7 +108,7 @@ fun PlayerControls(
                 )
             }
 
-            IconButton(modifier = Modifier.size(48.dp), onClick = {}) {
+            IconButton(modifier = Modifier.size(48.dp), onClick = onSkipPrevious) {
                 Icon(
                     imageVector = Icons.Rounded.SkipPrevious,
                     contentDescription = "Previous",

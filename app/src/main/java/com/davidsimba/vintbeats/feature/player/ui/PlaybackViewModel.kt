@@ -11,7 +11,6 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.davidsimba.vintbeats.core.youtube.YouTubeLyricsService
 import com.davidsimba.vintbeats.core.youtube.YouTubeQueueService
 import com.davidsimba.vintbeats.core.youtube.YouTubeStreamService
-import com.davidsimba.vintbeats.feature.library.domain.SavedTrack
 import com.davidsimba.vintbeats.feature.library.domain.TrackRepository
 import com.davidsimba.vintbeats.core.model.Track
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,8 +40,8 @@ class PlaybackViewModel @Inject constructor(
     private val player = ExoPlayer.Builder(context).build()
     private var currentStreamUrl: String? = null
 
-    private val _currentSavedTrack = MutableStateFlow<SavedTrack?>(null)
-    val currentSavedTrack: StateFlow<SavedTrack?> = _currentSavedTrack.asStateFlow()
+    private val _currentSavedTrack = MutableStateFlow<com.davidsimba.vintbeats.feature.library.domain.SavedTrack?>(null)
+    val currentSavedTrack: StateFlow<com.davidsimba.vintbeats.feature.library.domain.SavedTrack?> = _currentSavedTrack.asStateFlow()
 
     private val _unsavedTrack = MutableStateFlow<Track?>(null)
     val unsavedTrack: StateFlow<Track?> = _unsavedTrack.asStateFlow()
@@ -64,6 +63,9 @@ class PlaybackViewModel @Inject constructor(
 
     private val _queue = MutableStateFlow<List<Track>>(emptyList())
     val queue: StateFlow<List<Track>> = _queue.asStateFlow()
+
+    private val _history = MutableStateFlow<List<Track>>(emptyList())
+    val history: StateFlow<List<Track>> = _history.asStateFlow()
 
     private val _isDownloading = MutableStateFlow(false)
     val isDownloading: StateFlow<Boolean> = _isDownloading.asStateFlow()
@@ -87,6 +89,7 @@ class PlaybackViewModel @Inject constructor(
             Log.d(TAG, "playTrack: skipped (already playing)")
             return
         }
+        if (newQueue == null) _history.value = emptyList()
         playbackJob?.cancel()
         progressJob?.cancel()
         player.stop()
@@ -125,6 +128,7 @@ class PlaybackViewModel @Inject constructor(
 
     fun play(savedTrackId: Int) {
         if (_currentSavedTrack.value?.id == savedTrackId && player.isPlaying) return
+        _history.value = emptyList()
         playbackJob?.cancel()
         progressJob?.cancel()
         player.stop()
@@ -235,9 +239,33 @@ class PlaybackViewModel @Inject constructor(
             _playerState.value = PlayerState.Idle
             return
         }
+        buildCurrentTrack()?.let { _history.value = _history.value + it }
         val next = queue.first()
         Log.d(TAG, "skipToNext: playing next → ${next.id} '${next.title}'")
         playTrack(next, newQueue = queue.drop(1))
+    }
+
+    fun skipToPrevious() {
+        val history = _history.value
+        if (history.isEmpty()) {
+            seekTo(0)
+            return
+        }
+        val previous = history.last()
+        val newQueue = buildCurrentTrack()?.let { listOf(it) + _queue.value } ?: _queue.value
+        _history.value = history.dropLast(1)
+        playTrack(previous, newQueue = newQueue)
+    }
+
+    private fun buildCurrentTrack(): Track? = if (_isSaved.value) {
+        _currentSavedTrack.value?.let {
+            Track(
+                id = it.trackId, title = it.trackTitle, artist = it.trackArtist,
+                albumImageUrl = it.trackThumbnailUrl, previewUrl = null, durationText = it.trackDurationText
+            )
+        }
+    } else {
+        _unsavedTrack.value
     }
 
     private fun startProgressUpdates() {

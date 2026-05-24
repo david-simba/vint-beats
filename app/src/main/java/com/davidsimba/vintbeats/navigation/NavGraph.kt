@@ -52,7 +52,9 @@ fun NavGraph(
     val positionMs by playbackViewModel.positionMs.collectAsStateWithLifecycle()
     val durationMs by playbackViewModel.durationMs.collectAsStateWithLifecycle()
     val queue by playbackViewModel.queue.collectAsStateWithLifecycle()
+    val history by playbackViewModel.history.collectAsStateWithLifecycle()
     val nextTrack = queue.firstOrNull()
+    val previousTrack = history.lastOrNull()
 
     val hasActivePlayback = (isSaved && currentSavedTrack != null) || (!isSaved && unsavedTrack != null)
     val showMiniPlayer = hasActivePlayback && currentRoute != Screen.Player.route
@@ -91,8 +93,10 @@ fun NavGraph(
                         positionMs = positionMs,
                         durationMs = durationMs,
                         nextTrack = nextTrack,
+                        previousTrack = previousTrack,
                         onTogglePlayPause = playbackViewModel::togglePlayPause,
                         onSkipNext = playbackViewModel::skipToNext,
+                        onSkipPrevious = playbackViewModel::skipToPrevious,
                         onTap = { navController.navigate(Screen.Player.route) { launchSingleTop = true } }
                     )
                 }
