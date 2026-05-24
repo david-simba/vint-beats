@@ -98,9 +98,9 @@ fun PlayerScreen(
                 .fillMaxSize()
                 .background(
                     Brush.verticalGradient(
-                        0f to Color.Black.copy(alpha = 0.15f),
-                        0.6f to Color.Black.copy(alpha = 0.25f),
-                        1f to Color.Black.copy(alpha = 0.7f)
+                        0f to Color.Black.copy(alpha = 0.35f),
+                        0.6f to Color.Black.copy(alpha = 0.5f),
+                        1f to Color.Black.copy(alpha = 0.85f)
                     )
                 )
         )

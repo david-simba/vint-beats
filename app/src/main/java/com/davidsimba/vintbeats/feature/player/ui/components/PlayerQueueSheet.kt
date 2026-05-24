@@ -35,7 +35,7 @@ import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.shared.components.EqualizerBars
 import com.davidsimba.vintbeats.shared.components.TrackInfo
-import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
+import com.davidsimba.vintbeats.shared.theme.VintageGrayCool
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
 import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
@@ -72,7 +72,7 @@ fun PlayerQueueSheet(
             modifier = Modifier.padding(bottom = 14.dp)
         )
         HorizontalDivider(
-            color = VintageGrayDeep.copy(alpha = 1f),
+            color = VintageGrayCool.copy(alpha = 0.10f),
             thickness = 0.5.dp,
             modifier = Modifier.padding(bottom = 14.dp)
         )
@@ -109,7 +109,7 @@ fun PlayerQueueSheet(
                     onClick = { onTrackClick(track) }
                 )
                 HorizontalDivider(
-                    color = VintageGrayDeep.copy(alpha = 0.5f),
+                    color = VintageGrayCool.copy(alpha = 0.10f),
                     thickness = 0.5.dp,
                     modifier = Modifier.padding(vertical = 4.dp)
                 )
