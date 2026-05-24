@@ -145,6 +145,7 @@ fun PlayerScreen(
                 accentColor = VintageRedLight,
                 onSeek = viewModel::seekTo,
                 onTogglePlayPause = viewModel::togglePlayPause,
+                onSkipNext = viewModel::skipToNext,
                 modifier = Modifier.padding(horizontal = 24.dp)
             )
 

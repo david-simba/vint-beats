@@ -75,7 +75,7 @@ class PlaybackViewModel @Inject constructor(
         player.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 if (playbackState == Player.STATE_ENDED) {
-                    viewModelScope.launch(Dispatchers.Main) { playNextInQueue() }
+                    viewModelScope.launch(Dispatchers.Main) { skipToNext() }
                 }
             }
         })
@@ -89,6 +89,7 @@ class PlaybackViewModel @Inject constructor(
         }
         playbackJob?.cancel()
         progressJob?.cancel()
+        player.stop()
         _unsavedTrack.value = track
         _currentSavedTrack.value = null
         _isSaved.value = false
@@ -126,6 +127,7 @@ class PlaybackViewModel @Inject constructor(
         if (_currentSavedTrack.value?.id == savedTrackId && player.isPlaying) return
         playbackJob?.cancel()
         progressJob?.cancel()
+        player.stop()
         _unsavedTrack.value = null
         _isSaved.value = true
         currentStreamUrl = null
@@ -223,17 +225,18 @@ class PlaybackViewModel @Inject constructor(
         _positionMs.value = positionMs
     }
 
-    private fun playNextInQueue() {
+    fun skipToNext() {
         val queue = _queue.value
-        Log.d(TAG, "playNextInQueue: queue size=${queue.size}, playerState=${_playerState.value}")
+        Log.d(TAG, "skipToNext: queue size=${queue.size}")
         if (queue.isEmpty()) {
-            Log.d(TAG, "playNextInQueue: queue exhausted → Idle")
-            _playerState.value = PlayerState.Idle
+            Log.d(TAG, "skipToNext: queue exhausted → Idle")
+            player.stop()
             progressJob?.cancel()
+            _playerState.value = PlayerState.Idle
             return
         }
         val next = queue.first()
-        Log.d(TAG, "playNextInQueue: playing next → ${next.id} '${next.title}'")
+        Log.d(TAG, "skipToNext: playing next → ${next.id} '${next.title}'")
         playTrack(next, newQueue = queue.drop(1))
     }
 
