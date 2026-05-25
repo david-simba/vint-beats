@@ -248,10 +248,17 @@ class YouTubeArtistService @Inject constructor(
             ?.obj("musicResponsiveListItemFlexColumnRenderer")
             ?.obj("text")?.arr("runs")
 
-        val artistName = secondColRuns?.idx(0)?.asJsonObject?.str("text") ?: ""
-        val duration = if ((secondColRuns?.size() ?: 0) > 1)
-            secondColRuns?.last()?.asJsonObject?.str("text") ?: ""
-        else ""
+        // Join all runs to handle featured artists ("Artist • Feat")
+        val artistName = secondColRuns
+            ?.mapNotNull { it.asJsonObject.str("text") }
+            ?.joinToString("") ?: ""
+
+        // Duration lives in fixedColumns[0], not in flexColumns
+        val duration = r.arr("fixedColumns")
+            ?.idx(0)?.asJsonObject
+            ?.obj("musicResponsiveListItemFixedColumnRenderer")
+            ?.obj("text")?.arr("runs")
+            ?.idx(0)?.asJsonObject?.str("text") ?: ""
 
         val thumbnailUrl = r.obj("thumbnail")?.obj("musicThumbnailRenderer")
             ?.obj("thumbnail")?.arr("thumbnails")
