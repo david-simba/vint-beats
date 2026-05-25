@@ -129,13 +129,13 @@ fun PlayerLyricsScreen(
                     Text(
                         text = line.text,
                         color = color,
-                        fontSize = if (isCurrent) 20.sp else 18.sp,
-                        fontWeight = if (isCurrent) FontWeight.Black else FontWeight.SemiBold,
-                        lineHeight = 36.sp,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        lineHeight = 24.sp,
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable { onSeek(line.timeMs) }
-                            .padding(vertical = 6.dp)
+                            .padding(vertical = 12.dp)
                     )
                 }
             }

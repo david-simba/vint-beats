@@ -119,8 +119,8 @@ fun PlayerLyricsCard(
                         Text(
                             text = line.text,
                             color = color,
-                            fontSize = if (isCurrent) 20.sp else 18.sp,
-                            fontWeight = if (isCurrent) FontWeight.Black else FontWeight.SemiBold,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.SemiBold,
                             lineHeight = 22.sp,
                             modifier = Modifier
                                 .fillMaxWidth()
