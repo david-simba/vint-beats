@@ -46,6 +46,9 @@ import com.davidsimba.vintbeats.feature.player.ui.components.PlayerTrackInfo
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerLyricsCard
 import com.davidsimba.vintbeats.shared.components.EqualizerBars
 import com.davidsimba.vintbeats.core.model.Track
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.core.graphics.ColorUtils
 import com.davidsimba.vintbeats.shared.components.background.rememberPaletteColor
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
@@ -97,6 +100,12 @@ fun PlayerScreen(
     val hasPrevious by rememberUpdatedState(previousTrack != null)
 
     val paletteColor = rememberPaletteColor(trackForCard?.albumImageUrl)
+    val cardBgColor = run {
+        val hsl = FloatArray(3)
+        ColorUtils.colorToHSL(paletteColor.toArgb(), hsl)
+        hsl[2] = (hsl[2] + 0.06f).coerceAtMost(0.35f)
+        Color(ColorUtils.HSLToColor(hsl))
+    }
 
     val outerListState = rememberLazyListState()
 
@@ -250,6 +259,7 @@ fun PlayerScreen(
                     PlayerLyricsCard(
                         lines = syncedLyrics,
                         positionMs = positionMs,
+                        cardBgColor = cardBgColor,
                         modifier = Modifier
                             .padding(horizontal = 16.dp)
                             .padding(top = 16.dp, bottom = 40.dp)

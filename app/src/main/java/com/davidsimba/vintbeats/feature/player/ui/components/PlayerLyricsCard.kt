@@ -46,7 +46,8 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
 fun PlayerLyricsCard(
     lines: List<LyricLine>,
     positionMs: Long,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    cardBgColor: Color = VintageBgBase
 ) {
     val currentIndex = remember(lines, positionMs) {
         if (lines.isEmpty()) -1
@@ -64,7 +65,7 @@ fun PlayerLyricsCard(
         }
     }
 
-    Card(modifier = modifier) {
+    Card(modifier = modifier, backgroundColor = cardBgColor) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -111,12 +112,12 @@ fun PlayerLyricsCard(
                         Text(
                             text = line.text,
                             color = color,
-                            fontSize = 18.sp,
+                            fontSize = if (isCurrent) 20.sp else 18.sp,
                             fontWeight = if (isCurrent) FontWeight.Black else FontWeight.Light,
                             lineHeight = 22.sp,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = 12.dp, bottom = 12.dp, end = 12.dp)
+                                .padding(top = 8.dp, bottom = 8.dp, end = 12.dp)
                                 .onGloballyPositioned { coords ->
                                     itemYPositions[index] = coords.positionInParent().y.toInt()
                                 }
@@ -137,7 +138,7 @@ fun PlayerLyricsCard(
                         .background(
                             Brush.verticalGradient(
                                 listOf(
-                                    VintageBgBase.copy(alpha = topFadeAlpha),
+                                    cardBgColor.copy(alpha = topFadeAlpha),
                                     Color.Transparent
                                 )
                             )
@@ -150,7 +151,7 @@ fun PlayerLyricsCard(
                         .height(52.dp)
                         .align(Alignment.BottomCenter)
                         .background(
-                            Brush.verticalGradient(listOf(Color.Transparent, VintageBgBase))
+                            Brush.verticalGradient(listOf(Color.Transparent, cardBgColor))
                         )
                 )
             }
