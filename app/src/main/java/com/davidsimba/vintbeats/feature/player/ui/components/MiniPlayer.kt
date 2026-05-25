@@ -86,7 +86,8 @@ fun MiniPlayer(
     Box(
         modifier = modifier
             .onSizeChanged { componentWidth = it.width.toFloat() }
-            .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+            .padding(start = 6.dp, end = 6.dp, bottom = 8.dp)
+            .clip(RoundedCornerShape(12.dp))
             .pointerInput(Unit) {
                 awaitEachGesture {
                     val down = awaitFirstDown(requireUnconsumed = false)
@@ -144,7 +145,7 @@ fun MiniPlayer(
         Box(
             modifier = Modifier
                 .matchParentSize()
-                .background(Color.Black.copy(alpha = 0.45f))
+                .background(Color.Black.copy(alpha = 0.25f))
         )
 
         Column {
