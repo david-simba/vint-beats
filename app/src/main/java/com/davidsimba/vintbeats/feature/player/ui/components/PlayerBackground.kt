@@ -20,12 +20,13 @@ fun PlayerBackground(
     previousImageUrl: String?,
     offsetX: Float,
     componentWidth: Float,
+    backgroundColor: Color = Color.Black,
     modifier: Modifier = Modifier
 ) {
     val gradient = Brush.verticalGradient(
-        0f to Color.Black.copy(alpha = 0.35f),
-        0.6f to Color.Black.copy(alpha = 0.5f),
-        1f to Color.Black.copy(alpha = 0.85f)
+        0f to Color.Black.copy(alpha = 0.3f),
+        0.55f to Color.Black.copy(alpha = 0.5f),
+        1f to backgroundColor
     )
 
     Box(modifier = modifier) {

@@ -46,6 +46,7 @@ import com.davidsimba.vintbeats.feature.player.ui.components.PlayerTrackInfo
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerLyricsCard
 import com.davidsimba.vintbeats.shared.components.EqualizerBars
 import com.davidsimba.vintbeats.core.model.Track
+import com.davidsimba.vintbeats.shared.components.background.rememberPaletteColor
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
 
@@ -95,12 +96,14 @@ fun PlayerScreen(
     val previousTrack = history.lastOrNull()
     val hasPrevious by rememberUpdatedState(previousTrack != null)
 
+    val paletteColor = rememberPaletteColor(trackForCard?.albumImageUrl)
+
     val outerListState = rememberLazyListState()
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(VintageBgDark)
+            .background(paletteColor)
             .onSizeChanged { componentWidth = it.width.toFloat() }
             .pointerInput(Unit) {
                 awaitEachGesture {
@@ -185,6 +188,7 @@ fun PlayerScreen(
                         previousImageUrl = previousTrack?.albumImageUrl,
                         offsetX = offsetX.value,
                         componentWidth = componentWidth,
+                        backgroundColor = paletteColor,
                         modifier = Modifier.fillMaxSize()
                     )
                     Column(
@@ -241,7 +245,7 @@ fun PlayerScreen(
                 Box(
                     modifier = Modifier
                         .fillParentMaxWidth()
-                        .background(VintageBgDark)
+                        .background(paletteColor)
                 ) {
                     PlayerLyricsCard(
                         lines = syncedLyrics,
