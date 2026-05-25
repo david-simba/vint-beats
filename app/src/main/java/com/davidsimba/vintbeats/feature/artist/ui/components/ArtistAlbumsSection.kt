@@ -8,12 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import com.davidsimba.vintbeats.core.model.Album
 import com.davidsimba.vintbeats.feature.album.ui.components.AlbumCard
-import com.davidsimba.vintbeats.shared.components.SectionLabel
-
-@Composable
-fun ArtistAlbumsHeader() {
-    SectionLabel(title = "Albums")
-}
 
 @Composable
 fun ArtistAlbumsList(albums: List<Album>, onAlbumClick: (Album) -> Unit) {

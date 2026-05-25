@@ -17,7 +17,6 @@ import androidx.palette.graphics.Palette
 import coil.imageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
-import com.davidsimba.vintbeats.shared.theme.VintageBgBase
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -56,7 +55,7 @@ fun Background(
 ) {
     val context = LocalContext.current
 
-    val colors by produceState(listOf(VintageBgDark, VintageBgBase), thumbnailUrl, artColorsOnly) {
+    val colors by produceState(listOf(VintageBgDark, VintageBgDark), thumbnailUrl, artColorsOnly) {
         val url = thumbnailUrl ?: return@produceState
         val request = ImageRequest.Builder(context)
             .data(url)
@@ -68,11 +67,10 @@ fun Background(
         val palette = withContext(Dispatchers.Default) { Palette.from(bitmap).generate() }
 
         if (artColorsOnly) {
-            // Two darkest swatches from the art
             val c1 = (palette.darkVibrantSwatch ?: palette.darkMutedSwatch
                 ?: palette.dominantSwatch)?.rgb?.let { Color(it) } ?: VintageBgDark
             val c2 = (palette.darkMutedSwatch ?: palette.darkVibrantSwatch
-                ?: palette.dominantSwatch)?.rgb?.let { Color(it) } ?: VintageBgBase
+                ?: palette.dominantSwatch)?.rgb?.let { Color(it) } ?: VintageBgDark
             value = listOf(c1, c2)
         } else {
             val swatch = palette.darkVibrantSwatch ?: palette.darkMutedSwatch
@@ -82,7 +80,7 @@ fun Background(
             ColorUtils.colorToHSL(rgb, hsl)
             hsl[1] = hsl[1].coerceAtMost(0.45f)
             hsl[2] = 0.25f
-            value = listOf(Color(ColorUtils.HSLToColor(hsl)), VintageBgBase)
+            value = listOf(Color(ColorUtils.HSLToColor(hsl)), VintageBgDark)
         }
     }
 

@@ -1,14 +1,18 @@
 package com.davidsimba.vintbeats.feature.artist.ui
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBackIosNew
 import androidx.compose.material3.CircularProgressIndicator
@@ -23,12 +27,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.core.model.Track
-import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistAlbumsHeader
 import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistAlbumsList
 import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistHeader
 import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistTopSongItem
 import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistTopSongsEmpty
-import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistTopSongsHeader
+import androidx.compose.foundation.background
+import com.davidsimba.vintbeats.shared.components.SectionLabel
+import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageGrayCool
 import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
 
@@ -72,27 +77,40 @@ fun ArtistScreen(
                         )
                     }
 
-                    if (state.topTracks.isNotEmpty()) {
-                        item { ArtistTopSongsHeader() }
-                        itemsIndexed(state.topTracks) { index, track ->
-                            ArtistTopSongItem(index = index + 1, track = track, onClick = { onTrackSelected(track) })
-                        }
-                    } else {
-                        item { ArtistTopSongsEmpty() }
-                    }
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .offset(y = (-6).dp)
+                                .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                                .background(VintageBgDark)
+                        ) {
+                            if (state.topTracks.isNotEmpty()) {
+                                Spacer(Modifier.height(6.dp))
+                                SectionLabel("Top Songs")
+                                state.topTracks.forEachIndexed { index, track ->
+                                    ArtistTopSongItem(
+                                        index = index + 1,
+                                        track = track,
+                                        onClick = { onTrackSelected(track) }
+                                    )
+                                }
+                            } else {
+                                ArtistTopSongsEmpty()
+                            }
 
-                    if (state.albums.isNotEmpty()) {
-                        item { Spacer(Modifier.height(12.dp)) }
-                        item { ArtistAlbumsHeader() }
-                        item {
-                            ArtistAlbumsList(
-                                albums = state.albums,
-                                onAlbumClick = {}
-                            )
+                            if (state.albums.isNotEmpty()) {
+                                Spacer(Modifier.height(12.dp))
+                                SectionLabel("Albums")
+                                ArtistAlbumsList(
+                                    albums = state.albums,
+                                    onAlbumClick = {}
+                                )
+                            }
+
+                            Spacer(Modifier.height(100.dp))
                         }
                     }
-
-                    item { Spacer(Modifier.height(100.dp)) }
                 }
             }
         }
