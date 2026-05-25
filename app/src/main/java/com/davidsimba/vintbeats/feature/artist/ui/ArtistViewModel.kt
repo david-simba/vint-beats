@@ -33,8 +33,13 @@ class ArtistViewModel @Inject constructor(
     private fun loadArtist() {
         viewModelScope.launch {
             runCatching { repository.getArtistDetail(browseId) }
-                .onSuccess { (artist, tracks, songsBrowseId) ->
-                    _uiState.value = ArtistUiState.Success(artist, tracks, songsBrowseId)
+                .onSuccess { detail ->
+                    _uiState.value = ArtistUiState.Success(
+                        artist = detail.artist,
+                        topTracks = detail.topTracks,
+                        songsBrowseId = detail.songsBrowseId,
+                        albums = detail.albums
+                    )
                 }
                 .onFailure {
                     _uiState.value = ArtistUiState.Error(it.message ?: "Failed to load artist")

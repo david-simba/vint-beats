@@ -1,7 +1,9 @@
 package com.davidsimba.vintbeats.core.youtube
 
+import com.davidsimba.vintbeats.core.model.Album
 import com.davidsimba.vintbeats.core.model.Artist
 import com.davidsimba.vintbeats.core.model.Track
+import com.davidsimba.vintbeats.feature.artist.data.ArtistDetail
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import kotlinx.coroutines.Dispatchers
@@ -46,7 +48,7 @@ class YouTubeArtistService @Inject constructor(
             }
         }
 
-    suspend fun getArtistDetail(browseId: String): Triple<Artist, List<Track>, String?>? =
+    suspend fun getArtistDetail(browseId: String): ArtistDetail? =
         withContext(Dispatchers.IO) {
             try {
                 val body = """
@@ -172,7 +174,7 @@ class YouTubeArtistService @Inject constructor(
         }
     }
 
-    private fun parseArtistBrowseResponse(browseId: String, json: String): Triple<Artist, List<Track>, String?>? {
+    private fun parseArtistBrowseResponse(browseId: String, json: String): ArtistDetail? {
         val root = runCatching { JsonParser.parseString(json).asJsonObject }.getOrNull()
             ?: return null
 
@@ -200,7 +202,7 @@ class YouTubeArtistService @Inject constructor(
             ?.idx(0)?.asJsonObject
             ?.obj("tabRenderer")?.obj("content")
             ?.obj("sectionListRenderer")?.arr("contents")
-            ?: return Triple(artist, emptyList(), null)
+            ?: return ArtistDetail(artist, emptyList(), null, emptyList())
 
         val tracks = buildList {
             for (section in sections) {
@@ -225,7 +227,43 @@ class YouTubeArtistService @Inject constructor(
             }
         }
 
-        return Triple(artist, tracks, songsBrowseId)
+        val albums = buildList {
+            for (section in sections) {
+                val carousel = section.asJsonObject.obj("musicCarouselShelfRenderer") ?: continue
+                val headerTitle = carousel
+                    .obj("header")?.obj("musicCarouselShelfBasicHeaderRenderer")
+                    ?.obj("title")?.arr("runs")
+                    ?.idx(0)?.asJsonObject?.str("text") ?: ""
+                if (!headerTitle.contains("album", ignoreCase = true)) continue
+                val items = carousel.arr("contents") ?: continue
+                for (item in items) {
+                    parseAlbum(item.asJsonObject)?.let { add(it) }
+                }
+            }
+        }
+
+        return ArtistDetail(artist, tracks, songsBrowseId, albums)
+    }
+
+    private fun parseAlbum(item: JsonObject): Album? {
+        val r = item.obj("musicTwoRowItemRenderer") ?: return null
+
+        val titleRun = r.obj("title")?.arr("runs")?.idx(0)?.asJsonObject ?: return null
+        val title = titleRun.str("text") ?: return null
+
+        val id = titleRun.obj("navigationEndpoint")?.obj("browseEndpoint")?.str("browseId")
+            ?: r.obj("navigationEndpoint")?.obj("browseEndpoint")?.str("browseId")
+            ?: return null
+
+        val subtitleRuns = r.obj("subtitle")?.arr("runs")
+        val year = subtitleRuns?.lastOrNull()?.asJsonObject?.str("text")
+            ?.takeIf { it.matches(Regex("\\d{4}")) }
+
+        val thumbnailUrl = r.obj("thumbnailRenderer")?.obj("musicThumbnailRenderer")
+            ?.obj("thumbnail")?.arr("thumbnails")
+            ?.last()?.asJsonObject?.str("url")?.upscaleThumbnail()
+
+        return Album(id = id, title = title, thumbnailUrl = thumbnailUrl, year = year)
     }
 
     private fun parseTrackFromBrowse(r: JsonObject): Track? {

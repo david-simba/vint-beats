@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.core.model.Track
+import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistAlbumsHeader
+import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistAlbumsList
 import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistHeader
 import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistTopSongItem
 import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistTopSongsEmpty
@@ -77,6 +79,17 @@ fun ArtistScreen(
                         }
                     } else {
                         item { ArtistTopSongsEmpty() }
+                    }
+
+                    if (state.albums.isNotEmpty()) {
+                        item { Spacer(Modifier.height(12.dp)) }
+                        item { ArtistAlbumsHeader() }
+                        item {
+                            ArtistAlbumsList(
+                                albums = state.albums,
+                                onAlbumClick = {}
+                            )
+                        }
                     }
 
                     item { Spacer(Modifier.height(100.dp)) }

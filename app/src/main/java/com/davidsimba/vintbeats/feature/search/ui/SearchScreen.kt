@@ -38,12 +38,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.core.model.Artist
 import com.davidsimba.vintbeats.core.model.Track
+import com.davidsimba.vintbeats.shared.components.SectionLabel
 import com.davidsimba.vintbeats.shared.components.cards.TrackCard
 import com.davidsimba.vintbeats.shared.theme.VintageBlackMid
 import com.davidsimba.vintbeats.shared.theme.VintageGrayCool
 import com.davidsimba.vintbeats.shared.theme.VintageWhite
 import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
-import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
 
 @Composable
 fun SearchScreen(
@@ -107,7 +107,7 @@ fun SearchScreen(
                     LazyColumn {
                         if (state.artists.isNotEmpty()) {
                             item {
-                                SectionHeader("Artists")
+                                SectionLabel("Artists")
                             }
                             items(state.artists.take(3)) { artist ->
                                 ArtistRow(artist = artist, onClick = { onArtistSelected(artist) })
@@ -115,7 +115,7 @@ fun SearchScreen(
                         }
                         if (state.tracks.isNotEmpty()) {
                             item {
-                                SectionHeader("Songs")
+                                SectionLabel("Songs")
                             }
                             items(state.tracks) { track ->
                                 TrackCard(
@@ -131,17 +131,6 @@ fun SearchScreen(
             }
         }
     }
-}
-
-@Composable
-private fun SectionHeader(title: String) {
-    Text(
-        text = title,
-        color = VintageWhiteWarm,
-        fontSize = 14.sp,
-        fontWeight = FontWeight.SemiBold,
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-    )
 }
 
 @Composable
