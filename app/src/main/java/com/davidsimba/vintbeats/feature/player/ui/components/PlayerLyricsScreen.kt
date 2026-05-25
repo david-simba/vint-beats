@@ -28,7 +28,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.getValue
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.HorizontalDivider
@@ -37,7 +37,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,6 +55,7 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
 
 @Composable
 fun PlayerLyricsScreen(
+    modifier: Modifier = Modifier,
     lines: List<LyricLine>,
     isLoading: Boolean = false,
     positionMs: Long,
@@ -65,7 +65,6 @@ fun PlayerLyricsScreen(
     onClose: () -> Unit,
     onSeek: (Long) -> Unit,
     onTogglePlayPause: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
     val currentIndex = remember(lines, positionMs) {
         if (lines.isEmpty()) -1
@@ -90,15 +89,15 @@ fun PlayerLyricsScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
+                .padding(start = 4.dp, end = 16.dp, top = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onClose) {
                 Icon(
-                    imageVector = Icons.Rounded.Close,
-                    contentDescription = "Close lyrics",
-                    tint = VintageWhitePure.copy(alpha = 0.7f)
+                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                    contentDescription = "Back",
+                    tint = VintageWhitePure,
+                    modifier = Modifier.size(20.dp)
                 )
             }
             Text(
@@ -107,7 +106,6 @@ fun PlayerLyricsScreen(
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold
             )
-            Spacer(Modifier.size(48.dp))
         }
 
         if (isLoading) {
@@ -149,7 +147,7 @@ fun PlayerLyricsScreen(
             LazyColumn(
                 state = listState,
                 modifier = Modifier.weight(1f),
-                contentPadding = PaddingValues(horizontal = 24.dp, vertical = 16.dp)
+                contentPadding = PaddingValues(start = 24.dp, end = 24.dp, bottom = 16.dp)
             ) {
                 itemsIndexed(lines) { index, line ->
                     val isCurrent = index == currentIndex
