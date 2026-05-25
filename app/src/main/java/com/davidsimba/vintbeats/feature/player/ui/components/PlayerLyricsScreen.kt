@@ -1,15 +1,22 @@
 package com.davidsimba.vintbeats.feature.player.ui.components
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -19,6 +26,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.getValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Pause
@@ -49,6 +57,7 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
 @Composable
 fun PlayerLyricsScreen(
     lines: List<LyricLine>,
+    isLoading: Boolean = false,
     positionMs: Long,
     durationMs: Long,
     isPlaying: Boolean,
@@ -101,7 +110,30 @@ fun PlayerLyricsScreen(
             Spacer(Modifier.size(48.dp))
         }
 
-        if (lines.isEmpty()) {
+        if (isLoading) {
+            Column(
+                modifier = Modifier.weight(1f).fillMaxWidth().padding(horizontal = 24.dp, vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                val alpha by rememberInfiniteTransition(label = "skeleton").animateFloat(
+                    initialValue = 0.12f,
+                    targetValue = 0.3f,
+                    animationSpec = infiniteRepeatable(tween(900), RepeatMode.Reverse),
+                    label = "skeleton_alpha_screen"
+                )
+                listOf(0.8f, 0.6f, 0.9f, 0.5f, 0.75f, 0.55f, 0.85f).forEach { fraction ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(fraction)
+                            .height(14.dp)
+                            .background(
+                                color = VintageWhitePure.copy(alpha = alpha),
+                                shape = RoundedCornerShape(7.dp)
+                            )
+                    )
+                }
+            }
+        } else if (lines.isEmpty()) {
             Column(
                 modifier = Modifier.weight(1f).fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,

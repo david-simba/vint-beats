@@ -71,6 +71,7 @@ fun PlayerScreen(
     val positionMs by viewModel.positionMs.collectAsStateWithLifecycle()
     val durationMs by viewModel.durationMs.collectAsStateWithLifecycle()
     val syncedLyrics by viewModel.syncedLyrics.collectAsStateWithLifecycle()
+    val isLoadingLyrics by viewModel.isLoadingLyrics.collectAsStateWithLifecycle()
     val queue by viewModel.queue.collectAsStateWithLifecycle()
     val history by viewModel.history.collectAsStateWithLifecycle()
 
@@ -267,6 +268,7 @@ fun PlayerScreen(
                 ) {
                     PlayerLyricsCard(
                         lines = syncedLyrics,
+                        isLoading = isLoadingLyrics,
                         positionMs = positionMs,
                         cardBgColor = cardBgColor,
                         onExpand = { showLyricsScreen = true },
@@ -290,6 +292,7 @@ fun PlayerScreen(
             ) {
                 PlayerLyricsScreen(
                     lines = syncedLyrics,
+                    isLoading = isLoadingLyrics,
                     positionMs = positionMs,
                     durationMs = durationMs,
                     isPlaying = isPlaying,

@@ -1,7 +1,11 @@
 package com.davidsimba.vintbeats.feature.player.ui.components
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -10,9 +14,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -46,6 +52,7 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
 @Composable
 fun PlayerLyricsCard(
     lines: List<LyricLine>,
+    isLoading: Boolean = false,
     positionMs: Long,
     modifier: Modifier = Modifier,
     cardBgColor: Color = VintageBgBase,
@@ -94,7 +101,9 @@ fun PlayerLyricsCard(
             }
         }
 
-        if (lines.isEmpty()) {
+        if (isLoading) {
+            LyricsSkeleton(cardBgColor = cardBgColor)
+        } else if (lines.isEmpty()) {
             Text(
                 text = "No lyrics available for this song.",
                 color = VintageWhitePure.copy(alpha = 0.4f),
@@ -162,6 +171,30 @@ fun PlayerLyricsCard(
                         )
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun LyricsSkeleton(cardBgColor: Color) {
+    val alpha by rememberInfiniteTransition(label = "skeleton").animateFloat(
+        initialValue = 0.15f,
+        targetValue = 0.35f,
+        animationSpec = infiniteRepeatable(tween(900), RepeatMode.Reverse),
+        label = "skeleton_alpha"
+    )
+    val widths = remember { listOf(0.75f, 0.55f, 0.85f, 0.45f, 0.65f) }
+    Column(modifier = Modifier.fillMaxWidth().height(120.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+        widths.forEach { fraction ->
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(fraction)
+                    .height(12.dp)
+                    .background(
+                        color = VintageWhitePure.copy(alpha = alpha),
+                        shape = RoundedCornerShape(6.dp)
+                    )
+            )
         }
     }
 }

@@ -62,6 +62,9 @@ class PlaybackViewModel @Inject constructor(
     private val _syncedLyrics = MutableStateFlow<List<LyricLine>>(emptyList())
     val syncedLyrics: StateFlow<List<LyricLine>> = _syncedLyrics.asStateFlow()
 
+    private val _isLoadingLyrics = MutableStateFlow(false)
+    val isLoadingLyrics: StateFlow<Boolean> = _isLoadingLyrics.asStateFlow()
+
     private val _queue = MutableStateFlow<List<Track>>(emptyList())
     val queue: StateFlow<List<Track>> = _queue.asStateFlow()
 
@@ -99,10 +102,14 @@ class PlaybackViewModel @Inject constructor(
         _isSaved.value = false
         currentStreamUrl = null
         _syncedLyrics.value = emptyList()
+        _isLoadingLyrics.value = true
         _positionMs.value = 0L
         _durationMs.value = 0L
         _queue.value = newQueue ?: emptyList()
-        viewModelScope.launch { _syncedLyrics.value = lrcLibService.getSyncedLyrics(track.title, track.artist) }
+        viewModelScope.launch {
+            _syncedLyrics.value = lrcLibService.getSyncedLyrics(track.title, track.artist)
+            _isLoadingLyrics.value = false
+        }
         if (newQueue == null) {
             viewModelScope.launch { _queue.value = queueService.getUpNextTracks(track.id) }
         }
@@ -137,6 +144,7 @@ class PlaybackViewModel @Inject constructor(
         _isSaved.value = true
         currentStreamUrl = null
         _syncedLyrics.value = emptyList()
+        _isLoadingLyrics.value = true
         _positionMs.value = 0L
         _durationMs.value = 0L
         _queue.value = emptyList()
@@ -147,7 +155,10 @@ class PlaybackViewModel @Inject constructor(
                 return@launch
             }
             _currentSavedTrack.value = saved
-            viewModelScope.launch { _syncedLyrics.value = lrcLibService.getSyncedLyrics(saved.trackTitle, saved.trackArtist) }
+            viewModelScope.launch {
+                _syncedLyrics.value = lrcLibService.getSyncedLyrics(saved.trackTitle, saved.trackArtist)
+                _isLoadingLyrics.value = false
+            }
             viewModelScope.launch {
                 _queue.value = repository.getAllTracks().first()
                     .filter { it.id != savedTrackId }
