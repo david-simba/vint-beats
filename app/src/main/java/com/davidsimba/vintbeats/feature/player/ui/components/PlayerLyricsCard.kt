@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 
 import androidx.compose.material.icons.rounded.Fullscreen
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,7 +48,8 @@ fun PlayerLyricsCard(
     lines: List<LyricLine>,
     positionMs: Long,
     modifier: Modifier = Modifier,
-    cardBgColor: Color = VintageBgBase
+    cardBgColor: Color = VintageBgBase,
+    onExpand: () -> Unit = {}
 ) {
     val currentIndex = remember(lines, positionMs) {
         if (lines.isEmpty()) -1
@@ -79,12 +81,17 @@ fun PlayerLyricsCard(
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold
             )
-            Icon(
-                imageVector = Icons.Rounded.Fullscreen,
-                contentDescription = "Expand lyrics",
-                tint = VintageWhitePure.copy(alpha = 0.45f),
-                modifier = Modifier.size(20.dp)
-            )
+            IconButton(
+                onClick = onExpand,
+                modifier = Modifier.size(32.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Fullscreen,
+                    contentDescription = "Expand lyrics",
+                    tint = VintageWhitePure.copy(alpha = 0.45f),
+                    modifier = Modifier.size(20.dp)
+                )
+            }
         }
 
         if (lines.isEmpty()) {
@@ -113,7 +120,7 @@ fun PlayerLyricsCard(
                             text = line.text,
                             color = color,
                             fontSize = if (isCurrent) 20.sp else 18.sp,
-                            fontWeight = if (isCurrent) FontWeight.Black else FontWeight.Light,
+                            fontWeight = if (isCurrent) FontWeight.Black else FontWeight.SemiBold,
                             lineHeight = 22.sp,
                             modifier = Modifier
                                 .fillMaxWidth()

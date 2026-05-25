@@ -1,9 +1,12 @@
 package com.davidsimba.vintbeats.feature.player.ui
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.background
@@ -34,6 +37,7 @@ import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
+import androidx.activity.compose.BackHandler
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.shared.components.BottomSheetMenuItem
 import com.davidsimba.vintbeats.shared.components.BottomSheet
@@ -44,6 +48,7 @@ import com.davidsimba.vintbeats.feature.player.ui.components.PlayerQueueSheet
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerTopBar
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerTrackInfo
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerLyricsCard
+import com.davidsimba.vintbeats.feature.player.ui.components.PlayerLyricsScreen
 import com.davidsimba.vintbeats.shared.components.EqualizerBars
 import com.davidsimba.vintbeats.core.model.Track
 import androidx.compose.ui.graphics.Color
@@ -71,6 +76,9 @@ fun PlayerScreen(
 
     var showOptionsSheet by remember { mutableStateOf(false) }
     var showQueueSheet by remember { mutableStateOf(false) }
+    var showLyricsScreen by remember { mutableStateOf(false) }
+
+    BackHandler(enabled = showLyricsScreen) { showLyricsScreen = false }
     var isFavorite by remember { mutableStateOf(false) }
 
     val sheetState = rememberModalBottomSheetState()
@@ -114,7 +122,8 @@ fun PlayerScreen(
             .fillMaxSize()
             .background(paletteColor)
             .onSizeChanged { componentWidth = it.width.toFloat() }
-            .pointerInput(Unit) {
+            .pointerInput(showLyricsScreen) {
+                if (showLyricsScreen) return@pointerInput
                 awaitEachGesture {
                     val down = awaitFirstDown(requireUnconsumed = false)
                     var cumulX = 0f
@@ -260,11 +269,35 @@ fun PlayerScreen(
                         lines = syncedLyrics,
                         positionMs = positionMs,
                         cardBgColor = cardBgColor,
+                        onExpand = { showLyricsScreen = true },
                         modifier = Modifier
                             .padding(horizontal = 16.dp)
                             .padding(top = 16.dp, bottom = 40.dp)
                     )
                 }
+            }
+        }
+
+        AnimatedVisibility(
+            visible = showLyricsScreen,
+            enter = slideInVertically(initialOffsetY = { it }),
+            exit = slideOutVertically(targetOffsetY = { it })
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(cardBgColor)
+            ) {
+                PlayerLyricsScreen(
+                    lines = syncedLyrics,
+                    positionMs = positionMs,
+                    durationMs = durationMs,
+                    isPlaying = isPlaying,
+                    track = trackForCard,
+                    onClose = { showLyricsScreen = false },
+                    onSeek = viewModel::seekTo,
+                    onTogglePlayPause = viewModel::togglePlayPause
+                )
             }
         }
 

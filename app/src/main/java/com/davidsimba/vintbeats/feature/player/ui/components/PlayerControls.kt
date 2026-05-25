@@ -158,7 +158,7 @@ fun PlayerControls(
 }
 
 @Composable
-private fun SeekBar(
+internal fun SeekBar(
     positionMs: Long,
     durationMs: Long,
     isLoading: Boolean,
