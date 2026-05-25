@@ -8,7 +8,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
-import com.davidsimba.vintbeats.core.youtube.YouTubeLyricsService
+import com.davidsimba.vintbeats.core.model.LyricLine
+import com.davidsimba.vintbeats.core.youtube.LrcLibService
 import com.davidsimba.vintbeats.core.youtube.YouTubeQueueService
 import com.davidsimba.vintbeats.core.youtube.YouTubeStreamService
 import com.davidsimba.vintbeats.feature.library.domain.TrackRepository
@@ -33,7 +34,7 @@ class PlaybackViewModel @Inject constructor(
     private val repository: TrackRepository,
     private val streamService: YouTubeStreamService,
     private val queueService: YouTubeQueueService,
-    private val lyricsService: YouTubeLyricsService,
+    private val lrcLibService: LrcLibService,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -58,8 +59,8 @@ class PlaybackViewModel @Inject constructor(
     private val _durationMs = MutableStateFlow(0L)
     val durationMs: StateFlow<Long> = _durationMs.asStateFlow()
 
-    private val _lyrics = MutableStateFlow<String?>(null)
-    val lyrics: StateFlow<String?> = _lyrics.asStateFlow()
+    private val _syncedLyrics = MutableStateFlow<List<LyricLine>>(emptyList())
+    val syncedLyrics: StateFlow<List<LyricLine>> = _syncedLyrics.asStateFlow()
 
     private val _queue = MutableStateFlow<List<Track>>(emptyList())
     val queue: StateFlow<List<Track>> = _queue.asStateFlow()
@@ -97,11 +98,11 @@ class PlaybackViewModel @Inject constructor(
         _currentSavedTrack.value = null
         _isSaved.value = false
         currentStreamUrl = null
-        _lyrics.value = null
+        _syncedLyrics.value = emptyList()
         _positionMs.value = 0L
         _durationMs.value = 0L
         _queue.value = newQueue ?: emptyList()
-        viewModelScope.launch { _lyrics.value = lyricsService.getLyrics(track.id) }
+        viewModelScope.launch { _syncedLyrics.value = lrcLibService.getSyncedLyrics(track.title, track.artist) }
         if (newQueue == null) {
             viewModelScope.launch { _queue.value = queueService.getUpNextTracks(track.id) }
         }
@@ -135,7 +136,7 @@ class PlaybackViewModel @Inject constructor(
         _unsavedTrack.value = null
         _isSaved.value = true
         currentStreamUrl = null
-        _lyrics.value = null
+        _syncedLyrics.value = emptyList()
         _positionMs.value = 0L
         _durationMs.value = 0L
         _queue.value = emptyList()
@@ -146,7 +147,7 @@ class PlaybackViewModel @Inject constructor(
                 return@launch
             }
             _currentSavedTrack.value = saved
-            viewModelScope.launch { _lyrics.value = lyricsService.getLyrics(saved.trackId) }
+            viewModelScope.launch { _syncedLyrics.value = lrcLibService.getSyncedLyrics(saved.trackTitle, saved.trackArtist) }
             viewModelScope.launch {
                 _queue.value = repository.getAllTracks().first()
                     .filter { it.id != savedTrackId }

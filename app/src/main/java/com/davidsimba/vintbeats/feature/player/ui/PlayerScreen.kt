@@ -6,6 +6,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,8 +43,10 @@ import com.davidsimba.vintbeats.feature.player.ui.components.PlayerControls
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerQueueSheet
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerTopBar
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerTrackInfo
+import com.davidsimba.vintbeats.feature.player.ui.components.PlayerLyricsCard
 import com.davidsimba.vintbeats.shared.components.EqualizerBars
 import com.davidsimba.vintbeats.core.model.Track
+import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,7 +61,7 @@ fun PlayerScreen(
     val playerState by viewModel.playerState.collectAsStateWithLifecycle()
     val positionMs by viewModel.positionMs.collectAsStateWithLifecycle()
     val durationMs by viewModel.durationMs.collectAsStateWithLifecycle()
-    val lyrics by viewModel.lyrics.collectAsStateWithLifecycle()
+    val syncedLyrics by viewModel.syncedLyrics.collectAsStateWithLifecycle()
     val queue by viewModel.queue.collectAsStateWithLifecycle()
     val history by viewModel.history.collectAsStateWithLifecycle()
 
@@ -90,113 +95,163 @@ fun PlayerScreen(
     val previousTrack = history.lastOrNull()
     val hasPrevious by rememberUpdatedState(previousTrack != null)
 
+    val outerListState = rememberLazyListState()
+
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(VintageBgDark)
             .onSizeChanged { componentWidth = it.width.toFloat() }
             .pointerInput(Unit) {
                 awaitEachGesture {
                     val down = awaitFirstDown(requireUnconsumed = false)
+                    var cumulX = 0f
+                    var cumulY = 0f
+                    var isHorizontal: Boolean? = null
+
                     while (true) {
                         val event = awaitPointerEvent(PointerEventPass.Initial)
                         val change = event.changes.firstOrNull { it.id == down.id } ?: break
+                        val dx = change.position.x - change.previousPosition.x
+                        val dy = change.position.y - change.previousPosition.y
+                        cumulX += dx
+                        cumulY += dy
+
                         if (!change.pressed) {
-                            when {
-                                offsetX.value < -(componentWidth * 0.4f) -> {
-                                    change.consume()
-                                    scope.launch {
-                                        offsetX.animateTo(-componentWidth, tween(150))
-                                        viewModel.skipToNext()
-                                        offsetX.snapTo(0f)
+                            if (isHorizontal == true) {
+                                when {
+                                    offsetX.value < -(componentWidth * 0.4f) -> {
+                                        change.consume()
+                                        scope.launch {
+                                            offsetX.animateTo(-componentWidth, tween(150))
+                                            viewModel.skipToNext()
+                                            offsetX.snapTo(0f)
+                                        }
                                     }
-                                }
-                                offsetX.value > (componentWidth * 0.4f) -> {
-                                    change.consume()
-                                    scope.launch {
-                                        offsetX.animateTo(componentWidth, tween(150))
-                                        viewModel.skipToPrevious()
-                                        offsetX.snapTo(0f)
+                                    offsetX.value > (componentWidth * 0.4f) -> {
+                                        change.consume()
+                                        scope.launch {
+                                            offsetX.animateTo(componentWidth, tween(150))
+                                            viewModel.skipToPrevious()
+                                            offsetX.snapTo(0f)
+                                        }
                                     }
-                                }
-                                else -> {
-                                    scope.launch {
-                                        offsetX.animateTo(
-                                            0f,
-                                            spring(
-                                                dampingRatio = Spring.DampingRatioMediumBouncy,
-                                                stiffness = Spring.StiffnessMedium
+                                    else -> {
+                                        scope.launch {
+                                            offsetX.animateTo(
+                                                0f,
+                                                spring(
+                                                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                                                    stiffness = Spring.StiffnessMedium
+                                                )
                                             )
-                                        )
+                                        }
                                     }
                                 }
                             }
                             break
                         }
-                        val delta = change.position.x - change.previousPosition.x
-                        val newOffset = (offsetX.value + delta).coerceIn(-componentWidth, if (hasPrevious) componentWidth else 0f)
-                        scope.launch { offsetX.snapTo(newOffset) }
-                        if (kotlin.math.abs(offsetX.value) > viewConfiguration.touchSlop) {
+
+                        if (isHorizontal == null) {
+                            val absX = kotlin.math.abs(cumulX)
+                            val absY = kotlin.math.abs(cumulY)
+                            if (absX > viewConfiguration.touchSlop || absY > viewConfiguration.touchSlop) {
+                                isHorizontal = absX >= absY
+                                if (isHorizontal == false) scope.launch { offsetX.snapTo(0f) }
+                            }
+                        }
+
+                        if (isHorizontal == true) {
+                            val newOffset = (offsetX.value + dx).coerceIn(
+                                -componentWidth,
+                                if (hasPrevious) componentWidth else 0f
+                            )
+                            scope.launch { offsetX.snapTo(newOffset) }
                             change.consume()
                         }
                     }
                 }
             }
     ) {
-        PlayerBackground(
-            currentImageUrl = trackForCard?.albumImageUrl,
-            nextImageUrl = nextTrack?.albumImageUrl,
-            previousImageUrl = previousTrack?.albumImageUrl,
-            offsetX = offsetX.value,
-            componentWidth = componentWidth,
+        LazyColumn(
+            state = outerListState,
             modifier = Modifier.fillMaxSize()
-        )
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding(),
-            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            PlayerTopBar(
-                onBack = onBack,
-                onQueueOpen = { showQueueSheet = true },
-                onMoreOptions = { showOptionsSheet = true }
-            )
+            item {
+                Box(modifier = Modifier.fillParentMaxSize()) {
+                    PlayerBackground(
+                        currentImageUrl = trackForCard?.albumImageUrl,
+                        nextImageUrl = nextTrack?.albumImageUrl,
+                        previousImageUrl = previousTrack?.albumImageUrl,
+                        offsetX = offsetX.value,
+                        componentWidth = componentWidth,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .statusBarsPadding(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                    PlayerTopBar(
+                        onBack = onBack,
+                        onQueueOpen = { showQueueSheet = true },
+                        onMoreOptions = { showOptionsSheet = true }
+                    )
 
-            Spacer(Modifier.weight(1f))
+                    Spacer(Modifier.weight(1f))
 
-            trackForCard?.let {
-                PlayerTrackInfo(
-                    title = it.title,
-                    artist = it.artist,
-                    isFavorite = isFavorite,
-                    onToggleFavorite = { isFavorite = !isFavorite }
-                )
+                    trackForCard?.let {
+                        PlayerTrackInfo(
+                            title = it.title,
+                            artist = it.artist,
+                            isFavorite = isFavorite,
+                            onToggleFavorite = { isFavorite = !isFavorite }
+                        )
+                    }
+
+                    Spacer(Modifier.height(12.dp))
+
+                    EqualizerBars(
+                        isPlaying = isPlaying,
+                        color = VintageRedLight.copy(alpha = 0.8f),
+                        maxHeight = 18.dp,
+                        modifier = Modifier.padding(horizontal = 24.dp)
+                    )
+
+                    PlayerControls(
+                        isPlaying = isPlaying,
+                        isLoading = isLoading,
+                        positionMs = positionMs,
+                        durationMs = durationMs,
+                        accentColor = VintageRedLight,
+                        onSeek = viewModel::seekTo,
+                        onTogglePlayPause = viewModel::togglePlayPause,
+                        onSkipPrevious = viewModel::skipToPrevious,
+                        onSkipNext = viewModel::skipToNext,
+                        modifier = Modifier.padding(horizontal = 24.dp)
+                    )
+
+                    Spacer(Modifier.height(32.dp))
+                    }
+                }
             }
 
-            Spacer(Modifier.height(12.dp))
-
-            EqualizerBars(
-                isPlaying = isPlaying,
-                color = VintageRedLight.copy(alpha = 0.8f),
-                maxHeight = 18.dp,
-                modifier = Modifier.padding(horizontal = 24.dp)
-            )
-
-            PlayerControls(
-                isPlaying = isPlaying,
-                isLoading = isLoading,
-                positionMs = positionMs,
-                durationMs = durationMs,
-                accentColor = VintageRedLight,
-                onSeek = viewModel::seekTo,
-                onTogglePlayPause = viewModel::togglePlayPause,
-                onSkipPrevious = viewModel::skipToPrevious,
-                onSkipNext = viewModel::skipToNext,
-                modifier = Modifier.padding(horizontal = 24.dp)
-            )
-
-            Spacer(Modifier.height(32.dp))
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillParentMaxWidth()
+                        .background(VintageBgDark)
+                ) {
+                    PlayerLyricsCard(
+                        lines = syncedLyrics,
+                        positionMs = positionMs,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .padding(top = 16.dp, bottom = 40.dp)
+                    )
+                }
+            }
         }
 
         if (showOptionsSheet) {
