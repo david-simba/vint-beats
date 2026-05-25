@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.davidsimba.vintbeats.feature.search.domain.SearchRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -44,14 +46,17 @@ class SearchViewModel @Inject constructor(
     private fun search(query: String) {
         viewModelScope.launch {
             _uiState.value = SearchUiState.Loading
-            runCatching { repository.searchTracks(query) }
-                .onSuccess {
-                    _uiState.value = SearchUiState.Success(it)
+            runCatching {
+                coroutineScope {
+                    val tracks = async { repository.searchTracks(query) }
+                    val artists = async { repository.searchArtists(query) }
+                    tracks.await() to artists.await()
                 }
-                .onFailure {
-                    _uiState.value = SearchUiState.Error(it.message ?: "Error")
-                }
-
+            }.onSuccess { (tracks, artists) ->
+                _uiState.value = SearchUiState.Success(tracks, artists)
+            }.onFailure {
+                _uiState.value = SearchUiState.Error(it.message ?: "Error")
+            }
         }
     }
 }

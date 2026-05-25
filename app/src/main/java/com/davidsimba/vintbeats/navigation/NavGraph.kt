@@ -3,7 +3,9 @@ package com.davidsimba.vintbeats.navigation
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,9 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.navArgument
+import com.davidsimba.vintbeats.feature.artist.ui.ArtistScreen
 import com.davidsimba.vintbeats.feature.home.ui.HomeScreen
 import com.davidsimba.vintbeats.feature.library.ui.LibraryScreen
 import com.davidsimba.vintbeats.feature.player.ui.PlaybackViewModel
@@ -120,6 +125,25 @@ fun NavGraph(
                 }
                 composable(Screen.Search.route) {
                     SearchScreen(
+                        onTrackSelected = { track ->
+                            playbackViewModel.playTrack(track)
+                            navController.navigate(Screen.Player.route) { launchSingleTop = true }
+                        },
+                        onArtistSelected = { artist ->
+                            navController.navigate(Screen.Artist.route(artist.id))
+                        }
+                    )
+                }
+                composable(
+                    route = Screen.Artist.route,
+                    arguments = listOf(navArgument("browseId") { type = NavType.StringType }),
+                    enterTransition = { slideInHorizontally(animationSpec = tween(220), initialOffsetX = { it }) },
+                    exitTransition = { ExitTransition.None },
+                    popEnterTransition = { EnterTransition.None },
+                    popExitTransition = { slideOutHorizontally(animationSpec = tween(220), targetOffsetX = { it }) }
+                ) {
+                    ArtistScreen(
+                        onBack = { navController.popBackStack() },
                         onTrackSelected = { track ->
                             playbackViewModel.playTrack(track)
                             navController.navigate(Screen.Player.route) { launchSingleTop = true }
