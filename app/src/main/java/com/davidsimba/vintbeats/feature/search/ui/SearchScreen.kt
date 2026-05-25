@@ -109,7 +109,7 @@ fun SearchScreen(
                             item {
                                 SectionHeader("Artists")
                             }
-                            items(state.artists) { artist ->
+                            items(state.artists.take(3)) { artist ->
                                 ArtistRow(artist = artist, onClick = { onArtistSelected(artist) })
                             }
                         }

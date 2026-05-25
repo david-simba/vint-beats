@@ -147,6 +147,12 @@ fun NavGraph(
                         onTrackSelected = { track ->
                             playbackViewModel.playTrack(track)
                             navController.navigate(Screen.Player.route) { launchSingleTop = true }
+                        },
+                        onPlayArtist = { tracks ->
+                            if (tracks.isNotEmpty()) {
+                                playbackViewModel.playTrack(tracks.first(), newQueue = tracks.drop(1))
+                                navController.navigate(Screen.Player.route) { launchSingleTop = true }
+                            }
                         }
                     )
                 }

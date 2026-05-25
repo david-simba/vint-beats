@@ -8,6 +8,9 @@ import javax.inject.Inject
 class ArtistRepositoryImpl @Inject constructor(
     private val artistService: YouTubeArtistService
 ) : ArtistRepository {
-    override suspend fun getArtistDetail(browseId: String): Pair<Artist, List<Track>> =
+    override suspend fun getArtistDetail(browseId: String): Triple<Artist, List<Track>, String?> =
         artistService.getArtistDetail(browseId) ?: throw Exception("Could not load artist")
+
+    override suspend fun getArtistSongs(songsBrowseId: String): List<Track> =
+        artistService.getArtistSongs(songsBrowseId)
 }

@@ -46,7 +46,7 @@ class YouTubeArtistService @Inject constructor(
             }
         }
 
-    suspend fun getArtistDetail(browseId: String): Pair<Artist, List<Track>>? =
+    suspend fun getArtistDetail(browseId: String): Triple<Artist, List<Track>, String?>? =
         withContext(Dispatchers.IO) {
             try {
                 val body = """
@@ -127,7 +127,52 @@ class YouTubeArtistService @Inject constructor(
         return Artist(id = browseId, name = name, thumbnailUrl = thumbnailUrl, subtitle = subtitle)
     }
 
-    private fun parseArtistBrowseResponse(browseId: String, json: String): Pair<Artist, List<Track>>? {
+    suspend fun getArtistSongs(songsBrowseId: String): List<Track> =
+        withContext(Dispatchers.IO) {
+            try {
+                val body = """
+                    {
+                      $YT_CLIENT_CONTEXT,
+                      "browseId": "${songsBrowseId.escapeJson()}",
+                      "params": "ggMCCAI="
+                    }
+                """.trimIndent().toRequestBody("application/json".toMediaType())
+
+                val request = Request.Builder()
+                    .url("$YT_MUSIC_BASE_URL/browse?prettyPrint=false")
+                    .post(body)
+                    .headers(buildWebHeaders("https://music.youtube.com/playlist?list=${songsBrowseId.removePrefix("VL")}"))
+                    .build()
+
+                client.newCall(request).execute().use { response ->
+                    if (!response.isSuccessful) return@withContext emptyList()
+                    parseArtistSongsPlaylist(response.body?.string() ?: return@withContext emptyList())
+                }
+            } catch (e: Exception) {
+                emptyList()
+            }
+        }
+
+    private fun parseArtistSongsPlaylist(json: String): List<Track> {
+        val root = runCatching { JsonParser.parseString(json).asJsonObject }.getOrNull()
+            ?: return emptyList()
+
+        val items = root.obj("contents")
+            ?.obj("singleColumnBrowseResultsRenderer")?.arr("tabs")
+            ?.idx(0)?.asJsonObject?.obj("tabRenderer")?.obj("content")
+            ?.obj("sectionListRenderer")?.arr("contents")
+            ?.idx(0)?.asJsonObject?.obj("musicPlaylistShelfRenderer")?.arr("contents")
+            ?: return emptyList()
+
+        return buildList {
+            for (item in items) {
+                val r = item.asJsonObject.obj("musicResponsiveListItemRenderer") ?: continue
+                parseTrackFromBrowse(r)?.let { add(it) }
+            }
+        }
+    }
+
+    private fun parseArtistBrowseResponse(browseId: String, json: String): Triple<Artist, List<Track>, String?>? {
         val root = runCatching { JsonParser.parseString(json).asJsonObject }.getOrNull()
             ?: return null
 
@@ -148,12 +193,14 @@ class YouTubeArtistService @Inject constructor(
 
         val artist = Artist(id = browseId, name = name, thumbnailUrl = thumbnailUrl, subtitle = null)
 
+        var songsBrowseId: String? = null
+
         val sections = root.obj("contents")
             ?.obj("singleColumnBrowseResultsRenderer")?.arr("tabs")
             ?.idx(0)?.asJsonObject
             ?.obj("tabRenderer")?.obj("content")
             ?.obj("sectionListRenderer")?.arr("contents")
-            ?: return artist to emptyList()
+            ?: return Triple(artist, emptyList(), null)
 
         val tracks = buildList {
             for (section in sections) {
@@ -164,7 +211,10 @@ class YouTubeArtistService @Inject constructor(
 
                 val shelfTitle = shelf.obj("title")?.arr("runs")
                     ?.idx(0)?.asJsonObject?.str("text") ?: ""
-                if (!shelfTitle.equals("Songs", ignoreCase = true)) continue
+                if (!shelfTitle.contains("song", ignoreCase = true)) continue
+
+                songsBrowseId = shelf.obj("bottomEndpoint")
+                    ?.obj("browseEndpoint")?.str("browseId")
 
                 val items = shelf.arr("contents") ?: continue
                 for (item in items) {
@@ -175,7 +225,7 @@ class YouTubeArtistService @Inject constructor(
             }
         }
 
-        return artist to tracks
+        return Triple(artist, tracks, songsBrowseId)
     }
 
     private fun parseTrackFromBrowse(r: JsonObject): Track? {
@@ -199,7 +249,9 @@ class YouTubeArtistService @Inject constructor(
             ?.obj("text")?.arr("runs")
 
         val artistName = secondColRuns?.idx(0)?.asJsonObject?.str("text") ?: ""
-        val duration = secondColRuns?.last()?.asJsonObject?.str("text") ?: ""
+        val duration = if ((secondColRuns?.size() ?: 0) > 1)
+            secondColRuns?.last()?.asJsonObject?.str("text") ?: ""
+        else ""
 
         val thumbnailUrl = r.obj("thumbnail")?.obj("musicThumbnailRenderer")
             ?.obj("thumbnail")?.arr("thumbnails")

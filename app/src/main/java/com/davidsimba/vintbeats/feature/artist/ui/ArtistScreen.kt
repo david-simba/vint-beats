@@ -1,11 +1,8 @@
 package com.davidsimba.vintbeats.feature.artist.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,30 +19,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
-import com.davidsimba.vintbeats.core.model.Artist
 import com.davidsimba.vintbeats.core.model.Track
-import com.davidsimba.vintbeats.shared.components.cards.TrackCard
+import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistHeader
+import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistTopSongItem
+import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistTopSongsEmpty
+import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistTopSongsHeader
 import com.davidsimba.vintbeats.shared.theme.VintageGrayCool
-import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
-import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
 
 @Composable
 fun ArtistScreen(
     onBack: () -> Unit,
     onTrackSelected: (Track) -> Unit,
+    onPlayArtist: (List<Track>) -> Unit,
     viewModel: ArtistViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isLoadingPlay by viewModel.isLoadingPlay.collectAsStateWithLifecycle()
 
     Box(modifier = Modifier.fillMaxSize()) {
         when (val state = uiState) {
@@ -67,36 +60,23 @@ fun ArtistScreen(
             is ArtistUiState.Success -> {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     item {
-                        ArtistHeader(artist = state.artist)
+                        ArtistHeader(
+                            artist = state.artist,
+                            hasTopTracks = state.topTracks.isNotEmpty(),
+                            isLoadingPlay = isLoadingPlay,
+                            onPlay = {
+                                viewModel.loadPlayQueue { tracks -> onPlayArtist(tracks) }
+                            }
+                        )
                     }
 
                     if (state.topTracks.isNotEmpty()) {
-                        item {
-                            Text(
-                                text = "Top Songs",
-                                color = VintageWhiteWarm,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
-                            )
-                        }
+                        item { ArtistTopSongsHeader() }
                         items(state.topTracks) { track ->
-                            TrackCard(
-                                title = track.title,
-                                artist = track.artist,
-                                thumbnailUrl = track.albumImageUrl,
-                                onClick = { onTrackSelected(track) }
-                            )
+                            ArtistTopSongItem(track = track, onClick = { onTrackSelected(track) })
                         }
                     } else {
-                        item {
-                            Text(
-                                text = "No songs available.",
-                                color = VintageGrayMid,
-                                fontSize = 14.sp,
-                                modifier = Modifier.padding(16.dp)
-                            )
-                        }
+                        item { ArtistTopSongsEmpty() }
                     }
 
                     item { Spacer(Modifier.height(100.dp)) }
@@ -118,53 +98,6 @@ fun ArtistScreen(
                 tint = VintageWhitePure,
                 modifier = Modifier.size(20.dp)
             )
-        }
-    }
-}
-
-@Composable
-private fun ArtistHeader(artist: Artist) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(300.dp)
-    ) {
-        AsyncImage(
-            model = artist.thumbnailUrl,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            Color.Black.copy(alpha = 0.15f),
-                            Color.Black.copy(alpha = 0.75f)
-                        )
-                    )
-                )
-        )
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(20.dp)
-        ) {
-            Text(
-                text = artist.name,
-                color = VintageWhitePure,
-                fontSize = 34.sp,
-                fontWeight = FontWeight.Black
-            )
-            artist.subtitle?.let {
-                Text(
-                    text = it,
-                    color = VintageWhitePure.copy(alpha = 0.65f),
-                    fontSize = 13.sp
-                )
-            }
         }
     }
 }

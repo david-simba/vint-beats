@@ -5,6 +5,10 @@ import com.davidsimba.vintbeats.core.model.Track
 
 sealed interface ArtistUiState {
     data object Loading : ArtistUiState
-    data class Success(val artist: Artist, val topTracks: List<Track>) : ArtistUiState
+    data class Success(
+        val artist: Artist,
+        val topTracks: List<Track>,
+        val songsBrowseId: String?
+    ) : ArtistUiState
     data class Error(val message: String) : ArtistUiState
 }
