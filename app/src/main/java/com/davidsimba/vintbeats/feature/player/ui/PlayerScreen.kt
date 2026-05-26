@@ -11,14 +11,16 @@ import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -49,7 +51,6 @@ import com.davidsimba.vintbeats.feature.player.ui.components.PlayerTopBar
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerTrackInfo
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerLyricsCard
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerLyricsScreen
-import com.davidsimba.vintbeats.shared.components.EqualizerBars
 import com.davidsimba.vintbeats.core.model.Track
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -116,7 +117,7 @@ fun PlayerScreen(
         Color(ColorUtils.HSLToColor(hsl))
     }
 
-    val outerListState = rememberLazyListState()
+    val outerScrollState = rememberScrollState()
 
     Box(
         modifier = Modifier
@@ -195,12 +196,18 @@ fun PlayerScreen(
                 }
             }
     ) {
-        LazyColumn(
-            state = outerListState,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            item {
-                Box(modifier = Modifier.fillParentMaxSize()) {
+        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+            val screenHeight = maxHeight
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(outerScrollState)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(screenHeight)
+                ) {
                     PlayerBackground(
                         currentImageUrl = trackForCard?.albumImageUrl,
                         nextImageUrl = nextTrack?.albumImageUrl,
@@ -216,54 +223,45 @@ fun PlayerScreen(
                             .statusBarsPadding(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                    PlayerTopBar(
-                        onBack = onBack,
-                        onQueueOpen = { showQueueSheet = true },
-                        onMoreOptions = { showOptionsSheet = true }
-                    )
-
-                    Spacer(Modifier.weight(1f))
-
-                    trackForCard?.let {
-                        PlayerTrackInfo(
-                            title = it.title,
-                            artist = it.artist,
-                            isFavorite = isFavorite,
-                            onToggleFavorite = { isFavorite = !isFavorite }
+                        PlayerTopBar(
+                            onBack = onBack,
+                            onQueueOpen = { showQueueSheet = true },
+                            onMoreOptions = { showOptionsSheet = true }
                         )
-                    }
 
-                    Spacer(Modifier.height(2.dp))
+                        Spacer(Modifier.weight(1f))
 
-//                    EqualizerBars(
-//                        isPlaying = isPlaying,
-//                        color = VintageRedLight.copy(alpha = 0.8f),
-//                        maxHeight = 18.dp,
-//                        modifier = Modifier.padding(horizontal = 24.dp)
-//                    )
+                        trackForCard?.let {
+                            PlayerTrackInfo(
+                                title = it.title,
+                                artist = it.artist,
+                                isFavorite = isFavorite,
+                                onToggleFavorite = { isFavorite = !isFavorite }
+                            )
+                        }
 
-                    PlayerControls(
-                        isPlaying = isPlaying,
-                        isLoading = isLoading,
-                        positionMs = positionMs,
-                        durationMs = durationMs,
-                        accentColor = VintageRedLight,
-                        onSeek = viewModel::seekTo,
-                        onTogglePlayPause = viewModel::togglePlayPause,
-                        onSkipPrevious = viewModel::skipToPrevious,
-                        onSkipNext = viewModel::skipToNext,
-                        modifier = Modifier.padding(horizontal = 24.dp)
-                    )
+                        Spacer(Modifier.height(2.dp))
 
-                    Spacer(Modifier.height(32.dp))
+                        PlayerControls(
+                            isPlaying = isPlaying,
+                            isLoading = isLoading,
+                            positionMs = positionMs,
+                            durationMs = durationMs,
+                            accentColor = VintageRedLight,
+                            onSeek = viewModel::seekTo,
+                            onTogglePlayPause = viewModel::togglePlayPause,
+                            onSkipPrevious = viewModel::skipToPrevious,
+                            onSkipNext = viewModel::skipToNext,
+                            modifier = Modifier.padding(horizontal = 24.dp)
+                        )
+
+                        Spacer(Modifier.height(32.dp))
                     }
                 }
-            }
 
-            item {
                 Box(
                     modifier = Modifier
-                        .fillParentMaxWidth()
+                        .fillMaxWidth()
                         .background(paletteColor)
                 ) {
                     PlayerLyricsCard(
