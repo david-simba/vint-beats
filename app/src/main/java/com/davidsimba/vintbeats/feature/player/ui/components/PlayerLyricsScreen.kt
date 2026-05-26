@@ -46,12 +46,12 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.core.model.LyricLine
 import com.davidsimba.vintbeats.core.model.Track
+import com.davidsimba.vintbeats.shared.components.TrackInfo
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
 import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
 import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
@@ -202,23 +202,14 @@ fun PlayerLyricsScreen(
                     .clip(RoundedCornerShape(8.dp))
             )
             Spacer(Modifier.width(12.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = track?.title ?: "",
-                    color = VintageWhitePure,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = track?.artist ?: "",
-                    color = VintageWhitePure.copy(alpha = 0.55f),
-                    fontSize = 12.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
+            TrackInfo(
+                title = track?.title ?: "",
+                artist = track?.artist ?: "",
+                modifier = Modifier.weight(1f),
+                titleSize = 14.sp,
+                artistSize = 12.sp,
+                artistColor = VintageWhitePure.copy(alpha = 0.55f)
+            )
             IconButton(onClick = onTogglePlayPause) {
                 Icon(
                     imageVector = if (isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
