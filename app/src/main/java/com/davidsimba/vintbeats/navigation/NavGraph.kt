@@ -142,6 +142,9 @@ fun NavGraph(
                         },
                         onArtistSelected = { artist ->
                             navController.navigate(Screen.Artist.route(artist.id))
+                        },
+                        onAlbumSelected = { album ->
+                            navController.navigate(Screen.Album.route(album.id))
                         }
                     )
                 }

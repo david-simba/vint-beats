@@ -1,5 +1,6 @@
 package com.davidsimba.vintbeats.core.youtube
 
+import com.davidsimba.vintbeats.core.model.Album
 import com.davidsimba.vintbeats.core.model.Track
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
@@ -15,7 +16,35 @@ class YouTubeSearchService @Inject constructor(
 ) {
     companion object {
         private const val SONGS_FILTER = "EgWKAQIIAWoKEAkQBRAKEAMQBA=="
+        private const val ALBUMS_FILTER = "EgWKAQIYAWoKEAkQBRAKEAMQBA=="
     }
+
+    suspend fun searchAlbums(query: String): List<Album> =
+        kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+            try {
+                val body = """
+                    {
+                      $YT_CLIENT_CONTEXT,
+                      "query": "${query.escapeJson()}",
+                      "params": "$ALBUMS_FILTER"
+                    }
+                """.trimIndent().toRequestBody("application/json".toMediaType())
+
+                val request = Request.Builder()
+                    .url("$YT_MUSIC_BASE_URL/search?prettyPrint=false")
+                    .post(body)
+                    .headers(buildWebHeaders("https://music.youtube.com/search?q=${query.replace(" ", "+")}"))
+                    .build()
+
+                client.newCall(request).execute().use { response ->
+                    if (!response.isSuccessful) return@withContext emptyList()
+                    val json = response.body?.string() ?: return@withContext emptyList()
+                    parseAlbumSearchResponse(json)
+                }
+            } catch (e: Exception) {
+                emptyList()
+            }
+        }
 
     suspend fun searchSongs(query: String): List<Track> =
         kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
@@ -65,6 +94,64 @@ class YouTubeSearchService @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun parseAlbumSearchResponse(json: String): List<Album> {
+        val root = runCatching { JsonParser.parseString(json).asJsonObject }.getOrNull()
+            ?: return emptyList()
+
+        val tabs = root
+            .obj("contents")?.obj("tabbedSearchResultsRenderer")?.arr("tabs")
+            ?: return emptyList()
+
+        val sections = tabs.idx(0)?.asJsonObject
+            ?.obj("tabRenderer")?.obj("content")
+            ?.obj("sectionListRenderer")?.arr("contents")
+            ?: return emptyList()
+
+        return buildList {
+            for (section in sections) {
+                val items = section.asJsonObject.obj("musicShelfRenderer")?.arr("contents") ?: continue
+                for (item in items) {
+                    val renderer = item.asJsonObject.obj("musicResponsiveListItemRenderer") ?: continue
+                    parseAlbum(renderer)?.let { add(it) }
+                }
+            }
+        }
+    }
+
+    private fun parseAlbum(r: JsonObject): Album? {
+        val cols = r.arr("flexColumns") ?: return null
+
+        val firstRun = cols.idx(0)?.asJsonObject
+            ?.obj("musicResponsiveListItemFlexColumnRenderer")
+            ?.obj("text")?.arr("runs")
+            ?.idx(0)?.asJsonObject ?: return null
+
+        val title = firstRun.str("text") ?: return null
+
+        val browseId = r.obj("navigationEndpoint")?.obj("browseEndpoint")?.str("browseId")
+            ?: firstRun.obj("navigationEndpoint")?.obj("browseEndpoint")?.str("browseId")
+            ?: r.obj("overlay")?.obj("musicItemThumbnailOverlayRenderer")
+                ?.obj("content")?.obj("musicPlayButtonRenderer")
+                ?.obj("playNavigationEndpoint")?.obj("watchPlaylistEndpoint")?.str("playlistId")
+            ?: return null
+
+        val secondColRuns = cols.idx(1)?.asJsonObject
+            ?.obj("musicResponsiveListItemFlexColumnRenderer")
+            ?.obj("text")?.arr("runs")
+
+        var year: String? = null
+        secondColRuns?.forEach { el ->
+            val text = el.asJsonObject.str("text") ?: return@forEach
+            if (text.matches(Regex("\\d{4}"))) year = text
+        }
+
+        val thumbnailUrl = r.obj("thumbnail")?.obj("musicThumbnailRenderer")
+            ?.obj("thumbnail")?.arr("thumbnails")
+            ?.last()?.asJsonObject?.str("url")?.upscaleThumbnail()
+
+        return Album(id = browseId, title = title, thumbnailUrl = thumbnailUrl, year = year)
     }
 
     private fun parseTrack(r: JsonObject): Track? {

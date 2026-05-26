@@ -1,5 +1,6 @@
 package com.davidsimba.vintbeats.feature.search.data
 
+import com.davidsimba.vintbeats.core.model.Album
 import com.davidsimba.vintbeats.core.model.Artist
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.core.youtube.YouTubeArtistService
@@ -16,4 +17,7 @@ class SearchRepositoryImpl @Inject constructor(
 
     override suspend fun searchArtists(query: String): List<Artist> =
         artistService.searchArtists(query)
+
+    override suspend fun searchAlbums(query: String): List<Album> =
+        searchService.searchAlbums(query)
 }

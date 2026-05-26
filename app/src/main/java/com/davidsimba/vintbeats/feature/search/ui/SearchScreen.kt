@@ -36,9 +36,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.davidsimba.vintbeats.core.model.Album
 import com.davidsimba.vintbeats.core.model.Artist
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.shared.components.SectionLabel
+import com.davidsimba.vintbeats.shared.components.TrackInfo
 import com.davidsimba.vintbeats.shared.components.cards.TrackCard
 import com.davidsimba.vintbeats.shared.theme.VintageBlackMid
 import com.davidsimba.vintbeats.shared.theme.VintageGrayCool
@@ -49,6 +51,7 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
 fun SearchScreen(
     onTrackSelected: (Track) -> Unit,
     onArtistSelected: (Artist) -> Unit,
+    onAlbumSelected: (Album) -> Unit,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -106,17 +109,19 @@ fun SearchScreen(
                 is SearchUiState.Success -> {
                     LazyColumn {
                         if (state.artists.isNotEmpty()) {
-                            item {
-                                SectionLabel("Artists")
-                            }
+                            item { SectionLabel("Artists") }
                             items(state.artists.take(3)) { artist ->
                                 ArtistRow(artist = artist, onClick = { onArtistSelected(artist) })
                             }
                         }
-                        if (state.tracks.isNotEmpty()) {
-                            item {
-                                SectionLabel("Songs")
+                        if (state.albums.isNotEmpty()) {
+                            item { SectionLabel("Albums") }
+                            items(state.albums.take(3)) { album ->
+                                AlbumRow(album = album, onClick = { onAlbumSelected(album) })
                             }
+                        }
+                        if (state.tracks.isNotEmpty()) {
+                            item { SectionLabel("Songs") }
                             items(state.tracks) { track ->
                                 TrackCard(
                                     title = track.title,
@@ -152,18 +157,42 @@ private fun ArtistRow(artist: Artist, onClick: () -> Unit) {
                 .background(VintageBlackMid)
         )
         Spacer(Modifier.width(14.dp))
-        Column {
-            Text(
-                text = artist.name,
-                color = VintageWhitePure,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.SemiBold
-            )
-            Text(
-                text = "Artist",
-                color = VintageGrayCool,
-                fontSize = 12.sp
-            )
-        }
+        TrackInfo(
+            title = artist.name,
+            artist = "Artist",
+            titleSize = 15.sp,
+            titleWeight = FontWeight.SemiBold
+        )
+    }
+}
+
+@Composable
+private fun AlbumRow(album: Album, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        AsyncImage(
+            model = album.thumbnailUrl,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(56.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(VintageBlackMid)
+        )
+        Spacer(Modifier.width(14.dp))
+        TrackInfo(
+            title = album.title,
+            artist = buildString {
+                append("Album")
+                if (!album.year.isNullOrBlank()) append("  •  ${album.year}")
+            },
+            titleSize = 15.sp,
+            titleWeight = FontWeight.SemiBold
+        )
     }
 }

@@ -50,10 +50,11 @@ class SearchViewModel @Inject constructor(
                 coroutineScope {
                     val tracks = async { repository.searchTracks(query) }
                     val artists = async { repository.searchArtists(query) }
-                    tracks.await() to artists.await()
+                    val albums = async { repository.searchAlbums(query) }
+                    Triple(tracks.await(), artists.await(), albums.await())
                 }
-            }.onSuccess { (tracks, artists) ->
-                _uiState.value = SearchUiState.Success(tracks, artists)
+            }.onSuccess { (tracks, artists, albums) ->
+                _uiState.value = SearchUiState.Success(tracks, artists, albums)
             }.onFailure {
                 _uiState.value = SearchUiState.Error(it.message ?: "Error")
             }
