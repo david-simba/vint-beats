@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.davidsimba.vintbeats.navigation.Screen
-import com.davidsimba.vintbeats.shared.theme.VintageBlackMid
+import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageGrayCool
 import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
 
@@ -48,7 +48,7 @@ fun BottomNavBar(navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(VintageBlackMid)
+            .background(VintageBgDark)
             .navigationBarsPadding()
             .padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,

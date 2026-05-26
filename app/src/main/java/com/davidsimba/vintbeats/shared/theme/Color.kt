@@ -3,7 +3,6 @@ package com.davidsimba.vintbeats.shared.theme
 import androidx.compose.ui.graphics.Color
 
 val VintageBlack = Color(0xFF0A0A0A)
-val VintageBlackMid = Color(0xFF1A1A1A)
 val VintageBlackLight = Color(0xFF2A2A2A)
 
 val VintageGray = Color(0xFFD6CFC4)

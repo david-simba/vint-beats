@@ -42,7 +42,7 @@ import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.shared.components.SectionLabel
 import com.davidsimba.vintbeats.shared.components.TrackInfo
 import com.davidsimba.vintbeats.shared.components.cards.TrackCard
-import com.davidsimba.vintbeats.shared.theme.VintageBlackMid
+import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageGrayCool
 import com.davidsimba.vintbeats.shared.theme.VintageWhite
 import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
@@ -77,8 +77,8 @@ fun SearchScreen(
                 singleLine = true,
                 shape = RoundedCornerShape(12.dp),
                 colors = TextFieldDefaults.colors(
-                    focusedContainerColor = VintageBlackMid,
-                    unfocusedContainerColor = VintageBlackMid,
+                    focusedContainerColor = VintageBgDark,
+                    unfocusedContainerColor = VintageBgDark,
                     focusedTextColor = VintageWhitePure,
                     unfocusedTextColor = VintageGrayCool,
                     focusedIndicatorColor = Color.Transparent,
@@ -154,7 +154,7 @@ private fun ArtistRow(artist: Artist, onClick: () -> Unit) {
             modifier = Modifier
                 .size(56.dp)
                 .clip(CircleShape)
-                .background(VintageBlackMid)
+                .background(VintageBgDark)
         )
         Spacer(Modifier.width(14.dp))
         TrackInfo(
@@ -182,7 +182,7 @@ private fun AlbumRow(album: Album, onClick: () -> Unit) {
             modifier = Modifier
                 .size(56.dp)
                 .clip(RoundedCornerShape(8.dp))
-                .background(VintageBlackMid)
+                .background(VintageBgDark)
         )
         Spacer(Modifier.width(14.dp))
         TrackInfo(
