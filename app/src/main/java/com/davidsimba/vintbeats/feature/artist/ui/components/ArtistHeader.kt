@@ -43,7 +43,7 @@ fun ArtistHeader(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(380.dp)
+            .height(340.dp)
     ) {
         AsyncImage(
             model = artist.thumbnailUrl,

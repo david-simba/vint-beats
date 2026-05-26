@@ -10,4 +10,7 @@ sealed class Screen(val route: String) {
     data object Artist : Screen("artist/{browseId}") {
         fun route(browseId: String) = "artist/${Uri.encode(browseId)}"
     }
+    data object Album : Screen("album/{browseId}") {
+        fun route(browseId: String) = "album/${Uri.encode(browseId)}"
+    }
 }

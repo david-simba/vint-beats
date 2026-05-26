@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.davidsimba.vintbeats.core.model.Album
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistAlbumsList
 import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistHeader
@@ -43,6 +44,7 @@ fun ArtistScreen(
     onBack: () -> Unit,
     onTrackSelected: (Track) -> Unit,
     onPlayArtist: (List<Track>) -> Unit,
+    onAlbumSelected: (Album) -> Unit,
     viewModel: ArtistViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -105,7 +107,7 @@ fun ArtistScreen(
                                 SectionLabel("Albums")
                                 ArtistAlbumsList(
                                     albums = state.albums,
-                                    onAlbumClick = {}
+                                    onAlbumClick = { album -> onAlbumSelected(album) }
                                 )
                             }
 

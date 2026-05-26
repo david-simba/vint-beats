@@ -26,6 +26,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
+import com.davidsimba.vintbeats.feature.album.ui.AlbumScreen
 import com.davidsimba.vintbeats.feature.artist.ui.ArtistScreen
 import com.davidsimba.vintbeats.feature.home.ui.HomeScreen
 import com.davidsimba.vintbeats.feature.library.ui.LibraryScreen
@@ -159,6 +160,31 @@ fun NavGraph(
                             navController.navigate(Screen.Player.route) { launchSingleTop = true }
                         },
                         onPlayArtist = { tracks ->
+                            if (tracks.isNotEmpty()) {
+                                playbackViewModel.playTrack(tracks.first(), newQueue = tracks.drop(1))
+                                navController.navigate(Screen.Player.route) { launchSingleTop = true }
+                            }
+                        },
+                        onAlbumSelected = { album ->
+                            navController.navigate(Screen.Album.route(album.id))
+                        }
+                    )
+                }
+                composable(
+                    route = Screen.Album.route,
+                    arguments = listOf(navArgument("browseId") { type = NavType.StringType }),
+                    enterTransition = { slideInHorizontally(animationSpec = tween(220), initialOffsetX = { it }) },
+                    exitTransition = { ExitTransition.None },
+                    popEnterTransition = { EnterTransition.None },
+                    popExitTransition = { slideOutHorizontally(animationSpec = tween(220), targetOffsetX = { it }) }
+                ) {
+                    AlbumScreen(
+                        onBack = { navController.popBackStack() },
+                        onTrackSelected = { track ->
+                            playbackViewModel.playTrack(track)
+                            navController.navigate(Screen.Player.route) { launchSingleTop = true }
+                        },
+                        onPlayAlbum = { tracks ->
                             if (tracks.isNotEmpty()) {
                                 playbackViewModel.playTrack(tracks.first(), newQueue = tracks.drop(1))
                                 navController.navigate(Screen.Player.route) { launchSingleTop = true }
