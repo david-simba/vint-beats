@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.ui.zIndex
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.ui.draw.clip
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBackIosNew
@@ -21,6 +23,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -48,6 +51,14 @@ fun ArtistScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isLoadingPlay by viewModel.isLoadingPlay.collectAsStateWithLifecycle()
+    val lazyListState = rememberLazyListState()
+    val parallaxOffset by remember {
+        derivedStateOf {
+            lazyListState.layoutInfo.visibleItemsInfo
+                .firstOrNull { it.index == 0 }
+                ?.offset?.toFloat() ?: 0f
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         when (val state = uiState) {
@@ -67,12 +78,13 @@ fun ArtistScreen(
             }
 
             is ArtistUiState.Success -> {
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                LazyColumn(state = lazyListState, modifier = Modifier.fillMaxSize()) {
                     item {
                         ArtistHeader(
                             artist = state.artist,
                             hasTopTracks = state.topTracks.isNotEmpty(),
                             isLoadingPlay = isLoadingPlay,
+                            parallaxOffset = parallaxOffset,
                             onPlay = {
                                 viewModel.loadPlayQueue { tracks -> onPlayArtist(tracks) }
                             }

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -24,10 +25,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
@@ -57,6 +62,14 @@ fun AlbumScreen(
     viewModel: AlbumViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val lazyListState = rememberLazyListState()
+    val parallaxOffset by remember {
+        derivedStateOf {
+            lazyListState.layoutInfo.visibleItemsInfo
+                .firstOrNull { it.index == 0 }
+                ?.offset?.toFloat() ?: 0f
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         when (val state = uiState) {
@@ -78,10 +91,11 @@ fun AlbumScreen(
             }
 
             is AlbumUiState.Success -> {
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                LazyColumn(state = lazyListState, modifier = Modifier.fillMaxSize()) {
                     item {
                         AlbumHeader(
                             album = state.album,
+                            parallaxOffset = parallaxOffset,
                             onPlay = {
                                 val tracks = state.album.tracks
                                 if (tracks.isNotEmpty()) onPlayAlbum(tracks)
@@ -140,26 +154,31 @@ fun AlbumScreen(
 }
 
 @Composable
-private fun AlbumHeader(album: AlbumDetail, onPlay: () -> Unit) {
+private fun AlbumHeader(album: AlbumDetail, parallaxOffset: Float = 0f, onPlay: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(340.dp)
+            .clipToBounds()
     ) {
         AsyncImage(
             model = album.thumbnailUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(440.dp)
+                .graphicsLayer { translationY = parallaxOffset * 0.4f }
         )
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
                     Brush.verticalGradient(
-                        listOf(
-                            Color.Black.copy(alpha = 0.15f),
-                            Color.Black.copy(alpha = 0.80f)
+                        colorStops = arrayOf(
+                            0.0f to Color.Black.copy(alpha = 0.0f),
+                            0.45f to Color.Black.copy(alpha = 0.35f),
+                            1.0f to VintageBgDark
                         )
                     )
                 )
