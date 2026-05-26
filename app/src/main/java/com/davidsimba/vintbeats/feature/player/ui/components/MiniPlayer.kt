@@ -98,17 +98,17 @@ fun MiniPlayer(
                             when {
                                 offsetX.value < -(componentWidth * 0.4f) -> {
                                     change.consume()
+                                    onSkipNext()
                                     coroutineScope.launch {
                                         offsetX.animateTo(-componentWidth, tween(150))
-                                        onSkipNext()
                                         offsetX.snapTo(0f)
                                     }
                                 }
                                 offsetX.value > (componentWidth * 0.4f) -> {
                                     change.consume()
+                                    onSkipPrevious()
                                     coroutineScope.launch {
                                         offsetX.animateTo(componentWidth, tween(150))
-                                        onSkipPrevious()
                                         offsetX.snapTo(0f)
                                     }
                                 }

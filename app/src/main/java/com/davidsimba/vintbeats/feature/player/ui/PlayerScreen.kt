@@ -145,17 +145,17 @@ fun PlayerScreen(
                                 when {
                                     offsetX.value < -(componentWidth * 0.4f) -> {
                                         change.consume()
+                                        viewModel.skipToNext()
                                         scope.launch {
                                             offsetX.animateTo(-componentWidth, tween(150))
-                                            viewModel.skipToNext()
                                             offsetX.snapTo(0f)
                                         }
                                     }
                                     offsetX.value > (componentWidth * 0.4f) -> {
                                         change.consume()
+                                        viewModel.skipToPrevious()
                                         scope.launch {
                                             offsetX.animateTo(componentWidth, tween(150))
-                                            viewModel.skipToPrevious()
                                             offsetX.snapTo(0f)
                                         }
                                     }
