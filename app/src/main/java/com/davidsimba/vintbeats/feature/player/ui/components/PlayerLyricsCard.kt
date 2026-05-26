@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -37,6 +36,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.layout.positionInParent
@@ -66,6 +67,11 @@ fun PlayerLyricsCard(
     val scrollState = rememberScrollState()
     val itemYPositions = remember { HashMap<Int, Int>() }
     var boxHeightPx by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(lines) {
+        scrollState.scrollTo(0)
+        itemYPositions.clear()
+    }
 
     LaunchedEffect(currentIndex) {
         if (currentIndex >= 0 && !scrollState.isScrollInProgress) {
@@ -122,8 +128,13 @@ fun PlayerLyricsCard(
                         val color by animateColorAsState(
                             targetValue = if (isCurrent) VintageWhitePure
                                           else VintageWhitePure.copy(alpha = 0.32f),
-                            animationSpec = tween(300),
-                            label = "lyric_line_color"
+                            animationSpec = tween(250),
+                            label = "lyric_card_color_$index"
+                        )
+                        val scale by animateFloatAsState(
+                            targetValue = if (isCurrent) 1.06f else 1f,
+                            animationSpec = tween(250),
+                            label = "lyric_card_scale_$index"
                         )
                         Text(
                             text = line.text,
@@ -133,7 +144,12 @@ fun PlayerLyricsCard(
                             lineHeight = 22.sp,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = 8.dp, bottom = 8.dp, end = 12.dp)
+                                .padding(top = 6.dp, bottom = 6.dp, end = 12.dp)
+                                .graphicsLayer {
+                                    scaleX = scale
+                                    scaleY = scale
+                                    transformOrigin = TransformOrigin(0f, 0.5f)
+                                }
                                 .onGloballyPositioned { coords ->
                                     itemYPositions[index] = coords.positionInParent().y.toInt()
                                 }

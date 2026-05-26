@@ -233,14 +233,14 @@ fun PlayerScreen(
                         )
                     }
 
-                    Spacer(Modifier.height(12.dp))
+                    Spacer(Modifier.height(2.dp))
 
-                    EqualizerBars(
-                        isPlaying = isPlaying,
-                        color = VintageRedLight.copy(alpha = 0.8f),
-                        maxHeight = 18.dp,
-                        modifier = Modifier.padding(horizontal = 24.dp)
-                    )
+//                    EqualizerBars(
+//                        isPlaying = isPlaying,
+//                        color = VintageRedLight.copy(alpha = 0.8f),
+//                        maxHeight = 18.dp,
+//                        modifier = Modifier.padding(horizontal = 24.dp)
+//                    )
 
                     PlayerControls(
                         isPlaying = isPlaying,

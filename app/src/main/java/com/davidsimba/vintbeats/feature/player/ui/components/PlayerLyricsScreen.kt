@@ -3,6 +3,7 @@ package com.davidsimba.vintbeats.feature.player.ui.components
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -41,6 +42,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -153,8 +156,13 @@ fun PlayerLyricsScreen(
                     val isCurrent = index == currentIndex
                     val color by animateColorAsState(
                         targetValue = if (isCurrent) VintageWhitePure else VintageWhitePure.copy(alpha = 0.35f),
-                        animationSpec = tween(300),
-                        label = "lyric_full_$index"
+                        animationSpec = tween(250),
+                        label = "lyric_full_color_$index"
+                    )
+                    val scale by animateFloatAsState(
+                        targetValue = if (isCurrent) 1.08f else 1f,
+                        animationSpec = tween(250),
+                        label = "lyric_full_scale_$index"
                     )
                     Text(
                         text = line.text,
@@ -165,7 +173,12 @@ fun PlayerLyricsScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable { onSeek(line.timeMs) }
-                            .padding(vertical = 12.dp)
+                            .padding(top = 10.dp, bottom = 10.dp, end = 12.dp)
+                            .graphicsLayer {
+                                scaleX = scale
+                                scaleY = scale
+                                transformOrigin = TransformOrigin(0f, 0.5f)
+                            }
                     )
                 }
             }
