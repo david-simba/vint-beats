@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.ui.zIndex
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
@@ -119,6 +120,7 @@ fun ArtistScreen(
             onClick = onBack,
             modifier = Modifier
                 .align(Alignment.TopStart)
+                .zIndex(1f)
                 .statusBarsPadding()
                 .padding(8.dp)
                 .size(40.dp)
