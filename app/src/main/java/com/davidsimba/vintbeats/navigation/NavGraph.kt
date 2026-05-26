@@ -2,6 +2,7 @@ package com.davidsimba.vintbeats.navigation
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
@@ -45,7 +46,15 @@ private val bottomNavRoutes = setOf(
 fun NavGraph(
     navController: NavHostController,
     startDestination: String,
+    pendingNavRoute: String? = null,
+    onPendingNavHandled: () -> Unit = {},
 ) {
+    LaunchedEffect(pendingNavRoute) {
+        if (pendingNavRoute != null) {
+            navController.navigate(pendingNavRoute) { launchSingleTop = true }
+            onPendingNavHandled()
+        }
+    }
     val currentEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentEntry?.destination?.route
     val showBottomBar = currentRoute in bottomNavRoutes

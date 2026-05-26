@@ -1,11 +1,13 @@
 package com.davidsimba.vintbeats.feature.player.ui
 
+import android.app.PendingIntent
 import android.content.Intent
 import androidx.media3.common.ForwardingPlayer
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
+import com.davidsimba.vintbeats.MainActivity
 
 class PlaybackService : MediaSessionService() {
 
@@ -44,7 +46,18 @@ class PlaybackService : MediaSessionService() {
             }
         })
 
-        mediaSession = MediaSession.Builder(this, notificationPlayer).build()
+        val activityIntent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra(MainActivity.EXTRA_OPEN_PLAYER, true)
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0, activityIntent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        mediaSession = MediaSession.Builder(this, notificationPlayer)
+            .setSessionActivity(pendingIntent)
+            .build()
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo) = mediaSession
