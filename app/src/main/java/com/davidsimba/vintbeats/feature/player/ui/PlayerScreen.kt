@@ -55,6 +55,7 @@ import com.davidsimba.vintbeats.core.model.Track
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.graphics.ColorUtils
+import com.davidsimba.vintbeats.shared.components.EqualizerBars
 import com.davidsimba.vintbeats.shared.components.background.rememberPaletteColor
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
@@ -240,7 +241,15 @@ fun PlayerScreen(
                             )
                         }
 
-                        Spacer(Modifier.height(2.dp))
+                        Spacer(Modifier.height(12.dp))
+
+                        EqualizerBars(
+                            isPlaying = isPlaying,
+                            barCount = 16,
+                            color = VintageRedLight.copy(alpha = 0.8f),
+                            maxHeight = 18.dp,
+                            modifier = Modifier.padding(horizontal = 24.dp)
+                        )
 
                         PlayerControls(
                             isPlaying = isPlaying,

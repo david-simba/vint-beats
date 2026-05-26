@@ -34,6 +34,14 @@ private val barConfig = listOf(
     420 to 0.95f,
     560 to 0.65f,
     310 to 0.8f,
+    490 to 0.35f,
+    330 to 0.7f,
+    580 to 0.9f,
+    260 to 0.5f,
+    440 to 0.8f,
+    360 to 0.6f,
+    510 to 1.0f,
+    290 to 0.45f,
 )
 
 @Composable
@@ -42,7 +50,6 @@ fun EqualizerBars(
     modifier: Modifier = Modifier,
     color: Color = Color.White,
     maxHeight: Dp = 16.dp,
-    spacing: Dp = 2.dp,
     barCount: Int = barConfig.size
 ) {
     val transition = rememberInfiniteTransition(label = "eq")
