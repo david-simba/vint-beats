@@ -80,6 +80,9 @@ class PlaybackViewModel @Inject constructor(
     private val _isDownloading = MutableStateFlow(false)
     val isDownloading: StateFlow<Boolean> = _isDownloading.asStateFlow()
 
+    private val streamUrlCache = mutableMapOf<String, String>()
+    private val lyricsCache = mutableMapOf<String, List<LyricLine>>()
+    private var prefetchJob: Job? = null
     private var progressJob: Job? = null
     private var playbackJob: Job? = null
 
@@ -141,8 +144,14 @@ class PlaybackViewModel @Inject constructor(
         _durationMs.value = 0L
         _queue.value = newQueue ?: emptyList()
         viewModelScope.launch {
-            _syncedLyrics.value = lrcLibService.getSyncedLyrics(track.title, track.artist)
-            _isLoadingLyrics.value = false
+            val cached = lyricsCache.remove(track.id)
+            if (cached != null) {
+                _syncedLyrics.value = cached
+                _isLoadingLyrics.value = false
+            } else {
+                _syncedLyrics.value = lrcLibService.getSyncedLyrics(track.title, track.artist)
+                _isLoadingLyrics.value = false
+            }
         }
         if (newQueue == null) {
             viewModelScope.launch { _queue.value = queueService.getUpNextTracks(track.id) }
@@ -150,7 +159,9 @@ class PlaybackViewModel @Inject constructor(
         playbackJob = viewModelScope.launch {
             _playerState.value = PlayerState.Loading
             Log.d(TAG, "playTrack: fetching stream for ${track.id}")
-            val streamUrl = streamService.getAudioStreamUrl(track.id) ?: run {
+            val streamUrl = streamUrlCache.remove(track.id)?.also {
+                Log.d(TAG, "playTrack: cache hit for ${track.id}")
+            } ?: streamService.getAudioStreamUrl(track.id) ?: run {
                 Log.e(TAG, "playTrack: no stream for ${track.id}")
                 _playerState.value = PlayerState.Error("Stream not available")
                 return@launch
@@ -170,6 +181,7 @@ class PlaybackViewModel @Inject constructor(
                 _playerState.value = PlayerState.Playing
                 startProgressUpdates()
             }
+            prefetchAdjacentTracks()
         }
     }
 
@@ -344,9 +356,36 @@ class PlaybackViewModel @Inject constructor(
         }
     }
 
+    private fun prefetchAdjacentTracks() {
+        prefetchJob?.cancel()
+        val adjacent = buildList {
+            _queue.value.firstOrNull()?.let { add(it) }
+            _history.value.lastOrNull()?.let { add(it) }
+        }
+
+        if (adjacent.isEmpty()) return
+        prefetchJob = viewModelScope.launch {
+            for (track in adjacent) {
+                if (!streamUrlCache.containsKey(track.id)) {
+                    launch {
+                        Log.d(TAG, "prefetch: stream for ${track.id}")
+                        streamService.getAudioStreamUrl(track.id)?.let { streamUrlCache[track.id] = it }
+                    }
+                }
+                if (!lyricsCache.containsKey(track.id)) {
+                    launch {
+                        Log.d(TAG, "prefetch: lyrics for ${track.id}")
+                        lyricsCache[track.id] = lrcLibService.getSyncedLyrics(track.title, track.artist)
+                    }
+                }
+            }
+        }
+    }
+
     override fun onCleared() {
         playbackJob?.cancel()
         progressJob?.cancel()
+        prefetchJob?.cancel()
         MediaController.releaseFuture(controllerFuture)
         super.onCleared()
     }
