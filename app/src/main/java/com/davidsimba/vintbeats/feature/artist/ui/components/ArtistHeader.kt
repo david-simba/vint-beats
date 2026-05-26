@@ -31,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.core.model.Artist
+import com.davidsimba.vintbeats.shared.theme.VintageBgDark
+import com.davidsimba.vintbeats.shared.theme.VintageRedLight
 import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
 
 @Composable
@@ -56,9 +58,10 @@ fun ArtistHeader(
                 .fillMaxSize()
                 .background(
                     Brush.verticalGradient(
-                        listOf(
-                            Color.Black.copy(alpha = 0.15f),
-                            Color.Black.copy(alpha = 0.75f)
+                        colorStops = arrayOf(
+                            0.0f to Color.Black.copy(alpha = 0.0f),
+                            0.45f to Color.Black.copy(alpha = 0.35f),
+                            1.0f to VintageBgDark
                         )
                     )
                 )
@@ -68,16 +71,15 @@ fun ArtistHeader(
                 .align(Alignment.BottomStart)
                 .fillMaxWidth()
                 .padding(20.dp),
-            verticalAlignment = Alignment.Bottom
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = artist.name,
-                    color = VintageWhitePure,
-                    fontSize = 34.sp,
-                    fontWeight = FontWeight.Black
-                )
-            }
+            Text(
+                text = artist.name,
+                color = VintageWhitePure,
+                fontSize = 34.sp,
+                fontWeight = FontWeight.Black,
+                modifier = Modifier.weight(1f)
+            )
 
             if (hasTopTracks) {
                 Spacer(Modifier.width(12.dp))
@@ -85,7 +87,7 @@ fun ArtistHeader(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .size(52.dp)
-                        .border(1.5.dp, VintageWhitePure.copy(alpha = 0.4f), CircleShape)
+                        .background(VintageRedLight, CircleShape)
                 ) {
                     if (isLoadingPlay) {
                         CircularProgressIndicator(
