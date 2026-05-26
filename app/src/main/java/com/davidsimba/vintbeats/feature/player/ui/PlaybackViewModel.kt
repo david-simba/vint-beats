@@ -1,19 +1,25 @@
 package com.davidsimba.vintbeats.feature.player.ui
 
+import android.content.ComponentName
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
-import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.MediaController
+import androidx.media3.session.SessionToken
 import com.davidsimba.vintbeats.core.model.LyricLine
+import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.core.youtube.LrcLibService
 import com.davidsimba.vintbeats.core.youtube.YouTubeQueueService
 import com.davidsimba.vintbeats.core.youtube.YouTubeStreamService
 import com.davidsimba.vintbeats.feature.library.domain.TrackRepository
-import com.davidsimba.vintbeats.core.model.Track
+import com.google.common.util.concurrent.ListenableFuture
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +33,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
-import androidx.core.net.toUri
 
 @HiltViewModel
 class PlaybackViewModel @Inject constructor(
@@ -38,7 +43,8 @@ class PlaybackViewModel @Inject constructor(
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
-    private val player = ExoPlayer.Builder(context).build()
+    private var mediaController: MediaController? = null
+    private lateinit var controllerFuture: ListenableFuture<MediaController>
     private var currentStreamUrl: String? = null
 
     private val _currentSavedTrack = MutableStateFlow<com.davidsimba.vintbeats.feature.library.domain.SavedTrack?>(null)
@@ -78,10 +84,38 @@ class PlaybackViewModel @Inject constructor(
     private var playbackJob: Job? = null
 
     init {
-        player.addListener(object : Player.Listener {
-            override fun onPlaybackStateChanged(playbackState: Int) {
-                if (playbackState == Player.STATE_ENDED) {
-                    viewModelScope.launch(Dispatchers.Main) { skipToNext() }
+        val sessionToken = SessionToken(context, ComponentName(context, PlaybackService::class.java))
+        controllerFuture = MediaController.Builder(context, sessionToken).buildAsync()
+        controllerFuture.addListener({
+            try {
+                mediaController = controllerFuture.get().also { setupControllerListener(it) }
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to connect to PlaybackService", e)
+            }
+        }, ContextCompat.getMainExecutor(context))
+
+        // Receive next/previous triggered by notification buttons or track end.
+        viewModelScope.launch {
+            PlaybackEventBus.events.collect { event ->
+                when (event) {
+                    PlaybackEvent.SkipNext -> skipToNext()
+                    PlaybackEvent.SkipPrevious -> skipToPrevious()
+                }
+            }
+        }
+    }
+
+    private fun setupControllerListener(controller: MediaController) {
+        controller.addListener(object : Player.Listener {
+            // Sync playerState when play/pause is triggered from the notification.
+            override fun onIsPlayingChanged(isPlaying: Boolean) {
+                if (_playerState.value is PlayerState.Loading) return
+                if (isPlaying) {
+                    _playerState.value = PlayerState.Playing
+                    startProgressUpdates()
+                } else if (_playerState.value is PlayerState.Playing) {
+                    _playerState.value = PlayerState.Idle
+                    progressJob?.cancel()
                 }
             }
         })
@@ -89,14 +123,14 @@ class PlaybackViewModel @Inject constructor(
 
     fun playTrack(track: Track, newQueue: List<Track>? = null) {
         Log.d(TAG, "playTrack: ${track.id} '${track.title}'")
-        if (_unsavedTrack.value?.id == track.id && player.isPlaying) {
+        if (_unsavedTrack.value?.id == track.id && mediaController?.isPlaying == true) {
             Log.d(TAG, "playTrack: skipped (already playing)")
             return
         }
         if (newQueue == null) _history.value = emptyList()
         playbackJob?.cancel()
         progressJob?.cancel()
-        player.stop()
+        mediaController?.stop()
         _unsavedTrack.value = track
         _currentSavedTrack.value = null
         _isSaved.value = false
@@ -123,11 +157,16 @@ class PlaybackViewModel @Inject constructor(
             }
             Log.d(TAG, "playTrack: got stream, starting playback for ${track.id}")
             currentStreamUrl = streamUrl
+            val mediaItem = buildMediaItem(streamUrl, track.title, track.artist, track.albumImageUrl)
             withContext(Dispatchers.Main) {
-                player.stop()
-                player.setMediaItem(MediaItem.fromUri(streamUrl))
-                player.prepare()
-                player.play()
+                val controller = mediaController ?: run {
+                    _playerState.value = PlayerState.Error("Player not ready")
+                    return@withContext
+                }
+                controller.stop()
+                controller.setMediaItem(mediaItem)
+                controller.prepare()
+                controller.play()
                 _playerState.value = PlayerState.Playing
                 startProgressUpdates()
             }
@@ -135,11 +174,11 @@ class PlaybackViewModel @Inject constructor(
     }
 
     fun play(savedTrackId: Int) {
-        if (_currentSavedTrack.value?.id == savedTrackId && player.isPlaying) return
+        if (_currentSavedTrack.value?.id == savedTrackId && mediaController?.isPlaying == true) return
         _history.value = emptyList()
         playbackJob?.cancel()
         progressJob?.cancel()
-        player.stop()
+        mediaController?.stop()
         _unsavedTrack.value = null
         _isSaved.value = true
         currentStreamUrl = null
@@ -184,11 +223,16 @@ class PlaybackViewModel @Inject constructor(
                 streamUrl.toUri()
             }
 
+            val mediaItem = buildMediaItem(uri.toString(), saved.trackTitle, saved.trackArtist, saved.trackThumbnailUrl)
             withContext(Dispatchers.Main) {
-                player.stop()
-                player.setMediaItem(MediaItem.fromUri(uri))
-                player.prepare()
-                player.play()
+                val controller = mediaController ?: run {
+                    _playerState.value = PlayerState.Error("Player not ready")
+                    return@withContext
+                }
+                controller.stop()
+                controller.setMediaItem(mediaItem)
+                controller.prepare()
+                controller.play()
                 _playerState.value = PlayerState.Playing
                 startProgressUpdates()
             }
@@ -225,19 +269,16 @@ class PlaybackViewModel @Inject constructor(
     }
 
     fun togglePlayPause() {
-        if (player.isPlaying) {
-            player.pause()
-            _playerState.value = PlayerState.Idle
-            progressJob?.cancel()
+        val controller = mediaController ?: return
+        if (controller.isPlaying) {
+            controller.pause()
         } else {
-            player.play()
-            _playerState.value = PlayerState.Playing
-            startProgressUpdates()
+            controller.play()
         }
     }
 
     fun seekTo(positionMs: Long) {
-        player.seekTo(positionMs)
+        mediaController?.seekTo(positionMs)
         _positionMs.value = positionMs
     }
 
@@ -246,7 +287,7 @@ class PlaybackViewModel @Inject constructor(
         Log.d(TAG, "skipToNext: queue size=${queue.size}")
         if (queue.isEmpty()) {
             Log.d(TAG, "skipToNext: queue exhausted → Idle")
-            player.stop()
+            mediaController?.stop()
             progressJob?.cancel()
             _playerState.value = PlayerState.Idle
             return
@@ -280,22 +321,34 @@ class PlaybackViewModel @Inject constructor(
         _unsavedTrack.value
     }
 
+    private fun buildMediaItem(uri: String, title: String, artist: String, artworkUrl: String?): MediaItem =
+        MediaItem.Builder()
+            .setUri(uri)
+            .setMediaMetadata(
+                MediaMetadata.Builder()
+                    .setTitle(title)
+                    .setArtist(artist)
+                    .setArtworkUri(artworkUrl?.let { Uri.parse(it) })
+                    .build()
+            )
+            .build()
+
     private fun startProgressUpdates() {
         progressJob?.cancel()
         progressJob = viewModelScope.launch {
             while (true) {
-                _positionMs.value = player.currentPosition
-                _durationMs.value = player.duration.takeIf { it > 0 } ?: 0L
+                _positionMs.value = mediaController?.currentPosition ?: 0L
+                _durationMs.value = mediaController?.duration?.takeIf { it > 0 } ?: 0L
                 delay(500)
             }
         }
     }
 
     override fun onCleared() {
-        super.onCleared()
         playbackJob?.cancel()
         progressJob?.cancel()
-        player.release()
+        MediaController.releaseFuture(controllerFuture)
+        super.onCleared()
     }
 
     companion object {

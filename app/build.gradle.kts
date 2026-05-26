@@ -67,6 +67,7 @@ dependencies {
     implementation(libs.room.ktx)
     implementation(libs.coil.compose)
     implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.session)
     implementation(libs.reorderable)
     implementation(libs.androidx.palette)
     implementation("com.github.TeamNewPipe:NewPipeExtractor:dev-SNAPSHOT")
