@@ -38,6 +38,7 @@ import javax.inject.Inject
 class PlaybackViewModel @Inject constructor(
     private val repository: TrackRepository,
     private val streamService: YouTubeStreamService,
+    private val backendService: com.davidsimba.vintbeats.core.youtube.BackendService,
     private val queueService: YouTubeQueueService,
     private val lrcLibService: LrcLibService,
     @ApplicationContext private val context: Context
@@ -80,7 +81,6 @@ class PlaybackViewModel @Inject constructor(
     private val _isDownloading = MutableStateFlow(false)
     val isDownloading: StateFlow<Boolean> = _isDownloading.asStateFlow()
 
-    private val streamUrlCache = mutableMapOf<String, String>()
     private val lyricsCache = mutableMapOf<String, List<LyricLine>>()
     private var prefetchJob: Job? = null
     private var progressJob: Job? = null
@@ -110,16 +110,39 @@ class PlaybackViewModel @Inject constructor(
 
     private fun setupControllerListener(controller: MediaController) {
         controller.addListener(object : Player.Listener {
-            // Sync playerState when play/pause is triggered from the notification.
             override fun onIsPlayingChanged(isPlaying: Boolean) {
-                if (_playerState.value is PlayerState.Loading) return
                 if (isPlaying) {
                     _playerState.value = PlayerState.Playing
                     startProgressUpdates()
-                } else if (_playerState.value is PlayerState.Playing) {
+                } else {
+                    val isBuffering = mediaController?.playbackState ==
+                            androidx.media3.common.Player.STATE_BUFFERING
+                    if (!isBuffering && _playerState.value is PlayerState.Playing) {
+                        _playerState.value = PlayerState.Idle
+                        progressJob?.cancel()
+                    }
+                }
+            }
+
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                Log.d(TAG, "ExoPlayer state → ${
+                    when (playbackState) {
+                        androidx.media3.common.Player.STATE_BUFFERING -> "BUFFERING"
+                        androidx.media3.common.Player.STATE_READY     -> "READY"
+                        androidx.media3.common.Player.STATE_ENDED     -> "ENDED"
+                        else                                          -> "IDLE"
+                    }
+                }")
+                if (playbackState == androidx.media3.common.Player.STATE_ENDED) {
                     _playerState.value = PlayerState.Idle
                     progressJob?.cancel()
                 }
+            }
+
+            override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
+                Log.e(TAG, "ExoPlayer error: ${error.errorCodeName} — ${error.message}")
+                _playerState.value = PlayerState.Error(error.message ?: "Playback error")
+                progressJob?.cancel()
             }
         })
     }
@@ -158,15 +181,8 @@ class PlaybackViewModel @Inject constructor(
         }
         playbackJob = viewModelScope.launch {
             _playerState.value = PlayerState.Loading
-            Log.d(TAG, "playTrack: fetching stream for ${track.id}")
-            val streamUrl = streamUrlCache.remove(track.id)?.also {
-                Log.d(TAG, "playTrack: cache hit for ${track.id}")
-            } ?: streamService.getAudioStreamUrl(track.id) ?: run {
-                Log.e(TAG, "playTrack: no stream for ${track.id}")
-                _playerState.value = PlayerState.Error("Stream not available")
-                return@launch
-            }
-            Log.d(TAG, "playTrack: got stream, starting playback for ${track.id}")
+            val streamUrl = streamService.getAudioStreamUrl(track.id)
+            Log.d(TAG, "playTrack: ${track.id} → $streamUrl")
             currentStreamUrl = streamUrl
             val mediaItem = buildMediaItem(streamUrl, track.title, track.artist, track.albumImageUrl)
             withContext(Dispatchers.Main) {
@@ -178,8 +194,7 @@ class PlaybackViewModel @Inject constructor(
                 controller.setMediaItem(mediaItem)
                 controller.prepare()
                 controller.play()
-                _playerState.value = PlayerState.Playing
-                startProgressUpdates()
+                // PlayerState.Playing se asigna en onIsPlayingChanged cuando ExoPlayer realmente reproduce
             }
             prefetchAdjacentTracks()
         }
@@ -245,8 +260,7 @@ class PlaybackViewModel @Inject constructor(
                 controller.setMediaItem(mediaItem)
                 controller.prepare()
                 controller.play()
-                _playerState.value = PlayerState.Playing
-                startProgressUpdates()
+                // PlayerState.Playing se asigna en onIsPlayingChanged cuando ExoPlayer realmente reproduce
             }
         }
     }
@@ -362,15 +376,12 @@ class PlaybackViewModel @Inject constructor(
             _queue.value.firstOrNull()?.let { add(it) }
             _history.value.lastOrNull()?.let { add(it) }
         }
-
         if (adjacent.isEmpty()) return
         prefetchJob = viewModelScope.launch {
             for (track in adjacent) {
-                if (!streamUrlCache.containsKey(track.id)) {
-                    launch {
-                        Log.d(TAG, "prefetch: stream for ${track.id}")
-                        streamService.getAudioStreamUrl(track.id)?.let { streamUrlCache[track.id] = it }
-                    }
+                launch {
+                    Log.d(TAG, "prefetch: warming backend stream for ${track.id}")
+                    backendService.warmStream(track.id)
                 }
                 if (!lyricsCache.containsKey(track.id)) {
                     launch {

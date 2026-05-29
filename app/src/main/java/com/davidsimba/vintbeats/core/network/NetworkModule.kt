@@ -1,5 +1,6 @@
 package com.davidsimba.vintbeats.core.network
 
+import com.davidsimba.vintbeats.BuildConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,4 +32,17 @@ object NetworkModule {
         .connectTimeout(10, TimeUnit.SECONDS)
         .readTimeout(15, TimeUnit.SECONDS)
         .build()
+
+    @Provides
+    @Singleton
+    @Named("backend")
+    fun provideBackendOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
+        .connectTimeout(5, TimeUnit.SECONDS)
+        .readTimeout(10, TimeUnit.SECONDS)
+        .build()
+
+    @Provides
+    @Singleton
+    @Named("backendUrl")
+    fun provideBackendUrl(): String = BuildConfig.BACKEND_URL
 }
