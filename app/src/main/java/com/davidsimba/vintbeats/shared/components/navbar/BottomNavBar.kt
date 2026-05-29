@@ -3,6 +3,7 @@ package com.davidsimba.vintbeats.shared.components.navbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -14,13 +15,16 @@ import androidx.compose.material.icons.rounded.Headset
 import androidx.compose.material.icons.rounded.LibraryMusic
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.davidsimba.vintbeats.navigation.Screen
@@ -49,17 +53,15 @@ fun BottomNavBar(navController: NavController) {
         modifier = Modifier
             .fillMaxWidth()
             .background(VintageBgDark)
-            .navigationBarsPadding()
-            .padding(vertical = 8.dp),
+            .navigationBarsPadding(),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
         bottomNavItems.forEach { item ->
             val selected = currentRoute == item.screen.route
-            Icon(
-                imageVector = item.icon,
-                contentDescription = item.label,
-                tint = if (selected) VintageWhitePure else VintageGrayCool,
+            val tint = if (selected) VintageWhitePure else VintageGrayCool
+
+            Column(
                 modifier = Modifier
                     .clip(RoundedCornerShape(12.dp))
                     .clickable {
@@ -77,9 +79,22 @@ fun BottomNavBar(navController: NavController) {
                             }
                         }
                     }
-                    .padding(horizontal = 24.dp, vertical = 8.dp)
-                    .size(24.dp)
-            )
+                    .padding(horizontal = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Icon(
+                    imageVector = item.icon,
+                    contentDescription = item.label,
+                    tint = tint,
+                    modifier = Modifier.size(22.dp)
+                )
+                Text(
+                    text = item.label,
+                    color = tint,
+                    fontSize = 10.sp,
+                    fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal
+                )
+            }
         }
     }
 }

@@ -40,7 +40,9 @@ import com.davidsimba.vintbeats.shared.components.navbar.BottomNavBar
 private val bottomNavRoutes = setOf(
     Screen.Home.route,
     Screen.Search.route,
-    Screen.Library.route
+    Screen.Library.route,
+    Screen.Artist.route,
+    Screen.Album.route
 )
 
 @Composable
