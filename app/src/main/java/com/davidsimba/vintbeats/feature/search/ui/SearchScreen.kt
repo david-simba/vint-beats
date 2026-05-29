@@ -1,5 +1,8 @@
 package com.davidsimba.vintbeats.feature.search.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,7 +14,11 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -28,7 +35,6 @@ import com.davidsimba.vintbeats.feature.search.ui.components.CategorySheetConten
 import com.davidsimba.vintbeats.feature.search.ui.components.SearchField
 import com.davidsimba.vintbeats.feature.search.ui.components.exploreGrid
 import com.davidsimba.vintbeats.shared.components.Header
-import com.davidsimba.vintbeats.shared.components.SectionLabel
 import com.davidsimba.vintbeats.shared.components.cards.TrackCard
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
@@ -47,7 +53,12 @@ fun SearchScreen(
     val categories by viewModel.categories.collectAsStateWithLifecycle()
     val categorySheet by viewModel.categorySheet.collectAsStateWithLifecycle()
 
+    var isSearchFocused by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    DisposableEffect(Unit) {
+        onDispose { viewModel.onQueryChange("") }
+    }
 
     if (categorySheet !is CategorySheetState.Hidden) {
         ModalBottomSheet(
@@ -67,15 +78,31 @@ fun SearchScreen(
 
     Box(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
         LazyColumn(contentPadding = PaddingValues(bottom = 32.dp)) {
-            item { Header("Search") }
-            stickyHeader { SearchField(query = query, onQueryChange = viewModel::onQueryChange) }
+            item {
+                AnimatedVisibility(
+                    visible = !isSearchFocused,
+                    enter = expandVertically(),
+                    exit = shrinkVertically()
+                ) {
+                    Header("Search")
+                }
+            }
+            stickyHeader {
+                SearchField(
+                    query = query,
+                    onQueryChange = viewModel::onQueryChange,
+                    onFocusChanged = { isSearchFocused = it }
+                )
+            }
 
             when (val state = uiState) {
                 is SearchUiState.Idle -> {
-                    exploreGrid(
-                        categories = categories,
-                        onCategoryClick = viewModel::openCategory
-                    )
+                    if (!isSearchFocused) {
+                        exploreGrid(
+                            categories = categories,
+                            onCategoryClick = viewModel::openCategory
+                        )
+                    }
                 }
 
                 is SearchUiState.Loading -> {
@@ -104,15 +131,12 @@ fun SearchScreen(
 
                 is SearchUiState.Success -> {
                     if (state.artists.isNotEmpty()) {
-                        item { SectionLabel("Artists") }
                         items(state.artists.take(3)) { ArtistRow(it) { onArtistSelected(it) } }
                     }
                     if (state.albums.isNotEmpty()) {
-                        item { SectionLabel("Albums") }
                         items(state.albums.take(3)) { AlbumRow(it) { onAlbumSelected(it) } }
                     }
                     if (state.tracks.isNotEmpty()) {
-                        item { SectionLabel("Songs") }
                         items(state.tracks) { track ->
                             TrackCard(
                                 title = track.title,

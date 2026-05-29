@@ -35,8 +35,12 @@ import com.davidsimba.vintbeats.core.model.Artist
 import com.davidsimba.vintbeats.core.model.ExploreCategory
 import com.davidsimba.vintbeats.core.model.PlaylistSummary
 import com.davidsimba.vintbeats.feature.search.ui.CategorySheetState
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.shared.components.TrackInfo
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
+import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageBlueLight
 import com.davidsimba.vintbeats.shared.theme.VintageBrownLight
 import com.davidsimba.vintbeats.shared.theme.VintageGrayCool
@@ -213,7 +217,7 @@ fun ArtistRow(artist: Artist, onClick: () -> Unit) {
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .size(56.dp)
+                .size(44.dp)
                 .clip(CircleShape)
                 .background(VintageBgDark)
         )
@@ -241,7 +245,7 @@ fun AlbumRow(album: Album, onClick: () -> Unit) {
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .size(56.dp)
+                .size(44.dp)
                 .clip(RoundedCornerShape(8.dp))
                 .background(VintageBgDark)
         )

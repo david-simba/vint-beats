@@ -27,7 +27,7 @@ fun TrackCard(
     artist: String,
     thumbnailUrl: String?,
     modifier: Modifier = Modifier,
-    imageSize: Dp = 52.dp,
+    imageSize: Dp = 44.dp,
     onClick: (() -> Unit)? = null,
     trailingContent: (@Composable () -> Unit)? = null
 ) {
@@ -55,7 +55,7 @@ fun TrackCard(
 
         TrackInfo(
             title = title,
-            artist = artist,
+            artist = "Song  •  $artist",
             modifier = Modifier.weight(1f),
             titleSize = 14.sp,
             artistSize = 12.sp

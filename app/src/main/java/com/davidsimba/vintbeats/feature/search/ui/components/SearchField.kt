@@ -12,6 +12,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
@@ -22,6 +23,7 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
 fun SearchField(
     query: String,
     onQueryChange: (String) -> Unit,
+    onFocusChanged: (Boolean) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     TextField(
@@ -45,6 +47,7 @@ fun SearchField(
         modifier = modifier
             .fillMaxWidth()
             .background(VintageBgDark)
+            .onFocusChanged { onFocusChanged(it.isFocused) }
             .padding(horizontal = 16.dp, vertical = 12.dp)
     )
 }
