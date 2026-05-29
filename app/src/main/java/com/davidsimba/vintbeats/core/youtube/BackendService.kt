@@ -19,17 +19,21 @@ import okhttp3.Request
 import java.net.URLEncoder
 import javax.inject.Inject
 import javax.inject.Named
+import javax.inject.Singleton
 
 data class CategoryPlaylistsResult(
     val title: String,
     val playlists: List<PlaylistSummary>
 )
 
+@Singleton
 class BackendService @Inject constructor(
     @Named("backend") private val client: OkHttpClient,
     @Named("backendUrl") private val baseUrl: String
 ) {
     private val gson = Gson()
+
+    @Volatile private var categoriesCache: List<ExploreCategory>? = null
 
     fun streamProxyUrl(videoId: String): String = "$baseUrl/stream/$videoId"
 
@@ -73,8 +77,10 @@ class BackendService @Inject constructor(
     suspend fun getLyrics(title: String, artist: String): List<LyricLine> =
         getList("/lyrics?title=${title.encode()}&artist=${artist.encode()}", "lines")
 
-    suspend fun getExploreCategories(): List<ExploreCategory> =
-        getList("/explore", "categories")
+    suspend fun getExploreCategories(): List<ExploreCategory> {
+        categoriesCache?.let { return it }
+        return getList<ExploreCategory>("/explore", "categories").also { if (it.isNotEmpty()) categoriesCache = it }
+    }
 
     suspend fun getCategoryPlaylists(categoryId: String): CategoryPlaylistsResult? =
         get("/explore/${categoryId.encode()}") { body ->
