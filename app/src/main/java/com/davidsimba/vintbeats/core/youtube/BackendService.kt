@@ -2,7 +2,10 @@ package com.davidsimba.vintbeats.core.youtube
 
 import com.davidsimba.vintbeats.core.model.Album
 import com.davidsimba.vintbeats.core.model.Artist
+import com.davidsimba.vintbeats.core.model.ExploreCategory
 import com.davidsimba.vintbeats.core.model.LyricLine
+import com.davidsimba.vintbeats.core.model.PlaylistDetail
+import com.davidsimba.vintbeats.core.model.PlaylistSummary
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.album.data.AlbumDetail
 import com.davidsimba.vintbeats.feature.artist.data.ArtistDetail
@@ -16,6 +19,11 @@ import okhttp3.Request
 import java.net.URLEncoder
 import javax.inject.Inject
 import javax.inject.Named
+
+data class CategoryPlaylistsResult(
+    val title: String,
+    val playlists: List<PlaylistSummary>
+)
 
 class BackendService @Inject constructor(
     @Named("backend") private val client: OkHttpClient,
@@ -64,6 +72,19 @@ class BackendService @Inject constructor(
 
     suspend fun getLyrics(title: String, artist: String): List<LyricLine> =
         getList("/lyrics?title=${title.encode()}&artist=${artist.encode()}", "lines")
+
+    suspend fun getExploreCategories(): List<ExploreCategory> =
+        getList("/explore", "categories")
+
+    suspend fun getCategoryPlaylists(categoryId: String): CategoryPlaylistsResult? =
+        get("/explore/${categoryId.encode()}") { body ->
+            gson.fromJson(body, CategoryPlaylistsResult::class.java)
+        }
+
+    suspend fun getPlaylistDetail(playlistId: String): PlaylistDetail? =
+        get("/playlist/${playlistId.encode()}") { body ->
+            gson.fromJson(body, PlaylistDetail::class.java)
+        }
 
     private suspend fun <T> get(path: String, parse: (String) -> T?): T? = withContext(Dispatchers.IO) {
         try {

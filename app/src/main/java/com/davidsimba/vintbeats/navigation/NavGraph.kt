@@ -32,6 +32,7 @@ import com.davidsimba.vintbeats.feature.home.ui.HomeScreen
 import com.davidsimba.vintbeats.feature.library.ui.LibraryScreen
 import com.davidsimba.vintbeats.feature.player.ui.PlaybackViewModel
 import com.davidsimba.vintbeats.feature.player.ui.PlayerScreen
+import com.davidsimba.vintbeats.feature.playlist.PlaylistScreen
 import com.davidsimba.vintbeats.feature.search.ui.SearchScreen
 import com.davidsimba.vintbeats.feature.player.ui.components.MiniPlayer
 import com.davidsimba.vintbeats.shared.components.background.Background
@@ -42,7 +43,8 @@ private val bottomNavRoutes = setOf(
     Screen.Search.route,
     Screen.Library.route,
     Screen.Artist.route,
-    Screen.Album.route
+    Screen.Album.route,
+    Screen.Playlist.route
 )
 
 @Composable
@@ -147,6 +149,9 @@ fun NavGraph(
                         },
                         onAlbumSelected = { album ->
                             navController.navigate(Screen.Album.route(album.id))
+                        },
+                        onPlaylistSelected = { playlist ->
+                            navController.navigate(Screen.Playlist.route(playlist.id))
                         }
                     )
                 }
@@ -207,6 +212,28 @@ fun NavGraph(
                     PlayerScreen(
                         onBack = { navController.popBackStack() },
                         viewModel = playbackViewModel
+                    )
+                }
+                composable(
+                    route = Screen.Playlist.route,
+                    arguments = listOf(navArgument("playlistId") { type = NavType.StringType }),
+                    enterTransition = { slideInHorizontally(animationSpec = tween(220), initialOffsetX = { it }) },
+                    exitTransition = { ExitTransition.None },
+                    popEnterTransition = { EnterTransition.None },
+                    popExitTransition = { slideOutHorizontally(animationSpec = tween(220), targetOffsetX = { it }) }
+                ) {
+                    PlaylistScreen(
+                        onBack = { navController.popBackStack() },
+                        onTrackSelected = { track, queue ->
+                            playbackViewModel.playTrack(track, newQueue = queue.filter { it.id != track.id })
+                            navController.navigate(Screen.Player.route) { launchSingleTop = true }
+                        },
+                        onPlayAll = { tracks ->
+                            if (tracks.isNotEmpty()) {
+                                playbackViewModel.playTrack(tracks.first(), newQueue = tracks.drop(1))
+                                navController.navigate(Screen.Player.route) { launchSingleTop = true }
+                            }
+                        }
                     )
                 }
                 composable(Screen.Library.route) {
