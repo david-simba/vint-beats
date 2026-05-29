@@ -15,7 +15,6 @@ import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.davidsimba.vintbeats.core.model.LyricLine
 import com.davidsimba.vintbeats.core.model.Track
-import com.davidsimba.vintbeats.core.youtube.LrcLibService
 import com.davidsimba.vintbeats.core.youtube.YouTubeQueueService
 import com.davidsimba.vintbeats.core.youtube.YouTubeStreamService
 import com.davidsimba.vintbeats.feature.library.domain.TrackRepository
@@ -40,7 +39,6 @@ class PlaybackViewModel @Inject constructor(
     private val streamService: YouTubeStreamService,
     private val backendService: com.davidsimba.vintbeats.core.youtube.BackendService,
     private val queueService: YouTubeQueueService,
-    private val lrcLibService: LrcLibService,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -172,7 +170,7 @@ class PlaybackViewModel @Inject constructor(
                 _syncedLyrics.value = cached
                 _isLoadingLyrics.value = false
             } else {
-                _syncedLyrics.value = lrcLibService.getSyncedLyrics(track.title, track.artist)
+                _syncedLyrics.value = backendService.getLyrics(track.title, track.artist)
                 _isLoadingLyrics.value = false
             }
         }
@@ -222,7 +220,7 @@ class PlaybackViewModel @Inject constructor(
             }
             _currentSavedTrack.value = saved
             viewModelScope.launch {
-                _syncedLyrics.value = lrcLibService.getSyncedLyrics(saved.trackTitle, saved.trackArtist)
+                _syncedLyrics.value = backendService.getLyrics(saved.trackTitle, saved.trackArtist)
                 _isLoadingLyrics.value = false
             }
             viewModelScope.launch {
@@ -386,7 +384,7 @@ class PlaybackViewModel @Inject constructor(
                 if (!lyricsCache.containsKey(track.id)) {
                     launch {
                         Log.d(TAG, "prefetch: lyrics for ${track.id}")
-                        lyricsCache[track.id] = lrcLibService.getSyncedLyrics(track.title, track.artist)
+                        lyricsCache[track.id] = backendService.getLyrics(track.title, track.artist)
                     }
                 }
             }
