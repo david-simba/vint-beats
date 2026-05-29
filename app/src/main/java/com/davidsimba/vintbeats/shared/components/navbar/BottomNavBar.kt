@@ -53,7 +53,7 @@ fun BottomNavBar(navController: NavController) {
         modifier = Modifier
             .fillMaxWidth()
             .background(VintageBgDark)
-            .padding(top = 10.dp)
+            .padding(top = 6.dp)
             .navigationBarsPadding(),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically

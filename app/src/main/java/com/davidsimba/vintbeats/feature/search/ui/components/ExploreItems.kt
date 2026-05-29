@@ -85,7 +85,7 @@ fun LazyListScope.exploreGrid(
             color = VintageWhiteWarm,
             fontSize = 16.sp,
             fontWeight = FontWeight.Black,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 16.dp)
         )
     }
 

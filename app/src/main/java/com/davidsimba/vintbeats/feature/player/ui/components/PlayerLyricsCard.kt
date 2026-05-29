@@ -31,6 +31,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -67,18 +69,24 @@ fun PlayerLyricsCard(
     }
 
     val scrollState = rememberScrollState()
-    val itemYPositions = remember { HashMap<Int, Int>() }
+    val itemYPositions = remember { mutableStateMapOf<Int, Int>() }
     var boxHeightPx by remember { mutableIntStateOf(0) }
+    var initialScrollDone by remember(lines) { mutableStateOf(false) }
 
     LaunchedEffect(lines) {
         scrollState.scrollTo(0)
         itemYPositions.clear()
     }
 
-    LaunchedEffect(currentIndex) {
-        if (currentIndex >= 0 && !scrollState.isScrollInProgress) {
-            val targetY = itemYPositions[currentIndex] ?: return@LaunchedEffect
-            scrollState.animateScrollTo((targetY - boxHeightPx / 3).coerceAtLeast(0))
+    LaunchedEffect(currentIndex, itemYPositions.size) {
+        if (currentIndex < 0) return@LaunchedEffect
+        val targetY = itemYPositions[currentIndex] ?: return@LaunchedEffect
+        val offset = (targetY - boxHeightPx / 3).coerceAtLeast(0)
+        if (!initialScrollDone) {
+            scrollState.scrollTo(offset)
+            initialScrollDone = true
+        } else if (!scrollState.isScrollInProgress) {
+            scrollState.animateScrollTo(offset)
         }
     }
 
