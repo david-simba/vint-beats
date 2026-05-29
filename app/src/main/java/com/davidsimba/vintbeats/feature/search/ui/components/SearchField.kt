@@ -1,5 +1,6 @@
 package com.davidsimba.vintbeats.feature.search.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,6 +44,7 @@ fun SearchField(
         ),
         modifier = modifier
             .fillMaxWidth()
+            .background(VintageBgDark)
             .padding(horizontal = 16.dp, vertical = 12.dp)
     )
 }

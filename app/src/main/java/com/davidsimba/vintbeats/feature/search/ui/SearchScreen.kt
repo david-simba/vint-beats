@@ -27,6 +27,7 @@ import com.davidsimba.vintbeats.feature.search.ui.components.ArtistRow
 import com.davidsimba.vintbeats.feature.search.ui.components.CategorySheetContent
 import com.davidsimba.vintbeats.feature.search.ui.components.SearchField
 import com.davidsimba.vintbeats.feature.search.ui.components.exploreGrid
+import com.davidsimba.vintbeats.shared.components.Header
 import com.davidsimba.vintbeats.shared.components.SectionLabel
 import com.davidsimba.vintbeats.shared.components.cards.TrackCard
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
@@ -66,9 +67,8 @@ fun SearchScreen(
 
     Box(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
         LazyColumn(contentPadding = PaddingValues(bottom = 32.dp)) {
-            item {
-                SearchField(query = query, onQueryChange = viewModel::onQueryChange)
-            }
+            item { Header("Search") }
+            stickyHeader { SearchField(query = query, onQueryChange = viewModel::onQueryChange) }
 
             when (val state = uiState) {
                 is SearchUiState.Idle -> {
