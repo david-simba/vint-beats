@@ -5,6 +5,7 @@ import android.net.Uri
 sealed class Screen(val route: String) {
     data object Home : Screen("home")
     data object Search : Screen("search")
+    data object SearchActive : Screen("search_active")
     data object Library : Screen("library")
     data object Player : Screen("player")
     data object Artist : Screen("artist/{browseId}") {

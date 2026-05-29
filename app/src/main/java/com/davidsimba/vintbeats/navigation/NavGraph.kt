@@ -2,6 +2,8 @@ package com.davidsimba.vintbeats.navigation
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
@@ -17,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -25,6 +28,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.davidsimba.vintbeats.feature.album.ui.AlbumScreen
 import com.davidsimba.vintbeats.feature.artist.ui.ArtistScreen
@@ -33,7 +37,9 @@ import com.davidsimba.vintbeats.feature.library.ui.LibraryScreen
 import com.davidsimba.vintbeats.feature.player.ui.PlaybackViewModel
 import com.davidsimba.vintbeats.feature.player.ui.PlayerScreen
 import com.davidsimba.vintbeats.feature.playlist.PlaylistScreen
+import com.davidsimba.vintbeats.feature.search.ui.SearchActiveScreen
 import com.davidsimba.vintbeats.feature.search.ui.SearchScreen
+import com.davidsimba.vintbeats.feature.search.ui.SearchViewModel
 import com.davidsimba.vintbeats.feature.player.ui.components.MiniPlayer
 import com.davidsimba.vintbeats.shared.components.background.Background
 import com.davidsimba.vintbeats.shared.components.navbar.BottomNavBar
@@ -41,6 +47,7 @@ import com.davidsimba.vintbeats.shared.components.navbar.BottomNavBar
 private val bottomNavRoutes = setOf(
     Screen.Home.route,
     Screen.Search.route,
+    Screen.SearchActive.route,
     Screen.Library.route,
     Screen.Artist.route,
     Screen.Album.route,
@@ -138,22 +145,62 @@ fun NavGraph(
                 composable(Screen.Home.route) {
                     HomeScreen()
                 }
-                composable(Screen.Search.route) {
-                    SearchScreen(
-                        onTrackSelected = { track ->
-                            playbackViewModel.playTrack(track)
-                            navController.navigate(Screen.Player.route) { launchSingleTop = true }
-                        },
-                        onArtistSelected = { artist ->
-                            navController.navigate(Screen.Artist.route(artist.id))
-                        },
-                        onAlbumSelected = { album ->
-                            navController.navigate(Screen.Album.route(album.id))
-                        },
-                        onPlaylistSelected = { playlist ->
-                            navController.navigate(Screen.Playlist.route(playlist.id))
+                navigation(
+                    startDestination = Screen.Search.route,
+                    route = "search_graph"
+                ) {
+                    composable(
+                        route = Screen.Search.route,
+                        popEnterTransition = { fadeIn(animationSpec = tween(120)) }
+                    ) { entry ->
+                        val parentEntry = remember(entry) {
+                            navController.getBackStackEntry("search_graph")
                         }
-                    )
+                        val viewModel: SearchViewModel = hiltViewModel(parentEntry)
+                        SearchScreen(
+                            onSearchTap = {
+                                navController.navigate(Screen.SearchActive.route) {
+                                    launchSingleTop = true
+                                }
+                            },
+                            onPlaylistSelected = { playlist ->
+                                navController.navigate(Screen.Playlist.route(playlist.id))
+                            },
+                            viewModel = viewModel
+                        )
+                    }
+                    composable(
+                        route = Screen.SearchActive.route,
+                        enterTransition = { fadeIn(animationSpec = tween(120)) },
+                        exitTransition = { ExitTransition.None },
+                        popEnterTransition = { EnterTransition.None },
+                        popExitTransition = { ExitTransition.None }
+                    ) { entry ->
+                        val parentEntry = remember(entry) {
+                            navController.getBackStackEntry("search_graph")
+                        }
+                        val viewModel: SearchViewModel = hiltViewModel(parentEntry)
+                        SearchActiveScreen(
+                            onBack = {
+                                viewModel.onQueryChange("")
+                                navController.popBackStack()
+                            },
+                            onTrackSelected = { track ->
+                                playbackViewModel.playTrack(track)
+                                navController.navigate(Screen.Player.route) { launchSingleTop = true }
+                            },
+                            onArtistSelected = { artist ->
+                                navController.navigate(Screen.Artist.route(artist.id))
+                            },
+                            onAlbumSelected = { album ->
+                                navController.navigate(Screen.Album.route(album.id))
+                            },
+                            onPlaylistSelected = { playlist ->
+                                navController.navigate(Screen.Playlist.route(playlist.id))
+                            },
+                            viewModel = viewModel
+                        )
+                    }
                 }
                 composable(
                     route = Screen.Artist.route,
