@@ -164,6 +164,11 @@ fun PlayerLyricsScreen(
                         animationSpec = tween(250),
                         label = "lyric_full_scale_$index"
                     )
+                    val linePad by animateFloatAsState(
+                        targetValue = if (isCurrent) 15f else 10f,
+                        animationSpec = tween(250),
+                        label = "lyric_full_pad_$index"
+                    )
                     Text(
                         text = line.text,
                         color = color,
@@ -173,7 +178,7 @@ fun PlayerLyricsScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable { onSeek(line.timeMs) }
-                            .padding(top = 10.dp, bottom = 10.dp, end = 12.dp)
+                            .padding(top = linePad.dp, bottom = linePad.dp, end = 12.dp)
                             .graphicsLayer {
                                 scaleX = scale
                                 scaleY = scale

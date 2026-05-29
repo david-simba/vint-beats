@@ -2,6 +2,7 @@ package com.davidsimba.vintbeats.feature.player.ui.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
@@ -38,6 +39,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.layout.positionInParent
@@ -52,10 +54,10 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
 
 @Composable
 fun PlayerLyricsCard(
+    modifier: Modifier = Modifier,
     lines: List<LyricLine>,
     isLoading: Boolean = false,
     positionMs: Long,
-    modifier: Modifier = Modifier,
     cardBgColor: Color = VintageBgBase,
     onExpand: () -> Unit = {}
 ) {
@@ -136,6 +138,11 @@ fun PlayerLyricsCard(
                             animationSpec = tween(250),
                             label = "lyric_card_scale_$index"
                         )
+                        val linePad by animateDpAsState(
+                            targetValue = if (isCurrent) 16.dp else 6.dp,
+                            animationSpec = tween(250),
+                            label = "lyric_card_pad_$index"
+                        )
                         Text(
                             text = line.text,
                             color = color,
@@ -144,7 +151,7 @@ fun PlayerLyricsCard(
                             lineHeight = 22.sp,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = 6.dp, bottom = 6.dp, end = 12.dp)
+                                .padding(top = linePad, bottom = linePad, end = 12.dp)
                                 .graphicsLayer {
                                     scaleX = scale
                                     scaleY = scale
