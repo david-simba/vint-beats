@@ -10,6 +10,8 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
+import com.davidsimba.vintbeats.R
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -50,7 +52,7 @@ fun SearchScreen(
 
     Box(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
         LazyColumn(contentPadding = PaddingValues(bottom = 32.dp)) {
-            item { Header("Search") }
+            item { Header(stringResource(R.string.search_title)) }
             stickyHeader {
                 SearchField(
                     query = "",

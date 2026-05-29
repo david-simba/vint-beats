@@ -19,6 +19,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.davidsimba.vintbeats.R
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -81,7 +83,7 @@ fun LazyListScope.exploreGrid(
 
     item {
         Text(
-            text = "Explore",
+            text = stringResource(R.string.explore_title),
             color = VintageWhiteWarm,
             fontSize = 16.sp,
             fontWeight = FontWeight.Black,
@@ -131,7 +133,7 @@ fun CategorySheetContent(
                 modifier = Modifier.fillMaxWidth().height(200.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Couldn't load playlists", color = VintageGrayCool, fontSize = 14.sp)
+                Text(stringResource(R.string.explore_playlists_error), color = VintageGrayCool, fontSize = 14.sp)
             }
         }
         is CategorySheetState.Success -> {
@@ -204,7 +206,7 @@ fun ArtistRow(artist: Artist, onClick: () -> Unit) {
         Spacer(Modifier.width(14.dp))
         TrackInfo(
             title = artist.name,
-            artist = "Artist",
+            artist = stringResource(R.string.label_artist),
             titleSize = 15.sp,
             titleWeight = FontWeight.SemiBold
         )
@@ -230,10 +232,11 @@ fun AlbumRow(album: Album, onClick: () -> Unit) {
                 .background(VintageBgDark)
         )
         Spacer(Modifier.width(14.dp))
+        val albumLabel = stringResource(R.string.label_album)
         TrackInfo(
             title = album.title,
             artist = buildString {
-                append("Album")
+                append(albumLabel)
                 if (!album.year.isNullOrBlank()) append("  •  ${album.year}")
             },
             titleSize = 15.sp,

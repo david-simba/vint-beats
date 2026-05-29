@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Alignment
+import com.davidsimba.vintbeats.R
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -55,7 +57,7 @@ fun TrackCard(
 
         TrackInfo(
             title = title,
-            artist = "Song  •  $artist",
+            artist = "${stringResource(R.string.label_song)}  •  $artist",
             modifier = Modifier.weight(1f),
             titleSize = 14.sp,
             artistSize = 12.sp

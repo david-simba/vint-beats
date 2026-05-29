@@ -15,6 +15,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
+import com.davidsimba.vintbeats.R
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBackIosNew
 import androidx.compose.material3.CircularProgressIndicator
@@ -100,7 +102,7 @@ fun ArtistScreen(
                         ) {
                             if (state.topTracks.isNotEmpty()) {
                                 Spacer(Modifier.height(6.dp))
-                                SectionLabel("Top Songs")
+                                SectionLabel(stringResource(R.string.artist_top_songs))
                                 state.topTracks.forEachIndexed { index, track ->
                                     ArtistTopSongItem(
                                         index = index + 1,
@@ -114,7 +116,7 @@ fun ArtistScreen(
 
                             if (state.albums.isNotEmpty()) {
                                 Spacer(Modifier.height(12.dp))
-                                SectionLabel("Albums")
+                                SectionLabel(stringResource(R.string.artist_albums))
                                 ArtistAlbumsList(
                                     albums = state.albums,
                                     onAlbumClick = { album -> onAlbumSelected(album) }
@@ -139,7 +141,7 @@ fun ArtistScreen(
         ) {
             Icon(
                 imageVector = Icons.Rounded.ArrowBackIosNew,
-                contentDescription = "Back",
+                contentDescription = stringResource(R.string.action_back),
                 tint = VintageWhitePure,
                 modifier = Modifier.size(20.dp)
             )

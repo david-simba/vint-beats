@@ -1,5 +1,6 @@
 package com.davidsimba.vintbeats.shared.components.navbar
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,11 +23,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.navigation.Screen
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageGrayCool
@@ -34,14 +37,14 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
 
 data class BottomNavBarItem(
     val screen: Screen,
-    val label: String,
+    @StringRes val label: Int,
     val icon: ImageVector
 )
 
 val bottomNavItems = listOf(
-    BottomNavBarItem(Screen.Home, "Home", Icons.Rounded.Headset),
-    BottomNavBarItem(Screen.Search, "Search", Icons.Rounded.Search),
-    BottomNavBarItem(Screen.Library, "Library", Icons.Rounded.LibraryMusic)
+    BottomNavBarItem(Screen.Home, R.string.nav_home, Icons.Rounded.Headset),
+    BottomNavBarItem(Screen.Search, R.string.nav_search, Icons.Rounded.Search),
+    BottomNavBarItem(Screen.Library, R.string.nav_library, Icons.Rounded.LibraryMusic)
 )
 
 @Composable
@@ -61,6 +64,7 @@ fun BottomNavBar(navController: NavController) {
         bottomNavItems.forEach { item ->
             val selected = currentRoute == item.screen.route
             val tint = if (selected) VintageWhitePure else VintageGrayCool
+            val label = stringResource(item.label)
 
             Column(
                 modifier = Modifier
@@ -85,12 +89,12 @@ fun BottomNavBar(navController: NavController) {
             ) {
                 Icon(
                     imageVector = item.icon,
-                    contentDescription = item.label,
+                    contentDescription = label,
                     tint = tint,
                     modifier = Modifier.size(22.dp)
                 )
                 Text(
-                    text = item.label,
+                    text = label,
                     color = tint,
                     fontSize = 10.sp,
                     fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal

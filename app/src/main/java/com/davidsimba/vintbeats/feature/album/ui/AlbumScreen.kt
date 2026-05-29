@@ -17,6 +17,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.res.stringResource
+import com.davidsimba.vintbeats.R
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBackIosNew
 import androidx.compose.material.icons.rounded.PlayArrow
@@ -111,7 +113,7 @@ fun AlbumScreen(
                         ) {
                             if (state.album.tracks.isNotEmpty()) {
                                 Spacer(Modifier.height(6.dp))
-                                SectionLabel("Tracks")
+                                SectionLabel(stringResource(R.string.album_tracks))
                                 state.album.tracks.forEachIndexed { index, track ->
                                     AlbumTrackItem(
                                         index = index + 1,
@@ -121,7 +123,7 @@ fun AlbumScreen(
                                 }
                             } else {
                                 Text(
-                                    text = "No tracks available.",
+                                    text = stringResource(R.string.album_no_tracks),
                                     color = VintageGrayMid,
                                     fontSize = 14.sp,
                                     modifier = Modifier.padding(16.dp)
@@ -145,7 +147,7 @@ fun AlbumScreen(
         ) {
             Icon(
                 imageVector = Icons.Rounded.ArrowBackIosNew,
-                contentDescription = "Back",
+                contentDescription = stringResource(R.string.action_back),
                 tint = VintageWhitePure,
                 modifier = Modifier.size(20.dp)
             )
@@ -228,7 +230,7 @@ private fun AlbumHeader(album: AlbumDetail, parallaxOffset: Float = 0f, onPlay: 
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.PlayArrow,
-                            contentDescription = "Play album",
+                            contentDescription = stringResource(R.string.album_play),
                             tint = VintageWhitePure,
                             modifier = Modifier.size(30.dp)
                         )

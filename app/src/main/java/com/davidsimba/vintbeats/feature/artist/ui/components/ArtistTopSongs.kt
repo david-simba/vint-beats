@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Alignment
+import com.davidsimba.vintbeats.R
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -28,7 +30,7 @@ import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 @Composable
 fun ArtistTopSongsEmpty() {
     Text(
-        text = "No songs available.",
+        text = stringResource(R.string.artist_no_songs),
         color = VintageGrayMid,
         fontSize = 14.sp,
         modifier = Modifier.padding(16.dp)

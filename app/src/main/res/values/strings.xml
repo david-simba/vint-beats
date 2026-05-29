@@ -1,3 +1,39 @@
 <resources>
     <string name="app_name">Vint Beats</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_search">Search</string>
+    <string name="nav_library">Library</string>
+
+    <!-- Library -->
+    <string name="library_title">Library</string>
+    <string name="library_empty">No songs saved yet</string>
+
+    <!-- Search -->
+    <string name="search_title">Search</string>
+    <string name="search_placeholder">Search songs, artists…</string>
+
+    <!-- Explore -->
+    <string name="explore_title">Explore</string>
+    <string name="explore_playlists_error">Couldn\'t load playlists</string>
+
+    <!-- Labels -->
+    <string name="label_song">Song</string>
+    <string name="label_artist">Artist</string>
+    <string name="label_album">Album</string>
+
+    <!-- Artist -->
+    <string name="artist_top_songs">Top Songs</string>
+    <string name="artist_albums">Albums</string>
+    <string name="artist_no_songs">No songs available.</string>
+    <string name="artist_play">Play artist</string>
+
+    <!-- Album -->
+    <string name="album_tracks">Tracks</string>
+    <string name="album_no_tracks">No tracks available.</string>
+    <string name="album_play">Play album</string>
+
+    <!-- Common -->
+    <string name="action_back">Back</string>
 </resources>
