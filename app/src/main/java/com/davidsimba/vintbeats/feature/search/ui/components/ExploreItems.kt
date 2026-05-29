@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,7 +17,6 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -37,25 +35,28 @@ import com.davidsimba.vintbeats.core.model.PlaylistSummary
 import com.davidsimba.vintbeats.feature.search.ui.CategorySheetState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.CircularProgressIndicator
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.shared.components.TrackInfo
+import com.davidsimba.vintbeats.shared.components.cards.CategoryCard
+import com.davidsimba.vintbeats.shared.components.cards.CategoryCardSkeleton
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
-import com.davidsimba.vintbeats.shared.theme.VintageBlueLight
+import com.davidsimba.vintbeats.shared.theme.VintageBlue
 import com.davidsimba.vintbeats.shared.theme.VintageBrownLight
 import com.davidsimba.vintbeats.shared.theme.VintageGrayCool
-import com.davidsimba.vintbeats.shared.theme.VintageGreenLight
-import com.davidsimba.vintbeats.shared.theme.VintageOrangeLight
-import com.davidsimba.vintbeats.shared.theme.VintageRedLight
-import com.davidsimba.vintbeats.shared.theme.VintageTealLight
+import com.davidsimba.vintbeats.shared.theme.VintageGreen
+import com.davidsimba.vintbeats.shared.theme.VintageOrange
+import com.davidsimba.vintbeats.shared.theme.VintageRed
+import com.davidsimba.vintbeats.shared.theme.VintageTeal
 import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
 import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
-import com.davidsimba.vintbeats.shared.theme.VintageYellowLight
+import com.davidsimba.vintbeats.shared.theme.VintageYellow
 
 private val categoryColors = listOf(
-    VintageRedLight, VintageOrangeLight, VintageYellowLight,
-    VintageGreenLight, VintageTealLight, VintageBlueLight,
-    VintageBrownLight, VintageTealLight, VintageRedLight, VintageGreenLight
+    VintageRed, VintageOrange, VintageYellow,
+    VintageGreen, VintageTeal, VintageBlue,
+    VintageBrownLight, VintageTeal, VintageRed, VintageGreen
 )
 
 fun LazyListScope.exploreGrid(
@@ -63,12 +64,16 @@ fun LazyListScope.exploreGrid(
     onCategoryClick: (ExploreCategory) -> Unit
 ) {
     if (categories.isEmpty()) {
-        item {
-            Box(
-                modifier = Modifier.fillMaxWidth().height(200.dp),
-                contentAlignment = Alignment.Center
+        items(3) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                CircularProgressIndicator(color = VintageGrayCool, modifier = Modifier.size(24.dp))
+                CategoryCardSkeleton(modifier = Modifier.weight(1f))
+                CategoryCardSkeleton(modifier = Modifier.weight(1f))
             }
         }
         return
@@ -106,31 +111,6 @@ fun LazyListScope.exploreGrid(
     }
 }
 
-@Composable
-private fun CategoryCard(
-    title: String,
-    color: Color,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
-) {
-    Box(
-        modifier = modifier
-            .aspectRatio(2f)
-            .clip(RoundedCornerShape(12.dp))
-            .background(color)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 14.dp, vertical = 12.dp),
-        contentAlignment = Alignment.CenterStart
-    ) {
-        Text(
-            text = title,
-            color = VintageWhitePure,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold,
-            lineHeight = 18.sp
-        )
-    }
-}
 
 @Composable
 fun CategorySheetContent(
