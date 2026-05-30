@@ -165,7 +165,7 @@ fun PlayerLyricsScreen(
                         label = "lyric_full_scale_$index"
                     )
                     val linePad by animateFloatAsState(
-                        targetValue = if (isCurrent) 15f else 10f,
+                        targetValue = if (isCurrent) 12f else 8f,
                         animationSpec = tween(250),
                         label = "lyric_full_pad_$index"
                     )
@@ -173,7 +173,7 @@ fun PlayerLyricsScreen(
                         text = line.text,
                         color = color,
                         fontSize = 18.sp,
-                        fontWeight = FontWeight.SemiBold,
+                        fontWeight = FontWeight.ExtraBold,
                         lineHeight = 24.sp,
                         modifier = Modifier
                             .fillMaxWidth()

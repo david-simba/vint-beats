@@ -118,7 +118,7 @@ fun PlayerLyricsCard(
         }
 
         if (isLoading) {
-            LyricsSkeleton(cardBgColor = cardBgColor)
+            LyricsSkeleton()
         } else if (lines.isEmpty()) {
             Text(
                 text = "No lyrics available for this song.",
@@ -147,7 +147,7 @@ fun PlayerLyricsCard(
                             label = "lyric_card_scale_$index"
                         )
                         val linePad by animateDpAsState(
-                            targetValue = if (isCurrent) 16.dp else 6.dp,
+                            targetValue = if (isCurrent) 12.dp else 6.dp,
                             animationSpec = tween(250),
                             label = "lyric_card_pad_$index"
                         )
@@ -155,7 +155,7 @@ fun PlayerLyricsCard(
                             text = line.text,
                             color = color,
                             fontSize = 18.sp,
-                            fontWeight = FontWeight.SemiBold,
+                            fontWeight = FontWeight.ExtraBold,
                             lineHeight = 22.sp,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -207,7 +207,7 @@ fun PlayerLyricsCard(
 }
 
 @Composable
-private fun LyricsSkeleton(cardBgColor: Color) {
+private fun LyricsSkeleton() {
     val alpha by rememberInfiniteTransition(label = "skeleton").animateFloat(
         initialValue = 0.15f,
         targetValue = 0.35f,
