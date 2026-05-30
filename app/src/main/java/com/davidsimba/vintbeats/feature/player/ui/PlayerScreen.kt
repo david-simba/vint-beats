@@ -2,15 +2,11 @@ package com.davidsimba.vintbeats.feature.player.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -40,8 +36,6 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import androidx.activity.compose.BackHandler
@@ -131,77 +125,15 @@ fun PlayerScreen(
             .fillMaxSize()
             .background(paletteColor)
             .onSizeChanged { componentWidth = it.width.toFloat() }
-            .pointerInput(showLyricsScreen) {
-                if (showLyricsScreen) return@pointerInput
-                awaitEachGesture {
-                    val down = awaitFirstDown(requireUnconsumed = false)
-                    var cumulX = 0f
-                    var cumulY = 0f
-                    var isHorizontal: Boolean? = null
-
-                    while (true) {
-                        val event = awaitPointerEvent(PointerEventPass.Initial)
-                        val change = event.changes.firstOrNull { it.id == down.id } ?: break
-                        val dx = change.position.x - change.previousPosition.x
-                        val dy = change.position.y - change.previousPosition.y
-                        cumulX += dx
-                        cumulY += dy
-
-                        if (!change.pressed) {
-                            if (isHorizontal == true) {
-                                when {
-                                    offsetX.value < -(componentWidth * 0.4f) -> {
-                                        change.consume()
-                                        viewModel.skipToNext()
-                                        scope.launch {
-                                            offsetX.animateTo(-componentWidth, tween(150))
-                                            offsetX.snapTo(0f)
-                                        }
-                                    }
-                                    offsetX.value > (componentWidth * 0.4f) -> {
-                                        change.consume()
-                                        viewModel.skipToPrevious()
-                                        scope.launch {
-                                            offsetX.animateTo(componentWidth, tween(150))
-                                            offsetX.snapTo(0f)
-                                        }
-                                    }
-                                    else -> {
-                                        scope.launch {
-                                            offsetX.animateTo(
-                                                0f,
-                                                spring(
-                                                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                                                    stiffness = Spring.StiffnessMedium
-                                                )
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                            break
-                        }
-
-                        if (isHorizontal == null) {
-                            val absX = kotlin.math.abs(cumulX)
-                            val absY = kotlin.math.abs(cumulY)
-                            if (absX > viewConfiguration.touchSlop || absY > viewConfiguration.touchSlop) {
-                                isHorizontal = absX >= absY
-                                if (isHorizontal == false) scope.launch { offsetX.snapTo(0f) }
-                            }
-                        }
-
-                        if (isHorizontal == true) {
-                            val newOffset = (offsetX.value + dx).coerceIn(
-                                -componentWidth,
-                                if (hasPrevious) componentWidth else 0f
-                            )
-                            scope.launch { offsetX.snapTo(newOffset) }
-                            change.consume()
-                        }
-                    }
-                }
-            }
+            .playerSwipeGesture(
+                offsetX = offsetX,
+                componentWidth = componentWidth,
+                hasPrevious = hasPrevious,
+                enabled = !showLyricsScreen,
+                scope = scope,
+                onSkipNext = viewModel::skipToNext,
+                onSkipPrevious = viewModel::skipToPrevious,
+            )
     ) {
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
             val screenHeight = maxHeight

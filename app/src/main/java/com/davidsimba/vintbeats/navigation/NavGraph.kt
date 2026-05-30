@@ -187,7 +187,6 @@ fun NavGraph(
                             },
                             onTrackSelected = { track ->
                                 playbackViewModel.playTrack(track)
-                                navController.navigate(Screen.Player.route) { launchSingleTop = true }
                             },
                             onArtistSelected = { artist ->
                                 navController.navigate(Screen.Artist.route(artist.id))
@@ -214,12 +213,10 @@ fun NavGraph(
                         onBack = { navController.popBackStack() },
                         onTrackSelected = { track ->
                             playbackViewModel.playTrack(track)
-                            navController.navigate(Screen.Player.route) { launchSingleTop = true }
                         },
                         onPlayArtist = { tracks ->
                             if (tracks.isNotEmpty()) {
                                 playbackViewModel.playTrack(tracks.first(), newQueue = tracks.drop(1))
-                                navController.navigate(Screen.Player.route) { launchSingleTop = true }
                             }
                         },
                         onAlbumSelected = { album ->
@@ -239,12 +236,10 @@ fun NavGraph(
                         onBack = { navController.popBackStack() },
                         onTrackSelected = { track ->
                             playbackViewModel.playTrack(track)
-                            navController.navigate(Screen.Player.route) { launchSingleTop = true }
                         },
                         onPlayAlbum = { tracks ->
                             if (tracks.isNotEmpty()) {
                                 playbackViewModel.playTrack(tracks.first(), newQueue = tracks.drop(1))
-                                navController.navigate(Screen.Player.route) { launchSingleTop = true }
                             }
                         }
                     )
@@ -273,12 +268,10 @@ fun NavGraph(
                         onBack = { navController.popBackStack() },
                         onTrackSelected = { track, queue ->
                             playbackViewModel.playTrack(track, newQueue = queue.filter { it.id != track.id })
-                            navController.navigate(Screen.Player.route) { launchSingleTop = true }
                         },
                         onPlayAll = { tracks ->
                             if (tracks.isNotEmpty()) {
                                 playbackViewModel.playTrack(tracks.first(), newQueue = tracks.drop(1))
-                                navController.navigate(Screen.Player.route) { launchSingleTop = true }
                             }
                         }
                     )
@@ -287,7 +280,6 @@ fun NavGraph(
                     LibraryScreen(
                         onTrackClick = { id ->
                             playbackViewModel.play(id)
-                            navController.navigate(Screen.Player.route) { launchSingleTop = true }
                         }
                     )
                 }
