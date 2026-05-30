@@ -154,7 +154,6 @@ class PlaybackViewModel @Inject constructor(
         if (newQueue == null) _history.value = emptyList()
         playbackJob?.cancel()
         progressJob?.cancel()
-        mediaController?.stop()
         _unsavedTrack.value = track
         _currentSavedTrack.value = null
         _isSaved.value = false
@@ -188,7 +187,6 @@ class PlaybackViewModel @Inject constructor(
                     _playerState.value = PlayerState.Error("Player not ready")
                     return@withContext
                 }
-                controller.stop()
                 controller.setMediaItem(mediaItem)
                 controller.prepare()
                 controller.play()
@@ -254,7 +252,6 @@ class PlaybackViewModel @Inject constructor(
                     _playerState.value = PlayerState.Error("Player not ready")
                     return@withContext
                 }
-                controller.stop()
                 controller.setMediaItem(mediaItem)
                 controller.prepare()
                 controller.play()

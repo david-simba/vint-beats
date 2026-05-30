@@ -43,7 +43,7 @@ fun SearchField(
     val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(Unit) {
-        if (autoFocus) focusRequester.requestFocus()
+        if (autoFocus && query.isEmpty()) focusRequester.requestFocus()
     }
 
     Box(

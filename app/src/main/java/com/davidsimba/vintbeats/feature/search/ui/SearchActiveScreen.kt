@@ -15,6 +15,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import com.davidsimba.vintbeats.R
 import androidx.compose.ui.Alignment
@@ -48,6 +49,7 @@ fun SearchActiveScreen(
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val query by viewModel.query.collectAsStateWithLifecycle()
+    val focusManager = LocalFocusManager.current
 
     Box(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
         LazyColumn(contentPadding = PaddingValues(bottom = 32.dp)) {
@@ -107,7 +109,7 @@ fun SearchActiveScreen(
                                 title = track.title,
                                 artist = track.artist,
                                 thumbnailUrl = track.albumImageUrl,
-                                onClick = { onTrackSelected(track) }
+                                onClick = { focusManager.clearFocus(); onTrackSelected(track) }
                             )
                         }
                     }
