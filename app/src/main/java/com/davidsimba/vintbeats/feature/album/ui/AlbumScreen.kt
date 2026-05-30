@@ -37,7 +37,6 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -52,9 +51,9 @@ import com.davidsimba.vintbeats.feature.album.data.AlbumDetail
 import com.davidsimba.vintbeats.feature.album.ui.components.AlbumTrackItem
 import com.davidsimba.vintbeats.shared.components.SectionLabel
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
-import com.davidsimba.vintbeats.shared.theme.VintageGrayCool
+import com.davidsimba.vintbeats.shared.theme.VintageGray
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
-import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
+import com.davidsimba.vintbeats.shared.theme.VintageWhite
 
 @Composable
 fun AlbumScreen(
@@ -78,14 +77,14 @@ fun AlbumScreen(
             is AlbumUiState.Loading -> {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
-                    color = VintageGrayCool
+                    color = VintageGray
                 )
             }
 
             is AlbumUiState.Error -> {
                 Text(
                     text = state.message,
-                    color = VintageWhitePure,
+                    color = VintageWhite,
                     modifier = Modifier
                         .align(Alignment.Center)
                         .padding(24.dp)
@@ -148,7 +147,7 @@ fun AlbumScreen(
             Icon(
                 imageVector = Icons.Rounded.ArrowBackIosNew,
                 contentDescription = stringResource(R.string.action_back),
-                tint = VintageWhitePure,
+                tint = VintageWhite,
                 modifier = Modifier.size(20.dp)
             )
         }
@@ -195,7 +194,7 @@ private fun AlbumHeader(album: AlbumDetail, parallaxOffset: Float = 0f, onPlay: 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = album.title,
-                    color = VintageWhitePure,
+                    color = VintageWhite,
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Black,
                     maxLines = 2,
@@ -208,7 +207,7 @@ private fun AlbumHeader(album: AlbumDetail, parallaxOffset: Float = 0f, onPlay: 
                             append(album.artist)
                             if (!album.year.isNullOrBlank()) append("  •  ${album.year}")
                         },
-                        color = VintageWhitePure.copy(alpha = 0.7f),
+                        color = VintageWhite.copy(alpha = 0.7f),
                         fontSize = 14.sp,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -222,7 +221,7 @@ private fun AlbumHeader(album: AlbumDetail, parallaxOffset: Float = 0f, onPlay: 
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
                         .size(52.dp)
-                        .border(1.5.dp, VintageWhitePure.copy(alpha = 0.4f), CircleShape)
+                        .border(1.5.dp, VintageWhite.copy(alpha = 0.4f), CircleShape)
                 ) {
                     IconButton(
                         onClick = onPlay,
@@ -231,7 +230,7 @@ private fun AlbumHeader(album: AlbumDetail, parallaxOffset: Float = 0f, onPlay: 
                         Icon(
                             imageVector = Icons.Rounded.PlayArrow,
                             contentDescription = stringResource(R.string.album_play),
-                            tint = VintageWhitePure,
+                            tint = VintageWhite,
                             modifier = Modifier.size(30.dp)
                         )
                     }

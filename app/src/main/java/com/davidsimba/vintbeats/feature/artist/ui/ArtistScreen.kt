@@ -40,8 +40,8 @@ import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistTopSongsEmpty
 import androidx.compose.foundation.background
 import com.davidsimba.vintbeats.shared.components.SectionLabel
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
-import com.davidsimba.vintbeats.shared.theme.VintageGrayCool
-import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
+import com.davidsimba.vintbeats.shared.theme.VintageGray
+import com.davidsimba.vintbeats.shared.theme.VintageWhite
 
 @Composable
 fun ArtistScreen(
@@ -67,14 +67,14 @@ fun ArtistScreen(
             is ArtistUiState.Loading -> {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
-                    color = VintageGrayCool
+                    color = VintageGray
                 )
             }
 
             is ArtistUiState.Error -> {
                 Text(
                     text = state.message,
-                    color = VintageWhitePure,
+                    color = VintageWhite,
                     modifier = Modifier.align(Alignment.Center).padding(24.dp)
                 )
             }
@@ -142,7 +142,7 @@ fun ArtistScreen(
             Icon(
                 imageVector = Icons.Rounded.ArrowBackIosNew,
                 contentDescription = stringResource(R.string.action_back),
-                tint = VintageWhitePure,
+                tint = VintageWhite,
                 modifier = Modifier.size(20.dp)
             )
         }

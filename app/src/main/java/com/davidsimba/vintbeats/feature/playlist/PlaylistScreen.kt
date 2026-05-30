@@ -40,9 +40,9 @@ import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.shared.components.cards.TrackCard
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
-import com.davidsimba.vintbeats.shared.theme.VintageGrayCool
+import com.davidsimba.vintbeats.shared.theme.VintageGray
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
-import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
+import com.davidsimba.vintbeats.shared.theme.VintageWhite
 
 @Composable
 fun PlaylistScreen(
@@ -66,7 +66,7 @@ fun PlaylistScreen(
                 Icon(
                     imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                     contentDescription = "Back",
-                    tint = VintageWhitePure,
+                    tint = VintageWhite,
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -75,12 +75,12 @@ fun PlaylistScreen(
         when (val state = uiState) {
             is PlaylistUiState.Loading -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = VintageGrayCool)
+                    CircularProgressIndicator(color = VintageGray)
                 }
             }
             is PlaylistUiState.Error -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(state.message, color = VintageGrayCool, fontSize = 14.sp)
+                    Text(state.message, color = VintageGray, fontSize = 14.sp)
                 }
             }
             is PlaylistUiState.Success -> {
@@ -105,14 +105,14 @@ fun PlaylistScreen(
                             }
                             Text(
                                 text = detail.title,
-                                color = VintageWhitePure,
+                                color = VintageWhite,
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold
                             )
                             Spacer(Modifier.height(4.dp))
                             Text(
                                 text = "${detail.tracks.size} songs",
-                                color = VintageGrayCool,
+                                color = VintageGray,
                                 fontSize = 13.sp
                             )
                             Spacer(Modifier.height(16.dp))

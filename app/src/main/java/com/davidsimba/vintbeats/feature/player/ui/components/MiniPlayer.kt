@@ -53,7 +53,7 @@ import com.davidsimba.vintbeats.shared.components.TrackInfo
 import com.davidsimba.vintbeats.shared.components.background.Background
 import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
-import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
+import com.davidsimba.vintbeats.shared.theme.VintageWhite
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -223,7 +223,7 @@ fun MiniPlayer(
                         Icon(
                             imageVector = if (isFavorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
                             contentDescription = "Favorite",
-                            tint = if (isFavorite) VintageRedLight else VintageWhitePure,
+                            tint = if (isFavorite) VintageRedLight else VintageWhite,
                             modifier = Modifier.size(24.dp)
                         )
                     }
@@ -234,7 +234,7 @@ fun MiniPlayer(
                         Icon(
                             imageVector = if (isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
                             contentDescription = if (isPlaying) "Pause" else "Play",
-                            tint = VintageWhitePure,
+                            tint = VintageWhite,
                             modifier = Modifier.size(26.dp)
                         )
                     }
@@ -245,7 +245,7 @@ fun MiniPlayer(
                         Icon(
                             imageVector = Icons.Rounded.SkipNext,
                             contentDescription = "Next",
-                            tint = VintageWhitePure,
+                            tint = VintageWhite,
                             modifier = Modifier.size(24.dp)
                         )
                     }
@@ -256,7 +256,7 @@ fun MiniPlayer(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(4.dp)
-                    .background(VintageWhitePure.copy(alpha = 0.15f))
+                    .background(VintageWhite.copy(alpha = 0.15f))
             ) {
                 Box(
                     modifier = Modifier

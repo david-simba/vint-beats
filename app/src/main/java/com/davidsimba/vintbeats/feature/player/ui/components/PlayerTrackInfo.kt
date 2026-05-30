@@ -21,7 +21,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
-import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
+import com.davidsimba.vintbeats.shared.theme.VintageWhite
 
 @Composable
 fun PlayerTrackInfo(
@@ -40,7 +40,7 @@ fun PlayerTrackInfo(
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
-                color = VintageWhitePure,
+                color = VintageWhite,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
@@ -49,7 +49,7 @@ fun PlayerTrackInfo(
             Spacer(Modifier.height(2.dp))
             Text(
                 text = artist,
-                color = VintageWhitePure.copy(alpha = 0.7f),
+                color = VintageWhite.copy(alpha = 0.7f),
                 fontSize = 14.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -59,7 +59,7 @@ fun PlayerTrackInfo(
             Icon(
                 imageVector = if (isFavorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
                 contentDescription = "Favorite",
-                tint = if (isFavorite) VintageRedLight else VintageWhitePure,
+                tint = if (isFavorite) VintageRedLight else VintageWhite,
                 modifier = Modifier.size(28.dp)
             )
         }

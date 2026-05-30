@@ -32,8 +32,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.navigation.Screen
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
-import com.davidsimba.vintbeats.shared.theme.VintageGrayCool
-import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
+import com.davidsimba.vintbeats.shared.theme.VintageGray
+import com.davidsimba.vintbeats.shared.theme.VintageWhite
 
 data class BottomNavBarItem(
     val screen: Screen,
@@ -63,7 +63,7 @@ fun BottomNavBar(navController: NavController) {
     ) {
         bottomNavItems.forEach { item ->
             val selected = currentRoute == item.screen.route
-            val tint = if (selected) VintageWhitePure else VintageGrayCool
+            val tint = if (selected) VintageWhite else VintageGray
             val label = stringResource(item.label)
 
             Column(

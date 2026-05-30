@@ -22,7 +22,7 @@ import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.core.model.Album
 import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
-import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
+import com.davidsimba.vintbeats.shared.theme.VintageWhite
 
 @Composable
 fun AlbumCard(album: Album, onClick: () -> Unit) {
@@ -49,7 +49,7 @@ fun AlbumCard(album: Album, onClick: () -> Unit) {
 
         Text(
             text = album.title,
-            color = VintageWhitePure,
+            color = VintageWhite,
             fontSize = 13.sp,
             fontWeight = FontWeight.SemiBold,
             maxLines = 1,

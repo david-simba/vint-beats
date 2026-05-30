@@ -46,7 +46,7 @@ import androidx.compose.ui.unit.sp
 import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
-import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
+import com.davidsimba.vintbeats.shared.theme.VintageWhite
 
 @Composable
 fun PlayerControls(
@@ -103,7 +103,7 @@ fun PlayerControls(
                 Icon(
                     imageVector = Icons.Rounded.Shuffle,
                     contentDescription = "Shuffle",
-                    tint = VintageWhitePure.copy(alpha = 0.5f),
+                    tint = VintageWhite.copy(alpha = 0.5f),
                     modifier = Modifier.size(22.dp)
                 )
             }
@@ -112,7 +112,7 @@ fun PlayerControls(
                 Icon(
                     imageVector = Icons.Rounded.SkipPrevious,
                     contentDescription = "Previous",
-                    tint = VintageWhitePure,
+                    tint = VintageWhite,
                     modifier = Modifier.size(32.dp)
                 )
             }
@@ -121,7 +121,7 @@ fun PlayerControls(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .size(72.dp)
-                    .border(1.5.dp, VintageWhitePure.copy(alpha = 0.3f), CircleShape)
+                    .border(1.5.dp, VintageWhite.copy(alpha = 0.3f), CircleShape)
             ) {
                 IconButton(
                     onClick = onTogglePlayPause,
@@ -130,7 +130,7 @@ fun PlayerControls(
                     Icon(
                         imageVector = if (isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
                         contentDescription = if (isPlaying) "Pause" else "Play",
-                        tint = VintageWhitePure,
+                        tint = VintageWhite,
                         modifier = Modifier.size(40.dp)
                     )
                 }
@@ -140,7 +140,7 @@ fun PlayerControls(
                 Icon(
                     imageVector = Icons.Rounded.SkipNext,
                     contentDescription = "Next",
-                    tint = VintageWhitePure,
+                    tint = VintageWhite,
                     modifier = Modifier.size(32.dp)
                 )
             }
@@ -149,7 +149,7 @@ fun PlayerControls(
                 Icon(
                     imageVector = Icons.Rounded.Repeat,
                     contentDescription = "Repeat",
-                    tint = VintageWhitePure.copy(alpha = 0.5f),
+                    tint = VintageWhite.copy(alpha = 0.5f),
                     modifier = Modifier.size(22.dp)
                 )
             }

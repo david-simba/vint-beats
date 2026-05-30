@@ -53,7 +53,7 @@ import com.davidsimba.vintbeats.core.model.LyricLine
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.shared.components.TrackInfo
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
-import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
+import com.davidsimba.vintbeats.shared.theme.VintageWhite
 import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
 
 @Composable
@@ -99,7 +99,7 @@ fun PlayerLyricsScreen(
                 Icon(
                     imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                     contentDescription = "Back",
-                    tint = VintageWhitePure,
+                    tint = VintageWhite,
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -128,7 +128,7 @@ fun PlayerLyricsScreen(
                             .fillMaxWidth(fraction)
                             .height(14.dp)
                             .background(
-                                color = VintageWhitePure.copy(alpha = alpha),
+                                color = VintageWhite.copy(alpha = alpha),
                                 shape = RoundedCornerShape(7.dp)
                             )
                     )
@@ -142,7 +142,7 @@ fun PlayerLyricsScreen(
             ) {
                 Text(
                     text = "No lyrics available for this song.",
-                    color = VintageWhitePure.copy(alpha = 0.4f),
+                    color = VintageWhite.copy(alpha = 0.4f),
                     fontSize = 16.sp
                 )
             }
@@ -155,7 +155,7 @@ fun PlayerLyricsScreen(
                 itemsIndexed(lines) { index, line ->
                     val isCurrent = index == currentIndex
                     val color by animateColorAsState(
-                        targetValue = if (isCurrent) VintageWhitePure else VintageWhitePure.copy(alpha = 0.35f),
+                        targetValue = if (isCurrent) VintageWhite else VintageWhite.copy(alpha = 0.35f),
                         animationSpec = tween(250),
                         label = "lyric_full_color_$index"
                     )
@@ -189,7 +189,7 @@ fun PlayerLyricsScreen(
             }
         }
 
-        HorizontalDivider(color = VintageWhitePure.copy(alpha = 0.08f))
+        HorizontalDivider(color = VintageWhite.copy(alpha = 0.08f))
 
         Row(
             modifier = Modifier
@@ -213,13 +213,13 @@ fun PlayerLyricsScreen(
                 modifier = Modifier.weight(1f),
                 titleSize = 14.sp,
                 artistSize = 12.sp,
-                artistColor = VintageWhitePure.copy(alpha = 0.55f)
+                artistColor = VintageWhite.copy(alpha = 0.55f)
             )
             IconButton(onClick = onTogglePlayPause) {
                 Icon(
                     imageVector = if (isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
                     contentDescription = if (isPlaying) "Pause" else "Play",
-                    tint = VintageWhitePure,
+                    tint = VintageWhite,
                     modifier = Modifier.size(32.dp)
                 )
             }

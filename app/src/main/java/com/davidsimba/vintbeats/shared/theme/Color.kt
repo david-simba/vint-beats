@@ -2,14 +2,12 @@ package com.davidsimba.vintbeats.shared.theme
 
 import androidx.compose.ui.graphics.Color
 
-val VintageBlack = Color(0xFF0A0A0A)
-val VintageBlackLight = Color(0xFF2A2A2A)
-
-val VintageGray = Color(0xFFD6CFC4)
+val VintageBgBase = Color(0xFF2A2A2A)
+val VintageBgDark = Color(0xFF1A1A1A)
+val VintageGray = Color(0xFFA1A1AA)
 val VintageGrayMid = Color(0xFFB0A898)
 val VintageGrayDeep = Color(0xFF7A7268)
-
-val VintageWhite = Color(0xFFF5F0E8)
+val VintageWhite = Color(0xFFFFFFFF)
 val VintageWhiteMid = Color(0xFFF2ECD8)
 val VintageWhiteWarm = Color(0xFFF7F3EC)
 
@@ -40,11 +38,3 @@ val VintageTealLight = Color(0xFF66CCCC)
 val VintageBlue = Color(0xFF5577BB)
 val VintageBlueDeep = Color(0xFF334488)
 val VintageBlueLight = Color(0xFF7799DD)
-
-val VintageBgBase = Color(0xFF2A2A2A)
-val VintageBgAccent = Color(0xFFC8A87A)
-val VintageBgDark = Color(0xFF1A1A1A)
-
-val ErrorRed = Color(0xFFE53935)
-val VintageWhitePure = Color(0xFFFFFFFF)
-val VintageGrayCool = Color(0xFFA1A1AA)

@@ -32,7 +32,7 @@ import com.davidsimba.vintbeats.feature.search.ui.components.ArtistRow
 import com.davidsimba.vintbeats.feature.search.ui.components.SearchField
 import com.davidsimba.vintbeats.shared.components.cards.TrackCard
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
-import com.davidsimba.vintbeats.shared.theme.VintageGrayCool
+import com.davidsimba.vintbeats.shared.theme.VintageGray
 import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
 
 @Composable
@@ -76,7 +76,7 @@ fun SearchActiveScreen(
                             modifier = Modifier.fillParentMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
-                            CircularProgressIndicator(color = VintageGrayCool)
+                            CircularProgressIndicator(color = VintageGray)
                         }
                     }
                 }

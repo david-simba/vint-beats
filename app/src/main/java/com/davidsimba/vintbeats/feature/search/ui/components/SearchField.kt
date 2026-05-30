@@ -25,8 +25,8 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
-import com.davidsimba.vintbeats.shared.theme.VintageGrayCool
-import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
+import com.davidsimba.vintbeats.shared.theme.VintageGray
+import com.davidsimba.vintbeats.shared.theme.VintageWhite
 
 @Composable
 fun SearchField(
@@ -55,13 +55,13 @@ fun SearchField(
         TextField(
             value = query,
             onValueChange = onQueryChange,
-            placeholder = { Text(stringResource(R.string.search_placeholder), color = VintageGrayCool) },
+            placeholder = { Text(stringResource(R.string.search_placeholder), color = VintageGray) },
             leadingIcon = leadingIcon,
             singleLine = true,
             shape = RoundedCornerShape(12.dp),
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = VintageWhitePure,
-                unfocusedContainerColor = VintageWhitePure,
+                focusedContainerColor = VintageWhite,
+                unfocusedContainerColor = VintageWhite,
                 focusedTextColor = VintageBgDark,
                 unfocusedTextColor = VintageBgDark,
                 focusedIndicatorColor = Color.Transparent,

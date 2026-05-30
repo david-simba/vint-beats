@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
-import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
+import com.davidsimba.vintbeats.shared.theme.VintageWhite
 
 @Composable
 fun TrackInfo(
@@ -23,7 +23,7 @@ fun TrackInfo(
     titleSize: TextUnit = 13.sp,
     artistSize: TextUnit = 11.sp,
     titleWeight: FontWeight = FontWeight.SemiBold,
-    titleColor: Color = VintageWhitePure,
+    titleColor: Color = VintageWhite,
     artistColor: Color = VintageGrayMid,
     textAlign: TextAlign = TextAlign.Start
 ) {

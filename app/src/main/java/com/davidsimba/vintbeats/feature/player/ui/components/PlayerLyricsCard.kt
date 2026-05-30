@@ -41,7 +41,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.layout.positionInParent
@@ -51,7 +50,7 @@ import androidx.compose.ui.unit.sp
 import com.davidsimba.vintbeats.core.model.LyricLine
 import com.davidsimba.vintbeats.shared.components.cards.Card
 import com.davidsimba.vintbeats.shared.theme.VintageBgBase
-import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
+import com.davidsimba.vintbeats.shared.theme.VintageWhite
 import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
 
 @Composable
@@ -111,7 +110,7 @@ fun PlayerLyricsCard(
                 Icon(
                     imageVector = Icons.Rounded.Fullscreen,
                     contentDescription = "Expand lyrics",
-                    tint = VintageWhitePure.copy(alpha = 0.45f),
+                    tint = VintageWhite.copy(alpha = 0.45f),
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -122,7 +121,7 @@ fun PlayerLyricsCard(
         } else if (lines.isEmpty()) {
             Text(
                 text = "No lyrics available for this song.",
-                color = VintageWhitePure.copy(alpha = 0.4f),
+                color = VintageWhite.copy(alpha = 0.4f),
                 fontSize = 14.sp,
                 lineHeight = 22.sp
             )
@@ -136,8 +135,8 @@ fun PlayerLyricsCard(
                     lines.forEachIndexed { index, line ->
                         val isCurrent = index == currentIndex
                         val color by animateColorAsState(
-                            targetValue = if (isCurrent) VintageWhitePure
-                                          else VintageWhitePure.copy(alpha = 0.32f),
+                            targetValue = if (isCurrent) VintageWhite
+                                          else VintageWhite.copy(alpha = 0.32f),
                             animationSpec = tween(250),
                             label = "lyric_card_color_$index"
                         )
@@ -222,7 +221,7 @@ private fun LyricsSkeleton() {
                     .fillMaxWidth(fraction)
                     .height(12.dp)
                     .background(
-                        color = VintageWhitePure.copy(alpha = alpha),
+                        color = VintageWhite.copy(alpha = alpha),
                         shape = RoundedCornerShape(6.dp)
                     )
             )

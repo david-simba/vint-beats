@@ -12,7 +12,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
+import com.davidsimba.vintbeats.shared.theme.VintageWhite
 
 @Composable
 fun PlayerTopBar(
@@ -28,7 +28,7 @@ fun PlayerTopBar(
             Icon(
                 imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                 contentDescription = "Back",
-                tint = VintageWhitePure
+                tint = VintageWhite
             )
         }
         Spacer(Modifier.weight(1f))
@@ -36,14 +36,14 @@ fun PlayerTopBar(
             Icon(
                 imageVector = Icons.AutoMirrored.Rounded.QueueMusic,
                 contentDescription = "Queue",
-                tint = VintageWhitePure
+                tint = VintageWhite
             )
         }
         IconButton(onClick = onMoreOptions) {
             Icon(
                 imageVector = Icons.Rounded.MoreVert,
                 contentDescription = "More options",
-                tint = VintageWhitePure
+                tint = VintageWhite
             )
         }
     }

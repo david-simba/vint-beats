@@ -41,12 +41,12 @@ import com.davidsimba.vintbeats.shared.components.cards.CategoryCardSkeleton
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageBlue
 import com.davidsimba.vintbeats.shared.theme.VintageBrownLight
-import com.davidsimba.vintbeats.shared.theme.VintageGrayCool
+import com.davidsimba.vintbeats.shared.theme.VintageGray
 import com.davidsimba.vintbeats.shared.theme.VintageGreen
 import com.davidsimba.vintbeats.shared.theme.VintageOrange
 import com.davidsimba.vintbeats.shared.theme.VintageRed
 import com.davidsimba.vintbeats.shared.theme.VintageTeal
-import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
+import com.davidsimba.vintbeats.shared.theme.VintageWhite
 import com.davidsimba.vintbeats.shared.theme.VintageYellow
 
 private val categoryColors = listOf(
@@ -109,7 +109,7 @@ fun CategorySheetContent(
                 modifier = Modifier.fillMaxWidth().height(200.dp),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = VintageGrayCool)
+                CircularProgressIndicator(color = VintageGray)
             }
         }
         is CategorySheetState.Error -> {
@@ -117,7 +117,7 @@ fun CategorySheetContent(
                 modifier = Modifier.fillMaxWidth().height(200.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Text(stringResource(R.string.explore_playlists_error), color = VintageGrayCool, fontSize = 14.sp)
+                Text(stringResource(R.string.explore_playlists_error), color = VintageGray, fontSize = 14.sp)
             }
         }
         is CategorySheetState.Success -> {
@@ -126,7 +126,7 @@ fun CategorySheetContent(
                 item {
                     Text(
                         text = result.title,
-                        color = VintageWhitePure,
+                        color = VintageWhite,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)

@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
+import com.davidsimba.vintbeats.shared.theme.VintageWhite
 
 @Composable
 fun ColorDot(
@@ -26,7 +26,7 @@ fun ColorDot(
             .clip(RoundedCornerShape(8.dp))
             .background(color)
             .then(
-                if (selected) Modifier.border(2.dp, VintageWhitePure, RoundedCornerShape(10.dp))
+                if (selected) Modifier.border(2.dp, VintageWhite, RoundedCornerShape(10.dp))
                 else Modifier
             )
             .clickable { onClick() }

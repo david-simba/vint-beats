@@ -35,7 +35,7 @@ import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.core.model.Artist
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
-import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
+import com.davidsimba.vintbeats.shared.theme.VintageWhite
 
 @Composable
 fun ArtistHeader(
@@ -82,7 +82,7 @@ fun ArtistHeader(
         ) {
             Text(
                 text = artist.name,
-                color = VintageWhitePure,
+                color = VintageWhite,
                 fontSize = 34.sp,
                 fontWeight = FontWeight.Black,
                 modifier = Modifier.weight(1f)
@@ -99,7 +99,7 @@ fun ArtistHeader(
                     if (isLoadingPlay) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(24.dp),
-                            color = VintageWhitePure,
+                            color = VintageWhite,
                             strokeWidth = 2.dp,
                             strokeCap = StrokeCap.Round
                         )
@@ -111,7 +111,7 @@ fun ArtistHeader(
                             Icon(
                                 imageVector = Icons.Rounded.PlayArrow,
                                 contentDescription = stringResource(R.string.artist_play),
-                                tint = VintageWhitePure,
+                                tint = VintageWhite,
                                 modifier = Modifier.size(30.dp)
                             )
                         }

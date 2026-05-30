@@ -24,9 +24,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.davidsimba.vintbeats.shared.theme.VintageBgBase
-import com.davidsimba.vintbeats.shared.theme.VintageBrownMid
 import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
-import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
+import com.davidsimba.vintbeats.shared.theme.VintageWhite
 
 @Composable
 fun CategoryCard(
@@ -46,7 +45,7 @@ fun CategoryCard(
     ) {
         Text(
             text = title,
-            color = VintageWhitePure,
+            color = VintageWhite,
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
             lineHeight = 18.sp

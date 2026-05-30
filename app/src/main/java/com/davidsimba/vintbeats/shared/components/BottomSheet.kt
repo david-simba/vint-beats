@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
-import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
+import com.davidsimba.vintbeats.shared.theme.VintageWhite
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,10 +57,10 @@ fun BottomSheetMenuItem(
         Icon(
             imageVector = icon,
             contentDescription = null,
-            tint = VintageWhitePure,
+            tint = VintageWhite,
             modifier = Modifier.size(22.dp)
         )
         Spacer(Modifier.width(16.dp))
-        Text(text = label, fontSize = 16.sp, color = VintageWhitePure)
+        Text(text = label, fontSize = 16.sp, color = VintageWhite)
     }
 }

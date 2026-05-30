@@ -35,10 +35,10 @@ import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.shared.components.EqualizerBars
 import com.davidsimba.vintbeats.shared.components.TrackInfo
-import com.davidsimba.vintbeats.shared.theme.VintageGrayCool
+import com.davidsimba.vintbeats.shared.theme.VintageGray
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
-import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
+import com.davidsimba.vintbeats.shared.theme.VintageWhite
 import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
 import sh.calvin.reorderable.ReorderableColumn
 
@@ -72,7 +72,7 @@ fun PlayerQueueSheet(
             modifier = Modifier.padding(bottom = 14.dp)
         )
         HorizontalDivider(
-            color = VintageGrayCool.copy(alpha = 0.10f),
+            color = VintageGray.copy(alpha = 0.10f),
             thickness = 0.5.dp,
             modifier = Modifier.padding(bottom = 14.dp)
         )
@@ -90,7 +90,7 @@ fun PlayerQueueSheet(
         if (localQueue.isEmpty()) {
             Text(
                 text = "Loading up next tracks…",
-                color = VintageWhitePure.copy(alpha = 0.4f),
+                color = VintageWhite.copy(alpha = 0.4f),
                 fontSize = 14.sp
             )
         } else {
@@ -109,7 +109,7 @@ fun PlayerQueueSheet(
                     onClick = { onTrackClick(track) }
                 )
                 HorizontalDivider(
-                    color = VintageGrayCool.copy(alpha = 0.10f),
+                    color = VintageGray.copy(alpha = 0.10f),
                     thickness = 0.5.dp,
                     modifier = Modifier.padding(vertical = 4.dp)
                 )
@@ -159,7 +159,7 @@ private fun QueueTrackRow(
             artist = track.artist,
             modifier = Modifier.weight(1f),
             titleWeight = if (isCurrentTrack) FontWeight.SemiBold else FontWeight.Medium,
-            titleColor = if (isCurrentTrack) VintageWhiteWarm else VintageWhitePure
+            titleColor = if (isCurrentTrack) VintageWhiteWarm else VintageWhite
         )
 
         Spacer(Modifier.width(8.dp))
