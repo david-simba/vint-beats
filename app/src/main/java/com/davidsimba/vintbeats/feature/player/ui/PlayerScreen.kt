@@ -5,6 +5,8 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -23,8 +25,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Download
+import androidx.compose.material.icons.rounded.Equalizer
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.ui.res.stringResource
+import com.davidsimba.vintbeats.R
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -80,6 +85,7 @@ fun PlayerScreen(
     var showOptionsSheet by remember { mutableStateOf(false) }
     var showQueueSheet by remember { mutableStateOf(false) }
     var showLyricsScreen by remember { mutableStateOf(false) }
+    val showEqualizer by PlayerPreferences.equalizerEnabled.collectAsStateWithLifecycle()
 
     BackHandler(enabled = showLyricsScreen) { showLyricsScreen = false }
     var isFavorite by remember { mutableStateOf(false) }
@@ -241,15 +247,20 @@ fun PlayerScreen(
                             )
                         }
 
-                        Spacer(Modifier.height(12.dp))
-
-                        EqualizerBars(
-                            isPlaying = isPlaying,
-                            barCount = 16,
-                            color = VintageRedLight.copy(alpha = 0.8f),
-                            maxHeight = 18.dp,
-                            modifier = Modifier.padding(horizontal = 24.dp)
-                        )
+                        AnimatedVisibility(
+                            visible = showEqualizer,
+                            enter = fadeIn(tween(300)),
+                            exit = fadeOut(tween(300))
+                        ) {
+                            Spacer(Modifier.height(12.dp))
+                            EqualizerBars(
+                                isPlaying = isPlaying,
+                                barCount = 16,
+                                color = VintageRedLight.copy(alpha = 0.8f),
+                                maxHeight = 18.dp,
+                                modifier = Modifier.padding(horizontal = 24.dp)
+                            )
+                        }
 
                         PlayerControls(
                             isPlaying = isPlaying,
@@ -318,7 +329,7 @@ fun PlayerScreen(
             ) {
                 if (!isSaved) {
                     BottomSheetMenuItem(
-                        label = "Download",
+                        label = stringResource(R.string.player_option_download),
                         icon = Icons.Rounded.Download,
                         onClick = {
                             scope.launch { sheetState.hide() }.invokeOnCompletion {
@@ -328,6 +339,19 @@ fun PlayerScreen(
                         }
                     )
                 }
+                BottomSheetMenuItem(
+                    label = stringResource(
+                        if (showEqualizer) R.string.player_option_equalizer_hide
+                        else R.string.player_option_equalizer_show
+                    ),
+                    icon = Icons.Rounded.Equalizer,
+                    onClick = {
+                        scope.launch { sheetState.hide() }.invokeOnCompletion {
+                            showOptionsSheet = false
+                            PlayerPreferences.toggleEqualizer()
+                        }
+                    }
+                )
             }
         }
 

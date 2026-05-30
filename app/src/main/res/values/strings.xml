@@ -34,6 +34,11 @@
     <string name="album_no_tracks">No tracks available.</string>
     <string name="album_play">Play album</string>
 
+    <!-- Player options -->
+    <string name="player_option_download">Download</string>
+    <string name="player_option_equalizer_hide">Hide equalizer</string>
+    <string name="player_option_equalizer_show">Show equalizer</string>
+
     <!-- Common -->
     <string name="action_back">Back</string>
 </resources>
