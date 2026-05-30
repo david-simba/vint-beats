@@ -23,7 +23,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.davidsimba.vintbeats.shared.theme.VintageBrown
+import com.davidsimba.vintbeats.shared.theme.VintageBgBase
+import com.davidsimba.vintbeats.shared.theme.VintageBrownMid
 import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
 
@@ -38,7 +39,7 @@ fun CategoryCard(
         modifier = modifier
             .aspectRatio(1.6f)
             .clip(RoundedCornerShape(12.dp))
-            .background(Brush.verticalGradient(listOf(color, VintageBrown)))
+            .background(Brush.verticalGradient(listOf(color, VintageBgBase)))
             .clickable(onClick = onClick)
             .padding(horizontal = 14.dp, vertical = 12.dp),
         contentAlignment = Alignment.CenterStart

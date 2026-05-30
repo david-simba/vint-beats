@@ -24,7 +24,6 @@ import com.davidsimba.vintbeats.R
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -35,15 +34,11 @@ import com.davidsimba.vintbeats.core.model.Artist
 import com.davidsimba.vintbeats.core.model.ExploreCategory
 import com.davidsimba.vintbeats.core.model.PlaylistSummary
 import com.davidsimba.vintbeats.feature.search.ui.CategorySheetState
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.CircularProgressIndicator
-import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.shared.components.TrackInfo
 import com.davidsimba.vintbeats.shared.components.cards.CategoryCard
 import com.davidsimba.vintbeats.shared.components.cards.CategoryCardSkeleton
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
-import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageBlue
 import com.davidsimba.vintbeats.shared.theme.VintageBrownLight
 import com.davidsimba.vintbeats.shared.theme.VintageGrayCool
@@ -52,7 +47,6 @@ import com.davidsimba.vintbeats.shared.theme.VintageOrange
 import com.davidsimba.vintbeats.shared.theme.VintageRed
 import com.davidsimba.vintbeats.shared.theme.VintageTeal
 import com.davidsimba.vintbeats.shared.theme.VintageWhitePure
-import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
 import com.davidsimba.vintbeats.shared.theme.VintageYellow
 
 private val categoryColors = listOf(
@@ -71,7 +65,7 @@ fun LazyListScope.exploreGrid(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .padding(bottom = 12.dp),
+                    .padding(bottom = 12.dp, top = 6.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 CategoryCardSkeleton(modifier = Modifier.weight(1f))
@@ -81,23 +75,13 @@ fun LazyListScope.exploreGrid(
         return
     }
 
-    item {
-        Text(
-            text = stringResource(R.string.explore_title),
-            color = VintageWhiteWarm,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Black,
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 16.dp)
-        )
-    }
-
     val rows = categories.chunked(2)
     items(rows) { row ->
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
-                .padding(bottom = 12.dp),
+                .padding(bottom = 12.dp, top = 6.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             row.forEach { category ->
