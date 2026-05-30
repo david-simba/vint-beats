@@ -63,6 +63,7 @@ import com.davidsimba.vintbeats.shared.theme.VintageRedLight
 @Composable
 fun PlayerScreen(
     onBack: () -> Unit,
+    onArtistSelected: (browseId: String) -> Unit,
     viewModel: PlaybackViewModel
 ) {
     val currentSavedTrack by viewModel.currentSavedTrack.collectAsStateWithLifecycle()
@@ -175,7 +176,8 @@ fun PlayerScreen(
                                 title = it.title,
                                 artist = it.artist,
                                 isFavorite = isFavorite,
-                                onToggleFavorite = { isFavorite = !isFavorite }
+                                onToggleFavorite = { isFavorite = !isFavorite },
+                                onArtistClick = it.artistId?.let { id -> { onArtistSelected(id) } }
                             )
                         }
 

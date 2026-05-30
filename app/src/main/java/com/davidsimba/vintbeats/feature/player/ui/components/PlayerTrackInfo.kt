@@ -1,5 +1,7 @@
 package com.davidsimba.vintbeats.feature.player.ui.components
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -29,6 +32,7 @@ fun PlayerTrackInfo(
     artist: String,
     isFavorite: Boolean,
     onToggleFavorite: () -> Unit,
+    onArtistClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -49,10 +53,15 @@ fun PlayerTrackInfo(
             Spacer(Modifier.height(2.dp))
             Text(
                 text = artist,
-                color = VintageWhite.copy(alpha = 0.7f),
+                color = VintageWhite.copy(alpha = if (onArtistClick != null) 1f else 0.7f),
                 fontSize = 14.sp,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                modifier = if (onArtistClick != null) Modifier.clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() },
+                    onClick = onArtistClick
+                ) else Modifier
             )
         }
         IconButton(onClick = onToggleFavorite) {

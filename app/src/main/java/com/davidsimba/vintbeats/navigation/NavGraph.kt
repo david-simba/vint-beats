@@ -253,6 +253,9 @@ fun NavGraph(
                 ) {
                     PlayerScreen(
                         onBack = { navController.popBackStack() },
+                        onArtistSelected = { browseId ->
+                            navController.navigate(Screen.Artist.route(browseId))
+                        },
                         viewModel = playbackViewModel
                     )
                 }
