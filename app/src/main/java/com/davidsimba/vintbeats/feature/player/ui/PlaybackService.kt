@@ -2,6 +2,8 @@ package com.davidsimba.vintbeats.feature.player.ui
 
 import android.app.PendingIntent
 import android.content.Intent
+import androidx.media3.common.AudioAttributes
+import androidx.media3.common.C
 import androidx.media3.common.ForwardingPlayer
 import androidx.media3.common.Player
 import androidx.media3.datasource.cache.CacheDataSource
@@ -26,6 +28,14 @@ class PlaybackService : MediaSessionService() {
         super.onCreate()
         player = ExoPlayer.Builder(this)
             .setMediaSourceFactory(DefaultMediaSourceFactory(cacheDataSourceFactory))
+            .setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setUsage(C.USAGE_MEDIA)
+                    .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+                    .build(),
+                true
+            )
+            .setHandleAudioBecomingNoisy(true)
             .build()
 
         val notificationPlayer = object : ForwardingPlayer(player) {
