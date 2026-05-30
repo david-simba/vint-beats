@@ -1,6 +1,8 @@
 package com.davidsimba.vintbeats.core.player
 
 import android.content.Context
+import androidx.annotation.OptIn
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.database.StandaloneDatabaseProvider
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.datasource.cache.CacheDataSource
@@ -18,6 +20,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object CacheModule {
 
+    @OptIn(UnstableApi::class)
     @Provides
     @Singleton
     fun provideSimpleCache(@ApplicationContext context: Context): SimpleCache {
@@ -26,11 +29,17 @@ object CacheModule {
         return SimpleCache(cacheDir, evictor, StandaloneDatabaseProvider(context))
     }
 
+    @OptIn(UnstableApi::class)
     @Provides
     @Singleton
     fun provideCacheDataSourceFactory(cache: SimpleCache): CacheDataSource.Factory =
         CacheDataSource.Factory()
             .setCache(cache)
-            .setUpstreamDataSourceFactory(DefaultHttpDataSource.Factory())
+            .setUpstreamDataSourceFactory(
+                DefaultHttpDataSource.Factory()
+                    .setDefaultRequestProperties(
+                        mapOf("User-Agent" to "com.google.android.youtube/21.03.36 (Linux; U; Android 11; en_US; Pixel 5 Build/RQ3A.210805.001) gzip")
+                    )
+            )
             .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
 }

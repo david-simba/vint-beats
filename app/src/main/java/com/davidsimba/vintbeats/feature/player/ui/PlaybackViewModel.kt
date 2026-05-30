@@ -323,6 +323,10 @@ class PlaybackViewModel @Inject constructor(
     }
 
     fun skipToPrevious() {
+        if (_positionMs.value > 3_000L) {
+            seekTo(0)
+            return
+        }
         val history = _history.value
         if (history.isEmpty()) {
             seekTo(0)
