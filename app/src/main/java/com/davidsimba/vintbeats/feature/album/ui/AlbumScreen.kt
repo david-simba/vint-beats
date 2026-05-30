@@ -58,7 +58,7 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhite
 @Composable
 fun AlbumScreen(
     onBack: () -> Unit,
-    onTrackSelected: (Track) -> Unit,
+    onTrackSelected: (Track, List<Track>) -> Unit,
     onPlayAlbum: (List<Track>) -> Unit,
     viewModel: AlbumViewModel = hiltViewModel()
 ) {
@@ -117,7 +117,7 @@ fun AlbumScreen(
                                     AlbumTrackItem(
                                         index = index + 1,
                                         track = track,
-                                        onClick = { onTrackSelected(track) }
+                                        onClick = { onTrackSelected(track, state.album.tracks.drop(index + 1)) }
                                     )
                                 }
                             } else {
