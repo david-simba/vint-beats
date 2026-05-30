@@ -137,8 +137,8 @@ fun NavGraph(
                 navController = navController,
                 startDestination = startDestination,
                 modifier = Modifier.padding(innerPadding),
-                enterTransition = { EnterTransition.None },
-                exitTransition = { ExitTransition.None },
+                enterTransition = { fadeIn(animationSpec = tween(180)) },
+                exitTransition = { fadeOut(animationSpec = tween(180)) },
                 popEnterTransition = { EnterTransition.None },
                 popExitTransition = { ExitTransition.None }
             ) {
@@ -234,8 +234,8 @@ fun NavGraph(
                 ) {
                     AlbumScreen(
                         onBack = { navController.popBackStack() },
-                        onTrackSelected = { track ->
-                            playbackViewModel.playTrack(track)
+                        onTrackSelected = { track, queue ->
+                            playbackViewModel.playTrack(track, newQueue = queue)
                         },
                         onPlayAlbum = { tracks ->
                             if (tracks.isNotEmpty()) {

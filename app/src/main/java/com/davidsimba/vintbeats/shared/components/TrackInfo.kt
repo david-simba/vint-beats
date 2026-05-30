@@ -22,14 +22,14 @@ fun TrackInfo(
     modifier: Modifier = Modifier,
     titleSize: TextUnit = 13.sp,
     artistSize: TextUnit = 11.sp,
-    titleWeight: FontWeight = FontWeight.SemiBold,
+    titleWeight: FontWeight = FontWeight.Bold,
     titleColor: Color = VintageWhite,
     artistColor: Color = VintageGrayMid,
     textAlign: TextAlign = TextAlign.Start
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(2.dp)
+        verticalArrangement = Arrangement.spacedBy(1.dp)
     ) {
         Text(
             text = title,

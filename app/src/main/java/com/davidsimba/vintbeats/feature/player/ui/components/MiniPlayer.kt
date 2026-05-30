@@ -1,9 +1,15 @@
 package com.davidsimba.vintbeats.feature.player.ui.components
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.InfiniteRepeatableSpec
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -39,6 +45,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
@@ -74,7 +82,19 @@ fun MiniPlayer(
     onTap: () -> Unit
 ) {
     val isPlaying = playerState is PlayerState.Playing
+    val isLoading = playerState is PlayerState.Loading
     val progress = if (durationMs > 0) (positionMs.toFloat() / durationMs).coerceIn(0f, 1f) else 0f
+
+    val shimmerTransition = rememberInfiniteTransition(label = "mini_shimmer")
+    val shimmerOffset by shimmerTransition.animateFloat(
+        initialValue = -0.4f,
+        targetValue = 1.1f,
+        animationSpec = InfiniteRepeatableSpec(
+            animation = tween(durationMillis = 1200, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "mini_shimmer_offset"
+    )
 
     val coroutineScope = rememberCoroutineScope()
     val offsetX = remember { Animatable(0f) }
@@ -252,19 +272,42 @@ fun MiniPlayer(
                 }
             }
 
-            Box(
+            Canvas(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(4.dp)
-                    .background(VintageWhite.copy(alpha = 0.15f))
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(progress)
-                        .height(2.dp)
-                        .align(Alignment.CenterStart)
-                        .background(VintageRedLight)
+                val w = size.width
+                val h = size.height
+                val trackH = 4.dp.toPx()
+                val cy = h / 2f
+
+                drawRect(
+                    color = VintageWhite.copy(alpha = 0.15f),
+                    topLeft = Offset(0f, cy - trackH / 2),
+                    size = Size(w, trackH)
                 )
+
+                if (isLoading) {
+                    val segmentW = w * 0.35f
+                    val start = w * shimmerOffset
+                    val drawStart = maxOf(start, 0f)
+                    val drawEnd = minOf(start + segmentW, w)
+                    val drawWidth = drawEnd - drawStart
+                    if (drawWidth > 0f) {
+                        drawRect(
+                            color = VintageWhite.copy(alpha = 0.45f),
+                            topLeft = Offset(drawStart, cy - trackH / 2),
+                            size = Size(drawWidth, trackH)
+                        )
+                    }
+                } else if (progress > 0f) {
+                    drawRect(
+                        color = VintageRedLight,
+                        topLeft = Offset(0f, cy - trackH / 2),
+                        size = Size(w * progress, trackH)
+                    )
+                }
             }
         }
     }
