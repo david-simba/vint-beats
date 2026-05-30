@@ -268,10 +268,16 @@ class PlaybackViewModel @Inject constructor(
     }
 
     fun skipToQueueTrack(track: Track) {
-        val index = _queue.value.indexOf(track)
-        if (index >= 0) {
-            playTrack(track, newQueue = _queue.value.drop(index + 1))
+        val queue = _queue.value
+        val index = queue.indexOf(track)
+        if (index < 0) return
+        val skipped = queue.take(index)
+        buildCurrentTrack()?.let { current ->
+            _history.value = _history.value + current + skipped
+        } ?: run {
+            _history.value = _history.value + skipped
         }
+        playTrack(track, newQueue = queue.drop(index + 1))
     }
 
     fun downloadCurrentTrack() {
