@@ -12,6 +12,7 @@ fun VintBeatsTheme(
 ) {
     MaterialTheme(
         colorScheme = LightColorScheme,
+        typography = VintBeatsTypography,
         content = content
     )
 }
