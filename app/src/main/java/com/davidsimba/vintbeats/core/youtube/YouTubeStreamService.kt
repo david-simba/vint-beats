@@ -5,6 +5,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.schabi.newpipe.extractor.ServiceList
+import org.schabi.newpipe.extractor.stream.StreamInfo
 import java.io.File
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -19,8 +21,24 @@ class YouTubeStreamService @Inject constructor(
     }
 
     suspend fun getAudioStreamUrl(videoId: String): String = withContext(Dispatchers.IO) {
+        try {
+            val info = StreamInfo.getInfo(
+                ServiceList.YouTube,
+                "https://www.youtube.com/watch?v=$videoId"
+            )
+            val audio = info.audioStreams
+                .filter { it.content.isNotEmpty() }
+                .maxByOrNull { it.bitrate }
+            if (audio != null) {
+                Log.d(TAG, "[$videoId] NewPipe → bitrate=${audio.bitrate}")
+                return@withContext audio.content
+            }
+            Log.w(TAG, "[$videoId] NewPipe: no streams found, falling back to backend")
+        } catch (e: Exception) {
+            Log.w(TAG, "[$videoId] NewPipe failed (${e::class.simpleName}: ${e.message}), falling back to backend")
+        }
         val url = backendService.streamProxyUrl(videoId)
-        Log.d(TAG, "[$videoId] proxy → $url")
+        Log.d(TAG, "[$videoId] backend → $url")
         url
     }
 
