@@ -178,10 +178,17 @@ class PlaybackViewModel @Inject constructor(
         }
         playbackJob = viewModelScope.launch {
             _playerState.value = PlayerState.Loading
-            val streamUrl = streamService.getAudioStreamUrl(track.id)
-            Log.d(TAG, "playTrack: ${track.id} → $streamUrl")
-            currentStreamUrl = streamUrl
-            val mediaItem = buildMediaItem(streamUrl, track.title, track.artist, track.albumImageUrl)
+            val localPath = repository.getTrackByVideoId(track.id)?.audioFilePath
+            val uri: String = if (!localPath.isNullOrEmpty() && File(localPath).exists()) {
+                Log.d(TAG, "playTrack: ${track.id} → local file $localPath")
+                android.net.Uri.fromFile(File(localPath)).toString()
+            } else {
+                val streamUrl = streamService.getAudioStreamUrl(track.id)
+                Log.d(TAG, "playTrack: ${track.id} → stream $streamUrl")
+                currentStreamUrl = streamUrl
+                streamUrl
+            }
+            val mediaItem = buildMediaItem(uri, track.title, track.artist, track.albumImageUrl)
             withContext(Dispatchers.Main) {
                 val controller = mediaController ?: run {
                     _playerState.value = PlayerState.Error("Player not ready")

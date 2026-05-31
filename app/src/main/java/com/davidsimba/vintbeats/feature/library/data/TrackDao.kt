@@ -17,6 +17,9 @@ interface TrackDao {
     @Query("SELECT * FROM saved_tracks WHERE id = :id")
     suspend fun getById(id: Int): SavedTrackEntity?
 
+    @Query("SELECT * FROM saved_tracks WHERE trackId = :trackId LIMIT 1")
+    suspend fun getByTrackId(trackId: String): SavedTrackEntity?
+
     @Query("DELETE FROM saved_tracks WHERE id = :id")
     suspend fun deleteById(id: Int)
 }

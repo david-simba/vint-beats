@@ -17,6 +17,9 @@ class TrackRepositoryImpl @Inject constructor(
     override suspend fun getTrack(id: Int): SavedTrack? =
         dao.getById(id)?.toDomain()
 
+    override suspend fun getTrackByVideoId(trackId: String): SavedTrack? =
+        dao.getByTrackId(trackId)?.toDomain()
+
     override suspend fun saveTrack(track: Track, audioFilePath: String?) {
         dao.insert(
             SavedTrackEntity(
