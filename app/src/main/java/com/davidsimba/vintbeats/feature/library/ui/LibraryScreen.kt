@@ -61,10 +61,6 @@ fun LibraryScreen(
                         thumbnailUrl = track.trackThumbnailUrl,
                         onClick = { onTrackClick(track.id) }
                     )
-                    HorizontalDivider(
-                        color = VintageGrayDeep.copy(alpha = 0.4f),
-                        thickness = 0.5.dp
-                    )
                 }
                 item { Spacer(Modifier.height(24.dp)) }
             }

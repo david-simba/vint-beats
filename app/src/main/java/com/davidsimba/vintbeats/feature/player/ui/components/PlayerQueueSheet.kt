@@ -71,11 +71,6 @@ fun PlayerQueueSheet(
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(bottom = 14.dp)
         )
-        HorizontalDivider(
-            color = VintageGray.copy(alpha = 0.10f),
-            thickness = 0.5.dp,
-            modifier = Modifier.padding(bottom = 14.dp)
-        )
 
         currentTrack?.let {
             QueueTrackRow(
@@ -107,11 +102,6 @@ fun PlayerQueueSheet(
                     isCurrentTrack = false,
                     modifier = Modifier.draggableHandle(),
                     onClick = { onTrackClick(track) }
-                )
-                HorizontalDivider(
-                    color = VintageGray.copy(alpha = 0.10f),
-                    thickness = 0.5.dp,
-                    modifier = Modifier.padding(vertical = 4.dp)
                 )
             }
         }
