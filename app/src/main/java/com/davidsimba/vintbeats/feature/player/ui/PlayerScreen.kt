@@ -133,7 +133,7 @@ fun PlayerScreen(
                 enabled = !showLyricsScreen,
                 scope = scope,
                 onSkipNext = viewModel::skipToNext,
-                onSkipPrevious = viewModel::skipToPrevious,
+                onSkipPrevious = { viewModel.skipToPrevious(force = true) },
             )
     ) {
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {

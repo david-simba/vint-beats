@@ -332,8 +332,8 @@ class PlaybackViewModel @Inject constructor(
         playTrack(next, newQueue = queue.drop(1))
     }
 
-    fun skipToPrevious() {
-        if (_positionMs.value > 3_000L) {
+    fun skipToPrevious(force: Boolean = false) {
+        if (!force && _positionMs.value > 3_000L) {
             seekTo(0)
             return
         }
