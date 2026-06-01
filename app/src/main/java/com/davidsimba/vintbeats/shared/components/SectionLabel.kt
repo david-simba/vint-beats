@@ -15,7 +15,7 @@ fun SectionLabel(title: String, modifier: Modifier = Modifier) {
         text = title,
         color = VintageWhiteWarm,
         fontSize = 16.sp,
-        fontWeight = FontWeight.Black,
+        fontWeight = FontWeight.Bold,
         modifier = modifier.padding(horizontal = 16.dp, vertical = 14.dp)
     )
 }

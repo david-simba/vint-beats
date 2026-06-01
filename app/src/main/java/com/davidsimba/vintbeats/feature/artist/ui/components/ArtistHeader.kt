@@ -54,24 +54,11 @@ fun ArtistHeader(
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colorStops = arrayOf(
-                            0.0f to Color.Black.copy(alpha = 0.0f),
-                            0.45f to Color.Black.copy(alpha = 0.1f),
-                            1.0f to VintageBgDark
-                        )
-                    )
-                )
-        )
         Row(
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .fillMaxWidth()
-                .padding(20.dp),
+                .padding(horizontal = 16.dp, vertical = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -99,7 +86,7 @@ fun ArtistHeader(
                     } else {
                         IconButton(
                             onClick = onPlay,
-                            modifier = Modifier.size(52.dp)
+                            modifier = Modifier.size(42.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.Rounded.PlayArrow,
