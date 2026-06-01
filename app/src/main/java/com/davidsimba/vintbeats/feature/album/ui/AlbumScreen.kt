@@ -27,17 +27,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -45,10 +38,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.album.data.AlbumDetail
 import com.davidsimba.vintbeats.feature.album.ui.components.AlbumTrackItem
+import com.davidsimba.vintbeats.shared.components.ParallaxHeader
 import com.davidsimba.vintbeats.shared.components.SectionLabel
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageGray
@@ -64,13 +57,6 @@ fun AlbumScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val lazyListState = rememberLazyListState()
-    val parallaxOffset by remember {
-        derivedStateOf {
-            lazyListState.layoutInfo.visibleItemsInfo
-                .firstOrNull { it.index == 0 }
-                ?.offset?.toFloat() ?: 0f
-        }
-    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         when (val state = uiState) {
@@ -96,7 +82,6 @@ fun AlbumScreen(
                     item {
                         AlbumHeader(
                             album = state.album,
-                            parallaxOffset = parallaxOffset,
                             onPlay = {
                                 val tracks = state.album.tracks
                                 if (tracks.isNotEmpty()) onPlayAlbum(tracks)
@@ -156,37 +141,12 @@ fun AlbumScreen(
 
 @Composable
 private fun AlbumHeader(album: AlbumDetail, parallaxOffset: Float = 0f, onPlay: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(420.dp)
-            .clipToBounds()
+    ParallaxHeader(
+        imageUrl = album.thumbnailUrl,
+        parallaxOffset = parallaxOffset
     ) {
-        AsyncImage(
-            model = album.thumbnailUrl,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(520.dp)
-                .graphicsLayer { translationY = parallaxOffset * 0.4f }
-        )
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colorStops = arrayOf(
-                            0.0f to Color.Black.copy(alpha = 0.0f),
-                            0.45f to Color.Black.copy(alpha = 0.1f),
-                            1.0f to VintageBgDark
-                        )
-                    )
-                )
-        )
         Row(
             modifier = Modifier
-                .align(Alignment.BottomStart)
                 .fillMaxWidth()
                 .padding(20.dp),
             verticalAlignment = Alignment.Bottom
