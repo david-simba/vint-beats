@@ -77,6 +77,14 @@ class PlaybackService : MediaSessionService() {
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo) = mediaSession
 
+    // Keep foreground service alive during track transitions (STATE_IDLE between setMediaItem→prepare)
+    override fun onUpdateNotification(session: MediaSession, startInForegroundRequired: Boolean) {
+        super.onUpdateNotification(
+            session,
+            startInForegroundRequired || session.player.currentMediaItem != null
+        )
+    }
+
     override fun onTaskRemoved(rootIntent: Intent?) {
         player.stop()
         stopSelf()
