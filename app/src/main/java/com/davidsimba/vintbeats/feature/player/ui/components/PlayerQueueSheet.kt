@@ -28,7 +28,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import com.davidsimba.vintbeats.R
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -65,7 +67,7 @@ fun PlayerQueueSheet(
             .padding(horizontal = 20.dp)
     ) {
         Text(
-            text = "Up Next",
+            text = stringResource(R.string.queue_up_next),
             color = VintageWhiteWarm,
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
@@ -84,7 +86,7 @@ fun PlayerQueueSheet(
 
         if (localQueue.isEmpty()) {
             Text(
-                text = "Loading up next tracks…",
+                text = stringResource(R.string.queue_loading),
                 color = VintageWhite.copy(alpha = 0.4f),
                 fontSize = 14.sp
             )

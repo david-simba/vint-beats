@@ -34,6 +34,10 @@
     <string name="album_no_tracks">No tracks available.</string>
     <string name="album_play">Play album</string>
 
+    <!-- Queue -->
+    <string name="queue_up_next">Up Next</string>
+    <string name="queue_loading">Loading up next tracks…</string>
+
     <!-- Player options -->
     <string name="player_option_download">Download</string>
     <string name="player_option_equalizer_hide">Hide equalizer</string>

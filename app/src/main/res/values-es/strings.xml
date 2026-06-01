@@ -35,6 +35,10 @@
     <string name="album_no_tracks">No hay pistas disponibles.</string>
     <string name="album_play">Reproducir álbum</string>
 
+    <!-- Queue -->
+    <string name="queue_up_next">A continuación</string>
+    <string name="queue_loading">Cargando canciones…</string>
+
     <!-- Player options -->
     <string name="player_option_download">Descargar</string>
     <string name="player_option_equalizer_hide">Ocultar ecualizador</string>
