@@ -39,6 +39,7 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhite
 
 @Composable
 fun CollectionHeader(
+    modifier: Modifier = Modifier,
     title: String,
     subtitle: String?,
     imageUrl: String?,
@@ -46,7 +47,6 @@ fun CollectionHeader(
     iconTint: Color = VintageWhite,
     containerHeight: Dp = 420.dp,
     onPlayAll: (() -> Unit)? = null,
-    modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier

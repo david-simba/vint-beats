@@ -45,7 +45,7 @@ class PlaybackViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var mediaController: MediaController? = null
-    private lateinit var controllerFuture: ListenableFuture<MediaController>
+    private var controllerFuture: ListenableFuture<MediaController>
     private var currentStreamUrl: String? = null
 
     private val _currentSavedTrack = MutableStateFlow<com.davidsimba.vintbeats.feature.library.domain.SavedTrack?>(null)
@@ -120,7 +120,7 @@ class PlaybackViewModel @Inject constructor(
                     startProgressUpdates()
                 } else {
                     val isBuffering = mediaController?.playbackState ==
-                            androidx.media3.common.Player.STATE_BUFFERING
+                            Player.STATE_BUFFERING
                     if (!isBuffering && _playerState.value is PlayerState.Playing) {
                         _playerState.value = PlayerState.Idle
                         progressJob?.cancel()
@@ -131,13 +131,13 @@ class PlaybackViewModel @Inject constructor(
             override fun onPlaybackStateChanged(playbackState: Int) {
                 Log.d(TAG, "ExoPlayer state → ${
                     when (playbackState) {
-                        androidx.media3.common.Player.STATE_BUFFERING -> "BUFFERING"
-                        androidx.media3.common.Player.STATE_READY     -> "READY"
-                        androidx.media3.common.Player.STATE_ENDED     -> "ENDED"
+                        Player.STATE_BUFFERING -> "BUFFERING"
+                        Player.STATE_READY     -> "READY"
+                        Player.STATE_ENDED     -> "ENDED"
                         else                                          -> "IDLE"
                     }
                 }")
-                if (playbackState == androidx.media3.common.Player.STATE_ENDED) {
+                if (playbackState == Player.STATE_ENDED) {
                     _playerState.value = PlayerState.Idle
                     progressJob?.cancel()
                 }
@@ -189,7 +189,7 @@ class PlaybackViewModel @Inject constructor(
             val localPath = repository.getTrackByVideoId(track.id)?.audioFilePath
             val uri: String = if (!localPath.isNullOrEmpty() && File(localPath).exists()) {
                 Log.d(TAG, "playTrack: ${track.id} → local file $localPath")
-                android.net.Uri.fromFile(File(localPath)).toString()
+                Uri.fromFile(File(localPath)).toString()
             } else {
                 val streamUrl = streamService.getAudioStreamUrl(track.id)
                 Log.d(TAG, "playTrack: ${track.id} → stream $streamUrl")
@@ -254,10 +254,7 @@ class PlaybackViewModel @Inject constructor(
                 Uri.fromFile(File(saved.audioFilePath))
             } else {
                 Log.d(TAG, "Streaming ${saved.trackId}")
-                val streamUrl = streamService.getAudioStreamUrl(saved.trackId) ?: run {
-                    _playerState.value = PlayerState.Error("Audio not available")
-                    return@launch
-                }
+                val streamUrl = streamService.getAudioStreamUrl(saved.trackId)
                 currentStreamUrl = streamUrl
                 streamUrl.toUri()
             }
@@ -315,7 +312,7 @@ class PlaybackViewModel @Inject constructor(
             _isDownloading.value = true
             SnackbarController.emit(SnackbarEvent.DownloadStarted)
             val streamUrl = currentStreamUrl ?: streamService.getAudioStreamUrl(track.id)
-            val audioFilePath = streamUrl?.let {
+            val audioFilePath = streamUrl.let {
                 streamService.downloadAudio(track.id, it, context.filesDir)
             }
             repository.saveTrack(track, audioFilePath)
@@ -392,7 +389,7 @@ class PlaybackViewModel @Inject constructor(
                 MediaMetadata.Builder()
                     .setTitle(title)
                     .setArtist(artist)
-                    .setArtworkUri(artworkUrl?.let { Uri.parse(it) })
+                    .setArtworkUri(artworkUrl?.toUri())
                     .build()
             )
             .build()
