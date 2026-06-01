@@ -39,8 +39,13 @@
 
     <!-- Player options -->
     <string name="player_option_download">Download</string>
+    <string name="player_option_downloading">Downloading</string>
     <string name="player_option_equalizer_hide">Hide equalizer</string>
     <string name="player_option_equalizer_show">Show equalizer</string>
+
+    <!-- Download snackbar -->
+    <string name="download_started">Song is downloading</string>
+    <string name="download_success">Song downloaded successfully</string>
 
     <!-- Common -->
     <string name="action_back">Back</string>

@@ -15,6 +15,8 @@ import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.davidsimba.vintbeats.core.model.LyricLine
 import com.davidsimba.vintbeats.core.model.Track
+import com.davidsimba.vintbeats.shared.SnackbarController
+import com.davidsimba.vintbeats.shared.SnackbarEvent
 import com.davidsimba.vintbeats.core.youtube.YouTubeQueueService
 import com.davidsimba.vintbeats.core.youtube.YouTubeStreamService
 import com.davidsimba.vintbeats.feature.library.domain.TrackRepository
@@ -291,6 +293,7 @@ class PlaybackViewModel @Inject constructor(
         if (_isDownloading.value) return
         viewModelScope.launch {
             _isDownloading.value = true
+            SnackbarController.emit(SnackbarEvent.DownloadStarted)
             val streamUrl = currentStreamUrl ?: streamService.getAudioStreamUrl(track.id)
             val audioFilePath = streamUrl?.let {
                 streamService.downloadAudio(track.id, it, context.filesDir)
@@ -301,6 +304,7 @@ class PlaybackViewModel @Inject constructor(
             _unsavedTrack.value = null
             _isSaved.value = true
             _isDownloading.value = false
+            SnackbarController.emit(SnackbarEvent.DownloadSuccess)
         }
     }
 

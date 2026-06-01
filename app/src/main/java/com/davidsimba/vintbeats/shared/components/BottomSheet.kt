@@ -45,22 +45,24 @@ fun BottomSheet(
 fun BottomSheetMenuItem(
     label: String,
     icon: ImageVector,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    enabled: Boolean = true
 ) {
+    val alpha = if (enabled) 1f else 0.4f
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(enabled = enabled, onClick = onClick)
             .padding(horizontal = 24.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             imageVector = icon,
             contentDescription = null,
-            tint = VintageWhite,
+            tint = VintageWhite.copy(alpha = alpha),
             modifier = Modifier.size(22.dp)
         )
         Spacer(Modifier.width(16.dp))
-        Text(text = label, fontSize = 16.sp, color = VintageWhite)
+        Text(text = label, fontSize = 16.sp, color = VintageWhite.copy(alpha = alpha))
     }
 }

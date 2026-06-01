@@ -263,8 +263,12 @@ fun PlayerScreen(
             ) {
                 if (!isSaved) {
                     BottomSheetMenuItem(
-                        label = stringResource(R.string.player_option_download),
+                        label = stringResource(
+                            if (isDownloading) R.string.player_option_downloading
+                            else R.string.player_option_download
+                        ),
                         icon = Icons.Rounded.Download,
+                        enabled = !isDownloading,
                         onClick = {
                             scope.launch { sheetState.hide() }.invokeOnCompletion {
                                 showOptionsSheet = false

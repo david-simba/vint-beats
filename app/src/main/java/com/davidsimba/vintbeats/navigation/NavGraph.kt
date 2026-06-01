@@ -16,11 +16,24 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.davidsimba.vintbeats.R
+import com.davidsimba.vintbeats.shared.SnackbarController
+import com.davidsimba.vintbeats.shared.SnackbarEvent
+import com.davidsimba.vintbeats.shared.components.SnackbarPosition
+import com.davidsimba.vintbeats.shared.components.VintSnackbar
+import kotlinx.coroutines.delay
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -70,6 +83,18 @@ fun NavGraph(
     val currentEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentEntry?.destination?.route
     val showBottomBar = currentRoute in bottomNavRoutes
+
+    var snackbarEvent by remember { mutableStateOf<SnackbarEvent?>(null) }
+    val downloadStartedMsg = stringResource(R.string.download_started)
+    val downloadSuccessMsg = stringResource(R.string.download_success)
+
+    LaunchedEffect(Unit) {
+        SnackbarController.events.collect { event ->
+            snackbarEvent = event
+            delay(3000)
+            snackbarEvent = null
+        }
+    }
 
     val playbackViewModel: PlaybackViewModel = hiltViewModel()
     val currentSavedTrack by playbackViewModel.currentSavedTrack.collectAsStateWithLifecycle()
@@ -287,6 +312,21 @@ fun NavGraph(
                     )
                 }
             }
+
+            VintSnackbar(
+                message = when (snackbarEvent) {
+                    is SnackbarEvent.DownloadStarted -> downloadStartedMsg
+                    is SnackbarEvent.DownloadSuccess -> downloadSuccessMsg
+                    null -> ""
+                },
+                icon = when (snackbarEvent) {
+                    is SnackbarEvent.DownloadSuccess -> Icons.Rounded.CheckCircle
+                    else -> Icons.Rounded.Download
+                },
+                visible = snackbarEvent != null,
+                position = SnackbarPosition.TOP,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
         }
     }
 }

@@ -40,8 +40,13 @@
 
     <!-- Player options -->
     <string name="player_option_download">Descargar</string>
+    <string name="player_option_downloading">Descargando</string>
     <string name="player_option_equalizer_hide">Ocultar ecualizador</string>
     <string name="player_option_equalizer_show">Mostrar ecualizador</string>
+
+    <!-- Download snackbar -->
+    <string name="download_started">La canción se está descargando</string>
+    <string name="download_success">Canción descargada con éxito ;)</string>
 
     <!-- Common -->
     <string name="action_back">Atrás</string>
