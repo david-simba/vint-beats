@@ -109,7 +109,6 @@ fun PlayerScreen(
 
     val nextTrack = queue.firstOrNull()
     val previousTrack = history.lastOrNull()
-    val hasPrevious by rememberUpdatedState(previousTrack != null)
 
     val paletteColor = rememberPaletteColor(trackForCard?.albumImageUrl)
     val cardBgColor = run {
@@ -129,7 +128,6 @@ fun PlayerScreen(
             .playerSwipeGesture(
                 offsetX = offsetX,
                 componentWidth = componentWidth,
-                hasPrevious = hasPrevious,
                 enabled = !showLyricsScreen,
                 scope = scope,
                 onSkipNext = viewModel::skipToNext,
