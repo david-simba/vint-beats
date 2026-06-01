@@ -4,13 +4,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.ui.res.stringResource
-import com.davidsimba.vintbeats.R
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.CircularProgressIndicator
@@ -20,12 +20,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.core.model.Artist
-import com.davidsimba.vintbeats.shared.components.ParallaxHeader
+import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageRed
 import com.davidsimba.vintbeats.shared.theme.VintageWhite
 
@@ -34,15 +40,36 @@ fun ArtistHeader(
     artist: Artist,
     hasTopTracks: Boolean,
     isLoadingPlay: Boolean,
-    parallaxOffset: Float = 0f,
     onPlay: () -> Unit
 ) {
-    ParallaxHeader(
-        imageUrl = artist.thumbnailUrl,
-        parallaxOffset = parallaxOffset
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(420.dp)
+            .clipToBounds()
     ) {
+        AsyncImage(
+            model = artist.thumbnailUrl,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colorStops = arrayOf(
+                            0.0f to Color.Black.copy(alpha = 0.0f),
+                            0.45f to Color.Black.copy(alpha = 0.1f),
+                            1.0f to VintageBgDark
+                        )
+                    )
+                )
+        )
         Row(
             modifier = Modifier
+                .align(Alignment.BottomStart)
                 .fillMaxWidth()
                 .padding(20.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -67,8 +94,7 @@ fun ArtistHeader(
                         CircularProgressIndicator(
                             modifier = Modifier.size(24.dp),
                             color = VintageWhite,
-                            strokeWidth = 2.dp,
-                            strokeCap = StrokeCap.Round
+                            strokeWidth = 2.dp
                         )
                     } else {
                         IconButton(

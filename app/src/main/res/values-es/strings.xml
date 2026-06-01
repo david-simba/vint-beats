@@ -25,13 +25,12 @@
     <string name="label_album">Álbum</string>
 
     <!-- Artist -->
-    <string name="artist_top_songs">Canciones principales</string>
-    <string name="artist_albums">Álbumes</string>
+    <string name="artist_top_songs">Top Canciones</string>
+    <string name="artist_albums">Álbums</string>
     <string name="artist_no_songs">No hay canciones disponibles.</string>
     <string name="artist_play">Reproducir artista</string>
 
     <!-- Album -->
-    <string name="album_tracks">Pistas</string>
     <string name="album_no_tracks">No hay pistas disponibles.</string>
     <string name="album_play">Reproducir álbum</string>
 

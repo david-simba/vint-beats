@@ -30,7 +30,6 @@
     <string name="artist_play">Play artist</string>
 
     <!-- Album -->
-    <string name="album_tracks">Tracks</string>
     <string name="album_no_tracks">No tracks available.</string>
     <string name="album_play">Play album</string>
 
