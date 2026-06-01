@@ -128,6 +128,8 @@ fun PlayerScreen(
             .playerSwipeGesture(
                 offsetX = offsetX,
                 componentWidth = componentWidth,
+                hasNext = nextTrack != null,
+                hasPrevious = previousTrack != null,
                 enabled = !showLyricsScreen,
                 scope = scope,
                 onSkipNext = viewModel::skipToNext,

@@ -16,11 +16,13 @@ import kotlinx.coroutines.launch
 fun Modifier.playerSwipeGesture(
     offsetX: Animatable<Float, AnimationVector1D>,
     componentWidth: Float,
+    hasNext: Boolean,
+    hasPrevious: Boolean,
     enabled: Boolean,
     scope: CoroutineScope,
     onSkipNext: () -> Unit,
     onSkipPrevious: () -> Unit,
-): Modifier = this.pointerInput(enabled) {
+): Modifier = this.pointerInput(enabled, hasNext, hasPrevious) {
     if (!enabled) return@pointerInput
     awaitEachGesture {
         val down = awaitFirstDown(requireUnconsumed = false)
@@ -80,8 +82,8 @@ fun Modifier.playerSwipeGesture(
 
             if (isHorizontal == true) {
                 val newOffset = (offsetX.value + dx).coerceIn(
-                    -componentWidth,
-                    componentWidth
+                    if (hasNext) -componentWidth else 0f,
+                    if (hasPrevious) componentWidth else 0f
                 )
                 scope.launch { offsetX.snapTo(newOffset) }
                 change.consume()

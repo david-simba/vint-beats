@@ -83,6 +83,7 @@ class PlaybackViewModel @Inject constructor(
     private var prefetchJob: Job? = null
     private var progressJob: Job? = null
     private var playbackJob: Job? = null
+    private var queueFetchJob: Job? = null
 
     init {
         val sessionToken = SessionToken(context, ComponentName(context, PlaybackService::class.java))
@@ -145,13 +146,14 @@ class PlaybackViewModel @Inject constructor(
         })
     }
 
-    fun playTrack(track: Track, newQueue: List<Track>? = null) {
+    fun playTrack(track: Track, newQueue: List<Track>? = null, preserveHistory: Boolean = false) {
         Log.d(TAG, "playTrack: ${track.id} '${track.title}'")
         if (_unsavedTrack.value?.id == track.id && mediaController?.isPlaying == true) {
             Log.d(TAG, "playTrack: skipped (already playing)")
             return
         }
-        if (newQueue == null) _history.value = emptyList()
+        if (!preserveHistory) _history.value = emptyList()
+        queueFetchJob?.cancel()
         playbackJob?.cancel()
         progressJob?.cancel()
         _unsavedTrack.value = track
@@ -174,7 +176,7 @@ class PlaybackViewModel @Inject constructor(
             }
         }
         if (newQueue == null) {
-            viewModelScope.launch { _queue.value = queueService.getUpNextTracks(track.id) }
+            queueFetchJob = viewModelScope.launch { _queue.value = queueService.getUpNextTracks(track.id) }
         }
         playbackJob = viewModelScope.launch {
             _playerState.value = PlayerState.Loading
@@ -281,7 +283,7 @@ class PlaybackViewModel @Inject constructor(
         } ?: run {
             _history.value = _history.value + skipped
         }
-        playTrack(track, newQueue = queue.drop(index + 1))
+        playTrack(track, newQueue = queue.drop(index + 1), preserveHistory = true)
     }
 
     fun downloadCurrentTrack() {
@@ -329,7 +331,7 @@ class PlaybackViewModel @Inject constructor(
         buildCurrentTrack()?.let { _history.value = _history.value + it }
         val next = queue.first()
         Log.d(TAG, "skipToNext: playing next → ${next.id} '${next.title}'")
-        playTrack(next, newQueue = queue.drop(1))
+        playTrack(next, newQueue = queue.drop(1), preserveHistory = true)
     }
 
     fun skipToPrevious(force: Boolean = false) {
@@ -345,7 +347,7 @@ class PlaybackViewModel @Inject constructor(
         val previous = history.last()
         val newQueue = buildCurrentTrack()?.let { listOf(it) + _queue.value } ?: _queue.value
         _history.value = history.dropLast(1)
-        playTrack(previous, newQueue = newQueue)
+        playTrack(previous, newQueue = newQueue, preserveHistory = true)
     }
 
     private fun buildCurrentTrack(): Track? = if (_isSaved.value) {
@@ -409,6 +411,7 @@ class PlaybackViewModel @Inject constructor(
         playbackJob?.cancel()
         progressJob?.cancel()
         prefetchJob?.cancel()
+        queueFetchJob?.cancel()
         MediaController.releaseFuture(controllerFuture)
         super.onCleared()
     }
