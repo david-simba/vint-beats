@@ -8,5 +8,6 @@ data class SavedTrack(
     val trackThumbnailUrl: String?,
     val trackDurationText: String,
     val savedAt: Long,
-    val audioFilePath: String?
+    val audioFilePath: String?,
+    val isFavorite: Boolean = false
 )

@@ -1,4 +1,4 @@
-package com.davidsimba.vintbeats.feature.library.ui
+package com.davidsimba.vintbeats.feature.library.ui.downloads
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-class LibraryViewModel @Inject constructor(
+class DownloadsViewModel @Inject constructor(
     repository: TrackRepository
 ) : ViewModel() {
 
-    val tracks: StateFlow<List<SavedTrack>> = repository.getAllTracks()
+    val downloads: StateFlow<List<SavedTrack>> = repository.getDownloadedTracks()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 }

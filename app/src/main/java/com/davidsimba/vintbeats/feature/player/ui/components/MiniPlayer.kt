@@ -35,7 +35,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
@@ -76,6 +75,8 @@ fun MiniPlayer(
     playerState: PlayerState,
     positionMs: Long = 0L,
     durationMs: Long = 0L,
+    isFavorite: Boolean = false,
+    onToggleFavorite: () -> Unit = {},
     onTogglePlayPause: () -> Unit,
     onSkipNext: () -> Unit,
     onSkipPrevious: () -> Unit,
@@ -100,7 +101,6 @@ fun MiniPlayer(
     val offsetX = remember { Animatable(0f) }
     var componentWidth by remember { mutableFloatStateOf(0f) }
     var textZoneWidth by remember { mutableFloatStateOf(0f) }
-    var isFavorite by remember { mutableStateOf(false) }
     val hasPrevious by rememberUpdatedState(previousTrack != null)
 
     Box(
@@ -237,7 +237,7 @@ fun MiniPlayer(
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(
-                        onClick = { isFavorite = !isFavorite },
+                        onClick = onToggleFavorite,
                         modifier = Modifier.size(36.dp)
                     ) {
                         Icon(

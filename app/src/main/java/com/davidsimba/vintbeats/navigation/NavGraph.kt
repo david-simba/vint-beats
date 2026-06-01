@@ -45,8 +45,10 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.davidsimba.vintbeats.feature.album.ui.AlbumScreen
 import com.davidsimba.vintbeats.feature.artist.ui.ArtistScreen
+import com.davidsimba.vintbeats.feature.library.ui.downloads.DownloadsScreen
+import com.davidsimba.vintbeats.feature.library.ui.favorites.FavoritesScreen
+import com.davidsimba.vintbeats.feature.library.ui.library.LibraryScreen
 import com.davidsimba.vintbeats.feature.home.ui.HomeScreen
-import com.davidsimba.vintbeats.feature.library.ui.LibraryScreen
 import com.davidsimba.vintbeats.feature.player.ui.PlaybackViewModel
 import com.davidsimba.vintbeats.feature.player.ui.PlayerScreen
 import com.davidsimba.vintbeats.feature.playlist.PlaylistScreen
@@ -64,7 +66,9 @@ private val bottomNavRoutes = setOf(
     Screen.Library.route,
     Screen.Artist.route,
     Screen.Album.route,
-    Screen.Playlist.route
+    Screen.Playlist.route,
+    Screen.Favorites.route,
+    Screen.Downloads.route
 )
 
 @Composable
@@ -107,6 +111,7 @@ fun NavGraph(
     val history by playbackViewModel.history.collectAsStateWithLifecycle()
     val nextTrack = queue.firstOrNull()
     val previousTrack = history.lastOrNull()
+    val isFavorite by playbackViewModel.isFavorite.collectAsStateWithLifecycle()
 
     val hasActivePlayback = (isSaved && currentSavedTrack != null) || (!isSaved && unsavedTrack != null)
     val showMiniPlayer = hasActivePlayback && currentRoute != Screen.Player.route
@@ -146,6 +151,8 @@ fun NavGraph(
                         durationMs = durationMs,
                         nextTrack = nextTrack,
                         previousTrack = previousTrack,
+                        isFavorite = isFavorite,
+                        onToggleFavorite = playbackViewModel::toggleFavorite,
                         onTogglePlayPause = playbackViewModel::togglePlayPause,
                         onSkipNext = playbackViewModel::skipToNext,
                         onSkipPrevious = playbackViewModel::skipToPrevious,
@@ -306,9 +313,32 @@ fun NavGraph(
                 }
                 composable(Screen.Library.route) {
                     LibraryScreen(
-                        onTrackClick = { id ->
-                            playbackViewModel.play(id)
-                        }
+                        onFavoritesClick = { navController.navigate(Screen.Favorites.route) },
+                        onDownloadsClick = { navController.navigate(Screen.Downloads.route) }
+                    )
+                }
+                composable(
+                    route = Screen.Downloads.route,
+                    enterTransition = { slideInHorizontally(animationSpec = tween(220), initialOffsetX = { it }) },
+                    exitTransition = { ExitTransition.None },
+                    popEnterTransition = { EnterTransition.None },
+                    popExitTransition = { slideOutHorizontally(animationSpec = tween(220), targetOffsetX = { it }) }
+                ) {
+                    DownloadsScreen(
+                        onBack = { navController.popBackStack() },
+                        onTrackClick = { id -> playbackViewModel.play(id) }
+                    )
+                }
+                composable(
+                    route = Screen.Favorites.route,
+                    enterTransition = { slideInHorizontally(animationSpec = tween(220), initialOffsetX = { it }) },
+                    exitTransition = { ExitTransition.None },
+                    popEnterTransition = { EnterTransition.None },
+                    popExitTransition = { slideOutHorizontally(animationSpec = tween(220), targetOffsetX = { it }) }
+                ) {
+                    FavoritesScreen(
+                        onBack = { navController.popBackStack() },
+                        onTrackClick = { id -> playbackViewModel.play(id) }
                     )
                 }
             }

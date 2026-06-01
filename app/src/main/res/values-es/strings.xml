@@ -11,6 +11,18 @@
     <string name="library_title">Biblioteca</string>
     <string name="library_empty">Aún no tienes canciones guardadas</string>
 
+    <!-- Favorites -->
+    <string name="favorites_title">Favoritos</string>
+    <string name="favorites_empty">Aún no tienes canciones favoritas</string>
+    <string name="favorites_empty_short">Aún no hay canciones</string>
+    <string name="favorites_count">%d canciones</string>
+
+    <!-- Downloads -->
+    <string name="downloads_title">Descargas</string>
+    <string name="downloads_empty">Aún no tienes canciones descargadas</string>
+    <string name="downloads_empty_short">Aún no hay descargas</string>
+    <string name="downloads_count">%d canciones</string>
+
     <!-- Search -->
     <string name="search_title">Buscar</string>
     <string name="search_placeholder">Buscar canciones, artistas…</string>
@@ -50,4 +62,5 @@
 
     <!-- Common -->
     <string name="action_back">Atrás</string>
+    <string name="action_play_all">Reproducir todo</string>
 </resources>

@@ -83,7 +83,7 @@ fun PlayerScreen(
     val showEqualizer by PlayerPreferences.equalizerEnabled.collectAsStateWithLifecycle()
 
     BackHandler(enabled = showLyricsScreen) { showLyricsScreen = false }
-    var isFavorite by remember { mutableStateOf(false) }
+    val isFavorite by viewModel.isFavorite.collectAsStateWithLifecycle()
 
     val sheetState = rememberModalBottomSheetState()
     val queueSheetState = rememberModalBottomSheetState()
@@ -176,7 +176,7 @@ fun PlayerScreen(
                                 title = it.title,
                                 artist = it.artist,
                                 isFavorite = isFavorite,
-                                onToggleFavorite = { isFavorite = !isFavorite },
+                                onToggleFavorite = viewModel::toggleFavorite,
                                 onArtistClick = it.artistId?.let { id -> { onArtistSelected(id) } }
                             )
                         }

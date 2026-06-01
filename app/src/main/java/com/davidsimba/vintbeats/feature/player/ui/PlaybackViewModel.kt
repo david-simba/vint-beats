@@ -81,6 +81,9 @@ class PlaybackViewModel @Inject constructor(
     private val _isDownloading = MutableStateFlow(false)
     val isDownloading: StateFlow<Boolean> = _isDownloading.asStateFlow()
 
+    private val _isFavorite = MutableStateFlow(false)
+    val isFavorite: StateFlow<Boolean> = _isFavorite.asStateFlow()
+
     private val lyricsCache = mutableMapOf<String, List<LyricLine>>()
     private var prefetchJob: Job? = null
     private var progressJob: Job? = null
@@ -167,6 +170,7 @@ class PlaybackViewModel @Inject constructor(
         _positionMs.value = 0L
         _durationMs.value = 0L
         _queue.value = newQueue ?: emptyList()
+        loadFavoriteStatus(track.id)
         viewModelScope.launch {
             val cached = lyricsCache.remove(track.id)
             if (cached != null) {
@@ -228,6 +232,7 @@ class PlaybackViewModel @Inject constructor(
                 return@launch
             }
             _currentSavedTrack.value = saved
+            loadFavoriteStatus(saved.trackId)
             viewModelScope.launch {
                 _syncedLyrics.value = backendService.getLyrics(saved.trackTitle, saved.trackArtist)
                 _isLoadingLyrics.value = false
@@ -286,6 +291,21 @@ class PlaybackViewModel @Inject constructor(
             _history.value = _history.value + skipped
         }
         playTrack(track, newQueue = queue.drop(index + 1), preserveHistory = true)
+    }
+
+    fun toggleFavorite() {
+        val track = buildCurrentTrack() ?: return
+        _isFavorite.value = !_isFavorite.value
+        viewModelScope.launch {
+            repository.toggleFavorite(track)
+            _isFavorite.value = repository.isFavoriteTrack(track.id)
+        }
+    }
+
+    private fun loadFavoriteStatus(trackId: String) {
+        viewModelScope.launch {
+            _isFavorite.value = repository.isFavoriteTrack(trackId)
+        }
     }
 
     fun downloadCurrentTrack() {

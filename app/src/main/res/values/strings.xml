@@ -10,6 +10,18 @@
     <string name="library_title">Library</string>
     <string name="library_empty">No songs saved yet</string>
 
+    <!-- Favorites -->
+    <string name="favorites_title">Favorites</string>
+    <string name="favorites_empty">No favorite songs yet</string>
+    <string name="favorites_empty_short">No songs added yet</string>
+    <string name="favorites_count">%d songs</string>
+
+    <!-- Downloads -->
+    <string name="downloads_title">Downloads</string>
+    <string name="downloads_empty">No downloaded songs yet</string>
+    <string name="downloads_empty_short">No songs downloaded yet</string>
+    <string name="downloads_count">%d songs</string>
+
     <!-- Search -->
     <string name="search_title">Search</string>
     <string name="search_placeholder">Search songs, artists…</string>
@@ -49,4 +61,5 @@
 
     <!-- Common -->
     <string name="action_back">Back</string>
+    <string name="action_play_all">Play all</string>
 </resources>
