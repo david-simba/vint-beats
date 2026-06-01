@@ -20,7 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.res.stringResource
 import com.davidsimba.vintbeats.R
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBackIosNew
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -145,7 +145,7 @@ fun AlbumScreen(
                 .size(40.dp)
         ) {
             Icon(
-                imageVector = Icons.Rounded.ArrowBackIosNew,
+                imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                 contentDescription = stringResource(R.string.action_back),
                 tint = VintageWhite,
                 modifier = Modifier.size(20.dp)
@@ -159,7 +159,7 @@ private fun AlbumHeader(album: AlbumDetail, parallaxOffset: Float = 0f, onPlay: 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(340.dp)
+            .height(420.dp)
             .clipToBounds()
     ) {
         AsyncImage(
@@ -168,7 +168,7 @@ private fun AlbumHeader(album: AlbumDetail, parallaxOffset: Float = 0f, onPlay: 
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(440.dp)
+                .height(520.dp)
                 .graphicsLayer { translationY = parallaxOffset * 0.4f }
         )
         Box(
@@ -178,7 +178,7 @@ private fun AlbumHeader(album: AlbumDetail, parallaxOffset: Float = 0f, onPlay: 
                     Brush.verticalGradient(
                         colorStops = arrayOf(
                             0.0f to Color.Black.copy(alpha = 0.0f),
-                            0.45f to Color.Black.copy(alpha = 0.35f),
+                            0.45f to Color.Black.copy(alpha = 0.1f),
                             1.0f to VintageBgDark
                         )
                     )

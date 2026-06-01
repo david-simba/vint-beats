@@ -18,7 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import com.davidsimba.vintbeats.R
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBackIosNew
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -140,7 +140,7 @@ fun ArtistScreen(
                 .size(40.dp)
         ) {
             Icon(
-                imageVector = Icons.Rounded.ArrowBackIosNew,
+                imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                 contentDescription = stringResource(R.string.action_back),
                 tint = VintageWhite,
                 modifier = Modifier.size(20.dp)

@@ -48,7 +48,7 @@ fun ArtistHeader(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(340.dp)
+            .height(420.dp)
             .clipToBounds()
     ) {
         AsyncImage(
@@ -57,7 +57,7 @@ fun ArtistHeader(
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(440.dp)
+                .height(520.dp)
                 .graphicsLayer { translationY = parallaxOffset * 0.4f }
         )
         Box(
@@ -67,7 +67,7 @@ fun ArtistHeader(
                     Brush.verticalGradient(
                         colorStops = arrayOf(
                             0.0f to Color.Black.copy(alpha = 0.0f),
-                            0.45f to Color.Black.copy(alpha = 0.35f),
+                            0.45f to Color.Black.copy(alpha = 0.1f),
                             1.0f to VintageBgDark
                         )
                     )
