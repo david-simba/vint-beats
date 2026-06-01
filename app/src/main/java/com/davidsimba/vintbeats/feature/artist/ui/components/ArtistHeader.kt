@@ -21,8 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -31,7 +29,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.core.model.Artist
-import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageRed
 import com.davidsimba.vintbeats.shared.theme.VintageWhite
 

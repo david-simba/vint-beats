@@ -2,10 +2,12 @@ package com.davidsimba.vintbeats.feature.player.ui
 
 import android.app.PendingIntent
 import android.content.Intent
+import androidx.annotation.OptIn
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.ForwardingPlayer
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.cache.CacheDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
@@ -15,6 +17,7 @@ import com.davidsimba.vintbeats.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@UnstableApi
 @AndroidEntryPoint
 class PlaybackService : MediaSessionService() {
 
@@ -24,6 +27,7 @@ class PlaybackService : MediaSessionService() {
     private lateinit var player: ExoPlayer
     private lateinit var mediaSession: MediaSession
 
+    @OptIn(UnstableApi::class)
     override fun onCreate() {
         super.onCreate()
         player = ExoPlayer.Builder(this)
@@ -46,10 +50,10 @@ class PlaybackService : MediaSessionService() {
 
             override fun getAvailableCommands(): Player.Commands =
                 super.getAvailableCommands().buildUpon()
-                    .add(Player.COMMAND_SEEK_TO_NEXT)
-                    .add(Player.COMMAND_SEEK_TO_NEXT_MEDIA_ITEM)
-                    .add(Player.COMMAND_SEEK_TO_PREVIOUS)
-                    .add(Player.COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM)
+                    .add(COMMAND_SEEK_TO_NEXT)
+                    .add(COMMAND_SEEK_TO_NEXT_MEDIA_ITEM)
+                    .add(COMMAND_SEEK_TO_PREVIOUS)
+                    .add(COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM)
                     .build()
         }
 

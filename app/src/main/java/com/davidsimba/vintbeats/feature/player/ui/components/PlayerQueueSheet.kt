@@ -15,7 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.DragIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,7 +36,6 @@ import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.shared.components.EqualizerBars
 import com.davidsimba.vintbeats.shared.components.TrackInfo
-import com.davidsimba.vintbeats.shared.theme.VintageGray
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
 import com.davidsimba.vintbeats.shared.theme.VintageWhite
