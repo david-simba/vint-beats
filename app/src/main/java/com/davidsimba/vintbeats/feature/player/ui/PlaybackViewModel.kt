@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import androidx.annotation.OptIn
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
@@ -11,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.davidsimba.vintbeats.core.model.LyricLine
@@ -36,7 +38,8 @@ import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
-class PlaybackViewModel @Inject constructor(
+class PlaybackViewModel @OptIn(UnstableApi::class)
+@Inject constructor(
     private val repository: TrackRepository,
     private val streamService: YouTubeStreamService,
     private val backendService: com.davidsimba.vintbeats.core.youtube.BackendService,
