@@ -31,6 +31,7 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
 
 @Composable
 internal fun LibraryCardGrid(
+    modifier: Modifier = Modifier,
     icon: ImageVector,
     iconTint: Color,
     iconBg: Color,
@@ -38,7 +39,6 @@ internal fun LibraryCardGrid(
     subtitle: String,
     onClick: () -> Unit,
     imageUrl: String? = null,
-    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
@@ -46,7 +46,7 @@ internal fun LibraryCardGrid(
             .clip(RoundedCornerShape(14.dp))
             .background(VintageBgDark)
             .clickable(onClick = onClick)
-            .padding(12.dp),
+            .padding(vertical = 10.dp, horizontal = 6.dp),
         horizontalAlignment = Alignment.Start,
     ) {
         Box(
