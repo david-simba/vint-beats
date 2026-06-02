@@ -45,9 +45,11 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.davidsimba.vintbeats.feature.album.ui.AlbumScreen
 import com.davidsimba.vintbeats.feature.artist.ui.ArtistScreen
+import com.davidsimba.vintbeats.feature.library.ui.createplaylist.CreatePlaylistScreen
 import com.davidsimba.vintbeats.feature.library.ui.downloads.DownloadsScreen
 import com.davidsimba.vintbeats.feature.library.ui.favorites.FavoritesScreen
 import com.davidsimba.vintbeats.feature.library.ui.library.LibraryScreen
+import com.davidsimba.vintbeats.feature.library.ui.userplaylist.UserPlaylistScreen
 import com.davidsimba.vintbeats.feature.home.ui.HomeScreen
 import com.davidsimba.vintbeats.feature.player.ui.PlaybackViewModel
 import com.davidsimba.vintbeats.feature.player.ui.PlayerScreen
@@ -68,7 +70,9 @@ private val bottomNavRoutes = setOf(
     Screen.Album.route,
     Screen.Playlist.route,
     Screen.Favorites.route,
-    Screen.Downloads.route
+    Screen.Downloads.route,
+    Screen.CreatePlaylist.route,
+    Screen.UserPlaylist.route,
 )
 
 @Composable
@@ -314,7 +318,43 @@ fun NavGraph(
                 composable(Screen.Library.route) {
                     LibraryScreen(
                         onFavoritesClick = { navController.navigate(Screen.Favorites.route) },
-                        onDownloadsClick = { navController.navigate(Screen.Downloads.route) }
+                        onDownloadsClick = { navController.navigate(Screen.Downloads.route) },
+                        onPlaylistClick = { id -> navController.navigate(Screen.UserPlaylist.route(id)) },
+                        onCreatePlaylistClick = { navController.navigate(Screen.CreatePlaylist.route) },
+                    )
+                }
+                composable(
+                    route = Screen.CreatePlaylist.route,
+                    enterTransition = { slideInHorizontally(animationSpec = tween(220), initialOffsetX = { it }) },
+                    exitTransition = { ExitTransition.None },
+                    popEnterTransition = { EnterTransition.None },
+                    popExitTransition = { slideOutHorizontally(animationSpec = tween(220), targetOffsetX = { it }) },
+                ) {
+                    CreatePlaylistScreen(
+                        onBack = { navController.popBackStack() },
+                        onCreated = { playlistId ->
+                            navController.navigate(Screen.UserPlaylist.route(playlistId)) {
+                                popUpTo(Screen.CreatePlaylist.route) { inclusive = true }
+                            }
+                        },
+                    )
+                }
+                composable(
+                    route = Screen.UserPlaylist.route,
+                    arguments = listOf(navArgument("playlistId") { type = NavType.IntType }),
+                    enterTransition = { slideInHorizontally(animationSpec = tween(220), initialOffsetX = { it }) },
+                    exitTransition = { ExitTransition.None },
+                    popEnterTransition = { EnterTransition.None },
+                    popExitTransition = { slideOutHorizontally(animationSpec = tween(220), targetOffsetX = { it }) },
+                ) {
+                    UserPlaylistScreen(
+                        onBack = { navController.popBackStack() },
+                        onTrackClick = { id -> playbackViewModel.play(id) },
+                        onPlayAll = { tracks ->
+                            if (tracks.isNotEmpty()) {
+                                playbackViewModel.play(tracks.first().id)
+                            }
+                        },
                     )
                 }
                 composable(

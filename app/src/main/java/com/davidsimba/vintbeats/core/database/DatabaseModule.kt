@@ -2,6 +2,7 @@ package com.davidsimba.vintbeats.core.database
 
 import android.content.Context
 import androidx.room.Room
+import com.davidsimba.vintbeats.feature.library.data.PlaylistDao
 import com.davidsimba.vintbeats.feature.library.data.TrackDao
 import dagger.Module
 import dagger.Provides
@@ -18,9 +19,18 @@ object DatabaseModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): VintBeatsDatabase =
         Room.databaseBuilder(context, VintBeatsDatabase::class.java, "vintbeats.db")
-            .addMigrations(VintBeatsDatabase.MIGRATION_1_2, VintBeatsDatabase.MIGRATION_2_3, VintBeatsDatabase.MIGRATION_3_4)
+            .addMigrations(
+                VintBeatsDatabase.MIGRATION_1_2,
+                VintBeatsDatabase.MIGRATION_2_3,
+                VintBeatsDatabase.MIGRATION_3_4,
+                VintBeatsDatabase.MIGRATION_4_5,
+                VintBeatsDatabase.MIGRATION_5_6,
+            )
             .build()
 
     @Provides
     fun provideTrackDao(db: VintBeatsDatabase): TrackDao = db.trackDao()
+
+    @Provides
+    fun providePlaylistDao(db: VintBeatsDatabase): PlaylistDao = db.playlistDao()
 }

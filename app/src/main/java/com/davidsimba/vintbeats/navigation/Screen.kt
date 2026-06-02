@@ -19,4 +19,8 @@ sealed class Screen(val route: String) {
     }
     data object Favorites : Screen("favorites")
     data object Downloads : Screen("downloads")
+    data object CreatePlaylist : Screen("create_playlist")
+    data object UserPlaylist : Screen("user_playlist/{playlistId}") {
+        fun route(playlistId: Int) = "user_playlist/$playlistId"
+    }
 }

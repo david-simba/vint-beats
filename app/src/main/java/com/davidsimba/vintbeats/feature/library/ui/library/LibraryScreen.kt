@@ -12,10 +12,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ViewList
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.GridView
-import androidx.compose.material.icons.automirrored.rounded.ViewList
+import androidx.compose.material.icons.rounded.LibraryMusic
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -33,6 +35,7 @@ import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.feature.library.ui.components.LibraryCardGrid
 import com.davidsimba.vintbeats.feature.library.ui.components.LibraryCardList
 import com.davidsimba.vintbeats.feature.library.ui.components.LibraryItem
+import com.davidsimba.vintbeats.shared.theme.VintageOrangeLight
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
 import com.davidsimba.vintbeats.shared.theme.VintageWhite
 
@@ -40,13 +43,16 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhite
 fun LibraryScreen(
     onFavoritesClick: () -> Unit = {},
     onDownloadsClick: () -> Unit = {},
+    onPlaylistClick: (Int) -> Unit = {},
+    onCreatePlaylistClick: () -> Unit = {},
     viewModel: LibraryViewModel = hiltViewModel(),
 ) {
     val favoritesCount by viewModel.favoritesCount.collectAsStateWithLifecycle()
     val downloadsCount by viewModel.downloadsCount.collectAsStateWithLifecycle()
+    val playlists by viewModel.playlists.collectAsStateWithLifecycle()
     val isGrid by viewModel.isGridView.collectAsStateWithLifecycle()
 
-    val items = listOf(
+    val staticItems = listOf(
         LibraryItem(
             icon = Icons.Rounded.Favorite,
             iconTint = VintageRedLight,
@@ -66,6 +72,21 @@ fun LibraryScreen(
             onClick = onDownloadsClick,
         ),
     )
+
+    val playlistItems = playlists.map { playlist ->
+        LibraryItem(
+            icon = Icons.Rounded.LibraryMusic,
+            iconTint = VintageOrangeLight,
+            iconBg = VintageOrangeLight.copy(alpha = 0.15f),
+            title = playlist.name,
+            subtitle = if (playlist.trackCount == 0) stringResource(R.string.playlist_empty_short)
+                       else stringResource(R.string.playlist_count, playlist.trackCount),
+            onClick = { onPlaylistClick(playlist.id) },
+            imageUrl = playlist.coverImagePath?.let { "file://$it" },
+        )
+    }
+
+    val allItems = staticItems + playlistItems
 
     Column(
         modifier = Modifier
@@ -93,6 +114,14 @@ fun LibraryScreen(
                     modifier = Modifier.size(22.dp),
                 )
             }
+            IconButton(onClick = onCreatePlaylistClick) {
+                Icon(
+                    imageVector = Icons.Rounded.Add,
+                    contentDescription = stringResource(R.string.create_playlist_title),
+                    tint = VintageWhite.copy(alpha = 0.7f),
+                    modifier = Modifier.size(22.dp),
+                )
+            }
         }
 
         if (isGrid) {
@@ -101,8 +130,8 @@ fun LibraryScreen(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                items(items.size) { index ->
-                    val item = items[index]
+                items(allItems.size) { index ->
+                    val item = allItems[index]
                     LibraryCardGrid(
                         icon = item.icon,
                         iconTint = item.iconTint,
@@ -110,13 +139,14 @@ fun LibraryScreen(
                         title = item.title,
                         subtitle = item.subtitle,
                         onClick = item.onClick,
+                        imageUrl = item.imageUrl,
                     )
                 }
             }
         } else {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(items.size) { index ->
-                    val item = items[index]
+                items(allItems.size) { index ->
+                    val item = allItems[index]
                     LibraryCardList(
                         icon = item.icon,
                         iconTint = item.iconTint,
@@ -124,6 +154,7 @@ fun LibraryScreen(
                         title = item.title,
                         subtitle = item.subtitle,
                         onClick = item.onClick,
+                        imageUrl = item.imageUrl,
                     )
                 }
             }

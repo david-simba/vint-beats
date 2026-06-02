@@ -3,6 +3,8 @@ package com.davidsimba.vintbeats.feature.library.ui.library
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidsimba.vintbeats.feature.library.data.LibraryPreferences
+import com.davidsimba.vintbeats.feature.library.domain.Playlist
+import com.davidsimba.vintbeats.feature.library.domain.PlaylistRepository
 import com.davidsimba.vintbeats.feature.library.domain.TrackRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,6 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LibraryViewModel @Inject constructor(
     repository: TrackRepository,
+    playlistRepository: PlaylistRepository,
     private val preferences: LibraryPreferences,
 ) : ViewModel() {
 
@@ -25,6 +28,9 @@ class LibraryViewModel @Inject constructor(
     val downloadsCount: StateFlow<Int> = repository.getDownloadedTracks()
         .map { it.size }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+
+    val playlists: StateFlow<List<Playlist>> = playlistRepository.getPlaylists()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val isGridView: StateFlow<Boolean> = preferences.isGridView
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)

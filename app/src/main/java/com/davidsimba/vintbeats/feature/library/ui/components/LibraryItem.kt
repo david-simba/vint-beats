@@ -10,4 +10,5 @@ internal data class LibraryItem(
     val title: String,
     val subtitle: String,
     val onClick: () -> Unit,
+    val imageUrl: String? = null,
 )

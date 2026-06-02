@@ -17,6 +17,15 @@
     <string name="favorites_empty_short">Aún no hay canciones</string>
     <string name="favorites_count">%d canciones</string>
 
+    <!-- Playlists -->
+    <string name="create_playlist_title">Nueva playlist</string>
+    <string name="create_playlist_action">Crear</string>
+    <string name="playlist_name_hint">Nombre de la playlist</string>
+    <string name="playlist_add_photo">Añadir foto</string>
+    <string name="playlist_empty">Aún no hay canciones en esta playlist</string>
+    <string name="playlist_empty_short">Sin canciones aún</string>
+    <string name="playlist_count">%d canciones</string>
+
     <!-- Downloads -->
     <string name="downloads_title">Descargas</string>
     <string name="downloads_empty">Aún no tienes canciones descargadas</string>

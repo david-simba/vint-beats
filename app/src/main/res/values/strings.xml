@@ -16,6 +16,15 @@
     <string name="favorites_empty_short">No songs added yet</string>
     <string name="favorites_count">%d songs</string>
 
+    <!-- Playlists -->
+    <string name="create_playlist_title">New Playlist</string>
+    <string name="create_playlist_action">Create</string>
+    <string name="playlist_name_hint">Playlist name</string>
+    <string name="playlist_add_photo">Add photo</string>
+    <string name="playlist_empty">No songs in this playlist yet</string>
+    <string name="playlist_empty_short">No songs yet</string>
+    <string name="playlist_count">%d songs</string>
+
     <!-- Downloads -->
     <string name="downloads_title">Downloads</string>
     <string name="downloads_empty">No downloaded songs yet</string>
