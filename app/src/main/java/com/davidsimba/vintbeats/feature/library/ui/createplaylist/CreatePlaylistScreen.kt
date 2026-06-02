@@ -3,6 +3,10 @@ package com.davidsimba.vintbeats.feature.library.ui.createplaylist
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
+import com.canhub.cropper.CropImageView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,7 +17,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -59,16 +62,42 @@ fun CreatePlaylistScreen(
     onCreated: (Int) -> Unit,
     viewModel: CreatePlaylistViewModel = hiltViewModel(),
 ) {
+    val cropImage = rememberLauncherForActivityResult(CropImageContract()) { result ->
+        if (result.isSuccessful) {
+            result.uriContent?.let { viewModel.onImagePicked(it) }
+        }
+    }
+
     val imagePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = { uri -> uri?.let { viewModel.onImagePicked(it) } },
+        onResult = { uri ->
+            uri?.let {
+                cropImage.launch(
+                    CropImageContractOptions(
+                        uri = it,
+                        cropImageOptions = CropImageOptions(
+                            aspectRatioX = 1,
+                            aspectRatioY = 1,
+                            fixAspectRatio = true,
+                            guidelines = CropImageView.Guidelines.ON,
+                            activityBackgroundColor = 0xFF121212.toInt(),
+                            toolbarColor = 0xFF121212.toInt(),
+                            toolbarTitleColor = 0xFFFFFFFF.toInt(),
+                            toolbarBackButtonColor = 0xFFFFFFFF.toInt(),
+                            borderLineColor = 0xFFDD7733.toInt(),
+                            borderCornerColor = 0xFFDD7733.toInt(),
+                            guidelinesColor = 0x44DD7733,
+                        ),
+                    )
+                )
+            }
+        },
     )
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .statusBarsPadding()
-            .imePadding(),
+            .statusBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(
@@ -102,7 +131,7 @@ fun CreatePlaylistScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp)
-                .height(240.dp)
+                .height(420.dp)
                 .clip(RoundedCornerShape(14.dp))
                 .background(VintageBgDark)
                 .border(
