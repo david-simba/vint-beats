@@ -30,6 +30,7 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhite
 
 @Composable
 fun SearchField(
+    modifier: Modifier = Modifier,
     query: String,
     onQueryChange: (String) -> Unit,
     onFocusChanged: (Boolean) -> Unit = {},
@@ -38,7 +39,6 @@ fun SearchField(
     leadingIcon: @Composable () -> Unit = {
         Icon(Icons.Rounded.Search, contentDescription = null, tint = VintageBgDark)
     },
-    modifier: Modifier = Modifier
 ) {
     val focusRequester = remember { FocusRequester() }
 

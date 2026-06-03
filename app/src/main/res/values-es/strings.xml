@@ -79,6 +79,7 @@
     <!-- Common -->
     <string name="action_back">Atrás</string>
     <string name="action_play_all">Reproducir todo</string>
+    <string name="action_add_songs">Agregar canciones</string>
     <string name="action_remove_download">Eliminar canción</string>
     <string name="action_remove_favorite">Quitar de favoritos</string>
 </resources>

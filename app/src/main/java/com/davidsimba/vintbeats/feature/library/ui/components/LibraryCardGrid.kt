@@ -45,7 +45,7 @@ internal fun LibraryCardGrid(
 ) {
     val clipShape = when (imageShape) {
         ImageShape.Circle -> CircleShape
-        ImageShape.Square -> RoundedCornerShape(10.dp)
+        ImageShape.Square -> RoundedCornerShape(8.dp)
     }
 
     Column(

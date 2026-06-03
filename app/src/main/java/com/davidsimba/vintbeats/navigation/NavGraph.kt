@@ -45,6 +45,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.davidsimba.vintbeats.feature.album.ui.AlbumScreen
 import com.davidsimba.vintbeats.feature.artist.ui.ArtistScreen
+import com.davidsimba.vintbeats.feature.library.ui.addsongs.AddSongsScreen
 import com.davidsimba.vintbeats.feature.library.ui.createplaylist.CreatePlaylistScreen
 import com.davidsimba.vintbeats.feature.library.ui.downloads.DownloadsScreen
 import com.davidsimba.vintbeats.feature.library.ui.favorites.FavoritesScreen
@@ -73,6 +74,7 @@ private val bottomNavRoutes = setOf(
     Screen.Downloads.route,
     Screen.CreatePlaylist.route,
     Screen.UserPlaylist.route,
+    Screen.AddSongs.route,
 )
 
 @Composable
@@ -349,6 +351,7 @@ fun NavGraph(
                     popEnterTransition = { EnterTransition.None },
                     popExitTransition = { slideOutHorizontally(animationSpec = tween(220), targetOffsetX = { it }) },
                 ) {
+                    val playlistId = it.arguments?.getInt("playlistId") ?: return@composable
                     UserPlaylistScreen(
                         onBack = { navController.popBackStack() },
                         onTrackClick = { id -> playbackViewModel.play(id) },
@@ -357,7 +360,18 @@ fun NavGraph(
                                 playbackViewModel.play(tracks.first().id)
                             }
                         },
+                        onAddSongsClick = { navController.navigate(Screen.AddSongs.route(playlistId)) },
                     )
+                }
+                composable(
+                    route = Screen.AddSongs.route,
+                    arguments = listOf(navArgument("playlistId") { type = NavType.IntType }),
+                    enterTransition = { slideInHorizontally(animationSpec = tween(220), initialOffsetX = { it }) },
+                    exitTransition = { ExitTransition.None },
+                    popEnterTransition = { EnterTransition.None },
+                    popExitTransition = { slideOutHorizontally(animationSpec = tween(220), targetOffsetX = { it }) }
+                ) {
+                    AddSongsScreen(onBack = { navController.popBackStack() })
                 }
                 composable(
                     route = Screen.Downloads.route,

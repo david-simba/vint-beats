@@ -234,8 +234,8 @@ fun CreatePlaylistScreen(
             enabled = viewModel.name.isNotBlank(),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = VintageOrange,
-                contentColor = VintageWhite,
+                containerColor = VintageWhite,
+                contentColor = VintageBgDark,
                 disabledContainerColor = VintageGrayDeep.copy(alpha = 0.3f),
                 disabledContentColor = VintageGrayMid,
             ),

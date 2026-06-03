@@ -171,9 +171,7 @@ fun LibraryScreen(
         LazyRow(
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 12.dp),
+            modifier = Modifier.fillMaxWidth()
         ) {
             items(LibraryFilter.entries) { item ->
                 VintFilterChip(

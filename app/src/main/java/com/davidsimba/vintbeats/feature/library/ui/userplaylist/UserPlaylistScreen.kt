@@ -1,18 +1,24 @@
 package com.davidsimba.vintbeats.feature.library.ui.userplaylist
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.LibraryMusic
+import androidx.compose.material.icons.rounded.MusicNote
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,18 +36,20 @@ import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
 import com.davidsimba.vintbeats.feature.library.domain.track.subtitle
 import com.davidsimba.vintbeats.shared.components.CollectionAppBar
 import com.davidsimba.vintbeats.shared.components.CollectionHeader
+import com.davidsimba.vintbeats.shared.components.VintActionButton
 import com.davidsimba.vintbeats.shared.components.cards.TrackCard
 import com.davidsimba.vintbeats.shared.components.rememberScrollAppBarAlpha
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
+import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageOrangeLight
-import java.io.File
 
 @Composable
 fun UserPlaylistScreen(
     onBack: () -> Unit,
     onTrackClick: (Int) -> Unit,
     onPlayAll: (List<SavedTrack>) -> Unit,
+    onAddSongsClick: () -> Unit,
     viewModel: UserPlaylistViewModel = hiltViewModel(),
 ) {
     val playlist by viewModel.playlist.collectAsStateWithLifecycle()
@@ -83,20 +91,34 @@ fun UserPlaylistScreen(
                         .background(VintageBgDark),
                 ) {
                     if (playlist?.tracks.isNullOrEmpty()) {
-                        Box(
+                        Column(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 64.dp),
-                            contentAlignment = Alignment.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
-                            Text(
-                                text = stringResource(R.string.playlist_empty),
-                                color = VintageGrayMid,
-                                fontSize = 14.sp,
+                            Icon(
+                                imageVector = Icons.Rounded.MusicNote,
+                                contentDescription = null,
+                                tint = VintageGrayDeep,
+                                modifier = Modifier.size(48.dp),
+                            )
+                            VintActionButton(
+                                label = stringResource(R.string.action_add_songs),
+                                icon = Icons.Rounded.Add,
+                                onClick = onAddSongsClick,
                             )
                         }
                     } else {
-                        Spacer(Modifier.height(6.dp))
+                        Spacer(Modifier.height(12.dp))
+                        VintActionButton(
+                            label = stringResource(R.string.action_add_songs),
+                            icon = Icons.Rounded.Add,
+                            onClick = onAddSongsClick,
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                        )
+                        Spacer(Modifier.height(8.dp))
                         playlist!!.tracks.forEach { track ->
                             TrackCard(
                                 title = track.trackTitle,
@@ -121,3 +143,4 @@ fun UserPlaylistScreen(
         )
     }
 }
+
