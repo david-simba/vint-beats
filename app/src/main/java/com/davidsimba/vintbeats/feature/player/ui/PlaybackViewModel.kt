@@ -15,7 +15,6 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
-import com.davidsimba.vintbeats.feature.player.ui.LyricLine
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.shared.SnackbarController
 import com.davidsimba.vintbeats.shared.SnackbarEvent

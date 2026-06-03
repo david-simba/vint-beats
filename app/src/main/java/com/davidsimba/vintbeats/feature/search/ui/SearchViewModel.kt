@@ -3,7 +3,6 @@ package com.davidsimba.vintbeats.feature.search.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidsimba.vintbeats.feature.search.domain.ExploreCategory
-import com.davidsimba.vintbeats.feature.search.domain.PlaylistSummary
 import com.davidsimba.vintbeats.core.youtube.BackendService
 import com.davidsimba.vintbeats.core.youtube.CategoryPlaylistsResult
 import com.davidsimba.vintbeats.feature.search.domain.SearchRepository

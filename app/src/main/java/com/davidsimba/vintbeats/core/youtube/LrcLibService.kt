@@ -16,7 +16,7 @@ class LrcLibService @Inject constructor(
 ) {
     companion object {
         private const val TAG = "LrcLibService"
-        private val LRC_REGEX = Regex("""\[(\d+):(\d{2})\.(\d{2,3})\](.*)""")
+        private val LRC_REGEX = Regex("""\[(\d+):(\d{2})\.(\d{2,3})](.*)""")
     }
 
     suspend fun getSyncedLyrics(title: String, artist: String): List<LyricLine> =
