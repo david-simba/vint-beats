@@ -1,7 +1,9 @@
 package com.davidsimba.vintbeats.feature.library.ui.library
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,8 +11,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ViewList
 import androidx.compose.material.icons.rounded.Add
@@ -35,6 +39,8 @@ import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.feature.library.ui.components.LibraryCardGrid
 import com.davidsimba.vintbeats.feature.library.ui.components.LibraryCardList
 import com.davidsimba.vintbeats.feature.library.ui.components.LibraryItem
+import com.davidsimba.vintbeats.shared.components.VintFilterChip
+import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageOrangeLight
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
 import com.davidsimba.vintbeats.shared.theme.VintageWhite
@@ -51,6 +57,7 @@ fun LibraryScreen(
     val downloadsCount by viewModel.downloadsCount.collectAsStateWithLifecycle()
     val playlists by viewModel.playlists.collectAsStateWithLifecycle()
     val isGrid by viewModel.isGridView.collectAsStateWithLifecycle()
+    val filter by viewModel.filter.collectAsStateWithLifecycle()
 
     val staticItems = listOf(
         LibraryItem(
@@ -86,7 +93,11 @@ fun LibraryScreen(
         )
     }
 
-    val allItems = staticItems + playlistItems
+    val visibleItems = when (filter) {
+        LibraryFilter.User -> staticItems + playlistItems
+        LibraryFilter.Albums -> emptyList()
+        LibraryFilter.Artists -> emptyList()
+    }
 
     Column(
         modifier = Modifier
@@ -96,7 +107,7 @@ fun LibraryScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, end = 8.dp, top = 8.dp, bottom = 14.dp),
+                .padding(start = 16.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
@@ -124,14 +135,50 @@ fun LibraryScreen(
             }
         }
 
-        if (isGrid) {
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 12.dp),
+        ) {
+            items(LibraryFilter.entries) { item ->
+                VintFilterChip(
+                    label = when (item) {
+                        LibraryFilter.User -> stringResource(R.string.library_filter_yours)
+                        LibraryFilter.Albums -> stringResource(R.string.library_filter_albums)
+                        LibraryFilter.Artists -> stringResource(R.string.library_filter_artists)
+                    },
+                    selected = filter == item,
+                    onClick = { viewModel.setFilter(item) },
+                )
+            }
+        }
+
+        if (visibleItems.isEmpty()) {
+            val emptyText = when (filter) {
+                LibraryFilter.Albums -> stringResource(R.string.library_filter_albums_empty)
+                LibraryFilter.Artists -> stringResource(R.string.library_filter_artists_empty)
+                LibraryFilter.User -> stringResource(R.string.library_empty)
+            }
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = emptyText,
+                    color = VintageGrayMid,
+                    fontSize = 14.sp,
+                )
+            }
+        } else if (isGrid) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
                 modifier = Modifier.fillMaxSize().padding(horizontal = 10.dp),
                 verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                items(allItems.size) { index ->
-                    val item = allItems[index]
+                items(visibleItems.size) { index ->
+                    val item = visibleItems[index]
                     LibraryCardGrid(
                         icon = item.icon,
                         iconTint = item.iconTint,
@@ -145,8 +192,8 @@ fun LibraryScreen(
             }
         } else {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(allItems.size) { index ->
-                    val item = allItems[index]
+                items(visibleItems.size) { index ->
+                    val item = visibleItems[index]
                     LibraryCardList(
                         icon = item.icon,
                         iconTint = item.iconTint,
@@ -161,3 +208,4 @@ fun LibraryScreen(
         }
     }
 }
+

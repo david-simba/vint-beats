@@ -69,6 +69,13 @@
     <string name="download_started">La canción se está descargando</string>
     <string name="download_success">Canción descargada con éxito ;)</string>
 
+    <!-- Library filters -->
+    <string name="library_filter_yours">100% Tú</string>
+    <string name="library_filter_albums">Álbums</string>
+    <string name="library_filter_artists">Artistas</string>
+    <string name="library_filter_albums_empty">No tienes álbums guardados</string>
+    <string name="library_filter_artists_empty">No tienes artistas guardados</string>
+
     <!-- Common -->
     <string name="action_back">Atrás</string>
     <string name="action_play_all">Reproducir todo</string>

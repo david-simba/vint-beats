@@ -68,6 +68,13 @@
     <string name="download_started">Song is downloading</string>
     <string name="download_success">Song downloaded successfully</string>
 
+    <!-- Library filters -->
+    <string name="library_filter_yours">100% You</string>
+    <string name="library_filter_albums">Albums</string>
+    <string name="library_filter_artists">Artists</string>
+    <string name="library_filter_albums_empty">No saved albums yet</string>
+    <string name="library_filter_artists_empty">No saved artists yet</string>
+
     <!-- Common -->
     <string name="action_back">Back</string>
     <string name="action_play_all">Play all</string>

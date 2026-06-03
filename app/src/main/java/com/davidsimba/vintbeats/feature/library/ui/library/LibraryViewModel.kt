@@ -7,8 +7,10 @@ import com.davidsimba.vintbeats.feature.library.domain.Playlist
 import com.davidsimba.vintbeats.feature.library.domain.PlaylistRepository
 import com.davidsimba.vintbeats.feature.library.domain.TrackRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -34,6 +36,13 @@ class LibraryViewModel @Inject constructor(
 
     val isGridView: StateFlow<Boolean> = preferences.isGridView
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+    private val _filter = MutableStateFlow(LibraryFilter.User)
+    val filter: StateFlow<LibraryFilter> = _filter.asStateFlow()
+
+    fun setFilter(filter: LibraryFilter) {
+        _filter.value = filter
+    }
 
     fun toggleGridView() {
         viewModelScope.launch {
