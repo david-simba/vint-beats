@@ -1,8 +1,9 @@
-package com.davidsimba.vintbeats.feature.library.data
+package com.davidsimba.vintbeats.feature.library.data.playlist
 
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
+import com.davidsimba.vintbeats.feature.library.data.track.SavedTrackEntity
 
 data class PlaylistWithTracksEntity(
     @Embedded val playlist: PlaylistEntity,

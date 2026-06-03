@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidsimba.vintbeats.core.youtube.YouTubeStreamService
-import com.davidsimba.vintbeats.feature.library.domain.SavedTrack
-import com.davidsimba.vintbeats.feature.library.domain.TrackRepository
+import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
+import com.davidsimba.vintbeats.feature.library.domain.track.TrackRepository
 import com.davidsimba.vintbeats.shared.SnackbarController
 import com.davidsimba.vintbeats.shared.SnackbarEvent
 import dagger.hilt.android.lifecycle.HiltViewModel

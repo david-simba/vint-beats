@@ -18,10 +18,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ViewList
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Album
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.GridView
 import androidx.compose.material.icons.rounded.LibraryMusic
+import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -39,10 +41,13 @@ import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.feature.library.ui.components.LibraryCardGrid
 import com.davidsimba.vintbeats.feature.library.ui.components.LibraryCardList
 import com.davidsimba.vintbeats.feature.library.ui.components.LibraryItem
+import com.davidsimba.vintbeats.shared.components.ImageShape
 import com.davidsimba.vintbeats.shared.components.VintFilterChip
+import com.davidsimba.vintbeats.shared.theme.VintageBlueLight
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageOrangeLight
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
+import com.davidsimba.vintbeats.shared.theme.VintageTealLight
 import com.davidsimba.vintbeats.shared.theme.VintageWhite
 
 @Composable
@@ -51,15 +56,19 @@ fun LibraryScreen(
     onDownloadsClick: () -> Unit = {},
     onPlaylistClick: (Int) -> Unit = {},
     onCreatePlaylistClick: () -> Unit = {},
+    onAlbumClick: (String) -> Unit = {},
+    onArtistClick: (String) -> Unit = {},
     viewModel: LibraryViewModel = hiltViewModel(),
 ) {
     val favoritesCount by viewModel.favoritesCount.collectAsStateWithLifecycle()
     val downloadsCount by viewModel.downloadsCount.collectAsStateWithLifecycle()
     val playlists by viewModel.playlists.collectAsStateWithLifecycle()
+    val savedAlbums by viewModel.savedAlbums.collectAsStateWithLifecycle()
+    val savedArtists by viewModel.savedArtists.collectAsStateWithLifecycle()
     val isGrid by viewModel.isGridView.collectAsStateWithLifecycle()
     val filter by viewModel.filter.collectAsStateWithLifecycle()
 
-    val staticItems = listOf(
+    val userItems = listOf(
         LibraryItem(
             icon = Icons.Rounded.Favorite,
             iconTint = VintageRedLight,
@@ -78,9 +87,7 @@ fun LibraryScreen(
                        else stringResource(R.string.downloads_count, downloadsCount),
             onClick = onDownloadsClick,
         ),
-    )
-
-    val playlistItems = playlists.map { playlist ->
+    ) + playlists.map { playlist ->
         LibraryItem(
             icon = Icons.Rounded.LibraryMusic,
             iconTint = VintageOrangeLight,
@@ -93,10 +100,36 @@ fun LibraryScreen(
         )
     }
 
+    val albumItems = savedAlbums.map { album ->
+        LibraryItem(
+            icon = Icons.Rounded.Album,
+            iconTint = VintageBlueLight,
+            iconBg = VintageBlueLight.copy(alpha = 0.15f),
+            title = album.title,
+            subtitle = album.artist,
+            onClick = { onAlbumClick(album.albumId) },
+            imageUrl = album.thumbnailUrl,
+            imageShape = ImageShape.Square,
+        )
+    }
+
+    val artistItems = savedArtists.map { artist ->
+        LibraryItem(
+            icon = Icons.Rounded.Person,
+            iconTint = VintageTealLight,
+            iconBg = VintageTealLight.copy(alpha = 0.15f),
+            title = artist.name,
+            subtitle = stringResource(R.string.label_artist),
+            onClick = { onArtistClick(artist.artistId) },
+            imageUrl = artist.thumbnailUrl,
+            imageShape = ImageShape.Circle,
+        )
+    }
+
     val visibleItems = when (filter) {
-        LibraryFilter.User -> staticItems + playlistItems
-        LibraryFilter.Albums -> emptyList()
-        LibraryFilter.Artists -> emptyList()
+        LibraryFilter.User -> userItems
+        LibraryFilter.Albums -> albumItems
+        LibraryFilter.Artists -> artistItems
     }
 
     Column(
@@ -165,11 +198,7 @@ fun LibraryScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center,
             ) {
-                Text(
-                    text = emptyText,
-                    color = VintageGrayMid,
-                    fontSize = 14.sp,
-                )
+                Text(text = emptyText, color = VintageGrayMid, fontSize = 14.sp)
             }
         } else if (isGrid) {
             LazyVerticalGrid(
@@ -187,6 +216,7 @@ fun LibraryScreen(
                         subtitle = item.subtitle,
                         onClick = item.onClick,
                         imageUrl = item.imageUrl,
+                        imageShape = item.imageShape,
                     )
                 }
             }
@@ -202,10 +232,10 @@ fun LibraryScreen(
                         subtitle = item.subtitle,
                         onClick = item.onClick,
                         imageUrl = item.imageUrl,
+                        imageShape = item.imageShape,
                     )
                 }
             }
         }
     }
 }
-

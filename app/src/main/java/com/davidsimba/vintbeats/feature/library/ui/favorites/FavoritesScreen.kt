@@ -36,8 +36,8 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.R
-import com.davidsimba.vintbeats.feature.library.domain.SavedTrack
-import com.davidsimba.vintbeats.feature.library.domain.subtitle
+import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
+import com.davidsimba.vintbeats.feature.library.domain.track.subtitle
 import com.davidsimba.vintbeats.shared.components.BottomSheet
 import com.davidsimba.vintbeats.shared.components.BottomSheetMenuItem
 import com.davidsimba.vintbeats.shared.components.CollectionAppBar

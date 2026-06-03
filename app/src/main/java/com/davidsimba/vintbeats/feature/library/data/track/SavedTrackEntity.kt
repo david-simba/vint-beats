@@ -1,8 +1,8 @@
-package com.davidsimba.vintbeats.feature.library.data
+package com.davidsimba.vintbeats.feature.library.data.track
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.davidsimba.vintbeats.feature.library.domain.SavedTrack
+import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
 
 @Entity(tableName = "saved_tracks")
 data class SavedTrackEntity(

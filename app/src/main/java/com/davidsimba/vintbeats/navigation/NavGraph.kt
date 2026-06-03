@@ -321,6 +321,8 @@ fun NavGraph(
                         onDownloadsClick = { navController.navigate(Screen.Downloads.route) },
                         onPlaylistClick = { id -> navController.navigate(Screen.UserPlaylist.route(id)) },
                         onCreatePlaylistClick = { navController.navigate(Screen.CreatePlaylist.route) },
+                        onAlbumClick = { id -> navController.navigate(Screen.Album.route(id)) },
+                        onArtistClick = { id -> navController.navigate(Screen.Artist.route(id)) },
                     )
                 }
                 composable(

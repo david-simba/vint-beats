@@ -1,4 +1,4 @@
-package com.davidsimba.vintbeats.feature.library.data
+package com.davidsimba.vintbeats.feature.library.data.playlist
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

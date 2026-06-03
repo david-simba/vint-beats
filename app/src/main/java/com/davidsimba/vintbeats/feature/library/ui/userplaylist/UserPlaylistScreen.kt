@@ -26,7 +26,8 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.R
-import com.davidsimba.vintbeats.feature.library.domain.subtitle
+import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
+import com.davidsimba.vintbeats.feature.library.domain.track.subtitle
 import com.davidsimba.vintbeats.shared.components.CollectionAppBar
 import com.davidsimba.vintbeats.shared.components.CollectionHeader
 import com.davidsimba.vintbeats.shared.components.cards.TrackCard
@@ -40,7 +41,7 @@ import java.io.File
 fun UserPlaylistScreen(
     onBack: () -> Unit,
     onTrackClick: (Int) -> Unit,
-    onPlayAll: (List<com.davidsimba.vintbeats.feature.library.domain.SavedTrack>) -> Unit,
+    onPlayAll: (List<SavedTrack>) -> Unit,
     viewModel: UserPlaylistViewModel = hiltViewModel(),
 ) {
     val playlist by viewModel.playlist.collectAsStateWithLifecycle()

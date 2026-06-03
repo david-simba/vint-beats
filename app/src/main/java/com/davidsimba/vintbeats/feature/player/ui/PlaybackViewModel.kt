@@ -21,7 +21,8 @@ import com.davidsimba.vintbeats.shared.SnackbarController
 import com.davidsimba.vintbeats.shared.SnackbarEvent
 import com.davidsimba.vintbeats.core.youtube.YouTubeQueueService
 import com.davidsimba.vintbeats.core.youtube.YouTubeStreamService
-import com.davidsimba.vintbeats.feature.library.domain.TrackRepository
+import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
+import com.davidsimba.vintbeats.feature.library.domain.track.TrackRepository
 import com.google.common.util.concurrent.ListenableFuture
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -51,8 +52,8 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
     private var controllerFuture: ListenableFuture<MediaController>
     private var currentStreamUrl: String? = null
 
-    private val _currentSavedTrack = MutableStateFlow<com.davidsimba.vintbeats.feature.library.domain.SavedTrack?>(null)
-    val currentSavedTrack: StateFlow<com.davidsimba.vintbeats.feature.library.domain.SavedTrack?> = _currentSavedTrack.asStateFlow()
+    private val _currentSavedTrack = MutableStateFlow<SavedTrack?>(null)
+    val currentSavedTrack: StateFlow<SavedTrack?> = _currentSavedTrack.asStateFlow()
 
     private val _unsavedTrack = MutableStateFlow<Track?>(null)
     val unsavedTrack: StateFlow<Track?> = _unsavedTrack.asStateFlow()

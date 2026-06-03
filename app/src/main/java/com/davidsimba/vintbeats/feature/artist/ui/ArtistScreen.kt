@@ -11,7 +11,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,6 +41,7 @@ import com.davidsimba.vintbeats.shared.components.SectionLabel
 import com.davidsimba.vintbeats.shared.components.rememberScrollAppBarAlpha
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageGray
+import com.davidsimba.vintbeats.shared.theme.VintageRedLight
 import com.davidsimba.vintbeats.shared.theme.VintageWhite
 
 @Composable
@@ -47,6 +54,7 @@ fun ArtistScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isLoadingPlay by viewModel.isLoadingPlay.collectAsStateWithLifecycle()
+    val isSaved by viewModel.isSaved.collectAsStateWithLifecycle()
     val lazyListState = rememberLazyListState()
     val appBarAlpha = rememberScrollAppBarAlpha(lazyListState)
     val artistName = (uiState as? ArtistUiState.Success)?.artist?.name.orEmpty()
@@ -121,7 +129,19 @@ fun ArtistScreen(
             title = artistName,
             alpha = appBarAlpha,
             onBack = onBack,
-            modifier = Modifier.align(Alignment.TopStart).zIndex(1f)
+            modifier = Modifier.align(Alignment.TopStart).zIndex(1f),
+            trailingContent = {
+                if (uiState is ArtistUiState.Success) {
+                    IconButton(onClick = viewModel::toggleSave) {
+                        Icon(
+                            imageVector = if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+                            contentDescription = null,
+                            tint = if (isSaved) VintageRedLight else VintageWhite,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
+                }
+            }
         )
     }
 }

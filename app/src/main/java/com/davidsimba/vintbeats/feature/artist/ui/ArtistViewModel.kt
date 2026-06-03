@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.artist.data.ArtistRepository
+import com.davidsimba.vintbeats.feature.library.domain.artist.SavedArtistRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,6 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ArtistViewModel @Inject constructor(
     private val repository: ArtistRepository,
+    private val savedArtistRepository: SavedArtistRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -25,6 +27,9 @@ class ArtistViewModel @Inject constructor(
 
     private val _isLoadingPlay = MutableStateFlow(false)
     val isLoadingPlay: StateFlow<Boolean> = _isLoadingPlay.asStateFlow()
+
+    private val _isSaved = MutableStateFlow(false)
+    val isSaved: StateFlow<Boolean> = _isSaved.asStateFlow()
 
     init {
         loadArtist()
@@ -40,10 +45,27 @@ class ArtistViewModel @Inject constructor(
                         songsBrowseId = detail.songsBrowseId,
                         albums = detail.albums
                     )
+                    _isSaved.value = savedArtistRepository.isSaved(detail.artist.id)
                 }
                 .onFailure {
                     _uiState.value = ArtistUiState.Error(it.message ?: "Failed to load artist")
                 }
+        }
+    }
+
+    fun toggleSave() {
+        val state = _uiState.value as? ArtistUiState.Success ?: return
+        viewModelScope.launch {
+            if (_isSaved.value) {
+                savedArtistRepository.unsaveArtist(state.artist.id)
+            } else {
+                savedArtistRepository.saveArtist(
+                    artistId = state.artist.id,
+                    name = state.artist.name,
+                    thumbnailUrl = state.artist.thumbnailUrl
+                )
+            }
+            _isSaved.value = !_isSaved.value
         }
     }
 

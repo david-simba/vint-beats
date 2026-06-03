@@ -1,4 +1,4 @@
-package com.davidsimba.vintbeats.feature.library.data
+package com.davidsimba.vintbeats.feature.library.data.track
 
 import androidx.room.Dao
 import androidx.room.Insert

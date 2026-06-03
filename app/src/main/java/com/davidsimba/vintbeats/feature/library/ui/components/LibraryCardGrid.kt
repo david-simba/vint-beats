@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -25,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.davidsimba.vintbeats.shared.components.ImageShape
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
@@ -39,7 +41,13 @@ internal fun LibraryCardGrid(
     subtitle: String,
     onClick: () -> Unit,
     imageUrl: String? = null,
+    imageShape: ImageShape = ImageShape.Square,
 ) {
+    val clipShape = when (imageShape) {
+        ImageShape.Circle -> CircleShape
+        ImageShape.Square -> RoundedCornerShape(10.dp)
+    }
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -53,7 +61,7 @@ internal fun LibraryCardGrid(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f)
-                .clip(RoundedCornerShape(10.dp))
+                .clip(clipShape)
                 .background(iconBg),
             contentAlignment = Alignment.Center,
         ) {
@@ -62,9 +70,7 @@ internal fun LibraryCardGrid(
                     model = imageUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(10.dp)),
+                    modifier = Modifier.fillMaxSize().clip(clipShape),
                 )
             } else {
                 Icon(

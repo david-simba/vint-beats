@@ -1,4 +1,4 @@
-package com.davidsimba.vintbeats.feature.library.domain
+package com.davidsimba.vintbeats.feature.library.domain.track
 
 import com.davidsimba.vintbeats.core.model.Track
 import kotlinx.coroutines.flow.Flow

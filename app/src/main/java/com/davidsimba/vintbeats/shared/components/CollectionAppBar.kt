@@ -52,7 +52,8 @@ fun CollectionAppBar(
     title: String,
     alpha: Float,
     onBack: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    trailingContent: (@Composable () -> Unit)? = null
 ) {
     Box(
         modifier = modifier
@@ -64,7 +65,7 @@ fun CollectionAppBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
-                .padding(end = 16.dp),
+                .padding(end = if (trailingContent != null) 4.dp else 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onBack, modifier = Modifier.size(48.dp)) {
@@ -86,6 +87,7 @@ fun CollectionAppBar(
                     .weight(1f)
                     .alpha(alpha)
             )
+            trailingContent?.invoke()
         }
         HorizontalDivider(
             modifier = Modifier

@@ -3,8 +3,8 @@ package com.davidsimba.vintbeats.feature.library.ui.userplaylist
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.davidsimba.vintbeats.feature.library.domain.PlaylistRepository
-import com.davidsimba.vintbeats.feature.library.domain.PlaylistWithTracks
+import com.davidsimba.vintbeats.feature.library.domain.playlist.PlaylistRepository
+import com.davidsimba.vintbeats.feature.library.domain.playlist.PlaylistWithTracks
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

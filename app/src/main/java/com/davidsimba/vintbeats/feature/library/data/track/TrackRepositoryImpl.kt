@@ -1,7 +1,7 @@
-package com.davidsimba.vintbeats.feature.library.data
+package com.davidsimba.vintbeats.feature.library.data.track
 
-import com.davidsimba.vintbeats.feature.library.domain.SavedTrack
-import com.davidsimba.vintbeats.feature.library.domain.TrackRepository
+import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
+import com.davidsimba.vintbeats.feature.library.domain.track.TrackRepository
 import com.davidsimba.vintbeats.core.model.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

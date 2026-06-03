@@ -1,4 +1,4 @@
-package com.davidsimba.vintbeats.feature.library.domain
+package com.davidsimba.vintbeats.feature.library.domain.playlist
 
 import kotlinx.coroutines.flow.Flow
 

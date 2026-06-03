@@ -1,9 +1,9 @@
-package com.davidsimba.vintbeats.feature.library.data
+package com.davidsimba.vintbeats.feature.library.data.playlist
 
-import com.davidsimba.vintbeats.feature.library.domain.Playlist
-import com.davidsimba.vintbeats.feature.library.domain.PlaylistRepository
-import com.davidsimba.vintbeats.feature.library.domain.PlaylistWithTracks
-import com.davidsimba.vintbeats.feature.library.domain.SavedTrack
+import com.davidsimba.vintbeats.feature.library.domain.playlist.Playlist
+import com.davidsimba.vintbeats.feature.library.domain.playlist.PlaylistRepository
+import com.davidsimba.vintbeats.feature.library.domain.playlist.PlaylistWithTracks
+import com.davidsimba.vintbeats.feature.library.data.track.SavedTrackEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -48,14 +48,3 @@ private fun PlaylistWithTracksEntity.toDetailDomain() = PlaylistWithTracks(
     coverImagePath = playlist.coverImagePath,
 )
 
-private fun SavedTrackEntity.toDomain() = SavedTrack(
-    id = id,
-    trackId = trackId,
-    trackTitle = trackTitle,
-    trackArtist = trackArtist,
-    trackThumbnailUrl = trackThumbnailUrl,
-    trackDurationText = trackDurationText,
-    savedAt = savedAt,
-    audioFilePath = audioFilePath,
-    isFavorite = isFavorite,
-)

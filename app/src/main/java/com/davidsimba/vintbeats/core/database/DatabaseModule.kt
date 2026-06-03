@@ -2,8 +2,10 @@ package com.davidsimba.vintbeats.core.database
 
 import android.content.Context
 import androidx.room.Room
-import com.davidsimba.vintbeats.feature.library.data.PlaylistDao
-import com.davidsimba.vintbeats.feature.library.data.TrackDao
+import com.davidsimba.vintbeats.feature.library.data.playlist.PlaylistDao
+import com.davidsimba.vintbeats.feature.library.data.album.SavedAlbumDao
+import com.davidsimba.vintbeats.feature.library.data.artist.SavedArtistDao
+import com.davidsimba.vintbeats.feature.library.data.track.TrackDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,6 +27,7 @@ object DatabaseModule {
                 VintBeatsDatabase.MIGRATION_3_4,
                 VintBeatsDatabase.MIGRATION_4_5,
                 VintBeatsDatabase.MIGRATION_5_6,
+                VintBeatsDatabase.MIGRATION_6_7,
             )
             .build()
 
@@ -33,4 +36,10 @@ object DatabaseModule {
 
     @Provides
     fun providePlaylistDao(db: VintBeatsDatabase): PlaylistDao = db.playlistDao()
+
+    @Provides
+    fun provideSavedAlbumDao(db: VintBeatsDatabase): SavedAlbumDao = db.savedAlbumDao()
+
+    @Provides
+    fun provideSavedArtistDao(db: VintBeatsDatabase): SavedArtistDao = db.savedArtistDao()
 }

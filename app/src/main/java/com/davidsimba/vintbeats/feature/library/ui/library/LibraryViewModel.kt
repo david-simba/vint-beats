@@ -3,9 +3,13 @@ package com.davidsimba.vintbeats.feature.library.ui.library
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidsimba.vintbeats.feature.library.data.LibraryPreferences
-import com.davidsimba.vintbeats.feature.library.domain.Playlist
-import com.davidsimba.vintbeats.feature.library.domain.PlaylistRepository
-import com.davidsimba.vintbeats.feature.library.domain.TrackRepository
+import com.davidsimba.vintbeats.feature.library.domain.playlist.Playlist
+import com.davidsimba.vintbeats.feature.library.domain.playlist.PlaylistRepository
+import com.davidsimba.vintbeats.feature.library.domain.album.SavedAlbum
+import com.davidsimba.vintbeats.feature.library.domain.album.SavedAlbumRepository
+import com.davidsimba.vintbeats.feature.library.domain.artist.SavedArtist
+import com.davidsimba.vintbeats.feature.library.domain.artist.SavedArtistRepository
+import com.davidsimba.vintbeats.feature.library.domain.track.TrackRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,6 +24,8 @@ import javax.inject.Inject
 class LibraryViewModel @Inject constructor(
     repository: TrackRepository,
     playlistRepository: PlaylistRepository,
+    savedAlbumRepository: SavedAlbumRepository,
+    savedArtistRepository: SavedArtistRepository,
     private val preferences: LibraryPreferences,
 ) : ViewModel() {
 
@@ -32,6 +38,12 @@ class LibraryViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
 
     val playlists: StateFlow<List<Playlist>> = playlistRepository.getPlaylists()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val savedAlbums: StateFlow<List<SavedAlbum>> = savedAlbumRepository.getSavedAlbums()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val savedArtists: StateFlow<List<SavedArtist>> = savedArtistRepository.getSavedArtists()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val isGridView: StateFlow<Boolean> = preferences.isGridView
