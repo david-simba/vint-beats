@@ -2,8 +2,8 @@ package com.davidsimba.vintbeats.feature.home.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.davidsimba.vintbeats.core.model.HomeSectionPlaylists
-import com.davidsimba.vintbeats.core.model.PlaylistItem
+import com.davidsimba.vintbeats.feature.home.domain.HomeSectionPlaylists
+import com.davidsimba.vintbeats.feature.home.domain.PlaylistItem
 import com.davidsimba.vintbeats.core.youtube.ArtistInput
 import com.davidsimba.vintbeats.core.youtube.BackendService
 import com.davidsimba.vintbeats.feature.library.domain.artist.SavedArtistRepository

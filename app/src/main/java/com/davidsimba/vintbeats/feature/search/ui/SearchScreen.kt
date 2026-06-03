@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.davidsimba.vintbeats.core.model.PlaylistSummary
+import com.davidsimba.vintbeats.feature.search.domain.PlaylistSummary
 import com.davidsimba.vintbeats.feature.search.ui.components.CategorySheetContent
 import com.davidsimba.vintbeats.feature.search.ui.components.SearchField
 import com.davidsimba.vintbeats.feature.search.ui.components.exploreGrid

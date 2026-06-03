@@ -1,7 +1,7 @@
 package com.davidsimba.vintbeats.core.youtube
 
 import android.util.Log
-import com.davidsimba.vintbeats.core.model.LyricLine
+import com.davidsimba.vintbeats.feature.player.ui.LyricLine
 import com.google.gson.JsonParser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

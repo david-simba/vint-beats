@@ -31,8 +31,8 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.core.model.Album
 import com.davidsimba.vintbeats.core.model.Artist
-import com.davidsimba.vintbeats.core.model.ExploreCategory
-import com.davidsimba.vintbeats.core.model.PlaylistSummary
+import com.davidsimba.vintbeats.feature.search.domain.ExploreCategory
+import com.davidsimba.vintbeats.feature.search.domain.PlaylistSummary
 import com.davidsimba.vintbeats.feature.search.ui.CategorySheetState
 import androidx.compose.material3.CircularProgressIndicator
 import com.davidsimba.vintbeats.shared.components.TrackInfo

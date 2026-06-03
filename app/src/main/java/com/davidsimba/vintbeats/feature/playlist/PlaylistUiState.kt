@@ -1,6 +1,6 @@
 package com.davidsimba.vintbeats.feature.playlist
 
-import com.davidsimba.vintbeats.core.model.PlaylistDetail
+import com.davidsimba.vintbeats.feature.playlist.PlaylistDetail
 
 sealed interface PlaylistUiState {
     data object Loading : PlaylistUiState

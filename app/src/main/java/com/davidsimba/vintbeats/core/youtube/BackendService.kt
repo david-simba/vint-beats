@@ -2,19 +2,19 @@ package com.davidsimba.vintbeats.core.youtube
 
 import com.davidsimba.vintbeats.core.model.Album
 import com.davidsimba.vintbeats.core.model.Artist
-import com.davidsimba.vintbeats.core.model.ExploreCategory
-import com.davidsimba.vintbeats.core.model.LyricLine
-import com.davidsimba.vintbeats.core.model.PlaylistDetail
-import com.davidsimba.vintbeats.core.model.PlaylistSummary
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.album.data.AlbumDetail
 import com.davidsimba.vintbeats.feature.artist.data.ArtistDetail
+import com.davidsimba.vintbeats.feature.home.domain.HomeSectionPlaylists
+import com.davidsimba.vintbeats.feature.player.ui.LyricLine
+import com.davidsimba.vintbeats.feature.playlist.PlaylistDetail
+import com.davidsimba.vintbeats.feature.search.domain.ExploreCategory
+import com.davidsimba.vintbeats.feature.search.domain.PlaylistSummary
 import com.google.gson.Gson
 import com.google.gson.JsonParser
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import com.davidsimba.vintbeats.core.model.HomeSectionPlaylists
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request

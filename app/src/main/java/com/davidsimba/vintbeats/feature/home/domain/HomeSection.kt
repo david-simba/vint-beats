@@ -1,4 +1,4 @@
-package com.davidsimba.vintbeats.core.model
+package com.davidsimba.vintbeats.feature.home.domain
 
 data class PlaylistItem(
     val id: String,
