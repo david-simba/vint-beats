@@ -76,6 +76,10 @@
     <string name="library_filter_albums_empty">No tienes álbums guardados</string>
     <string name="library_filter_artists_empty">No tienes artistas guardados</string>
 
+    <!-- Home -->
+    <string name="home_greeting">Hola, %s</string>
+    <string name="home_empty">Guarda artistas para personalizar tu home</string>
+
     <!-- Common -->
     <string name="action_back">Atrás</string>
     <string name="action_play_all">Reproducir todo</string>

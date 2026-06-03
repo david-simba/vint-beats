@@ -58,6 +58,9 @@ class HomeViewModel @Inject constructor(
         .map { !it }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
+    val userName: StateFlow<String> = onboardingPreferences.userName
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
+
     fun loadFeed() {
         if (_paraPlaylists.value.isNotEmpty() || _extraSections.value.isNotEmpty()) return
         viewModelScope.launch {

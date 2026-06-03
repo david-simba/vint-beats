@@ -75,6 +75,10 @@
     <string name="library_filter_albums_empty">No saved albums yet</string>
     <string name="library_filter_artists_empty">No saved artists yet</string>
 
+    <!-- Home -->
+    <string name="home_greeting">Hello, %s</string>
+    <string name="home_empty">Save artists to personalize your home</string>
+
     <!-- Common -->
     <string name="action_back">Back</string>
     <string name="action_play_all">Play all</string>

@@ -36,6 +36,12 @@ class OnboardingViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
+    private val _name = MutableStateFlow("")
+    val name: StateFlow<String> = _name.asStateFlow()
+
+    private val _step = MutableStateFlow(0)
+    val step: StateFlow<Int> = _step.asStateFlow()
+
     private val _selected = MutableStateFlow<List<Artist>>(emptyList())
     val selected: StateFlow<List<Artist>> = _selected.asStateFlow()
 
@@ -47,6 +53,11 @@ class OnboardingViewModel @Inject constructor(
             .onEach { search(it) }
             .launchIn(viewModelScope)
     }
+
+    fun onNameChange(name: String) { _name.value = name }
+
+    fun goToArtists() { if (_name.value.isNotBlank()) _step.value = 1 }
+    fun goBack() { _step.value = 0 }
 
     fun onQueryChange(query: String) {
         _query.value = query
@@ -64,8 +75,9 @@ class OnboardingViewModel @Inject constructor(
 
     fun complete(onDone: () -> Unit) {
         val artists = _selected.value
-        if (artists.size < 3) return
+        if (artists.size < 3 || _name.value.isBlank()) return
         viewModelScope.launch {
+            onboardingPreferences.setName(_name.value.trim())
             artists.forEach { artistRepository.saveArtist(it.id, it.name, it.thumbnailUrl) }
             onboardingPreferences.setComplete(true)
             onDone()

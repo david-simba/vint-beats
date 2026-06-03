@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -21,12 +22,18 @@ class OnboardingPreferences @Inject constructor(
     private val dataStore = context.onboardingDataStore
 
     val isComplete: Flow<Boolean> = dataStore.data.map { it[KEY_COMPLETE] ?: false }
+    val userName: Flow<String> = dataStore.data.map { it[KEY_NAME] ?: "" }
 
     suspend fun setComplete(complete: Boolean) {
         dataStore.edit { it[KEY_COMPLETE] = complete }
     }
 
+    suspend fun setName(name: String) {
+        dataStore.edit { it[KEY_NAME] = name }
+    }
+
     companion object {
         private val KEY_COMPLETE = booleanPreferencesKey("onboarding_complete")
+        private val KEY_NAME = stringPreferencesKey("user_name")
     }
 }

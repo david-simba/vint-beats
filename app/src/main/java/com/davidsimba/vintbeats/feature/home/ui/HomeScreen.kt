@@ -22,6 +22,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
+import com.davidsimba.vintbeats.R
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,13 +52,16 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val needsOnboarding by viewModel.needsOnboarding.collectAsStateWithLifecycle()
+    val userName by viewModel.userName.collectAsStateWithLifecycle()
 
+    // One-shot: navigate to onboarding only once on first load
+    LaunchedEffect(Unit) {
+        val needsIt = viewModel.needsOnboarding.filterNotNull().first()
+        if (needsIt) onNavigateToOnboarding()
+    }
+    // Load feed whenever onboarding is confirmed complete
     LaunchedEffect(needsOnboarding) {
-        when (needsOnboarding) {
-            true -> onNavigateToOnboarding()
-            false -> viewModel.loadFeed()
-            null -> Unit
-        }
+        if (needsOnboarding == false) viewModel.loadFeed()
     }
 
     Box(
@@ -73,7 +80,7 @@ fun HomeScreen(
 
             is HomeUiState.Empty -> {
                 Text(
-                    text = "Guarda artistas para personalizar tu home",
+                    text = stringResource(R.string.home_empty),
                     color = VintageGrayMid,
                     fontSize = 14.sp,
                     modifier = Modifier
@@ -90,7 +97,11 @@ fun HomeScreen(
                 ) {
                     item {
                         Text(
-                            text = "Home",
+                            text = if (userName.isNotBlank()) {
+                                stringResource(R.string.home_greeting, userName)
+                            } else {
+                                stringResource(R.string.nav_home)
+                            },
                             color = VintageWhite,
                             fontSize = 28.sp,
                             fontWeight = FontWeight.Black,

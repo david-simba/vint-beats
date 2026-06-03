@@ -15,15 +15,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.stringResource
-import com.davidsimba.vintbeats.R
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.core.model.Album
 import com.davidsimba.vintbeats.core.model.Artist
 import com.davidsimba.vintbeats.core.model.PlaylistSummary
@@ -70,51 +70,43 @@ fun SearchActiveScreen(
                 )
             }
 
-            when (val state = uiState) {
-                is SearchUiState.Idle -> {}
-                is SearchUiState.Loading -> {
-                    item {
-                        Box(
-                            modifier = Modifier.fillParentMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(color = VintageGray)
-                        }
+            if (uiState is SearchUiState.Success) {
+                val state = uiState as SearchUiState.Success
+                if (state.artists.isNotEmpty()) {
+                    items(state.artists.take(3)) { artist ->
+                        ArtistRow(artist) { onArtistSelected(artist) }
                     }
                 }
-                is SearchUiState.Error -> {
-                    item {
-                        Box(
-                            modifier = Modifier.fillParentMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(state.message, color = VintageWhiteWarm, fontSize = 14.sp)
-                        }
+                if (state.albums.isNotEmpty()) {
+                    items(state.albums.take(3)) { album ->
+                        AlbumRow(album) { onAlbumSelected(album) }
                     }
                 }
-                is SearchUiState.Success -> {
-                    if (state.artists.isNotEmpty()) {
-                        items(state.artists.take(3)) { artist ->
-                            ArtistRow(artist) { onArtistSelected(artist) }
-                        }
-                    }
-                    if (state.albums.isNotEmpty()) {
-                        items(state.albums.take(3)) { album ->
-                            AlbumRow(album) { onAlbumSelected(album) }
-                        }
-                    }
-                    if (state.tracks.isNotEmpty()) {
-                        items(state.tracks) { track ->
-                            TrackCard(
-                                title = track.title,
-                                artist = track.artist,
-                                thumbnailUrl = track.albumImageUrl,
-                                onClick = { focusManager.clearFocus(); onTrackSelected(track) }
-                            )
-                        }
+                if (state.tracks.isNotEmpty()) {
+                    items(state.tracks) { track ->
+                        TrackCard(
+                            title = track.title,
+                            artist = track.artist,
+                            thumbnailUrl = track.albumImageUrl,
+                            onClick = { focusManager.clearFocus(); onTrackSelected(track) }
+                        )
                     }
                 }
             }
+        }
+
+        when (val state = uiState) {
+            is SearchUiState.Loading -> CircularProgressIndicator(
+                color = VintageGray,
+                modifier = Modifier.align(Alignment.Center)
+            )
+            is SearchUiState.Error -> Text(
+                text = state.message,
+                color = VintageWhiteWarm,
+                fontSize = 14.sp,
+                modifier = Modifier.align(Alignment.Center)
+            )
+            else -> {}
         }
     }
 }

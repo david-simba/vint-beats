@@ -1,5 +1,10 @@
 package com.davidsimba.vintbeats.feature.onboarding.ui
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -21,6 +26,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Check
@@ -30,6 +37,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -38,30 +47,120 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.core.model.Artist
+import com.davidsimba.vintbeats.feature.search.ui.components.SearchField
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageWhite
 import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
-import com.davidsimba.vintbeats.feature.search.ui.components.SearchField
 
 @Composable
 fun OnboardingScreen(
     onDone: () -> Unit,
     viewModel: OnboardingViewModel = hiltViewModel(),
 ) {
+    val step by viewModel.step.collectAsStateWithLifecycle()
+
+    BackHandler(enabled = step == 1) { viewModel.goBack() }
+
+    AnimatedContent(
+        targetState = step,
+        transitionSpec = {
+            if (targetState > initialState) {
+                slideInHorizontally { it } togetherWith slideOutHorizontally { -it }
+            } else {
+                slideInHorizontally { -it } togetherWith slideOutHorizontally { it }
+            }
+        },
+        label = "onboarding_step"
+    ) { currentStep ->
+        when (currentStep) {
+            0 -> NameStep(viewModel = viewModel)
+            else -> ArtistsStep(viewModel = viewModel, onDone = onDone)
+        }
+    }
+}
+
+@Composable
+private fun NameStep(viewModel: OnboardingViewModel) {
+    val name by viewModel.name.collectAsStateWithLifecycle()
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(VintageBgDark)
+            .statusBarsPadding()
+            .padding(horizontal = 20.dp),
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Text(
+            text = "Bienvenido a Vint",
+            color = VintageWhite,
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Black,
+        )
+        Text(
+            text = "¿Cómo te llamas?",
+            color = VintageGrayMid,
+            fontSize = 15.sp,
+            modifier = Modifier.padding(top = 6.dp, bottom = 24.dp)
+        )
+        OutlinedTextField(
+            value = name,
+            onValueChange = viewModel::onNameChange,
+            placeholder = { Text("Tu nombre", color = VintageGrayDeep) },
+            singleLine = true,
+            shape = RoundedCornerShape(12.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = VintageWhite,
+                unfocusedBorderColor = VintageGrayDeep,
+                focusedTextColor = VintageWhiteWarm,
+                unfocusedTextColor = VintageWhiteWarm,
+                cursorColor = VintageWhite,
+                focusedContainerColor = VintageBgDark,
+                unfocusedContainerColor = VintageBgDark,
+            ),
+            keyboardOptions = KeyboardOptions(
+                capitalization = KeyboardCapitalization.Words,
+                imeAction = ImeAction.Done,
+            ),
+            keyboardActions = KeyboardActions(onDone = { viewModel.goToArtists() }),
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(Modifier.height(16.dp))
+        Button(
+            onClick = viewModel::goToArtists,
+            enabled = name.isNotBlank(),
+            shape = RoundedCornerShape(14.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = VintageWhite,
+                contentColor = VintageBgDark,
+                disabledContainerColor = VintageGrayDeep.copy(alpha = 0.3f),
+                disabledContentColor = VintageGrayMid,
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(52.dp)
+        ) {
+            Text(text = "Continuar", fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
+        }
+    }
+}
+
+@Composable
+private fun ArtistsStep(viewModel: OnboardingViewModel, onDone: () -> Unit) {
     val query by viewModel.query.collectAsStateWithLifecycle()
     val results by viewModel.results.collectAsStateWithLifecycle()
     val selected by viewModel.selected.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
-
-    val canFinish = selected.size >= 3
 
     Column(
         modifier = Modifier
@@ -69,33 +168,46 @@ fun OnboardingScreen(
             .background(VintageBgDark)
             .statusBarsPadding()
     ) {
-        Column(modifier = Modifier.padding(horizontal = 20.dp).padding(top = 24.dp, bottom = 8.dp)) {
-            Text(
-                text = "Elige tus artistas",
-                color = VintageWhite,
-                fontSize = 26.sp,
-                fontWeight = FontWeight.Black,
-            )
-            Text(
-                text = "Selecciona al menos 3 para personalizar tu home",
-                color = VintageGrayMid,
-                fontSize = 14.sp,
-                modifier = Modifier.padding(top = 4.dp)
-            )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(start = 4.dp, end = 20.dp, top = 8.dp)
+        ) {
+            IconButton(onClick = viewModel::goBack) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                    contentDescription = null,
+                    tint = VintageWhite,
+                )
+            }
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Elige tus artistas",
+                    color = VintageWhite,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Black,
+                )
+                Text(
+                    text = "Selecciona al menos 3",
+                    color = VintageGrayMid,
+                    fontSize = 13.sp,
+                )
+            }
         }
+
+        Spacer(Modifier.height(8.dp))
 
         if (selected.isNotEmpty()) {
             LazyRow(
-                contentPadding = PaddingValues(horizontal = 20.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(vertical = 12.dp)
+                modifier = Modifier.padding(bottom = 10.dp)
             ) {
                 items(selected) { artist ->
                     SelectedArtistChip(artist = artist, onRemove = { viewModel.toggleArtist(artist) })
                 }
             }
         } else {
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(4.dp))
         }
 
         SearchField(
@@ -104,7 +216,7 @@ fun OnboardingScreen(
             autoFocus = false,
         )
 
-        Box(modifier = Modifier.weight(1f)) {
+        Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
             if (isLoading) {
                 CircularProgressIndicator(
                     color = VintageWhite,
@@ -125,7 +237,7 @@ fun OnboardingScreen(
 
         Button(
             onClick = { viewModel.complete(onDone) },
-            enabled = canFinish,
+            enabled = selected.size >= 3,
             shape = RoundedCornerShape(14.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = VintageWhite,
@@ -138,11 +250,8 @@ fun OnboardingScreen(
                 .padding(horizontal = 20.dp, vertical = 16.dp)
                 .height(52.dp)
         ) {
-            Text(
-                text = if (canFinish) "Listo (${selected.size})" else "Selecciona ${3 - selected.size} más",
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 15.sp,
-            )
+            val label = if (selected.size < 3) "Selecciona ${3 - selected.size} más" else "Listo (${selected.size})"
+            Text(text = label, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
         }
     }
 }
