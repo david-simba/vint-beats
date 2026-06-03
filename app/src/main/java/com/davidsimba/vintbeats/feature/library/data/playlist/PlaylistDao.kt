@@ -40,6 +40,12 @@ interface PlaylistDao {
     @Delete
     suspend fun removeTrack(crossRef: PlaylistTrackCrossRef)
 
+    @Query("SELECT * FROM playlists WHERE playlistId = :id LIMIT 1")
+    suspend fun getPlaylistInfo(id: Int): PlaylistEntity?
+
+    @Query("UPDATE playlists SET name = :name, coverImagePath = :coverImagePath WHERE playlistId = :playlistId")
+    suspend fun updatePlaylist(playlistId: Int, name: String, coverImagePath: String?)
+
     @Query("SELECT COALESCE(MAX(displayOrder), -1) + 1 FROM playlist_track_cross_ref WHERE playlistId = :playlistId")
     suspend fun nextDisplayOrder(playlistId: Int): Int
 

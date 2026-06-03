@@ -10,6 +10,8 @@ data class Playlist(
     val coverImagePath: String? = null,
 )
 
+data class PlaylistInfo(val name: String, val coverImagePath: String?)
+
 data class PlaylistWithTracks(
     val id: Int,
     val name: String,

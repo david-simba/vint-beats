@@ -331,16 +331,25 @@ fun NavGraph(
                 }
                 composable(
                     route = Screen.CreatePlaylist.route,
+                    arguments = listOf(navArgument("playlistId") {
+                        type = NavType.IntType
+                        defaultValue = -1
+                    }),
                     enterTransition = { slideInHorizontally(animationSpec = tween(220), initialOffsetX = { it }) },
                     exitTransition = { ExitTransition.None },
                     popEnterTransition = { EnterTransition.None },
                     popExitTransition = { slideOutHorizontally(animationSpec = tween(220), targetOffsetX = { it }) },
-                ) {
+                ) { backStackEntry ->
+                    val editId = backStackEntry.arguments?.getInt("playlistId")?.takeIf { it != -1 }
                     CreatePlaylistScreen(
                         onBack = { navController.popBackStack() },
                         onCreated = { playlistId ->
-                            navController.navigate(Screen.UserPlaylist.route(playlistId)) {
-                                popUpTo(Screen.CreatePlaylist.route) { inclusive = true }
+                            if (editId != null) {
+                                navController.popBackStack()
+                            } else {
+                                navController.navigate(Screen.UserPlaylist.route(playlistId)) {
+                                    popUpTo(Screen.CreatePlaylist.route()) { inclusive = true }
+                                }
                             }
                         },
                     )
@@ -363,7 +372,8 @@ fun NavGraph(
                             }
                         },
                         onAddSongsClick = { navController.navigate(Screen.AddSongs.route(playlistId)) },
-                        onEditClick = { navController.navigate(Screen.EditPlaylist.route(playlistId)) },
+                    onEditClick = { navController.navigate(Screen.EditPlaylist.route(playlistId)) },
+                    onEditInfoClick = { navController.navigate(Screen.CreatePlaylist.route(playlistId)) },
                     )
                 }
                 composable(

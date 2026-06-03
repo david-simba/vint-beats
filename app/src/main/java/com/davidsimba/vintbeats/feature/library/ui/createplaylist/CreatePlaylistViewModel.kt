@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidsimba.vintbeats.feature.library.domain.playlist.PlaylistRepository
@@ -19,9 +20,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CreatePlaylistViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val repository: PlaylistRepository,
     @ApplicationContext private val context: Context,
 ) : ViewModel() {
+
+    private val editPlaylistId: Int? = savedStateHandle.get<Int>("playlistId")?.takeIf { it != -1 }
+    val isEditMode: Boolean get() = editPlaylistId != null
 
     var name by mutableStateOf("")
         private set
@@ -29,9 +34,17 @@ class CreatePlaylistViewModel @Inject constructor(
     var coverImagePath by mutableStateOf<String?>(null)
         private set
 
-    fun onNameChange(value: String) {
-        name = value
+    init {
+        editPlaylistId?.let { id ->
+            viewModelScope.launch {
+                val info = repository.getPlaylistInfo(id) ?: return@launch
+                name = info.name
+                coverImagePath = info.coverImagePath
+            }
+        }
     }
+
+    fun onNameChange(value: String) { name = value }
 
     fun onImagePicked(uri: Uri) {
         viewModelScope.launch {
@@ -47,11 +60,16 @@ class CreatePlaylistViewModel @Inject constructor(
         }
     }
 
-    fun create(onCreated: (Int) -> Unit) {
+    fun save(onDone: (Int) -> Unit) {
         if (name.isBlank()) return
         viewModelScope.launch {
-            val id = repository.createPlaylist(name.trim(), coverImagePath)
-            onCreated(id)
+            if (editPlaylistId != null) {
+                repository.updatePlaylist(editPlaylistId, name.trim(), coverImagePath)
+                onDone(editPlaylistId)
+            } else {
+                val id = repository.createPlaylist(name.trim(), coverImagePath)
+                onDone(id)
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.davidsimba.vintbeats.feature.library.data.playlist
 
 import com.davidsimba.vintbeats.feature.library.domain.playlist.Playlist
+import com.davidsimba.vintbeats.feature.library.domain.playlist.PlaylistInfo
 import com.davidsimba.vintbeats.feature.library.domain.playlist.PlaylistRepository
 import com.davidsimba.vintbeats.feature.library.domain.playlist.PlaylistWithTracks
 import com.davidsimba.vintbeats.feature.library.data.track.SavedTrackEntity
@@ -29,8 +30,14 @@ class PlaylistRepositoryImpl @Inject constructor(
             )
         }
 
+    override suspend fun getPlaylistInfo(playlistId: Int): PlaylistInfo? =
+        dao.getPlaylistInfo(playlistId)?.let { PlaylistInfo(it.name, it.coverImagePath) }
+
     override suspend fun createPlaylist(name: String, coverImagePath: String?): Int =
         dao.insert(PlaylistEntity(name = name, coverImagePath = coverImagePath)).toInt()
+
+    override suspend fun updatePlaylist(playlistId: Int, name: String, coverImagePath: String?) =
+        dao.updatePlaylist(playlistId, name, coverImagePath)
 
     override suspend fun deletePlaylist(playlistId: Int) =
         dao.deleteById(playlistId)

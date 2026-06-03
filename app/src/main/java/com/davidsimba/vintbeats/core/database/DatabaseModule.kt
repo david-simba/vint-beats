@@ -21,15 +21,7 @@ object DatabaseModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): VintBeatsDatabase =
         Room.databaseBuilder(context, VintBeatsDatabase::class.java, "vintbeats.db")
-            .addMigrations(
-                VintBeatsDatabase.MIGRATION_1_2,
-                VintBeatsDatabase.MIGRATION_2_3,
-                VintBeatsDatabase.MIGRATION_3_4,
-                VintBeatsDatabase.MIGRATION_4_5,
-                VintBeatsDatabase.MIGRATION_5_6,
-                VintBeatsDatabase.MIGRATION_6_7,
-                VintBeatsDatabase.MIGRATION_7_8,
-            )
+//            .fallbackToDestructiveMigration()
             .build()
 
     @Provides

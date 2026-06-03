@@ -81,6 +81,13 @@
     <string name="action_add_songs">Add songs</string>
     <string name="action_edit_playlist">Edit</string>
     <string name="edit_playlist_title">Edit playlist</string>
+    <string name="action_edit_info">Edit info</string>
+    <string name="action_delete_playlist">Delete playlist</string>
+    <string name="alert_delete_playlist_title">Delete playlist?</string>
+    <string name="alert_delete_playlist_message">This action cannot be undone.</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="save_playlist_action">Save</string>
     <string name="action_remove_download">Delete song</string>
     <string name="action_remove_favorite">Remove from favorites</string>
 </resources>

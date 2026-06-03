@@ -82,6 +82,13 @@
     <string name="action_add_songs">Agregar canciones</string>
     <string name="action_edit_playlist">Editar</string>
     <string name="edit_playlist_title">Editar playlist</string>
+    <string name="action_edit_info">Editar info</string>
+    <string name="action_delete_playlist">Eliminar playlist</string>
+    <string name="alert_delete_playlist_title">¿Eliminar playlist?</string>
+    <string name="alert_delete_playlist_message">Esta acción no se puede deshacer.</string>
+    <string name="action_delete">Eliminar</string>
+    <string name="action_cancel">Cancelar</string>
+    <string name="save_playlist_action">Guardar</string>
     <string name="action_remove_download">Eliminar canción</string>
     <string name="action_remove_favorite">Quitar de favoritos</string>
 </resources>

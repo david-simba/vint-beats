@@ -51,7 +51,6 @@ import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
-import com.davidsimba.vintbeats.shared.theme.VintageOrange
 import com.davidsimba.vintbeats.shared.theme.VintageWhite
 import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
 import java.io.File
@@ -118,7 +117,7 @@ fun CreatePlaylistScreen(
                 )
             }
             Text(
-                text = stringResource(R.string.create_playlist_title),
+                text = stringResource(if (viewModel.isEditMode) R.string.edit_playlist_title else R.string.create_playlist_title),
                 color = VintageWhite,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Black,
@@ -136,7 +135,7 @@ fun CreatePlaylistScreen(
                 .background(VintageBgDark)
                 .border(
                     width = 1.dp,
-                    color = if (viewModel.coverImagePath != null) VintageOrange.copy(alpha = 0.4f)
+                    color = if (viewModel.coverImagePath != null) VintageWhite.copy(alpha = 0.3f)
                             else VintageGrayDeep,
                     shape = RoundedCornerShape(14.dp),
                 )
@@ -163,7 +162,7 @@ fun CreatePlaylistScreen(
                         .padding(8.dp)
                         .size(28.dp)
                         .clip(RoundedCornerShape(50))
-                        .background(VintageOrange),
+                        .background(VintageWhite.copy(alpha = 0.15f)),
                     contentAlignment = Alignment.Center,
                 ) {
                     Icon(
@@ -207,11 +206,11 @@ fun CreatePlaylistScreen(
             singleLine = true,
             shape = RoundedCornerShape(12.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = VintageOrange,
+                focusedBorderColor = VintageWhite,
                 unfocusedBorderColor = VintageGrayDeep,
                 focusedTextColor = VintageWhiteWarm,
                 unfocusedTextColor = VintageWhiteWarm,
-                cursorColor = VintageOrange,
+                cursorColor = VintageWhite,
                 focusedContainerColor = VintageBgDark,
                 unfocusedContainerColor = VintageBgDark,
             ),
@@ -220,7 +219,7 @@ fun CreatePlaylistScreen(
                 imeAction = ImeAction.Done,
             ),
             keyboardActions = KeyboardActions(
-                onDone = { viewModel.create(onCreated) },
+                onDone = { viewModel.save(onCreated) },
             ),
             modifier = Modifier
                 .fillMaxWidth()
@@ -230,7 +229,7 @@ fun CreatePlaylistScreen(
         Spacer(Modifier.height(24.dp))
 
         Button(
-            onClick = { viewModel.create(onCreated) },
+            onClick = { viewModel.save(onCreated) },
             enabled = viewModel.name.isNotBlank(),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
@@ -245,7 +244,7 @@ fun CreatePlaylistScreen(
                 .height(52.dp),
         ) {
             Text(
-                text = stringResource(R.string.create_playlist_action),
+                text = stringResource(if (viewModel.isEditMode) R.string.save_playlist_action else R.string.create_playlist_action),
                 fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold,
             )

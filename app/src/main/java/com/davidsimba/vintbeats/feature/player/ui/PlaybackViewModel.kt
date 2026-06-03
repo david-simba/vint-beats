@@ -34,6 +34,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -47,6 +48,7 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
     private val backendService: com.davidsimba.vintbeats.core.youtube.BackendService,
     private val lrcLibService: LrcLibService,
     private val queueService: YouTubeQueueService,
+    private val sessionPreferences: PlayerSessionPreferences,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -116,6 +118,8 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
                 }
             }
         }
+
+        restoreLastTrack()
 
         // Keep currentSavedTrack in sync with DB (e.g. downloaded from another screen)
         viewModelScope.launch {
@@ -189,6 +193,15 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
         _queue.value = newQueue ?: emptyList()
         loadFavoriteStatus(track.id)
         viewModelScope.launch {
+            sessionPreferences.save(
+                trackId = track.id,
+                title = track.title,
+                artist = track.artist,
+                thumbnail = track.albumImageUrl,
+                isSaved = false,
+            )
+        }
+        viewModelScope.launch {
             val cached = lyricsCache.remove(track.id)
             if (cached != null) {
                 _syncedLyrics.value = cached
@@ -250,6 +263,16 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
             }
             _currentSavedTrack.value = saved
             loadFavoriteStatus(saved.trackId)
+            viewModelScope.launch {
+                sessionPreferences.save(
+                    trackId = saved.trackId,
+                    title = saved.trackTitle,
+                    artist = saved.trackArtist,
+                    thumbnail = saved.trackThumbnailUrl,
+                    isSaved = true,
+                    savedDbId = saved.id,
+                )
+            }
             viewModelScope.launch {
                 _syncedLyrics.value = loadLyrics(saved.trackTitle, saved.trackArtist)
                 _isLoadingLyrics.value = false
@@ -350,10 +373,21 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
 
     fun togglePlayPause() {
         val controller = mediaController ?: return
-        if (controller.isPlaying) {
-            controller.pause()
+        when {
+            controller.isPlaying -> controller.pause()
+            controller.playbackState == Player.STATE_READY ||
+            controller.playbackState == Player.STATE_BUFFERING -> controller.play()
+            else -> loadAndPlay()
+        }
+    }
+
+    private fun loadAndPlay() {
+        if (_isSaved.value) {
+            val saved = _currentSavedTrack.value ?: return
+            play(saved.id)
         } else {
-            controller.play()
+            val track = _unsavedTrack.value ?: return
+            playTrack(track)
         }
     }
 
@@ -416,6 +450,30 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
                     .build()
             )
             .build()
+
+    private fun restoreLastTrack() {
+        viewModelScope.launch {
+            val last = sessionPreferences.lastTrack.firstOrNull() ?: return@launch
+            if (_currentSavedTrack.value != null || _unsavedTrack.value != null) return@launch
+            if (last.isSaved && last.savedDbId != -1) {
+                val saved = repository.getTrack(last.savedDbId) ?: return@launch
+                _currentSavedTrack.value = saved
+                _isSaved.value = true
+                loadFavoriteStatus(saved.trackId)
+            } else {
+                _unsavedTrack.value = Track(
+                    id = last.trackId,
+                    title = last.title,
+                    artist = last.artist,
+                    albumImageUrl = last.thumbnail,
+                    previewUrl = null,
+                    durationText = ""
+                )
+                _isSaved.value = false
+                loadFavoriteStatus(last.trackId)
+            }
+        }
+    }
 
     private suspend fun loadLyrics(title: String, artist: String): List<LyricLine> {
         val fromBackend = backendService.getLyrics(title, artist)
