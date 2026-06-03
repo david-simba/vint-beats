@@ -113,6 +113,17 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
                 }
             }
         }
+
+        // Keep currentSavedTrack in sync with DB (e.g. downloaded from another screen)
+        viewModelScope.launch {
+            repository.getAllTracks().collect { tracks ->
+                val current = _currentSavedTrack.value ?: return@collect
+                val updated = tracks.find { it.id == current.id }
+                if (updated != null && updated != current) {
+                    _currentSavedTrack.value = updated
+                }
+            }
+        }
     }
 
     private fun setupControllerListener(controller: MediaController) {
