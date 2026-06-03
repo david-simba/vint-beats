@@ -42,7 +42,6 @@ fun SearchActiveScreen(
     onTrackSelected: (Track) -> Unit,
     onArtistSelected: (Artist) -> Unit,
     onAlbumSelected: (Album) -> Unit,
-    onPlaylistSelected: (PlaylistSummary) -> Unit,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
     BackHandler(onBack = onBack)

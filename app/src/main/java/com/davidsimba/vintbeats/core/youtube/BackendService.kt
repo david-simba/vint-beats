@@ -95,21 +95,6 @@ class BackendService @Inject constructor(
             } catch (_: Exception) { emptyList() }
         }
 
-    suspend fun getHomeFeed(artists: List<ArtistInput>): List<HomeSection> =
-        withContext(Dispatchers.IO) {
-            try {
-                val body = gson.toJson(mapOf("artists" to artists))
-                    .toRequestBody("application/json".toMediaType())
-                val request = Request.Builder().url("$baseUrl/home").post(body).build()
-                client.newCall(request).execute().use { response ->
-                    if (!response.isSuccessful) return@withContext emptyList()
-                    val root = JsonParser.parseString(response.body?.string()).asJsonObject
-                    val type = object : TypeToken<List<HomeSection>>() {}.type
-                    gson.fromJson<List<HomeSection>>(root.getAsJsonArray("sections"), type) ?: emptyList()
-                }
-            } catch (_: Exception) { emptyList() }
-        }
-
     suspend fun getLyrics(title: String, artist: String): List<LyricLine> =
         getList("/lyrics?title=${title.encode()}&artist=${artist.encode()}", "lines")
 

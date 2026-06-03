@@ -259,9 +259,6 @@ fun NavGraph(
                             onAlbumSelected = { album ->
                                 navController.navigate(Screen.Album.route(album.id))
                             },
-                            onPlaylistSelected = { playlist ->
-                                navController.navigate(Screen.Playlist.route(playlist.id))
-                            },
                             viewModel = viewModel
                         )
                     }
