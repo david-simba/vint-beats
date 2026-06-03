@@ -11,7 +11,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.padding
 import com.davidsimba.vintbeats.shared.theme.VintageBgBase
-import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.shared.theme.VintageWhite
 
 @Composable
