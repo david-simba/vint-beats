@@ -14,7 +14,6 @@ import com.google.gson.JsonParser
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import com.davidsimba.vintbeats.core.model.HomeSection
 import com.davidsimba.vintbeats.core.model.HomeSectionPlaylists
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient

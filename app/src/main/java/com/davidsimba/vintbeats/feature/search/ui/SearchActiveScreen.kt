@@ -26,7 +26,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.core.model.Album
 import com.davidsimba.vintbeats.core.model.Artist
-import com.davidsimba.vintbeats.core.model.PlaylistSummary
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.search.ui.components.AlbumRow
 import com.davidsimba.vintbeats.feature.search.ui.components.ArtistRow
