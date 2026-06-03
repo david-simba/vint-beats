@@ -77,7 +77,7 @@
     <string name="library_filter_artists_empty">No tienes artistas guardados</string>
 
     <!-- Home -->
-    <string name="home_greeting">Hola, %s</string>
+    <string name="home_greeting">Hola, %s!</string>
     <string name="home_empty">Guarda artistas para personalizar tu home</string>
 
     <!-- Common -->

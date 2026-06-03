@@ -6,11 +6,11 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -98,8 +97,8 @@ private fun NameStep(viewModel: OnboardingViewModel) {
             .fillMaxSize()
             .background(VintageBgDark)
             .statusBarsPadding()
-            .padding(horizontal = 20.dp),
-        verticalArrangement = Arrangement.Center,
+            .padding(horizontal = 20.dp)
+            .padding(top = 24.dp),
     ) {
         Text(
             text = "Bienvenido a Vint",
@@ -194,20 +193,20 @@ private fun ArtistsStep(viewModel: OnboardingViewModel, onDone: () -> Unit) {
             }
         }
 
-        Spacer(Modifier.height(8.dp))
-
         if (selected.isNotEmpty()) {
-            LazyRow(
-                contentPadding = PaddingValues(horizontal = 16.dp),
+            FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(bottom = 10.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 16.dp, bottom = 12.dp)
             ) {
-                items(selected) { artist ->
+                selected.forEach { artist ->
                     SelectedArtistChip(artist = artist, onRemove = { viewModel.toggleArtist(artist) })
                 }
             }
         } else {
-            Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(16.dp))
         }
 
         SearchField(

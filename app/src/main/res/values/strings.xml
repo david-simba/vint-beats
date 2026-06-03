@@ -76,7 +76,7 @@
     <string name="library_filter_artists_empty">No saved artists yet</string>
 
     <!-- Home -->
-    <string name="home_greeting">Hello, %s</string>
+    <string name="home_greeting">Hello, %s!</string>
     <string name="home_empty">Save artists to personalize your home</string>
 
     <!-- Common -->

@@ -183,7 +183,10 @@ fun NavGraph(
                 popEnterTransition = { EnterTransition.None },
                 popExitTransition = { ExitTransition.None }
             ) {
-                composable(Screen.Home.route) {
+                composable(
+                    route = Screen.Home.route,
+                    popEnterTransition = { fadeIn(animationSpec = tween(180)) }
+                ) {
                     HomeScreen(
                         onPlaylistSelected = { id ->
                             navController.navigate(Screen.Playlist.route(id))
@@ -212,7 +215,8 @@ fun NavGraph(
                 ) {
                     composable(
                         route = Screen.Search.route,
-                        popEnterTransition = { fadeIn(animationSpec = tween(120)) }
+                        popEnterTransition = { fadeIn(animationSpec = tween(120)) },
+                        popExitTransition = { fadeOut(animationSpec = tween(180)) }
                     ) { entry ->
                         val parentEntry = remember(entry) {
                             navController.getBackStackEntry("search_graph")
@@ -340,7 +344,10 @@ fun NavGraph(
                         }
                     )
                 }
-                composable(Screen.Library.route) {
+                composable(
+                    route = Screen.Library.route,
+                    popExitTransition = { fadeOut(animationSpec = tween(180)) }
+                ) {
                     LibraryScreen(
                         onFavoritesClick = { navController.navigate(Screen.Favorites.route) },
                         onDownloadsClick = { navController.navigate(Screen.Downloads.route) },

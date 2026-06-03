@@ -56,7 +56,15 @@ class HomeViewModel @Inject constructor(
 
     val needsOnboarding: StateFlow<Boolean?> = onboardingPreferences.isComplete
         .map { !it }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+    private var onboardingNavigationConsumed = false
+
+    fun tryConsumeOnboardingNavigation(): Boolean {
+        if (onboardingNavigationConsumed) return false
+        onboardingNavigationConsumed = true
+        return true
+    }
 
     val userName: StateFlow<String> = onboardingPreferences.userName
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")

@@ -54,12 +54,12 @@ fun HomeScreen(
     val needsOnboarding by viewModel.needsOnboarding.collectAsStateWithLifecycle()
     val userName by viewModel.userName.collectAsStateWithLifecycle()
 
-    // One-shot: navigate to onboarding only once on first load
     LaunchedEffect(Unit) {
         val needsIt = viewModel.needsOnboarding.filterNotNull().first()
-        if (needsIt) onNavigateToOnboarding()
+        if (needsIt && viewModel.tryConsumeOnboardingNavigation()) {
+            onNavigateToOnboarding()
+        }
     }
-    // Load feed whenever onboarding is confirmed complete
     LaunchedEffect(needsOnboarding) {
         if (needsOnboarding == false) viewModel.loadFeed()
     }
@@ -92,7 +92,6 @@ fun HomeScreen(
             is HomeUiState.Success -> {
                 LazyColumn(
                     contentPadding = PaddingValues(bottom = 100.dp),
-                    verticalArrangement = Arrangement.spacedBy(28.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
                     item {
@@ -105,11 +104,13 @@ fun HomeScreen(
                             color = VintageWhite,
                             fontSize = 28.sp,
                             fontWeight = FontWeight.Black,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp)
                         )
                     }
                     items(state.sections) { section ->
-                        Column {
+                        Column(
+                            modifier = Modifier.padding(bottom = 24.dp)
+                        ) {
                             Text(
                                 text = section.title,
                                 color = VintageWhiteWarm,
