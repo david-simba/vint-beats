@@ -14,12 +14,18 @@ import com.google.gson.JsonParser
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import com.davidsimba.vintbeats.core.model.HomeSection
+import com.davidsimba.vintbeats.core.model.HomeSectionPlaylists
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.net.URLEncoder
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
+
+data class ArtistInput(val id: String, val name: String)
 
 data class CategoryPlaylistsResult(
     val title: String,
@@ -73,6 +79,36 @@ class BackendService @Inject constructor(
 
     suspend fun getQueue(videoId: String): List<Track> =
         getList("/queue/$videoId", "tracks")
+
+    suspend fun getHomeFeedPlaylists(artists: List<ArtistInput>): List<HomeSectionPlaylists> =
+        withContext(Dispatchers.IO) {
+            try {
+                val body = gson.toJson(mapOf("artists" to artists))
+                    .toRequestBody("application/json".toMediaType())
+                val request = Request.Builder().url("$baseUrl/home/playlists").post(body).build()
+                client.newCall(request).execute().use { response ->
+                    if (!response.isSuccessful) return@withContext emptyList()
+                    val root = JsonParser.parseString(response.body?.string()).asJsonObject
+                    val type = object : TypeToken<List<HomeSectionPlaylists>>() {}.type
+                    gson.fromJson<List<HomeSectionPlaylists>>(root.getAsJsonArray("sections"), type) ?: emptyList()
+                }
+            } catch (_: Exception) { emptyList() }
+        }
+
+    suspend fun getHomeFeed(artists: List<ArtistInput>): List<HomeSection> =
+        withContext(Dispatchers.IO) {
+            try {
+                val body = gson.toJson(mapOf("artists" to artists))
+                    .toRequestBody("application/json".toMediaType())
+                val request = Request.Builder().url("$baseUrl/home").post(body).build()
+                client.newCall(request).execute().use { response ->
+                    if (!response.isSuccessful) return@withContext emptyList()
+                    val root = JsonParser.parseString(response.body?.string()).asJsonObject
+                    val type = object : TypeToken<List<HomeSection>>() {}.type
+                    gson.fromJson<List<HomeSection>>(root.getAsJsonArray("sections"), type) ?: emptyList()
+                }
+            } catch (_: Exception) { emptyList() }
+        }
 
     suspend fun getLyrics(title: String, artist: String): List<LyricLine> =
         getList("/lyrics?title=${title.encode()}&artist=${artist.encode()}", "lines")

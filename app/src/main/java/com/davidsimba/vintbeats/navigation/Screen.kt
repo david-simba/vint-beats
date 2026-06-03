@@ -32,4 +32,5 @@ sealed class Screen(val route: String) {
     data object EditPlaylist : Screen("edit_playlist/{playlistId}") {
         fun route(playlistId: Int) = "edit_playlist/$playlistId"
     }
+    data object Onboarding : Screen("onboarding")
 }

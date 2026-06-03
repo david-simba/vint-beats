@@ -46,6 +46,7 @@ import androidx.navigation.navArgument
 import com.davidsimba.vintbeats.feature.album.ui.AlbumScreen
 import com.davidsimba.vintbeats.feature.artist.ui.ArtistScreen
 import com.davidsimba.vintbeats.feature.library.ui.addsongs.AddSongsScreen
+import com.davidsimba.vintbeats.feature.onboarding.ui.OnboardingScreen
 import com.davidsimba.vintbeats.feature.library.ui.editplaylist.EditPlaylistScreen
 import com.davidsimba.vintbeats.feature.library.ui.createplaylist.CreatePlaylistScreen
 import com.davidsimba.vintbeats.feature.library.ui.downloads.DownloadsScreen
@@ -183,7 +184,27 @@ fun NavGraph(
                 popExitTransition = { ExitTransition.None }
             ) {
                 composable(Screen.Home.route) {
-                    HomeScreen()
+                    HomeScreen(
+                        onPlaylistSelected = { id ->
+                            navController.navigate(Screen.Playlist.route(id))
+                        },
+                        onNavigateToOnboarding = {
+                            navController.navigate(Screen.Onboarding.route) {
+                                launchSingleTop = true
+                            }
+                        }
+                    )
+                }
+                composable(
+                    route = Screen.Onboarding.route,
+                    enterTransition = { slideInVertically(animationSpec = tween(300), initialOffsetY = { it }) },
+                    exitTransition = { ExitTransition.None },
+                    popEnterTransition = { EnterTransition.None },
+                    popExitTransition = { slideOutVertically(animationSpec = tween(300), targetOffsetY = { it }) }
+                ) {
+                    OnboardingScreen(
+                        onDone = { navController.popBackStack() }
+                    )
                 }
                 navigation(
                     startDestination = Screen.Search.route,

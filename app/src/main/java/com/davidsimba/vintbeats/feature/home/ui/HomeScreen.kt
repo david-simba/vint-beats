@@ -1,11 +1,164 @@
 package com.davidsimba.vintbeats.feature.home.ui
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
+import com.davidsimba.vintbeats.core.model.PlaylistItem
+import com.davidsimba.vintbeats.shared.theme.VintageBgDark
+import com.davidsimba.vintbeats.shared.theme.VintageGray
+import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
+import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
+import com.davidsimba.vintbeats.shared.theme.VintageWhite
+import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
 
 @Composable
-fun HomeScreen() {
-    Box(modifier = Modifier.fillMaxSize())
+fun HomeScreen(
+    onPlaylistSelected: (String) -> Unit = {},
+    onNavigateToOnboarding: () -> Unit = {},
+    viewModel: HomeViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val needsOnboarding by viewModel.needsOnboarding.collectAsStateWithLifecycle()
+
+    LaunchedEffect(needsOnboarding) {
+        when (needsOnboarding) {
+            true -> onNavigateToOnboarding()
+            false -> viewModel.loadFeed()
+            null -> Unit
+        }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(VintageBgDark)
+            .statusBarsPadding()
+    ) {
+        when (val state = uiState) {
+            is HomeUiState.Loading -> {
+                CircularProgressIndicator(
+                    color = VintageGray,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+
+            is HomeUiState.Empty -> {
+                Text(
+                    text = "Guarda artistas para personalizar tu home",
+                    color = VintageGrayMid,
+                    fontSize = 14.sp,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(32.dp)
+                )
+            }
+
+            is HomeUiState.Success -> {
+                LazyColumn(
+                    contentPadding = PaddingValues(bottom = 100.dp),
+                    verticalArrangement = Arrangement.spacedBy(28.dp),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    item {
+                        Text(
+                            text = "Home",
+                            color = VintageWhite,
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.Black,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                        )
+                    }
+                    items(state.sections) { section ->
+                        Column {
+                            Text(
+                                text = section.title,
+                                color = VintageWhiteWarm,
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                            )
+                            Spacer(Modifier.height(10.dp))
+                            LazyRow(
+                                contentPadding = PaddingValues(horizontal = 16.dp),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                items(section.playlists) { playlist ->
+                                    HomePlaylistCard(
+                                        playlist = playlist,
+                                        onClick = { onPlaylistSelected(playlist.id) }
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun HomePlaylistCard(playlist: PlaylistItem, onClick: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .width(150.dp)
+            .clickable(onClick = onClick)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(150.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .background(VintageGrayDeep)
+        ) {
+            AsyncImage(
+                model = playlist.thumbnailUrl,
+                contentDescription = playlist.title,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.matchParentSize()
+            )
+        }
+        Spacer(Modifier.height(6.dp))
+        Text(
+            text = playlist.title,
+            color = VintageWhiteWarm,
+            fontSize = 13.sp,
+            fontWeight = FontWeight.Medium,
+            maxLines = 1,
+        )
+        Text(
+            text = playlist.subtitle,
+            color = VintageGrayMid,
+            fontSize = 11.sp,
+            maxLines = 1,
+        )
+    }
 }
