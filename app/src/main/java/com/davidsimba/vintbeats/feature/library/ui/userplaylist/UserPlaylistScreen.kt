@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +16,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.LibraryMusic
 import androidx.compose.material.icons.rounded.MusicNote
 import androidx.compose.material3.Icon
@@ -46,6 +48,7 @@ fun UserPlaylistScreen(
     onTrackClick: (Int) -> Unit,
     onPlayAll: (List<SavedTrack>) -> Unit,
     onAddSongsClick: () -> Unit,
+    onEditClick: () -> Unit,
     viewModel: UserPlaylistViewModel = hiltViewModel(),
 ) {
     val playlist by viewModel.playlist.collectAsStateWithLifecycle()
@@ -108,12 +111,21 @@ fun UserPlaylistScreen(
                         }
                     } else {
                         Spacer(Modifier.height(12.dp))
-                        VintActionButton(
-                            label = stringResource(R.string.action_add_songs),
-                            icon = Icons.Rounded.Add,
-                            onClick = onAddSongsClick,
+                        Row(
                             modifier = Modifier.padding(horizontal = 16.dp),
-                        )
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            VintActionButton(
+                                label = stringResource(R.string.action_add_songs),
+                                icon = Icons.Rounded.Add,
+                                onClick = onAddSongsClick,
+                            )
+                            VintActionButton(
+                                label = stringResource(R.string.action_edit_playlist),
+                                icon = Icons.Rounded.Edit,
+                                onClick = onEditClick,
+                            )
+                        }
                         Spacer(Modifier.height(8.dp))
                         playlist!!.tracks.forEach { track ->
                             TrackCard(

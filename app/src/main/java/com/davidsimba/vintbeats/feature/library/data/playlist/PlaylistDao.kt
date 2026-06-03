@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import com.davidsimba.vintbeats.feature.library.data.track.SavedTrackEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -19,6 +20,14 @@ interface PlaylistDao {
     @Query("SELECT * FROM playlists WHERE playlistId = :id")
     fun getById(id: Int): Flow<PlaylistWithTracksEntity?>
 
+    @Query("""
+        SELECT st.* FROM saved_tracks st
+        INNER JOIN playlist_track_cross_ref ptcr ON st.id = ptcr.savedTrackId
+        WHERE ptcr.playlistId = :playlistId
+        ORDER BY ptcr.displayOrder ASC, ptcr.addedAt ASC
+    """)
+    fun getOrderedTracks(playlistId: Int): Flow<List<SavedTrackEntity>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(playlist: PlaylistEntity): Long
 
@@ -30,4 +39,10 @@ interface PlaylistDao {
 
     @Delete
     suspend fun removeTrack(crossRef: PlaylistTrackCrossRef)
+
+    @Query("SELECT COALESCE(MAX(displayOrder), -1) + 1 FROM playlist_track_cross_ref WHERE playlistId = :playlistId")
+    suspend fun nextDisplayOrder(playlistId: Int): Int
+
+    @Query("UPDATE playlist_track_cross_ref SET displayOrder = :order WHERE playlistId = :playlistId AND savedTrackId = :savedTrackId")
+    suspend fun updateTrackOrder(playlistId: Int, savedTrackId: Int, order: Int)
 }

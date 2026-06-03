@@ -22,7 +22,7 @@ import com.davidsimba.vintbeats.feature.library.data.track.TrackDao
         SavedAlbumEntity::class,
         SavedArtistEntity::class,
     ],
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 abstract class VintBeatsDatabase : RoomDatabase() {
@@ -86,6 +86,11 @@ abstract class VintBeatsDatabase : RoomDatabase() {
         val MIGRATION_5_6 = object : Migration(5, 6) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE playlists ADD COLUMN coverImagePath TEXT")
+            }
+        }
+        val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE playlist_track_cross_ref ADD COLUMN displayOrder INTEGER NOT NULL DEFAULT 0")
             }
         }
         val MIGRATION_6_7 = object : Migration(6, 7) {

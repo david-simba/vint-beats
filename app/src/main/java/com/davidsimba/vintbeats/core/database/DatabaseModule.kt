@@ -28,6 +28,7 @@ object DatabaseModule {
                 VintBeatsDatabase.MIGRATION_4_5,
                 VintBeatsDatabase.MIGRATION_5_6,
                 VintBeatsDatabase.MIGRATION_6_7,
+                VintBeatsDatabase.MIGRATION_7_8,
             )
             .build()
 

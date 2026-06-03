@@ -9,4 +9,5 @@ interface PlaylistRepository {
     suspend fun deletePlaylist(playlistId: Int)
     suspend fun addTrackToPlaylist(playlistId: Int, savedTrackId: Int)
     suspend fun removeTrackFromPlaylist(playlistId: Int, savedTrackId: Int)
+    suspend fun reorderTracks(playlistId: Int, orderedTrackIds: List<Int>)
 }

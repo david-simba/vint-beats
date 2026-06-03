@@ -79,6 +79,8 @@
     <string name="action_back">Back</string>
     <string name="action_play_all">Play all</string>
     <string name="action_add_songs">Add songs</string>
+    <string name="action_edit_playlist">Edit</string>
+    <string name="edit_playlist_title">Edit playlist</string>
     <string name="action_remove_download">Delete song</string>
     <string name="action_remove_favorite">Remove from favorites</string>
 </resources>

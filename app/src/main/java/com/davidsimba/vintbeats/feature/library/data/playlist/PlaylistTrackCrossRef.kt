@@ -10,4 +10,5 @@ data class PlaylistTrackCrossRef(
     val playlistId: Int,
     val savedTrackId: Int,
     val addedAt: Long = System.currentTimeMillis(),
+    val displayOrder: Int = 0,
 )
