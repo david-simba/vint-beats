@@ -19,6 +19,7 @@ import com.davidsimba.vintbeats.core.model.LyricLine
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.shared.SnackbarController
 import com.davidsimba.vintbeats.shared.SnackbarEvent
+import com.davidsimba.vintbeats.core.youtube.LrcLibService
 import com.davidsimba.vintbeats.core.youtube.YouTubeQueueService
 import com.davidsimba.vintbeats.core.youtube.YouTubeStreamService
 import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
@@ -44,6 +45,7 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
     private val repository: TrackRepository,
     private val streamService: YouTubeStreamService,
     private val backendService: com.davidsimba.vintbeats.core.youtube.BackendService,
+    private val lrcLibService: LrcLibService,
     private val queueService: YouTubeQueueService,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
@@ -192,7 +194,7 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
                 _syncedLyrics.value = cached
                 _isLoadingLyrics.value = false
             } else {
-                _syncedLyrics.value = backendService.getLyrics(track.title, track.artist)
+                _syncedLyrics.value = loadLyrics(track.title, track.artist)
                 _isLoadingLyrics.value = false
             }
         }
@@ -249,7 +251,7 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
             _currentSavedTrack.value = saved
             loadFavoriteStatus(saved.trackId)
             viewModelScope.launch {
-                _syncedLyrics.value = backendService.getLyrics(saved.trackTitle, saved.trackArtist)
+                _syncedLyrics.value = loadLyrics(saved.trackTitle, saved.trackArtist)
                 _isLoadingLyrics.value = false
             }
             viewModelScope.launch {
@@ -415,6 +417,12 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
             )
             .build()
 
+    private suspend fun loadLyrics(title: String, artist: String): List<LyricLine> {
+        val fromBackend = backendService.getLyrics(title, artist)
+        if (fromBackend.isNotEmpty()) return fromBackend
+        return lrcLibService.getSyncedLyrics(title, artist)
+    }
+
     private fun startProgressUpdates() {
         progressJob?.cancel()
         progressJob = viewModelScope.launch {
@@ -442,7 +450,7 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
                 if (!lyricsCache.containsKey(track.id)) {
                     launch {
                         Log.d(TAG, "prefetch: lyrics for ${track.id}")
-                        lyricsCache[track.id] = backendService.getLyrics(track.title, track.artist)
+                        lyricsCache[track.id] = loadLyrics(track.title, track.artist)
                     }
                 }
             }
