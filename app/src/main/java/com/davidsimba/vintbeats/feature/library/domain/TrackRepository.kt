@@ -11,6 +11,7 @@ interface TrackRepository {
     suspend fun getTrackByVideoId(trackId: String): SavedTrack?
     suspend fun saveTrack(track: Track, audioFilePath: String?)
     suspend fun deleteTrack(id: Int)
+    suspend fun removeFavorite(id: Int)
     suspend fun toggleFavorite(track: Track)
     suspend fun isFavoriteTrack(trackId: String): Boolean
 }

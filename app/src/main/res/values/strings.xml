@@ -71,4 +71,6 @@
     <!-- Common -->
     <string name="action_back">Back</string>
     <string name="action_play_all">Play all</string>
+    <string name="action_remove_download">Delete song</string>
+    <string name="action_remove_favorite">Remove from favorites</string>
 </resources>

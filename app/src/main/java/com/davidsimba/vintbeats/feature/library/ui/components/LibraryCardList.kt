@@ -34,6 +34,7 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
 
 @Composable
 internal fun LibraryCardList(
+    modifier: Modifier = Modifier,
     icon: ImageVector,
     iconTint: Color,
     iconBg: Color,
@@ -41,7 +42,6 @@ internal fun LibraryCardList(
     subtitle: String,
     onClick: () -> Unit,
     imageUrl: String? = null,
-    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier

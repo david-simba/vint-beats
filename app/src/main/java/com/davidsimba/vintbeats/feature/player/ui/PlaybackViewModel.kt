@@ -309,15 +309,21 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
     }
 
     fun downloadCurrentTrack() {
-        val track = _unsavedTrack.value ?: return
         if (_isDownloading.value) return
+        val track = if (!_isSaved.value) {
+            _unsavedTrack.value ?: return
+        } else {
+            val saved = _currentSavedTrack.value?.takeIf { it.audioFilePath.isNullOrEmpty() } ?: return
+            Track(
+                id = saved.trackId, title = saved.trackTitle, artist = saved.trackArtist,
+                albumImageUrl = saved.trackThumbnailUrl, previewUrl = null, durationText = saved.trackDurationText
+            )
+        }
         viewModelScope.launch {
             _isDownloading.value = true
             SnackbarController.emit(SnackbarEvent.DownloadStarted)
             val streamUrl = currentStreamUrl ?: streamService.getAudioStreamUrl(track.id)
-            val audioFilePath = streamUrl.let {
-                streamService.downloadAudio(track.id, it, context.filesDir)
-            }
+            val audioFilePath = streamService.downloadAudio(track.id, streamUrl, context.filesDir)
             repository.saveTrack(track, audioFilePath)
             val saved = repository.getAllTracks().first().find { it.trackId == track.id }
             _currentSavedTrack.value = saved

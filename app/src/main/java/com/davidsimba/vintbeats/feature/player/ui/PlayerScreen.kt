@@ -259,7 +259,8 @@ fun PlayerScreen(
                 onDismiss = { showOptionsSheet = false },
                 sheetState = sheetState
             ) {
-                if (!isSaved) {
+                val hasLocalFile = isSaved && !currentSavedTrack?.audioFilePath.isNullOrEmpty()
+                if (!hasLocalFile) {
                     BottomSheetMenuItem(
                         label = stringResource(
                             if (isDownloading) R.string.player_option_downloading

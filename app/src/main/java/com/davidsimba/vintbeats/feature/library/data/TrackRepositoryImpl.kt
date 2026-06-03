@@ -45,6 +45,15 @@ class TrackRepositoryImpl @Inject constructor(
 
     override suspend fun deleteTrack(id: Int) = dao.deleteById(id)
 
+    override suspend fun removeFavorite(id: Int) {
+        val track = dao.getById(id) ?: return
+        if (track.audioFilePath == null) {
+            dao.deleteById(id)
+        } else {
+            dao.setFavorite(id, false)
+        }
+    }
+
     override suspend fun toggleFavorite(track: Track) {
         val existing = dao.getByTrackId(track.id)
         if (existing == null) {
