@@ -50,7 +50,7 @@ import kotlinx.coroutines.flow.first
 
 @Composable
 fun HomeScreen(
-    onPlaylistSelected: (id: String, thumbnailUrl: String?) -> Unit = { _, _ -> },
+    onPlaylistSelected: (id: String, thumbnailUrl: String?, artistId: String?, artistName: String?) -> Unit = { _, _, _, _ -> },
     onNavigateToOnboarding: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -126,7 +126,7 @@ fun HomeScreen(
 @Composable
 private fun HomeSection(
     section: HomeSectionPlaylists,
-    onPlaylistSelected: (id: String, thumbnailUrl: String?) -> Unit
+    onPlaylistSelected: (id: String, thumbnailUrl: String?, artistId: String?, artistName: String?) -> Unit
 ) {
     Column(modifier = Modifier.padding(bottom = 28.dp)) {
         Text(
@@ -137,36 +137,29 @@ private fun HomeSection(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
         )
         Spacer(Modifier.height(10.dp))
-        if (section.isPrimary) {
-            LazyRow(
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(section.playlists) { playlist ->
-                    ParaTiPlaylistCard(
-                        playlist = playlist,
-                        onClick = { onPlaylistSelected(playlist.id, playlist.thumbnailUrl) }
-                    )
-                }
-            }
-        } else {
-            LazyRow(
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(section.playlists) { playlist ->
-                    HomePlaylistCard(
-                        playlist = playlist,
-                        onClick = { onPlaylistSelected(playlist.id, playlist.thumbnailUrl) }
-                    )
-                }
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(section.playlists, key = { it.id }) { playlist ->
+                PlaylistCard(
+                    playlist = playlist,
+                    onClick = {
+                        onPlaylistSelected(
+                            playlist.id,
+                            playlist.thumbnailUrl,
+                            playlist.artistId,
+                            playlist.artistName
+                        )
+                    }
+                )
             }
         }
     }
 }
 
 @Composable
-private fun ParaTiPlaylistCard(playlist: PlaylistItem, onClick: () -> Unit) {
+private fun PlaylistCard(playlist: PlaylistItem, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .width(155.dp)
@@ -207,39 +200,3 @@ private fun ParaTiPlaylistCard(playlist: PlaylistItem, onClick: () -> Unit) {
     }
 }
 
-@Composable
-private fun HomePlaylistCard(playlist: PlaylistItem, onClick: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .width(150.dp)
-            .clickable(onClick = onClick)
-    ) {
-        Box(
-            modifier = Modifier
-                .size(150.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(VintageGrayDeep)
-        ) {
-            AsyncImage(
-                model = playlist.thumbnailUrl,
-                contentDescription = playlist.title,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.matchParentSize()
-            )
-        }
-        Spacer(Modifier.height(6.dp))
-        Text(
-            text = playlist.title,
-            color = VintageWhiteWarm,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Medium,
-            maxLines = 1,
-        )
-        Text(
-            text = playlist.subtitle,
-            color = VintageGrayMid,
-            fontSize = 11.sp,
-            maxLines = 1,
-        )
-    }
-}

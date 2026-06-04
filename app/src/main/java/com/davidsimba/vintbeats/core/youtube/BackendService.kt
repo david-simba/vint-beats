@@ -79,6 +79,11 @@ class BackendService @Inject constructor(
     suspend fun getQueue(videoId: String): List<Track> =
         getList("/queue/$videoId", "tracks")
 
+    suspend fun getHomeMix(artistId: String, artistName: String): PlaylistDetail? =
+        get("/home/mix/${artistId.encode()}?name=${artistName.encode()}") { body ->
+            gson.fromJson(body, PlaylistDetail::class.java)
+        }
+
     suspend fun getHomeFeedPlaylists(artists: List<ArtistInput>): List<HomeSectionPlaylists> =
         withContext(Dispatchers.IO) {
             try {

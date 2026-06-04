@@ -19,6 +19,8 @@ class PlaylistViewModel @Inject constructor(
 
     private val playlistId: String = checkNotNull(savedStateHandle["playlistId"])
     private val navThumbnailUrl: String? = savedStateHandle["thumbnailUrl"]
+    private val artistId: String? = savedStateHandle["artistId"]
+    private val artistName: String? = savedStateHandle["artistName"]
 
     private val _uiState = MutableStateFlow<PlaylistUiState>(PlaylistUiState.Loading)
     val uiState: StateFlow<PlaylistUiState> = _uiState.asStateFlow()
@@ -30,9 +32,16 @@ class PlaylistViewModel @Inject constructor(
     private fun load() {
         viewModelScope.launch {
             _uiState.value = PlaylistUiState.Loading
-            val detail = backendService.getPlaylistDetail(playlistId)
+            val detail = if (artistId != null && artistName != null) {
+                backendService.getHomeMix(artistId, artistName)
+            } else {
+                backendService.getPlaylistDetail(playlistId)
+            }
             _uiState.value = if (detail != null) {
-                val overridden = navThumbnailUrl?.let { detail.copy(thumbnailUrl = it) } ?: detail
+                val overridden = detail.copy(
+                    title = if (artistName != null) "This Is $artistName" else detail.title,
+                    thumbnailUrl = navThumbnailUrl ?: detail.thumbnailUrl
+                )
                 PlaylistUiState.Success(overridden)
             } else PlaylistUiState.Error("Playlist not found")
         }

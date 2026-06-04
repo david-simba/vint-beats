@@ -14,10 +14,20 @@ sealed class Screen(val route: String) {
     data object Album : Screen("album/{browseId}") {
         fun route(browseId: String) = "album/${Uri.encode(browseId)}"
     }
-    data object Playlist : Screen("playlist/{playlistId}?thumbnailUrl={thumbnailUrl}") {
-        fun route(playlistId: String, thumbnailUrl: String? = null): String {
+    data object Playlist : Screen("playlist/{playlistId}?thumbnailUrl={thumbnailUrl}&artistId={artistId}&artistName={artistName}") {
+        fun route(
+            playlistId: String,
+            thumbnailUrl: String? = null,
+            artistId: String? = null,
+            artistName: String? = null,
+        ): String {
             val base = "playlist/${Uri.encode(playlistId)}"
-            return if (thumbnailUrl != null) "$base?thumbnailUrl=${Uri.encode(thumbnailUrl)}" else base
+            val params = buildList {
+                if (thumbnailUrl != null) add("thumbnailUrl=${Uri.encode(thumbnailUrl)}")
+                if (artistId != null) add("artistId=${Uri.encode(artistId)}")
+                if (artistName != null) add("artistName=${Uri.encode(artistName)}")
+            }
+            return if (params.isEmpty()) base else "$base?${params.joinToString("&")}"
         }
     }
     data object Favorites : Screen("favorites")

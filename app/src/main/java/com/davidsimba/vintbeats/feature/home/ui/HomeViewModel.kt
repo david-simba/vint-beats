@@ -16,8 +16,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -80,32 +78,27 @@ class HomeViewModel @Inject constructor(
                 return@launch
             }
 
-            val jobs = buildList {
-                artists.forEach { artist ->
-                    add(launch {
-                        backendService
-                            .getHomeFeedPlaylists(listOf(ArtistInput(artist.artistId, artist.name, artist.thumbnailUrl)))
-                            .filter { it.title.startsWith("Porque") }
-                            .flatMap { it.playlists }
-                            .forEach { playlist ->
-                                _paraPlaylists.update { it + playlist }
-                                _initialLoad.value = false
-                            }
-                    })
-                }
-                add(launch {
-                    val extra = backendService
-                        .getHomeFeedPlaylists(artists.map { ArtistInput(it.artistId, it.name, it.thumbnailUrl) })
-                        .filter { !it.title.startsWith("Porque") }
-                    if (extra.isNotEmpty()) {
-                        _extraSections.value = extra
-                        _initialLoad.value = false
-                    }
-                })
+            // Para ti: cards directas desde los artistas guardados — sin red
+            _paraPlaylists.value = artists.map { artist ->
+                PlaylistItem(
+                    id = artist.artistId,
+                    title = "This Is ${artist.name}",
+                    subtitle = "",
+                    thumbnailUrl = artist.thumbnailUrl,
+                    artistId = artist.artistId,
+                    artistName = artist.name,
+                )
             }
-
-            jobs.joinAll()
             _initialLoad.value = false
+
+            // Extra: Fans también escuchan + Descubre
+            val artistInputs = artists.map { ArtistInput(it.artistId, it.name, it.thumbnailUrl) }
+            val extra = backendService
+                .getHomeFeedPlaylists(artistInputs)
+                .filter { !it.title.startsWith("Porque") }
+            if (extra.isNotEmpty()) {
+                _extraSections.value = extra
+            }
         }
     }
 }

@@ -5,6 +5,8 @@ data class PlaylistItem(
     val title: String,
     val subtitle: String,
     val thumbnailUrl: String?,
+    val artistId: String? = null,
+    val artistName: String? = null,
 )
 
 data class HomeSectionPlaylists(
