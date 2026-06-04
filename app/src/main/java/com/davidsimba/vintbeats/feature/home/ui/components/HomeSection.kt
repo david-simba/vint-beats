@@ -72,8 +72,8 @@ fun HomeSection(
 fun PlaylistCard(playlist: PlaylistItem, onClick: () -> Unit) {
     Box(
         modifier = Modifier
-            .width(155.dp)
-            .height(215.dp)
+            .width(165.dp)
+            .height(225.dp)
             .clip(RoundedCornerShape(14.dp))
             .background(VintageGrayDeep)
             .clickable(onClick = onClick)

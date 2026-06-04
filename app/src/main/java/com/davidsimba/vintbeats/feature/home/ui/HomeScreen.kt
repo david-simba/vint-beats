@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,11 +27,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.home.ui.components.HomeSection
+import com.davidsimba.vintbeats.feature.home.ui.components.HomeSectionSkeleton
 import com.davidsimba.vintbeats.feature.home.ui.components.QuickMixSection
+import com.davidsimba.vintbeats.feature.home.ui.components.QuickMixSkeleton
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import com.davidsimba.vintbeats.shared.components.TrackOptionsBottomSheet
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
-import com.davidsimba.vintbeats.shared.theme.VintageGray
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageWhite
 import kotlinx.coroutines.flow.filterNotNull
@@ -74,10 +74,27 @@ fun HomeScreen(
     ) {
         when (val state = uiState) {
             is HomeUiState.Loading -> {
-                CircularProgressIndicator(
-                    color = VintageGray,
-                    modifier = Modifier.align(Alignment.Center)
-                )
+                LazyColumn(
+                    contentPadding = PaddingValues(bottom = 100.dp),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    item {
+                        Text(
+                            text = if (userName.isNotBlank()) {
+                                stringResource(R.string.home_greeting, userName)
+                            } else {
+                                stringResource(R.string.nav_home)
+                            },
+                            color = VintageWhite,
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.Black,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp)
+                        )
+                    }
+                    item { QuickMixSkeleton() }
+                    item { HomeSectionSkeleton() }
+                    item { HomeSectionSkeleton() }
+                }
             }
 
             is HomeUiState.Empty -> {
@@ -110,13 +127,15 @@ fun HomeScreen(
                         )
                     }
 
-                    if (state.quickMix.isNotEmpty()) {
-                        item {
+                    item {
+                        if (state.quickMix.isNotEmpty()) {
                             QuickMixSection(
                                 tracks = state.quickMix,
                                 onTrackSelected = onTrackSelected,
                                 onMenuClick = { selectedTrack = it }
                             )
+                        } else {
+                            QuickMixSkeleton()
                         }
                     }
 
