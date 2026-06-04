@@ -94,6 +94,11 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
     private val _repeatMode = MutableStateFlow(Player.REPEAT_MODE_OFF)
     val repeatMode: StateFlow<Int> = _repeatMode.asStateFlow()
 
+    private val _shuffleEnabled = MutableStateFlow(false)
+    val shuffleEnabled: StateFlow<Boolean> = _shuffleEnabled.asStateFlow()
+
+    private val _originalQueue = MutableStateFlow<List<Track>>(emptyList())
+
     private val lyricsCache = mutableMapOf<String, List<LyricLine>>()
     private var prefetchJob: Job? = null
     private var progressJob: Job? = null
@@ -196,7 +201,20 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
         _isLoadingLyrics.value = true
         _positionMs.value = 0L
         _durationMs.value = 0L
-        _queue.value = newQueue ?: emptyList()
+        when {
+            newQueue == null -> {
+                _queue.value = emptyList()
+                _originalQueue.value = emptyList()
+            }
+            _shuffleEnabled.value -> {
+                _originalQueue.value = newQueue
+                _queue.value = newQueue.shuffled()
+            }
+            else -> {
+                _queue.value = newQueue
+                _originalQueue.value = emptyList()
+            }
+        }
         loadFavoriteStatus(track.id)
         viewModelScope.launch {
             sessionPreferences.save(
@@ -374,6 +392,19 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
             _isSaved.value = true
             _isDownloading.value = false
             SnackbarController.emit(SnackbarEvent.DownloadSuccess)
+        }
+    }
+
+    fun toggleShuffle() {
+        val newValue = !_shuffleEnabled.value
+        _shuffleEnabled.value = newValue
+        if (newValue) {
+            _originalQueue.value = _queue.value
+            _queue.value = _queue.value.shuffled()
+        } else {
+            val remaining = _queue.value.map { it.id }.toSet()
+            _queue.value = _originalQueue.value.filter { it.id in remaining }
+            _originalQueue.value = emptyList()
         }
     }
 

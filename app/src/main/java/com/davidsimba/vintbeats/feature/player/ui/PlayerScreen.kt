@@ -92,6 +92,7 @@ fun PlayerScreen(
 
     val isDownloading by viewModel.isDownloading.collectAsStateWithLifecycle()
     val repeatMode by viewModel.repeatMode.collectAsStateWithLifecycle()
+    val shuffleEnabled by viewModel.shuffleEnabled.collectAsStateWithLifecycle()
     val isPlaying = playerState is PlayerState.Playing
     val isLoading = playerState is PlayerState.Loading
 
@@ -202,11 +203,13 @@ fun PlayerScreen(
                             durationMs = durationMs,
                             accentColor = VintageRedLight,
                             repeatMode = repeatMode,
+                            shuffleEnabled = shuffleEnabled,
                             onSeek = viewModel::seekTo,
                             onTogglePlayPause = viewModel::togglePlayPause,
                             onSkipPrevious = viewModel::skipToPrevious,
                             onSkipNext = viewModel::skipToNext,
                             onToggleRepeat = viewModel::toggleRepeatMode,
+                            onToggleShuffle = viewModel::toggleShuffle,
                             modifier = Modifier.padding(horizontal = 24.dp)
                         )
 

@@ -59,11 +59,13 @@ fun PlayerControls(
     durationMs: Long,
     accentColor: Color = VintageRedLight,
     repeatMode: Int = Player.REPEAT_MODE_OFF,
+    shuffleEnabled: Boolean = false,
     onSeek: (Long) -> Unit,
     onTogglePlayPause: () -> Unit,
     onSkipPrevious: () -> Unit,
     onSkipNext: () -> Unit,
     onToggleRepeat: () -> Unit = {},
+    onToggleShuffle: () -> Unit = {},
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -103,12 +105,12 @@ fun PlayerControls(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(modifier = Modifier.size(40.dp), onClick = {}) {
+            IconButton(modifier = Modifier.size(40.dp), onClick = onToggleShuffle) {
                 Icon(
                     imageVector = Icons.Rounded.Shuffle,
                     contentDescription = "Shuffle",
-                    tint = VintageWhite.copy(alpha = 0.5f),
-                    modifier = Modifier.size(22.dp)
+                    tint = if (shuffleEnabled) accentColor else VintageWhite.copy(alpha = 0.5f),
+                    modifier = Modifier.size(if (shuffleEnabled) 25.dp else 22.dp)
                 )
             }
 
