@@ -91,6 +91,7 @@ fun PlayerScreen(
     var componentWidth by remember { mutableFloatStateOf(0f) }
 
     val isDownloading by viewModel.isDownloading.collectAsStateWithLifecycle()
+    val repeatMode by viewModel.repeatMode.collectAsStateWithLifecycle()
     val isPlaying = playerState is PlayerState.Playing
     val isLoading = playerState is PlayerState.Loading
 
@@ -200,10 +201,12 @@ fun PlayerScreen(
                             positionMs = positionMs,
                             durationMs = durationMs,
                             accentColor = VintageRedLight,
+                            repeatMode = repeatMode,
                             onSeek = viewModel::seekTo,
                             onTogglePlayPause = viewModel::togglePlayPause,
                             onSkipPrevious = viewModel::skipToPrevious,
                             onSkipNext = viewModel::skipToNext,
+                            onToggleRepeat = viewModel::toggleRepeatMode,
                             modifier = Modifier.padding(horizontal = 24.dp)
                         )
 

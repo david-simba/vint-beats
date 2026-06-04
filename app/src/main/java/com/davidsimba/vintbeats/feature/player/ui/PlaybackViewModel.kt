@@ -91,6 +91,9 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
     private val _isFavorite = MutableStateFlow(false)
     val isFavorite: StateFlow<Boolean> = _isFavorite.asStateFlow()
 
+    private val _repeatMode = MutableStateFlow(Player.REPEAT_MODE_OFF)
+    val repeatMode: StateFlow<Int> = _repeatMode.asStateFlow()
+
     private val lyricsCache = mutableMapOf<String, List<LyricLine>>()
     private var prefetchJob: Job? = null
     private var progressJob: Job? = null
@@ -134,6 +137,10 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
 
     private fun setupControllerListener(controller: MediaController) {
         controller.addListener(object : Player.Listener {
+            override fun onRepeatModeChanged(repeatMode: Int) {
+                _repeatMode.value = repeatMode
+            }
+
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 if (isPlaying) {
                     _playerState.value = PlayerState.Playing
@@ -368,6 +375,13 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
             _isDownloading.value = false
             SnackbarController.emit(SnackbarEvent.DownloadSuccess)
         }
+    }
+
+    fun toggleRepeatMode() {
+        val next = if (_repeatMode.value == Player.REPEAT_MODE_OFF)
+            Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
+        _repeatMode.value = next
+        mediaController?.repeatMode = next
     }
 
     fun togglePlayPause() {

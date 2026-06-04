@@ -22,9 +22,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Repeat
+import androidx.compose.material.icons.rounded.RepeatOne
 import androidx.compose.material.icons.rounded.Shuffle
 import androidx.compose.material.icons.rounded.SkipNext
 import androidx.compose.material.icons.rounded.SkipPrevious
+import androidx.media3.common.Player
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -56,10 +58,12 @@ fun PlayerControls(
     positionMs: Long,
     durationMs: Long,
     accentColor: Color = VintageRedLight,
+    repeatMode: Int = Player.REPEAT_MODE_OFF,
     onSeek: (Long) -> Unit,
     onTogglePlayPause: () -> Unit,
     onSkipPrevious: () -> Unit,
-    onSkipNext: () -> Unit
+    onSkipNext: () -> Unit,
+    onToggleRepeat: () -> Unit = {},
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -145,12 +149,14 @@ fun PlayerControls(
                 )
             }
 
-            IconButton(modifier = Modifier.size(40.dp), onClick = {}) {
+            IconButton(modifier = Modifier.size(40.dp), onClick = onToggleRepeat) {
                 Icon(
-                    imageVector = Icons.Rounded.Repeat,
+                    imageVector = if (repeatMode == Player.REPEAT_MODE_ONE)
+                        Icons.Rounded.RepeatOne else Icons.Rounded.Repeat,
                     contentDescription = "Repeat",
-                    tint = VintageWhite.copy(alpha = 0.5f),
-                    modifier = Modifier.size(22.dp)
+                    tint = if (repeatMode == Player.REPEAT_MODE_OFF)
+                        VintageWhite.copy(alpha = 0.5f) else accentColor,
+                    modifier = Modifier.size(if (repeatMode == Player.REPEAT_MODE_OFF) 22.dp else 25.dp)
                 )
             }
         }
