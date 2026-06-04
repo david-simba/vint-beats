@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.core.youtube.ArtistInput
 import com.davidsimba.vintbeats.core.youtube.BackendService
+import com.davidsimba.vintbeats.core.util.toHighRes
 import com.davidsimba.vintbeats.feature.home.domain.HomeSectionPlaylists
 import com.davidsimba.vintbeats.feature.home.domain.PlaylistItem
 import com.davidsimba.vintbeats.feature.library.domain.artist.SavedArtistRepository
@@ -98,7 +99,7 @@ class HomeViewModel @Inject constructor(
                     id = artist.artistId,
                     title = "This Is ${artist.name}",
                     subtitle = "",
-                    thumbnailUrl = artist.thumbnailUrl,
+                    thumbnailUrl = artist.thumbnailUrl.toHighRes(),
                     artistId = artist.artistId,
                     artistName = artist.name,
                 )

@@ -47,6 +47,7 @@ import com.davidsimba.vintbeats.shared.components.SectionLabel
 import com.davidsimba.vintbeats.shared.components.TrackOptionsBottomSheet
 import com.davidsimba.vintbeats.shared.components.rememberScrollAppBarAlpha
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
+import com.davidsimba.vintbeats.core.util.toHighRes
 import com.davidsimba.vintbeats.shared.theme.VintageGray
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
 import com.davidsimba.vintbeats.shared.theme.VintageWhite
@@ -96,7 +97,7 @@ fun ArtistScreen(
                         CollectionHeader(
                             title = state.artist.name,
                             subtitle = null,
-                            imageUrl = state.artist.thumbnailUrl,
+                            imageUrl = state.artist.thumbnailUrl.toHighRes(),
                             placeholderIcon = Icons.Rounded.Person,
                             imageAlignment = Alignment.TopCenter,
                             onPlayAll = if (state.topTracks.isNotEmpty() && !isLoadingPlay) {
