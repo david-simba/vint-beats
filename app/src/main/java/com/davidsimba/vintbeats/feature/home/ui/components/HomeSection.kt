@@ -31,13 +31,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageBlue
-import com.davidsimba.vintbeats.shared.theme.VintageBlueDeep
 import com.davidsimba.vintbeats.shared.theme.VintageGreen
-import com.davidsimba.vintbeats.shared.theme.VintageGreenDeep
 import com.davidsimba.vintbeats.shared.theme.VintageOrange
-import com.davidsimba.vintbeats.shared.theme.VintageOrangeDeep
 import com.davidsimba.vintbeats.shared.theme.VintageRed
-import com.davidsimba.vintbeats.shared.theme.VintageRedDeep
 import com.davidsimba.vintbeats.shared.theme.VintageWhite
 import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
 
