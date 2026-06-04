@@ -2,10 +2,11 @@ package com.davidsimba.vintbeats.feature.home.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.davidsimba.vintbeats.feature.home.domain.HomeSectionPlaylists
-import com.davidsimba.vintbeats.feature.home.domain.PlaylistItem
+import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.core.youtube.ArtistInput
 import com.davidsimba.vintbeats.core.youtube.BackendService
+import com.davidsimba.vintbeats.feature.home.domain.HomeSectionPlaylists
+import com.davidsimba.vintbeats.feature.home.domain.PlaylistItem
 import com.davidsimba.vintbeats.feature.library.domain.artist.SavedArtistRepository
 import com.davidsimba.vintbeats.feature.onboarding.OnboardingPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +23,10 @@ import javax.inject.Inject
 sealed interface HomeUiState {
     object Loading : HomeUiState
     object Empty : HomeUiState
-    data class Success(val sections: List<HomeSectionPlaylists>) : HomeUiState
+    data class Success(
+        val quickMix: List<Track>,
+        val sections: List<HomeSectionPlaylists>,
+    ) : HomeUiState
 }
 
 @HiltViewModel
@@ -32,21 +36,22 @@ class HomeViewModel @Inject constructor(
     onboardingPreferences: OnboardingPreferences,
 ) : ViewModel() {
 
+    private val _quickMix = MutableStateFlow<List<Track>>(emptyList())
     private val _paraPlaylists = MutableStateFlow<List<PlaylistItem>>(emptyList())
     private val _extraSections = MutableStateFlow<List<HomeSectionPlaylists>>(emptyList())
     private val _initialLoad = MutableStateFlow(true)
 
     val uiState: StateFlow<HomeUiState> = combine(
-        _paraPlaylists, _extraSections, _initialLoad
-    ) { para, extra, loading ->
+        _quickMix, _paraPlaylists, _extraSections, _initialLoad
+    ) { mix, para, extra, loading ->
         val sections = buildList {
-            if (para.isNotEmpty()) add(HomeSectionPlaylists("Para ti", para, isPrimary = true))
+            if (para.isNotEmpty()) add(HomeSectionPlaylists("Artistas que escuchas", para, isPrimary = true))
             addAll(extra)
         }
         when {
             loading -> HomeUiState.Loading
-            sections.isEmpty() -> HomeUiState.Empty
-            else -> HomeUiState.Success(sections)
+            mix.isEmpty() && sections.isEmpty() -> HomeUiState.Empty
+            else -> HomeUiState.Success(mix, sections)
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeUiState.Loading)
 
@@ -66,8 +71,9 @@ class HomeViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
 
     fun loadFeed() {
-        if (_paraPlaylists.value.isNotEmpty() || _extraSections.value.isNotEmpty()) return
+        if (_paraPlaylists.value.isNotEmpty() || _quickMix.value.isNotEmpty()) return
         viewModelScope.launch {
+            _quickMix.value = emptyList()
             _paraPlaylists.value = emptyList()
             _extraSections.value = emptyList()
             _initialLoad.value = true
@@ -78,7 +84,15 @@ class HomeViewModel @Inject constructor(
                 return@launch
             }
 
-            // Para ti: cards directas desde los artistas guardados — sin red
+            val artistInputs = artists.map { ArtistInput(it.artistId, it.name, it.thumbnailUrl) }
+
+            // Quick mix — cacheado en memoria, no en servidor
+            launch {
+                val mix = backendService.getQuickMix(artistInputs)
+                if (mix.isNotEmpty()) _quickMix.value = mix
+            }
+
+            // Para ti: cards instantáneas desde los artistas guardados
             _paraPlaylists.value = artists.map { artist ->
                 PlaylistItem(
                     id = artist.artistId,
@@ -92,13 +106,10 @@ class HomeViewModel @Inject constructor(
             _initialLoad.value = false
 
             // Extra: Fans también escuchan + Descubre
-            val artistInputs = artists.map { ArtistInput(it.artistId, it.name, it.thumbnailUrl) }
             val extra = backendService
                 .getHomeFeedPlaylists(artistInputs)
                 .filter { !it.title.startsWith("Porque") }
-            if (extra.isNotEmpty()) {
-                _extraSections.value = extra
-            }
+            if (extra.isNotEmpty()) _extraSections.value = extra
         }
     }
 }

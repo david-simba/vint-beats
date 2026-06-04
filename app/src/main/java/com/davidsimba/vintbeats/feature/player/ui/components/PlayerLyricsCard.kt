@@ -100,8 +100,8 @@ fun PlayerLyricsCard(
             Text(
                 text = "Lyrics",
                 color = VintageWhiteWarm,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold
             )
             IconButton(
                 onClick = onExpand,

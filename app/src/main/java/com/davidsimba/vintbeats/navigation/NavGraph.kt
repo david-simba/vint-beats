@@ -188,6 +188,9 @@ fun NavGraph(
                     popEnterTransition = { fadeIn(animationSpec = tween(180)) }
                 ) {
                     HomeScreen(
+                        onTrackSelected = { track, queue ->
+                            playbackViewModel.playTrack(track, newQueue = queue)
+                        },
                         onPlaylistSelected = { id, thumbnailUrl, artistId, artistName ->
                             navController.navigate(Screen.Playlist.route(id, thumbnailUrl, artistId, artistName))
                         },

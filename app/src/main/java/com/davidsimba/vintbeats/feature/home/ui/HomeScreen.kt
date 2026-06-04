@@ -1,62 +1,60 @@
 package com.davidsimba.vintbeats.feature.home.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.R
-import com.davidsimba.vintbeats.feature.home.domain.HomeSectionPlaylists
-import com.davidsimba.vintbeats.feature.home.domain.PlaylistItem
+import com.davidsimba.vintbeats.core.model.Track
+import com.davidsimba.vintbeats.feature.home.ui.components.HomeSection
+import com.davidsimba.vintbeats.feature.home.ui.components.QuickMixSection
+import com.davidsimba.vintbeats.shared.TrackActionsViewModel
+import com.davidsimba.vintbeats.shared.components.TrackOptionsBottomSheet
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageGray
-import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageWhite
-import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    onTrackSelected: (Track, List<Track>) -> Unit = { _, _ -> },
     onPlaylistSelected: (id: String, thumbnailUrl: String?, artistId: String?, artistName: String?) -> Unit = { _, _, _, _ -> },
     onNavigateToOnboarding: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel(),
+    trackActionsViewModel: TrackActionsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val needsOnboarding by viewModel.needsOnboarding.collectAsStateWithLifecycle()
     val userName by viewModel.userName.collectAsStateWithLifecycle()
+    val favoriteTrackIds by trackActionsViewModel.favoriteTrackIds.collectAsStateWithLifecycle()
+    val downloadedTrackIds by trackActionsViewModel.downloadedTrackIds.collectAsStateWithLifecycle()
+    val downloadingTrackId by trackActionsViewModel.downloadingTrackId.collectAsStateWithLifecycle()
+
+    var selectedTrack by remember { mutableStateOf<Track?>(null) }
 
     LaunchedEffect(Unit) {
         val needsIt = viewModel.needsOnboarding.filterNotNull().first()
@@ -111,7 +109,18 @@ fun HomeScreen(
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp)
                         )
                     }
-                    items(state.sections) { section ->
+
+                    if (state.quickMix.isNotEmpty()) {
+                        item {
+                            QuickMixSection(
+                                tracks = state.quickMix,
+                                onTrackSelected = onTrackSelected,
+                                onMenuClick = { selectedTrack = it }
+                            )
+                        }
+                    }
+
+                    items(state.sections, key = { it.title }) { section ->
                         HomeSection(
                             section = section,
                             onPlaylistSelected = onPlaylistSelected
@@ -121,82 +130,22 @@ fun HomeScreen(
             }
         }
     }
-}
 
-@Composable
-private fun HomeSection(
-    section: HomeSectionPlaylists,
-    onPlaylistSelected: (id: String, thumbnailUrl: String?, artistId: String?, artistName: String?) -> Unit
-) {
-    Column(modifier = Modifier.padding(bottom = 28.dp)) {
-        Text(
-            text = section.title,
-            color = VintageWhiteWarm,
-            fontSize = 17.sp,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-        )
-        Spacer(Modifier.height(10.dp))
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            items(section.playlists, key = { it.id }) { playlist ->
-                PlaylistCard(
-                    playlist = playlist,
-                    onClick = {
-                        onPlaylistSelected(
-                            playlist.id,
-                            playlist.thumbnailUrl,
-                            playlist.artistId,
-                            playlist.artistName
-                        )
-                    }
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun PlaylistCard(playlist: PlaylistItem, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .width(155.dp)
-            .height(215.dp)
-            .clip(RoundedCornerShape(14.dp))
-            .background(VintageGrayDeep)
-            .clickable(onClick = onClick)
-    ) {
-        AsyncImage(
-            model = playlist.thumbnailUrl,
-            contentDescription = playlist.title,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.matchParentSize()
-        )
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .background(
-                    Brush.verticalGradient(
-                        0f to Color.Transparent,
-                        0.42f to Color.Transparent,
-                        1f to VintageBgDark
-                    )
-                )
-        )
-        Text(
-            text = playlist.title,
-            color = VintageWhite,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold,
-            lineHeight = 18.sp,
-            maxLines = 2,
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .fillMaxWidth()
-                .padding(start = 12.dp, end = 12.dp, bottom = 14.dp)
+    selectedTrack?.let { track ->
+        TrackOptionsBottomSheet(
+            isFavorite = track.id in favoriteTrackIds,
+            isDownloaded = track.id in downloadedTrackIds,
+            isDownloading = downloadingTrackId == track.id,
+            onDownload = {
+                trackActionsViewModel.downloadTrack(track)
+                selectedTrack = null
+            },
+            onToggleFavorite = {
+                trackActionsViewModel.toggleFavorite(track)
+                selectedTrack = null
+            },
+            onAddToPlaylist = {},
+            onDismiss = { selectedTrack = null }
         )
     }
 }
-

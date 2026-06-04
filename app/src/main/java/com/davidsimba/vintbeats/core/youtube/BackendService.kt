@@ -79,6 +79,21 @@ class BackendService @Inject constructor(
     suspend fun getQueue(videoId: String): List<Track> =
         getList("/queue/$videoId", "tracks")
 
+    suspend fun getQuickMix(artists: List<ArtistInput>): List<Track> =
+        withContext(Dispatchers.IO) {
+            try {
+                val body = gson.toJson(mapOf("artists" to artists))
+                    .toRequestBody("application/json".toMediaType())
+                val request = Request.Builder().url("$baseUrl/home/quick-mix").post(body).build()
+                client.newCall(request).execute().use { response ->
+                    if (!response.isSuccessful) return@withContext emptyList()
+                    val root = JsonParser.parseString(response.body?.string()).asJsonObject
+                    val type = object : TypeToken<List<Track>>() {}.type
+                    gson.fromJson<List<Track>>(root.getAsJsonArray("tracks"), type) ?: emptyList()
+                }
+            } catch (_: Exception) { emptyList() }
+        }
+
     suspend fun getHomeMix(artistId: String, artistName: String): PlaylistDetail? =
         get("/home/mix/${artistId.encode()}?name=${artistName.encode()}") { body ->
             gson.fromJson(body, PlaylistDetail::class.java)
