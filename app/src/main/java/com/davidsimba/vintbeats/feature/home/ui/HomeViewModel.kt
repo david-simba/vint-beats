@@ -87,7 +87,7 @@ class HomeViewModel @Inject constructor(
                 artists.forEach { artist ->
                     add(launch {
                         backendService
-                            .getHomeFeedPlaylists(listOf(ArtistInput(artist.artistId, artist.name)))
+                            .getHomeFeedPlaylists(listOf(ArtistInput(artist.artistId, artist.name, artist.thumbnailUrl)))
                             .filter { it.title.startsWith("Porque") }
                             .flatMap { it.playlists }
                             .forEach { playlist ->
@@ -99,7 +99,7 @@ class HomeViewModel @Inject constructor(
                 // Request combinada solo para "Fans también escuchan" + "Descubre"
                 add(launch {
                     val extra = backendService
-                        .getHomeFeedPlaylists(artists.map { ArtistInput(it.artistId, it.name) })
+                        .getHomeFeedPlaylists(artists.map { ArtistInput(it.artistId, it.name, it.thumbnailUrl) })
                         .filter { !it.title.startsWith("Porque") }
                     if (extra.isNotEmpty()) {
                         _extraSections.value = extra

@@ -46,7 +46,7 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
 
 @Composable
 fun HomeScreen(
-    onPlaylistSelected: (String) -> Unit = {},
+    onPlaylistSelected: (id: String, thumbnailUrl: String?) -> Unit = { _, _ -> },
     onNavigateToOnboarding: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -126,7 +126,7 @@ fun HomeScreen(
                                 items(section.playlists) { playlist ->
                                     HomePlaylistCard(
                                         playlist = playlist,
-                                        onClick = { onPlaylistSelected(playlist.id) }
+                                        onClick = { onPlaylistSelected(playlist.id, playlist.thumbnailUrl) }
                                     )
                                 }
                             }

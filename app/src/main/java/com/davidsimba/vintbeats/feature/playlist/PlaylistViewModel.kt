@@ -18,6 +18,7 @@ class PlaylistViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val playlistId: String = checkNotNull(savedStateHandle["playlistId"])
+    private val navThumbnailUrl: String? = savedStateHandle["thumbnailUrl"]
 
     private val _uiState = MutableStateFlow<PlaylistUiState>(PlaylistUiState.Loading)
     val uiState: StateFlow<PlaylistUiState> = _uiState.asStateFlow()
@@ -30,8 +31,10 @@ class PlaylistViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = PlaylistUiState.Loading
             val detail = backendService.getPlaylistDetail(playlistId)
-            _uiState.value = if (detail != null) PlaylistUiState.Success(detail)
-                             else PlaylistUiState.Error("Playlist not found")
+            _uiState.value = if (detail != null) {
+                val overridden = navThumbnailUrl?.let { detail.copy(thumbnailUrl = it) } ?: detail
+                PlaylistUiState.Success(overridden)
+            } else PlaylistUiState.Error("Playlist not found")
         }
     }
 }

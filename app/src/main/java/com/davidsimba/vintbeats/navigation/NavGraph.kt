@@ -188,8 +188,8 @@ fun NavGraph(
                     popEnterTransition = { fadeIn(animationSpec = tween(180)) }
                 ) {
                     HomeScreen(
-                        onPlaylistSelected = { id ->
-                            navController.navigate(Screen.Playlist.route(id))
+                        onPlaylistSelected = { id, thumbnailUrl ->
+                            navController.navigate(Screen.Playlist.route(id, thumbnailUrl))
                         },
                         onNavigateToOnboarding = {
                             navController.navigate(Screen.Onboarding.route) {
@@ -323,7 +323,10 @@ fun NavGraph(
                 }
                 composable(
                     route = Screen.Playlist.route,
-                    arguments = listOf(navArgument("playlistId") { type = NavType.StringType }),
+                    arguments = listOf(
+                        navArgument("playlistId") { type = NavType.StringType },
+                        navArgument("thumbnailUrl") { type = NavType.StringType; nullable = true; defaultValue = null }
+                    ),
                     enterTransition = { slideInHorizontally(animationSpec = tween(220), initialOffsetX = { it }) },
                     exitTransition = { ExitTransition.None },
                     popEnterTransition = { EnterTransition.None },

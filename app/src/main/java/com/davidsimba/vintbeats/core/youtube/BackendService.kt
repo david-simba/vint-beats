@@ -24,7 +24,7 @@ import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
 
-data class ArtistInput(val id: String, val name: String)
+data class ArtistInput(val id: String, val name: String, val thumbnailUrl: String? = null)
 
 data class CategoryPlaylistsResult(
     val title: String,
