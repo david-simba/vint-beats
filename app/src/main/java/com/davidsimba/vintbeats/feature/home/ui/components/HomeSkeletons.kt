@@ -25,7 +25,7 @@ import com.davidsimba.vintbeats.shared.components.shimmerBrush
 fun QuickMixSkeleton() {
     val brush = shimmerBrush()
 
-    Column(modifier = Modifier.padding(bottom = 28.dp)) {
+    Column(modifier = Modifier.padding(bottom = 12.dp)) {
         Box(
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 4.dp)
@@ -83,7 +83,7 @@ fun QuickMixSkeleton() {
 fun HomeSectionSkeleton() {
     val brush = shimmerBrush()
 
-    Column(modifier = Modifier.padding(bottom = 28.dp)) {
+    Column(modifier = Modifier.padding(bottom = 12.dp)) {
         Box(
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 4.dp)
@@ -101,11 +101,42 @@ fun HomeSectionSkeleton() {
             items(3) {
                 Box(
                     modifier = Modifier
-                        .width(155.dp)
-                        .height(215.dp)
-                        .clip(RoundedCornerShape(14.dp))
-                        .background(brush)
-                )
+                        .width(175.dp)
+                        .height(200.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                ) {
+                    Column(modifier = Modifier.matchParentSize()) {
+                        Box(modifier = Modifier.fillMaxWidth().weight(1f).background(brush))
+                        Box(modifier = Modifier.fillMaxWidth().weight(1f).background(brush))
+                    }
+                    Box(
+                        modifier = Modifier
+                            .width(36.dp)
+                            .height(10.dp)
+                            .align(Alignment.TopCenter)
+                            .padding(top = 14.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(brush)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(120.dp)
+                            .padding(horizontal = 16.dp)
+                            .clip(RoundedCornerShape(6.dp))
+                            .align(Alignment.Center)
+                            .background(brush)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .width(90.dp)
+                            .height(12.dp)
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = 14.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(brush)
+                    )
+                }
             }
         }
     }

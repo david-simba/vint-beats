@@ -88,7 +88,7 @@ fun HomeScreen(
                             color = VintageWhite,
                             fontSize = 28.sp,
                             fontWeight = FontWeight.Black,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp)
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                         )
                     }
                     item { QuickMixSkeleton() }

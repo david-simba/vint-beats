@@ -1,6 +1,7 @@
 package com.davidsimba.vintbeats.feature.home.ui.components
 
 import androidx.compose.foundation.background
+import kotlin.math.absoluteValue
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,8 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -28,8 +27,17 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.feature.home.domain.HomeSectionPlaylists
 import com.davidsimba.vintbeats.feature.home.domain.PlaylistItem
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
-import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
+import com.davidsimba.vintbeats.shared.theme.VintageBlue
+import com.davidsimba.vintbeats.shared.theme.VintageBlueDeep
+import com.davidsimba.vintbeats.shared.theme.VintageGreen
+import com.davidsimba.vintbeats.shared.theme.VintageGreenDeep
+import com.davidsimba.vintbeats.shared.theme.VintageOrange
+import com.davidsimba.vintbeats.shared.theme.VintageOrangeDeep
+import com.davidsimba.vintbeats.shared.theme.VintageRed
+import com.davidsimba.vintbeats.shared.theme.VintageRedDeep
 import com.davidsimba.vintbeats.shared.theme.VintageWhite
 import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
 
@@ -54,6 +62,7 @@ fun HomeSection(
             items(section.playlists, key = { it.id }) { playlist ->
                 PlaylistCard(
                     playlist = playlist,
+                    showStripe = !section.title.lowercase().contains("descubre"),
                     onClick = {
                         onPlaylistSelected(
                             playlist.id,
@@ -68,44 +77,82 @@ fun HomeSection(
     }
 }
 
+private val accentColors = listOf(
+    VintageRed,
+    VintageOrange,
+    VintageGreen,
+    VintageBlue,
+)
+
+private fun accentColorFor(id: String) = accentColors[id.hashCode().absoluteValue % accentColors.size]
+
 @Composable
-fun PlaylistCard(playlist: PlaylistItem, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .width(165.dp)
-            .height(225.dp)
-            .clip(RoundedCornerShape(14.dp))
-            .background(VintageGrayDeep)
-            .clickable(onClick = onClick)
-    ) {
+fun PlaylistCard(
+    playlist: PlaylistItem,
+    showStripe: Boolean = true,
+    onClick: () -> Unit,
+) {
+    if (!showStripe) {
         AsyncImage(
             model = playlist.thumbnailUrl,
             contentDescription = playlist.title,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.matchParentSize()
-        )
-        Box(
             modifier = Modifier
-                .matchParentSize()
-                .background(
-                    Brush.verticalGradient(
-                        0f to Color.Transparent,
-                        0.42f to Color.Transparent,
-                        1f to VintageBgDark
-                    )
-                )
+                .width(175.dp)
+                .height(200.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .clickable(onClick = onClick)
         )
+        return
+    }
+
+    val accent = accentColorFor(playlist.id)
+    Box(
+        modifier = Modifier
+            .width(175.dp)
+            .height(200.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .clickable(onClick = onClick)
+    ) {
+        Column(modifier = Modifier.matchParentSize()) {
+            Box(modifier = Modifier.fillMaxWidth().weight(1f).background(accent))
+            Box(modifier = Modifier.fillMaxWidth().weight(1f).background(VintageWhite))
+        }
+
         Text(
-            text = playlist.title,
+            text = "This is",
             color = VintageWhite,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold,
-            lineHeight = 18.sp,
-            maxLines = 2,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
+            textAlign = TextAlign.Center,
             modifier = Modifier
-                .align(Alignment.BottomStart)
+                .align(Alignment.TopCenter)
+                .padding(top = 12.dp)
+        )
+
+        AsyncImage(
+            model = playlist.thumbnailUrl,
+            contentDescription = playlist.title,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 12.dp, end = 12.dp, bottom = 14.dp)
+                .height(120.dp)
+                .padding(horizontal = 16.dp)
+                .clip(RoundedCornerShape(6.dp))
+                .align(Alignment.Center)
+        )
+
+        Text(
+            text = playlist.artistName ?: playlist.title,
+            color = VintageBgDark,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.ExtraBold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 12.dp, start = 12.dp, end = 12.dp)
         )
     }
 }

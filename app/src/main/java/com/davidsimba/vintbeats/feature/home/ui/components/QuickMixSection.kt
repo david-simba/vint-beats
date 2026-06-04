@@ -34,7 +34,7 @@ fun QuickMixSection(
     val pages = tracks.chunked(4)
     val pagerState = rememberPagerState { pages.size }
 
-    Column(modifier = Modifier.padding(bottom = 28.dp)) {
+    Column(modifier = Modifier.padding(bottom = 12.dp)) {
         Text(
             text = stringResource(R.string.home_seleccion_rapida),
             color = VintageWhiteWarm,
