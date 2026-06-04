@@ -46,6 +46,7 @@ fun CollectionHeader(
     placeholderIcon: ImageVector,
     iconTint: Color = VintageWhite,
     containerHeight: Dp = 420.dp,
+    imageAlignment: Alignment = Alignment.Center,
     onPlayAll: (() -> Unit)? = null,
 ) {
     Box(
@@ -59,6 +60,7 @@ fun CollectionHeader(
                 model = imageUrl,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
+                alignment = imageAlignment,
                 modifier = Modifier.fillMaxSize()
             )
         } else {

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -37,11 +38,11 @@ import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.core.model.Album
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistAlbumsList
-import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistHeader
 import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistTopSongItem
 import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistTopSongsEmpty
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import com.davidsimba.vintbeats.shared.components.CollectionAppBar
+import com.davidsimba.vintbeats.shared.components.CollectionHeader
 import com.davidsimba.vintbeats.shared.components.SectionLabel
 import com.davidsimba.vintbeats.shared.components.TrackOptionsBottomSheet
 import com.davidsimba.vintbeats.shared.components.rememberScrollAppBarAlpha
@@ -92,13 +93,15 @@ fun ArtistScreen(
             is ArtistUiState.Success -> {
                 LazyColumn(state = lazyListState, modifier = Modifier.fillMaxSize().background(VintageBgDark)) {
                     item {
-                        ArtistHeader(
-                            artist = state.artist,
-                            hasTopTracks = state.topTracks.isNotEmpty(),
-                            isLoadingPlay = isLoadingPlay,
-                            onPlay = {
-                                viewModel.loadPlayQueue { tracks -> onPlayArtist(tracks) }
-                            }
+                        CollectionHeader(
+                            title = state.artist.name,
+                            subtitle = null,
+                            imageUrl = state.artist.thumbnailUrl,
+                            placeholderIcon = Icons.Rounded.Person,
+                            imageAlignment = Alignment.TopCenter,
+                            onPlayAll = if (state.topTracks.isNotEmpty() && !isLoadingPlay) {
+                                { viewModel.loadPlayQueue { tracks -> onPlayArtist(tracks) } }
+                            } else null
                         )
                     }
                     item {
