@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -31,9 +32,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageBlue
+import com.davidsimba.vintbeats.shared.theme.VintageBlueDeep
 import com.davidsimba.vintbeats.shared.theme.VintageGreen
+import com.davidsimba.vintbeats.shared.theme.VintageGreenDeep
 import com.davidsimba.vintbeats.shared.theme.VintageOrange
+import com.davidsimba.vintbeats.shared.theme.VintageOrangeDeep
 import com.davidsimba.vintbeats.shared.theme.VintageRed
+import com.davidsimba.vintbeats.shared.theme.VintageRedDeep
 import com.davidsimba.vintbeats.shared.theme.VintageWhite
 import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
 
@@ -80,7 +85,15 @@ private val accentColors = listOf(
     VintageBlue,
 )
 
+private val accentDeepColors = listOf(
+    VintageRedDeep,
+    VintageOrangeDeep,
+    VintageGreenDeep,
+    VintageBlueDeep,
+)
+
 private fun accentColorFor(id: String) = accentColors[id.hashCode().absoluteValue % accentColors.size]
+private fun accentDeepColorFor(id: String) = accentDeepColors[id.hashCode().absoluteValue % accentDeepColors.size]
 
 @Composable
 fun PlaylistCard(
@@ -103,6 +116,7 @@ fun PlaylistCard(
     }
 
     val accent = accentColorFor(playlist.id)
+    val accentDeep = accentDeepColorFor(playlist.id)
     Box(
         modifier = Modifier
             .width(175.dp)
@@ -111,7 +125,9 @@ fun PlaylistCard(
             .clickable(onClick = onClick)
     ) {
         Column(modifier = Modifier.matchParentSize()) {
-            Box(modifier = Modifier.fillMaxWidth().weight(1f).background(accent))
+            Box(modifier = Modifier.fillMaxWidth().weight(1f).background(
+                Brush.verticalGradient(listOf(accent, accentDeep))
+            ))
             Box(modifier = Modifier.fillMaxWidth().weight(1f).background(VintageWhite))
         }
 
