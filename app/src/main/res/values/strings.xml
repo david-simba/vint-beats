@@ -94,4 +94,6 @@
     <string name="save_playlist_action">Save</string>
     <string name="action_remove_download">Delete song</string>
     <string name="action_remove_favorite">Remove from favorites</string>
+    <string name="action_add_favorite">Add to favorites</string>
+    <string name="action_add_to_playlist">Add to playlist</string>
 </resources>

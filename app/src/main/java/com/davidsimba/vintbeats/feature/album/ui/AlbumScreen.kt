@@ -19,9 +19,13 @@ import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,8 +38,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.album.ui.components.AlbumTrackItem
+import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import com.davidsimba.vintbeats.shared.components.CollectionAppBar
 import com.davidsimba.vintbeats.shared.components.CollectionHeader
+import com.davidsimba.vintbeats.shared.components.TrackOptionsBottomSheet
 import com.davidsimba.vintbeats.shared.components.rememberScrollAppBarAlpha
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageGray
@@ -43,19 +49,26 @@ import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
 import com.davidsimba.vintbeats.shared.theme.VintageWhite
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlbumScreen(
     onBack: () -> Unit,
     onTrackSelected: (Track, List<Track>) -> Unit,
     onPlayAlbum: (List<Track>) -> Unit,
-    viewModel: AlbumViewModel = hiltViewModel()
+    viewModel: AlbumViewModel = hiltViewModel(),
+    trackActionsViewModel: TrackActionsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isSaved by viewModel.isSaved.collectAsStateWithLifecycle()
+    val favoriteTrackIds by trackActionsViewModel.favoriteTrackIds.collectAsStateWithLifecycle()
+    val downloadedTrackIds by trackActionsViewModel.downloadedTrackIds.collectAsStateWithLifecycle()
+    val downloadingTrackId by trackActionsViewModel.downloadingTrackId.collectAsStateWithLifecycle()
     val lazyListState = rememberLazyListState()
 
     val appBarAlpha = rememberScrollAppBarAlpha(lazyListState)
     val albumTitle = (uiState as? AlbumUiState.Success)?.album?.title.orEmpty()
+
+    var selectedTrack by remember { mutableStateOf<Track?>(null) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         when (val state = uiState) {
@@ -103,7 +116,8 @@ fun AlbumScreen(
                                     AlbumTrackItem(
                                         index = index + 1,
                                         track = track,
-                                        onClick = { onTrackSelected(track, state.album.tracks.drop(index + 1)) }
+                                        onClick = { onTrackSelected(track, state.album.tracks.drop(index + 1)) },
+                                        onMenuClick = { selectedTrack = track }
                                     )
                                 }
                             } else {
@@ -138,6 +152,24 @@ fun AlbumScreen(
                     }
                 }
             }
+        )
+    }
+
+    selectedTrack?.let { track ->
+        TrackOptionsBottomSheet(
+            isFavorite = track.id in favoriteTrackIds,
+            isDownloaded = track.id in downloadedTrackIds,
+            isDownloading = downloadingTrackId == track.id,
+            onDownload = {
+                trackActionsViewModel.downloadTrack(track)
+                selectedTrack = null
+            },
+            onToggleFavorite = {
+                trackActionsViewModel.toggleFavorite(track)
+                selectedTrack = null
+            },
+            onAddToPlaylist = {},
+            onDismiss = { selectedTrack = null }
         )
     }
 }

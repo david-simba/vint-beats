@@ -13,8 +13,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.PlaylistAdd
 import androidx.compose.material.icons.rounded.DeleteOutline
 import androidx.compose.material.icons.rounded.Download
+import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material.icons.rounded.HeartBroken
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -37,6 +40,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
 import com.davidsimba.vintbeats.feature.library.domain.track.subtitle
+import com.davidsimba.vintbeats.feature.library.domain.track.toTrack
+import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import com.davidsimba.vintbeats.shared.components.BottomSheet
 import com.davidsimba.vintbeats.shared.components.BottomSheetMenuItem
 import com.davidsimba.vintbeats.shared.components.CollectionAppBar
@@ -51,7 +56,8 @@ import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 fun DownloadsScreen(
     onBack: () -> Unit,
     onTrackClick: (Int) -> Unit,
-    viewModel: DownloadsViewModel = hiltViewModel()
+    viewModel: DownloadsViewModel = hiltViewModel(),
+    trackActionsViewModel: TrackActionsViewModel = hiltViewModel()
 ) {
     val downloads by viewModel.downloads.collectAsStateWithLifecycle()
     val lazyListState = rememberLazyListState()
@@ -130,13 +136,31 @@ fun DownloadsScreen(
         )
     }
 
-    selectedTrack?.let { track ->
+    selectedTrack?.let { savedTrack ->
+        val track = savedTrack.toTrack()
         BottomSheet(onDismiss = { selectedTrack = null }) {
+            BottomSheetMenuItem(
+                label = stringResource(
+                    if (savedTrack.isFavorite) R.string.action_remove_favorite
+                    else R.string.action_add_favorite
+                ),
+                icon = if (savedTrack.isFavorite) Icons.Rounded.HeartBroken else Icons.Rounded.FavoriteBorder,
+                onClick = {
+                    trackActionsViewModel.toggleFavorite(track)
+                    selectedTrack = null
+                }
+            )
+            BottomSheetMenuItem(
+                label = stringResource(R.string.action_add_to_playlist),
+                icon = Icons.AutoMirrored.Rounded.PlaylistAdd,
+                enabled = false,
+                onClick = {}
+            )
             BottomSheetMenuItem(
                 label = stringResource(R.string.action_remove_download),
                 icon = Icons.Rounded.DeleteOutline,
                 onClick = {
-                    viewModel.deleteDownload(track.id)
+                    viewModel.deleteDownload(savedTrack.id)
                     selectedTrack = null
                 }
             )

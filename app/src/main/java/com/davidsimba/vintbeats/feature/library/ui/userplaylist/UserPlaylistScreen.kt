@@ -43,10 +43,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
 import com.davidsimba.vintbeats.feature.library.domain.track.subtitle
+import com.davidsimba.vintbeats.feature.library.domain.track.toTrack
+import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import com.davidsimba.vintbeats.shared.components.BottomSheet
 import com.davidsimba.vintbeats.shared.components.BottomSheetMenuItem
 import com.davidsimba.vintbeats.shared.components.CollectionAppBar
 import com.davidsimba.vintbeats.shared.components.CollectionHeader
+import com.davidsimba.vintbeats.shared.components.TrackOptionsBottomSheet
 import com.davidsimba.vintbeats.shared.components.VintActionButton
 import com.davidsimba.vintbeats.shared.components.VintAlertDialog
 import com.davidsimba.vintbeats.shared.components.cards.TrackCard
@@ -68,14 +71,18 @@ fun UserPlaylistScreen(
     onEditClick: () -> Unit,
     onEditInfoClick: () -> Unit,
     viewModel: UserPlaylistViewModel = hiltViewModel(),
+    trackActionsViewModel: TrackActionsViewModel = hiltViewModel()
 ) {
     val playlist by viewModel.playlist.collectAsStateWithLifecycle()
     val isDeleted by viewModel.isDeleted.collectAsStateWithLifecycle()
+    val downloadedTrackIds by trackActionsViewModel.downloadedTrackIds.collectAsStateWithLifecycle()
+    val downloadingTrackId by trackActionsViewModel.downloadingTrackId.collectAsStateWithLifecycle()
     val lazyListState = rememberLazyListState()
     val appBarAlpha = rememberScrollAppBarAlpha(lazyListState)
 
     var showOptionsSheet by remember { mutableStateOf(false) }
     var showDeleteAlert by remember { mutableStateOf(false) }
+    var selectedTrack by remember { mutableStateOf<SavedTrack?>(null) }
 
     LaunchedEffect(isDeleted) {
         if (isDeleted) onBack()
@@ -155,6 +162,19 @@ fun UserPlaylistScreen(
                                 artist = track.subtitle(),
                                 thumbnailUrl = track.trackThumbnailUrl,
                                 onClick = { onTrackClick(track.id) },
+                                trailingContent = {
+                                    IconButton(
+                                        onClick = { selectedTrack = track },
+                                        modifier = Modifier.size(36.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Rounded.MoreVert,
+                                            contentDescription = null,
+                                            tint = VintageGrayMid,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
+                                }
                             )
                         }
                     }
@@ -200,6 +220,26 @@ fun UserPlaylistScreen(
                 }
             )
         }
+    }
+
+    selectedTrack?.let { savedTrack ->
+        val track = savedTrack.toTrack()
+        TrackOptionsBottomSheet(
+            isFavorite = savedTrack.isFavorite,
+            isDownloaded = !savedTrack.audioFilePath.isNullOrEmpty() ||
+                savedTrack.trackId in downloadedTrackIds,
+            isDownloading = downloadingTrackId == savedTrack.trackId,
+            onDownload = {
+                trackActionsViewModel.downloadTrack(track)
+                selectedTrack = null
+            },
+            onToggleFavorite = {
+                trackActionsViewModel.toggleFavorite(track)
+                selectedTrack = null
+            },
+            onAddToPlaylist = {},
+            onDismiss = { selectedTrack = null }
+        )
     }
 
     if (showDeleteAlert) {

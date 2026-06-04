@@ -21,7 +21,7 @@ object DatabaseModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): VintBeatsDatabase =
         Room.databaseBuilder(context, VintBeatsDatabase::class.java, "vintbeats.db")
-            .fallbackToDestructiveMigration()
+//            .fallbackToDestructiveMigration()
             .build()
 
     @Provides

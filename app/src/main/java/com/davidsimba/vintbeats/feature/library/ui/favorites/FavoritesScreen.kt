@@ -13,9 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.Favorite
-import androidx.compose.material.icons.rounded.HeartBroken
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -38,10 +36,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
 import com.davidsimba.vintbeats.feature.library.domain.track.subtitle
-import com.davidsimba.vintbeats.shared.components.BottomSheet
-import com.davidsimba.vintbeats.shared.components.BottomSheetMenuItem
+import com.davidsimba.vintbeats.feature.library.domain.track.toTrack
+import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import com.davidsimba.vintbeats.shared.components.CollectionAppBar
 import com.davidsimba.vintbeats.shared.components.CollectionHeader
+import com.davidsimba.vintbeats.shared.components.TrackOptionsBottomSheet
 import com.davidsimba.vintbeats.shared.components.cards.TrackCard
 import com.davidsimba.vintbeats.shared.components.rememberScrollAppBarAlpha
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
@@ -53,10 +52,12 @@ import com.davidsimba.vintbeats.shared.theme.VintageRedLight
 fun FavoritesScreen(
     onBack: () -> Unit,
     onTrackClick: (Int) -> Unit,
-    viewModel: FavoritesViewModel = hiltViewModel()
+    viewModel: FavoritesViewModel = hiltViewModel(),
+    trackActionsViewModel: TrackActionsViewModel = hiltViewModel()
 ) {
     val favorites by viewModel.favorites.collectAsStateWithLifecycle()
-    val downloadingTrackId by viewModel.downloadingTrackId.collectAsStateWithLifecycle()
+    val downloadedTrackIds by trackActionsViewModel.downloadedTrackIds.collectAsStateWithLifecycle()
+    val downloadingTrackId by trackActionsViewModel.downloadingTrackId.collectAsStateWithLifecycle()
     val lazyListState = rememberLazyListState()
     val appBarAlpha = rememberScrollAppBarAlpha(lazyListState)
 
@@ -134,31 +135,23 @@ fun FavoritesScreen(
         )
     }
 
-    selectedTrack?.let { track ->
-        val isDownloading = downloadingTrackId == track.id
-        BottomSheet(onDismiss = { selectedTrack = null }) {
-            if (track.audioFilePath.isNullOrEmpty()) {
-                BottomSheetMenuItem(
-                    label = stringResource(
-                        if (isDownloading) R.string.player_option_downloading
-                        else R.string.player_option_download
-                    ),
-                    icon = Icons.Rounded.Download,
-                    enabled = !isDownloading,
-                    onClick = {
-                        viewModel.downloadTrack(track)
-                        selectedTrack = null
-                    }
-                )
-            }
-            BottomSheetMenuItem(
-                label = stringResource(R.string.action_remove_favorite),
-                icon = Icons.Rounded.HeartBroken,
-                onClick = {
-                    viewModel.removeFavorite(track.id)
-                    selectedTrack = null
-                }
-            )
-        }
+    selectedTrack?.let { savedTrack ->
+        val track = savedTrack.toTrack()
+        TrackOptionsBottomSheet(
+            isFavorite = true,
+            isDownloaded = !savedTrack.audioFilePath.isNullOrEmpty() ||
+                savedTrack.trackId in downloadedTrackIds,
+            isDownloading = downloadingTrackId == savedTrack.trackId,
+            onDownload = {
+                trackActionsViewModel.downloadTrack(track)
+                selectedTrack = null
+            },
+            onToggleFavorite = {
+                trackActionsViewModel.toggleFavorite(track)
+                selectedTrack = null
+            },
+            onAddToPlaylist = {},
+            onDismiss = { selectedTrack = null }
+        )
     }
 }
