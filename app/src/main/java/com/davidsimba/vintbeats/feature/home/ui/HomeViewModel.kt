@@ -34,9 +34,7 @@ class HomeViewModel @Inject constructor(
     onboardingPreferences: OnboardingPreferences,
 ) : ViewModel() {
 
-    // "Para ti" acumula una playlist por artista — siempre va primero
     private val _paraPlaylists = MutableStateFlow<List<PlaylistItem>>(emptyList())
-    // Secciones extra: "Fans también escuchan" + "Descubre" — van después
     private val _extraSections = MutableStateFlow<List<HomeSectionPlaylists>>(emptyList())
     private val _initialLoad = MutableStateFlow(true)
 
@@ -44,7 +42,7 @@ class HomeViewModel @Inject constructor(
         _paraPlaylists, _extraSections, _initialLoad
     ) { para, extra, loading ->
         val sections = buildList {
-            if (para.isNotEmpty()) add(HomeSectionPlaylists("Para ti", para))
+            if (para.isNotEmpty()) add(HomeSectionPlaylists("Para ti", para, isPrimary = true))
             addAll(extra)
         }
         when {
@@ -83,7 +81,6 @@ class HomeViewModel @Inject constructor(
             }
 
             val jobs = buildList {
-                // Una request por artista — cada playlist llega y se añade a "Para ti" inmediatamente
                 artists.forEach { artist ->
                     add(launch {
                         backendService
@@ -96,7 +93,6 @@ class HomeViewModel @Inject constructor(
                             }
                     })
                 }
-                // Request combinada solo para "Fans también escuchan" + "Descubre"
                 add(launch {
                     val extra = backendService
                         .getHomeFeedPlaylists(artists.map { ArtistInput(it.artistId, it.name, it.thumbnailUrl) })

@@ -10,4 +10,5 @@ data class PlaylistItem(
 data class HomeSectionPlaylists(
     val title: String,
     val playlists: List<PlaylistItem>,
+    val isPrimary: Boolean = false,
 )
