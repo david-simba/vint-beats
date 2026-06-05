@@ -6,12 +6,14 @@ import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.core.youtube.ArtistInput
 import com.davidsimba.vintbeats.core.youtube.BackendService
 import com.davidsimba.vintbeats.core.util.toHighRes
+import com.davidsimba.vintbeats.feature.home.data.HomeFeedCache
 import com.davidsimba.vintbeats.feature.home.domain.ArtistRadioItem
 import com.davidsimba.vintbeats.feature.home.domain.HomeSectionPlaylists
 import com.davidsimba.vintbeats.feature.home.domain.PlaylistItem
 import com.davidsimba.vintbeats.feature.library.domain.artist.SavedArtistRepository
 import com.davidsimba.vintbeats.feature.onboarding.OnboardingPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -36,6 +38,7 @@ sealed interface HomeUiState {
 class HomeViewModel @Inject constructor(
     private val artistRepository: SavedArtistRepository,
     private val backendService: BackendService,
+    private val homeFeedCache: HomeFeedCache,
     onboardingPreferences: OnboardingPreferences,
 ) : ViewModel() {
 
@@ -77,10 +80,6 @@ class HomeViewModel @Inject constructor(
     fun loadFeed() {
         if (_paraPlaylists.value.isNotEmpty() || _quickMix.value.isNotEmpty()) return
         viewModelScope.launch {
-            _quickMix.value = emptyList()
-            _paraPlaylists.value = emptyList()
-            _extraSections.value = emptyList()
-            _artistRadios.value = emptyList()
             _initialLoad.value = true
 
             val artists = artistRepository.getSavedArtists().first()
@@ -89,15 +88,7 @@ class HomeViewModel @Inject constructor(
                 return@launch
             }
 
-            val artistInputs = artists.map { ArtistInput(it.artistId, it.name, it.thumbnailUrl) }
-
-            // Quick mix — cacheado en memoria, no en servidor
-            launch {
-                val mix = backendService.getQuickMix(artistInputs)
-                if (mix.isNotEmpty()) _quickMix.value = mix
-            }
-
-            // Para ti: cards instantáneas desde los artistas guardados
+            // Para ti: instant from local DB, no network needed
             _paraPlaylists.value = artists.map { artist ->
                 PlaylistItem(
                     id = artist.artistId,
@@ -110,16 +101,33 @@ class HomeViewModel @Inject constructor(
             }
             _initialLoad.value = false
 
-            // Extra: Fans también escuchan + Descubre
-            launch {
+            // Restore from cache if data is from today
+            val cached = homeFeedCache.get()
+            if (cached != null) {
+                if (cached.quickMix.isNotEmpty()) _quickMix.value = cached.quickMix
+                if (cached.extraSections.isNotEmpty()) _extraSections.value = cached.extraSections
+                if (cached.artistRadios.isNotEmpty()) _artistRadios.value = cached.artistRadios
+                return@launch
+            }
+
+            // Cache miss: fetch all three in parallel, update UI as each completes
+            val artistInputs = artists.map { ArtistInput(it.artistId, it.name, it.thumbnailUrl) }
+
+            val mixDeferred = async {
+                val mix = backendService.getQuickMix(artistInputs)
+                if (mix.isNotEmpty()) _quickMix.value = mix
+                mix
+            }
+
+            val extraDeferred = async {
                 val extra = backendService
                     .getHomeFeedPlaylists(artistInputs)
                     .filter { !it.title.startsWith("Porque") }
                 if (extra.isNotEmpty()) _extraSections.value = extra
+                extra
             }
 
-            // Radio: one card per saved artist
-            launch {
+            val radiosDeferred = async {
                 val radios = mutableListOf<ArtistRadioItem>()
                 artists.forEach { artist ->
                     val result = backendService.getArtistRadio(artist.artistId)
@@ -129,6 +137,16 @@ class HomeViewModel @Inject constructor(
                     }
                 }
                 if (radios.isNotEmpty()) _artistRadios.value = radios
+                radios.toList()
+            }
+
+            val mix = mixDeferred.await()
+            val extra = extraDeferred.await()
+            val radios = radiosDeferred.await()
+
+            // Only cache if we got meaningful data (guards against offline first-run)
+            if (mix.isNotEmpty() || extra.isNotEmpty()) {
+                homeFeedCache.save(mix, extra, radios)
             }
         }
     }
