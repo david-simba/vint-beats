@@ -43,7 +43,6 @@ import com.davidsimba.vintbeats.shared.components.CollectionHeader
 import com.davidsimba.vintbeats.shared.components.TrackOptionsBottomSheet
 import com.davidsimba.vintbeats.shared.components.cards.TrackCard
 import com.davidsimba.vintbeats.shared.components.rememberScrollAppBarAlpha
-import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
 import com.davidsimba.vintbeats.shared.theme.vintageBgGradient
@@ -88,7 +87,6 @@ fun FavoritesScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-                        .background(VintageBgDark)
                 ) {
                     if (favorites.isEmpty()) {
                         Box(
