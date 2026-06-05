@@ -53,6 +53,8 @@ import com.davidsimba.vintbeats.shared.theme.vintageBgGradient
 fun FavoritesScreen(
     onBack: () -> Unit,
     onTrackClick: (Int) -> Unit,
+    playingTrackId: String? = null,
+    isTrackPlaying: Boolean = false,
     viewModel: FavoritesViewModel = hiltViewModel(),
     trackActionsViewModel: TrackActionsViewModel = hiltViewModel()
 ) {
@@ -106,6 +108,8 @@ fun FavoritesScreen(
                                 title = track.trackTitle,
                                 artist = track.subtitle(),
                                 thumbnailUrl = track.trackThumbnailUrl,
+                                isActive = track.trackId == playingTrackId,
+                                isPlaying = track.trackId == playingTrackId && isTrackPlaying,
                                 onClick = { onTrackClick(track.id) },
                                 trailingContent = {
                                     IconButton(

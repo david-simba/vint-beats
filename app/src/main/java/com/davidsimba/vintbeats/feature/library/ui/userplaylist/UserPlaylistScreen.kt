@@ -69,6 +69,8 @@ fun UserPlaylistScreen(
     onAddSongsClick: () -> Unit,
     onEditClick: () -> Unit,
     onEditInfoClick: () -> Unit,
+    playingTrackId: String? = null,
+    isTrackPlaying: Boolean = false,
     viewModel: UserPlaylistViewModel = hiltViewModel(),
     trackActionsViewModel: TrackActionsViewModel = hiltViewModel()
 ) {
@@ -160,6 +162,8 @@ fun UserPlaylistScreen(
                                 title = track.trackTitle,
                                 artist = track.subtitle(),
                                 thumbnailUrl = track.trackThumbnailUrl,
+                                isActive = track.trackId == playingTrackId,
+                                isPlaying = track.trackId == playingTrackId && isTrackPlaying,
                                 onClick = { onTrackClick(track.id) },
                                 trailingContent = {
                                     IconButton(

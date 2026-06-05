@@ -53,6 +53,8 @@ fun PlaylistScreen(
     onBack: () -> Unit,
     onTrackSelected: (Track, List<Track>) -> Unit,
     onPlayAll: (List<Track>) -> Unit,
+    playingTrackId: String? = null,
+    isTrackPlaying: Boolean = false,
     viewModel: PlaylistViewModel = hiltViewModel(),
     trackActionsViewModel: TrackActionsViewModel = hiltViewModel()
 ) {
@@ -117,6 +119,8 @@ fun PlaylistScreen(
                                     title = track.title,
                                     artist = track.artist,
                                     thumbnailUrl = track.albumImageUrl,
+                                    isActive = track.id == playingTrackId,
+                                    isPlaying = track.id == playingTrackId && isTrackPlaying,
                                     onClick = {
                                         onTrackSelected(track, detail.tracks.drop(index + 1))
                                     },

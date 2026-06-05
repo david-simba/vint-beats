@@ -43,6 +43,8 @@ import kotlinx.coroutines.flow.first
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    playingTrackId: String? = null,
+    isTrackPlaying: Boolean = false,
     onTrackSelected: (Track, List<Track>) -> Unit = { _, _ -> },
     onPlaylistSelected: (id: String, thumbnailUrl: String?, artistId: String?, artistName: String?) -> Unit = { _, _, _, _ -> },
     onRadioSelected: (ArtistRadioItem) -> Unit = {},
@@ -136,7 +138,9 @@ fun HomeScreen(
                             QuickMixSection(
                                 tracks = state.quickMix,
                                 onTrackSelected = onTrackSelected,
-                                onMenuClick = { selectedTrack = it }
+                                onMenuClick = { selectedTrack = it },
+                                playingTrackId = playingTrackId,
+                                isTrackPlaying = isTrackPlaying,
                             )
                         } else {
                             QuickMixSkeleton()

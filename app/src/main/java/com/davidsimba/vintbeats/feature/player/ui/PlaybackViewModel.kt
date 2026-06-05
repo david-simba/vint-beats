@@ -30,10 +30,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -96,6 +99,12 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
 
     private val _shuffleEnabled = MutableStateFlow(false)
     val shuffleEnabled: StateFlow<Boolean> = _shuffleEnabled.asStateFlow()
+
+    val currentlyPlayingTrackId: StateFlow<String?> = combine(
+        isSaved, currentSavedTrack, unsavedTrack
+    ) { saved, savedTrack, unsaved ->
+        if (saved) savedTrack?.trackId else unsaved?.id
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     private val _originalQueue = MutableStateFlow<List<Track>>(emptyList())
 

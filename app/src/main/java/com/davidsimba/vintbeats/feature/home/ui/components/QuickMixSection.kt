@@ -30,6 +30,8 @@ fun QuickMixSection(
     tracks: List<Track>,
     onTrackSelected: (Track, List<Track>) -> Unit,
     onMenuClick: (Track) -> Unit,
+    playingTrackId: String? = null,
+    isTrackPlaying: Boolean = false,
 ) {
     val pages = tracks.chunked(4)
     val pagerState = rememberPagerState { pages.size }
@@ -56,6 +58,8 @@ fun QuickMixSection(
                         artist = track.artist,
                         thumbnailUrl = track.albumImageUrl,
                         imageSize = 54.dp,
+                        isActive = track.id == playingTrackId,
+                        isPlaying = track.id == playingTrackId && isTrackPlaying,
                         onClick = { onTrackSelected(track, tracks.drop(globalIndex + 1)) },
                         trailingContent = {
                             IconButton(

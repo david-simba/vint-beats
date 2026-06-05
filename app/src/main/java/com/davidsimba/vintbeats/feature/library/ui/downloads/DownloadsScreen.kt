@@ -57,6 +57,8 @@ import com.davidsimba.vintbeats.shared.theme.vintageBgGradient
 fun DownloadsScreen(
     onBack: () -> Unit,
     onTrackClick: (Int) -> Unit,
+    playingTrackId: String? = null,
+    isTrackPlaying: Boolean = false,
     viewModel: DownloadsViewModel = hiltViewModel(),
     trackActionsViewModel: TrackActionsViewModel = hiltViewModel()
 ) {
@@ -107,6 +109,8 @@ fun DownloadsScreen(
                                 title = track.trackTitle,
                                 artist = track.subtitle(),
                                 thumbnailUrl = track.trackThumbnailUrl,
+                                isActive = track.trackId == playingTrackId,
+                                isPlaying = track.trackId == playingTrackId && isTrackPlaying,
                                 onClick = { onTrackClick(track.id) },
                                 trailingContent = {
                                     IconButton(

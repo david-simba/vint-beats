@@ -15,13 +15,16 @@ import androidx.compose.ui.Alignment
 import com.davidsimba.vintbeats.R
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.davidsimba.vintbeats.shared.components.EqualizerBars
 import com.davidsimba.vintbeats.shared.components.TrackInfo
 import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
+import com.davidsimba.vintbeats.shared.theme.VintageWhite
 
 @Composable
 fun TrackCard(
@@ -30,6 +33,8 @@ fun TrackCard(
     thumbnailUrl: String?,
     modifier: Modifier = Modifier,
     imageSize: Dp = 44.dp,
+    isActive: Boolean = false,
+    isPlaying: Boolean = false,
     onClick: (() -> Unit)? = null,
     trailingContent: (@Composable () -> Unit)? = null
 ) {
@@ -53,6 +58,25 @@ fun TrackCard(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.matchParentSize()
             )
+            if (isActive) {
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(Color.Black.copy(alpha = 0.25f))
+                )
+                if (isPlaying) {
+                    EqualizerBars(
+                        isPlaying = true,
+                        barCount = 3,
+                        maxHeight = (imageSize.value * 0.25f).dp,
+                        color = VintageWhite.copy(0.75f),
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(end = 4.dp)
+                            .size(width = imageSize * 0.4f, height = imageSize * 0.25f)
+                    )
+                }
+            }
         }
 
         TrackInfo(
