@@ -6,6 +6,7 @@ import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.core.youtube.ArtistInput
 import com.davidsimba.vintbeats.core.youtube.BackendService
 import com.davidsimba.vintbeats.core.util.toHighRes
+import com.davidsimba.vintbeats.feature.home.domain.ArtistRadioItem
 import com.davidsimba.vintbeats.feature.home.domain.HomeSectionPlaylists
 import com.davidsimba.vintbeats.feature.home.domain.PlaylistItem
 import com.davidsimba.vintbeats.feature.library.domain.artist.SavedArtistRepository
@@ -27,6 +28,7 @@ sealed interface HomeUiState {
     data class Success(
         val quickMix: List<Track>,
         val sections: List<HomeSectionPlaylists>,
+        val artistRadios: List<ArtistRadioItem>,
     ) : HomeUiState
 }
 
@@ -41,10 +43,11 @@ class HomeViewModel @Inject constructor(
     private val _paraPlaylists = MutableStateFlow<List<PlaylistItem>>(emptyList())
     private val _extraSections = MutableStateFlow<List<HomeSectionPlaylists>>(emptyList())
     private val _initialLoad = MutableStateFlow(true)
+    private val _artistRadios = MutableStateFlow<List<ArtistRadioItem>>(emptyList())
 
     val uiState: StateFlow<HomeUiState> = combine(
-        _quickMix, _paraPlaylists, _extraSections, _initialLoad
-    ) { mix, para, extra, loading ->
+        _quickMix, _paraPlaylists, _extraSections, _initialLoad, _artistRadios
+    ) { mix, para, extra, loading, radios ->
         val sections = buildList {
             if (para.isNotEmpty()) add(HomeSectionPlaylists("Artistas que escuchas", para, isPrimary = true))
             addAll(extra)
@@ -52,7 +55,7 @@ class HomeViewModel @Inject constructor(
         when {
             loading -> HomeUiState.Loading
             mix.isEmpty() && sections.isEmpty() -> HomeUiState.Empty
-            else -> HomeUiState.Success(mix, sections)
+            else -> HomeUiState.Success(mix, sections, radios)
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeUiState.Loading)
 
@@ -77,6 +80,7 @@ class HomeViewModel @Inject constructor(
             _quickMix.value = emptyList()
             _paraPlaylists.value = emptyList()
             _extraSections.value = emptyList()
+            _artistRadios.value = emptyList()
             _initialLoad.value = true
 
             val artists = artistRepository.getSavedArtists().first()
@@ -107,10 +111,25 @@ class HomeViewModel @Inject constructor(
             _initialLoad.value = false
 
             // Extra: Fans también escuchan + Descubre
-            val extra = backendService
-                .getHomeFeedPlaylists(artistInputs)
-                .filter { !it.title.startsWith("Porque") }
-            if (extra.isNotEmpty()) _extraSections.value = extra
+            launch {
+                val extra = backendService
+                    .getHomeFeedPlaylists(artistInputs)
+                    .filter { !it.title.startsWith("Porque") }
+                if (extra.isNotEmpty()) _extraSections.value = extra
+            }
+
+            // Radio: one card per saved artist
+            launch {
+                val radios = mutableListOf<ArtistRadioItem>()
+                artists.forEach { artist ->
+                    val result = backendService.getArtistRadio(artist.artistId)
+                    if (result != null) {
+                        val (images, tracks) = result
+                        radios.add(ArtistRadioItem(artist.artistId, artist.name, images, tracks))
+                    }
+                }
+                if (radios.isNotEmpty()) _artistRadios.value = radios
+            }
         }
     }
 }

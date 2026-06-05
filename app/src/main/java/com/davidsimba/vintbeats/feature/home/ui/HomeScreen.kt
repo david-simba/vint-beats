@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,8 +25,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.core.model.Track
-import com.davidsimba.vintbeats.feature.home.ui.components.HomeSection
+import com.davidsimba.vintbeats.feature.home.domain.ArtistRadioItem
+import com.davidsimba.vintbeats.feature.home.ui.components.ArtistRadioSection
+import com.davidsimba.vintbeats.feature.home.ui.components.ArtistRadioSkeleton
 import com.davidsimba.vintbeats.feature.home.ui.components.HomeSectionSkeleton
+import com.davidsimba.vintbeats.feature.home.ui.components.PlaylistSection
 import com.davidsimba.vintbeats.feature.home.ui.components.QuickMixSection
 import com.davidsimba.vintbeats.feature.home.ui.components.QuickMixSkeleton
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
@@ -43,6 +45,7 @@ import kotlinx.coroutines.flow.first
 fun HomeScreen(
     onTrackSelected: (Track, List<Track>) -> Unit = { _, _ -> },
     onPlaylistSelected: (id: String, thumbnailUrl: String?, artistId: String?, artistName: String?) -> Unit = { _, _, _, _ -> },
+    onRadioSelected: (ArtistRadioItem) -> Unit = {},
     onNavigateToOnboarding: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel(),
     trackActionsViewModel: TrackActionsViewModel = hiltViewModel(),
@@ -93,6 +96,7 @@ fun HomeScreen(
                     }
                     item { QuickMixSkeleton() }
                     item { HomeSectionSkeleton() }
+                    item { ArtistRadioSkeleton() }
                     item { HomeSectionSkeleton() }
                 }
             }
@@ -139,11 +143,21 @@ fun HomeScreen(
                         }
                     }
 
-                    items(state.sections, key = { it.title }) { section ->
-                        HomeSection(
-                            section = section,
-                            onPlaylistSelected = onPlaylistSelected
-                        )
+                    state.sections.forEachIndexed { index, section ->
+                        item(key = section.title) {
+                            PlaylistSection(
+                                section = section,
+                                onPlaylistSelected = onPlaylistSelected
+                            )
+                        }
+                        if (index == 0 && state.artistRadios.isNotEmpty()) {
+                            item(key = "radio") {
+                                ArtistRadioSection(
+                                    radios = state.artistRadios,
+                                    onRadioSelected = onRadioSelected,
+                                )
+                            }
+                        }
                     }
                 }
             }

@@ -194,6 +194,14 @@ fun NavGraph(
                         onPlaylistSelected = { id, thumbnailUrl, artistId, artistName ->
                             navController.navigate(Screen.Playlist.route(id, thumbnailUrl, artistId, artistName))
                         },
+                        onRadioSelected = { radio ->
+                            if (radio.tracks.isNotEmpty()) {
+                                playbackViewModel.playTrack(
+                                    radio.tracks.first(),
+                                    newQueue = radio.tracks.drop(1)
+                                )
+                            }
+                        },
                         onNavigateToOnboarding = {
                             navController.navigate(Screen.Onboarding.route) {
                                 launchSingleTop = true

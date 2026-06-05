@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -83,7 +84,7 @@ fun QuickMixSkeleton() {
 fun HomeSectionSkeleton() {
     val brush = shimmerBrush()
 
-    Column(modifier = Modifier.padding(bottom = 12.dp)) {
+    Column(modifier = Modifier.padding(bottom = 28.dp)) {
         Box(
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 4.dp)
@@ -92,47 +93,174 @@ fun HomeSectionSkeleton() {
                 .clip(RoundedCornerShape(6.dp))
                 .background(brush)
         )
-        Spacer(Modifier.height(14.dp))
+        Spacer(Modifier.height(10.dp))
         LazyRow(
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             userScrollEnabled = false
         ) {
             items(3) {
-                Box(
-                    modifier = Modifier
-                        .width(175.dp)
-                        .height(200.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                ) {
-                    Column(modifier = Modifier.matchParentSize()) {
-                        Box(modifier = Modifier.fillMaxWidth().weight(1f).background(brush))
-                        Box(modifier = Modifier.fillMaxWidth().weight(1f).background(brush))
-                    }
+                Column {
                     Box(
                         modifier = Modifier
-                            .width(36.dp)
+                            .width(180.dp)
+                            .height(180.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                    ) {
+                        Column(modifier = Modifier.matchParentSize()) {
+                            Box(modifier = Modifier.fillMaxWidth().weight(1f).background(brush))
+                            Box(modifier = Modifier.fillMaxWidth().weight(1f).background(brush))
+                        }
+                        // App icon placeholder
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.TopStart)
+                                .padding(top = 6.dp, start = 6.dp)
+                                .size(24.dp)
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(brush)
+                        )
+                        // "This is" label
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.TopCenter)
+                                .padding(top = 14.dp)
+                                .width(36.dp)
+                                .height(10.dp)
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(brush)
+                        )
+                        // Artist image block
+                        Box(
+                            modifier = Modifier
+                                .width(108.dp)
+                                .height(100.dp)
+                                .align(Alignment.Center)
+                                .clip(RoundedCornerShape(2.dp))
+                                .background(brush)
+                        )
+                        // Artist name
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(bottom = 12.dp)
+                                .width(90.dp)
+                                .height(12.dp)
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(brush)
+                        )
+                    }
+                    // CardSubtitle placeholder
+                    Spacer(Modifier.height(12.dp))
+                    Box(
+                        modifier = Modifier
+                            .width(120.dp)
                             .height(10.dp)
-                            .align(Alignment.TopCenter)
-                            .padding(top = 14.dp)
                             .clip(RoundedCornerShape(4.dp))
                             .background(brush)
                     )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ArtistRadioSkeleton() {
+    val brush = shimmerBrush()
+
+    Column(modifier = Modifier.padding(bottom = 28.dp)) {
+        Box(
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 4.dp)
+                .width(60.dp)
+                .height(18.dp)
+                .clip(RoundedCornerShape(6.dp))
+                .background(brush)
+        )
+        Spacer(Modifier.height(10.dp))
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            userScrollEnabled = false
+        ) {
+            items(3) {
+                Column {
                     Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(120.dp)
-                            .padding(horizontal = 16.dp)
-                            .clip(RoundedCornerShape(6.dp))
-                            .align(Alignment.Center)
-                            .background(brush)
-                    )
+                            .width(180.dp)
+                            .height(180.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                    ) {
+                        Column(modifier = Modifier.matchParentSize()) {
+                            Box(modifier = Modifier.fillMaxWidth().weight(1f).background(brush))
+                            Box(modifier = Modifier.fillMaxWidth().weight(1f).background(brush))
+                        }
+                        // App icon placeholder
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.TopStart)
+                                .padding(top = 12.dp, start = 6.dp)
+                                .size(24.dp)
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(brush)
+                        )
+                        // "Radio" label
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(top = 16.dp, end = 12.dp)
+                                .width(36.dp)
+                                .height(10.dp)
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(brush)
+                        )
+                        // 3 circles
+                        Box(
+                            modifier = Modifier
+                                .width(175.dp)
+                                .height(90.dp)
+                                .align(Alignment.Center)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(75.dp)
+                                    .clip(CircleShape)
+                                    .background(brush)
+                                    .align(Alignment.CenterStart)
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .size(90.dp)
+                                    .clip(CircleShape)
+                                    .background(brush)
+                                    .align(Alignment.Center)
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .size(75.dp)
+                                    .clip(CircleShape)
+                                    .background(brush)
+                                    .align(Alignment.CenterEnd)
+                            )
+                        }
+                        // Artist name
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.BottomStart)
+                                .padding(bottom = 12.dp, start = 12.dp)
+                                .width(80.dp)
+                                .height(12.dp)
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(brush)
+                        )
+                    }
+                    // CardSubtitle placeholder
+                    Spacer(Modifier.height(12.dp))
                     Box(
                         modifier = Modifier
-                            .width(90.dp)
-                            .height(12.dp)
-                            .align(Alignment.BottomCenter)
-                            .padding(bottom = 14.dp)
+                            .width(120.dp)
+                            .height(10.dp)
                             .clip(RoundedCornerShape(4.dp))
                             .background(brush)
                     )

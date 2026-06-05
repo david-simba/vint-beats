@@ -99,6 +99,16 @@ class BackendService @Inject constructor(
             gson.fromJson(body, PlaylistDetail::class.java)
         }
 
+    suspend fun getArtistRadio(artistId: String): Pair<List<String>, List<Track>>? =
+        get("/home/radio/${artistId.encode()}") { body ->
+            val root = JsonParser.parseString(body).asJsonObject
+            val imageType = object : TypeToken<List<String>>() {}.type
+            val trackType = object : TypeToken<List<Track>>() {}.type
+            val images: List<String> = gson.fromJson(root.getAsJsonArray("artistImages"), imageType) ?: emptyList()
+            val tracks: List<Track> = gson.fromJson(root.getAsJsonArray("tracks"), trackType) ?: emptyList()
+            if (tracks.isEmpty()) null else images to tracks
+        }
+
     suspend fun getHomeFeedPlaylists(artists: List<ArtistInput>): List<HomeSectionPlaylists> =
         withContext(Dispatchers.IO) {
             try {

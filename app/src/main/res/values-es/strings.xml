@@ -79,6 +79,7 @@
     <!-- Home -->
     <string name="home_greeting">Hola, %s!</string>
     <string name="home_empty">Guarda artistas para personalizar tu home</string>
+    <string name="home_radio">Radio</string>
 
     <!-- Common -->
     <string name="action_back">Atrás</string>
