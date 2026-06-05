@@ -80,6 +80,7 @@
     <string name="home_empty">Save artists to personalize your home</string>
     <string name="home_seleccion_rapida">Para ti</string>
     <string name="home_tus_artistas">Artistas que escuchas</string>
+    <string name="home_recientes">Escuchado recientemente</string>
     <string name="home_radio">Radio</string>
 
     <!-- Common -->

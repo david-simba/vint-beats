@@ -6,6 +6,7 @@ import com.davidsimba.vintbeats.feature.library.data.playlist.PlaylistDao
 import com.davidsimba.vintbeats.feature.library.data.album.SavedAlbumDao
 import com.davidsimba.vintbeats.feature.library.data.artist.SavedArtistDao
 import com.davidsimba.vintbeats.feature.library.data.track.TrackDao
+import com.davidsimba.vintbeats.feature.home.data.RecentlyPlayedDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,4 +36,7 @@ object DatabaseModule {
 
     @Provides
     fun provideSavedArtistDao(db: VintBeatsDatabase): SavedArtistDao = db.savedArtistDao()
+
+    @Provides
+    fun provideRecentlyPlayedDao(db: VintBeatsDatabase): RecentlyPlayedDao = db.recentlyPlayedDao()
 }

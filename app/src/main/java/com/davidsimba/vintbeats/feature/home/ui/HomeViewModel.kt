@@ -7,7 +7,9 @@ import com.davidsimba.vintbeats.core.youtube.ArtistInput
 import com.davidsimba.vintbeats.core.youtube.BackendService
 import com.davidsimba.vintbeats.core.util.toHighRes
 import com.davidsimba.vintbeats.feature.home.data.HomeFeedCache
+import com.davidsimba.vintbeats.feature.home.data.RecentlyPlayedRepository
 import com.davidsimba.vintbeats.feature.home.domain.ArtistRadioItem
+import com.davidsimba.vintbeats.feature.home.domain.RecentTrack
 import com.davidsimba.vintbeats.feature.home.domain.HomeSectionPlaylists
 import com.davidsimba.vintbeats.feature.home.domain.PlaylistItem
 import com.davidsimba.vintbeats.feature.library.domain.artist.SavedArtistRepository
@@ -39,6 +41,7 @@ class HomeViewModel @Inject constructor(
     private val artistRepository: SavedArtistRepository,
     private val backendService: BackendService,
     private val homeFeedCache: HomeFeedCache,
+    private val recentlyPlayedRepository: RecentlyPlayedRepository,
     onboardingPreferences: OnboardingPreferences,
 ) : ViewModel() {
 
@@ -76,6 +79,9 @@ class HomeViewModel @Inject constructor(
 
     val userName: StateFlow<String> = onboardingPreferences.userName
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
+
+    val recentTracks: StateFlow<List<RecentTrack>> = recentlyPlayedRepository.getRecent()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun loadFeed() {
         if (_paraPlaylists.value.isNotEmpty() || _quickMix.value.isNotEmpty()) return

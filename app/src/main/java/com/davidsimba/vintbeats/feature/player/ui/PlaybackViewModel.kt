@@ -21,6 +21,7 @@ import com.davidsimba.vintbeats.shared.SnackbarEvent
 import com.davidsimba.vintbeats.core.youtube.LrcLibService
 import com.davidsimba.vintbeats.core.youtube.YouTubeQueueService
 import com.davidsimba.vintbeats.core.youtube.YouTubeStreamService
+import com.davidsimba.vintbeats.feature.home.data.RecentlyPlayedRepository
 import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
 import com.davidsimba.vintbeats.feature.library.domain.track.TrackRepository
 import com.google.common.util.concurrent.ListenableFuture
@@ -51,6 +52,7 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
     private val lrcLibService: LrcLibService,
     private val queueService: YouTubeQueueService,
     private val sessionPreferences: PlayerSessionPreferences,
+    private val recentlyPlayedRepository: RecentlyPlayedRepository,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -225,6 +227,7 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
             }
         }
         loadFavoriteStatus(track.id)
+        viewModelScope.launch { recentlyPlayedRepository.save(track) }
         viewModelScope.launch {
             sessionPreferences.save(
                 trackId = track.id,
@@ -296,6 +299,7 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
             }
             _currentSavedTrack.value = saved
             loadFavoriteStatus(saved.trackId)
+            viewModelScope.launch { recentlyPlayedRepository.save(saved) }
             viewModelScope.launch {
                 sessionPreferences.save(
                     trackId = saved.trackId,

@@ -32,6 +32,7 @@ import com.davidsimba.vintbeats.feature.home.ui.components.HomeSectionSkeleton
 import com.davidsimba.vintbeats.feature.home.ui.components.PlaylistSection
 import com.davidsimba.vintbeats.feature.home.ui.components.QuickMixSection
 import com.davidsimba.vintbeats.feature.home.ui.components.QuickMixSkeleton
+import com.davidsimba.vintbeats.feature.home.ui.components.RecentlyPlayedSection
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import com.davidsimba.vintbeats.shared.components.TrackOptionsBottomSheet
 import com.davidsimba.vintbeats.shared.theme.vintageBgGradient
@@ -55,6 +56,7 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val needsOnboarding by viewModel.needsOnboarding.collectAsStateWithLifecycle()
     val userName by viewModel.userName.collectAsStateWithLifecycle()
+    val recentTracks by viewModel.recentTracks.collectAsStateWithLifecycle()
     val favoriteTrackIds by trackActionsViewModel.favoriteTrackIds.collectAsStateWithLifecycle()
     val downloadedTrackIds by trackActionsViewModel.downloadedTrackIds.collectAsStateWithLifecycle()
     val downloadingTrackId by trackActionsViewModel.downloadingTrackId.collectAsStateWithLifecycle()
@@ -153,6 +155,24 @@ fun HomeScreen(
                                 section = section,
                                 onPlaylistSelected = onPlaylistSelected
                             )
+                        }
+                        if (index == 0 && recentTracks.isNotEmpty()) {
+                            item(key = "recientes") {
+                                RecentlyPlayedSection(
+                                    tracks = recentTracks,
+                                    onTrackClick = { recent ->
+                                        val asTrack = com.davidsimba.vintbeats.core.model.Track(
+                                            id = recent.trackId,
+                                            title = recent.title,
+                                            artist = recent.artist,
+                                            albumImageUrl = recent.thumbnailUrl,
+                                            previewUrl = null,
+                                            durationText = ""
+                                        )
+                                        onTrackSelected(asTrack, emptyList())
+                                    }
+                                )
+                            }
                         }
                         if (index == 0 && state.artistRadios.isNotEmpty()) {
                             item(key = "radio") {
