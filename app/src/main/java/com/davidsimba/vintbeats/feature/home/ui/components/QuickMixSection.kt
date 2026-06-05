@@ -14,6 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,6 +54,10 @@ fun QuickMixSection(
             Column(modifier = Modifier.fillMaxWidth()) {
                 pages[pageIndex].forEachIndexed { indexInPage, track ->
                     val globalIndex = pageIndex * 4 + indexInPage
+                    val onClickTrack = remember(track.id, globalIndex) {
+                        { onTrackSelected(track, tracks.drop(globalIndex + 1)) }
+                    }
+                    val onClickMenu = remember(track.id) { { onMenuClick(track) } }
                     TrackCard(
                         title = track.title,
                         artist = track.artist,
@@ -60,10 +65,10 @@ fun QuickMixSection(
                         imageSize = 54.dp,
                         isActive = track.id == playingTrackId,
                         isPlaying = track.id == playingTrackId && isTrackPlaying,
-                        onClick = { onTrackSelected(track, tracks.drop(globalIndex + 1)) },
+                        onClick = onClickTrack,
                         trailingContent = {
                             IconButton(
-                                onClick = { onMenuClick(track) },
+                                onClick = onClickMenu,
                                 modifier = Modifier.size(36.dp)
                             ) {
                                 Icon(

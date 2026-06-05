@@ -1,5 +1,8 @@
 package com.davidsimba.vintbeats.feature.home.domain
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 data class PlaylistItem(
     val id: String,
     val title: String,
@@ -9,6 +12,7 @@ data class PlaylistItem(
     val artistName: String? = null,
 )
 
+@Immutable
 data class HomeSectionPlaylists(
     val title: String,
     val playlists: List<PlaylistItem>,

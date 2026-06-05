@@ -1,5 +1,8 @@
 package com.davidsimba.vintbeats.core.model
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 data class Track(
     val id: String,
     val title: String,
