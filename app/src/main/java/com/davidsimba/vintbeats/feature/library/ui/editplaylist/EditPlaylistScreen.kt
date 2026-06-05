@@ -43,7 +43,6 @@ import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
 import com.davidsimba.vintbeats.feature.library.domain.track.subtitle
-import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.shared.theme.vintageBgGradient
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
@@ -114,8 +113,8 @@ fun EditPlaylistScreen(
 
 @Composable
 private fun EditTrackRow(
-    track: SavedTrack,
     dragHandle: Modifier,
+    track: SavedTrack,
     onRemove: () -> Unit
 ) {
     Row(
