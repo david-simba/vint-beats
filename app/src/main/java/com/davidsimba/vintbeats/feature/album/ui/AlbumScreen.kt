@@ -99,7 +99,10 @@ fun AlbumScreen(
                             imageUrl = state.album.thumbnailUrl,
                             placeholderIcon = Icons.Rounded.Album,
                             onPlayAll = if (state.album.tracks.isNotEmpty()) {
-                                { onPlayAlbum(state.album.tracks) }
+                                {
+                                    viewModel.notifyPlayed()
+                                    onPlayAlbum(state.album.tracks)
+                                }
                             } else null
                         )
                     }
@@ -116,7 +119,10 @@ fun AlbumScreen(
                                     AlbumTrackItem(
                                         index = index + 1,
                                         track = track,
-                                        onClick = { onTrackSelected(track, state.album.tracks.drop(index + 1)) },
+                                        onClick = {
+                                            viewModel.notifyPlayed()
+                                            onTrackSelected(track, state.album.tracks.drop(index + 1))
+                                        },
                                         onMenuClick = { selectedTrack = track }
                                     )
                                 }

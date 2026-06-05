@@ -103,4 +103,5 @@
     <string name="home_seleccion_rapida">Para ti</string>
     <string name="home_tus_artistas">Artistas que escuchas</string>
     <string name="home_recientes">Escuchado recientemente</string>
+    <string name="home_albumes_recientes">Álbumes recientes</string>
 </resources>

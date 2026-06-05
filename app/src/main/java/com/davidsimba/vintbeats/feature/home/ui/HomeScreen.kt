@@ -32,6 +32,7 @@ import com.davidsimba.vintbeats.feature.home.ui.components.HomeSectionSkeleton
 import com.davidsimba.vintbeats.feature.home.ui.components.PlaylistSection
 import com.davidsimba.vintbeats.feature.home.ui.components.QuickMixSection
 import com.davidsimba.vintbeats.feature.home.ui.components.QuickMixSkeleton
+import com.davidsimba.vintbeats.feature.home.ui.components.RecentAlbumsSection
 import com.davidsimba.vintbeats.feature.home.ui.components.RecentlyPlayedSection
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import com.davidsimba.vintbeats.shared.components.TrackOptionsBottomSheet
@@ -48,6 +49,7 @@ fun HomeScreen(
     isTrackPlaying: Boolean = false,
     onTrackSelected: (Track, List<Track>) -> Unit = { _, _ -> },
     onPlaylistSelected: (id: String, thumbnailUrl: String?, artistId: String?, artistName: String?) -> Unit = { _, _, _, _ -> },
+    onAlbumSelected: (id: String) -> Unit = {},
     onRadioSelected: (ArtistRadioItem) -> Unit = {},
     onNavigateToOnboarding: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel(),
@@ -57,6 +59,7 @@ fun HomeScreen(
     val needsOnboarding by viewModel.needsOnboarding.collectAsStateWithLifecycle()
     val userName by viewModel.userName.collectAsStateWithLifecycle()
     val recentTracks by viewModel.recentTracks.collectAsStateWithLifecycle()
+    val recentAlbums by viewModel.recentAlbums.collectAsStateWithLifecycle()
     val favoriteTrackIds by trackActionsViewModel.favoriteTrackIds.collectAsStateWithLifecycle()
     val downloadedTrackIds by trackActionsViewModel.downloadedTrackIds.collectAsStateWithLifecycle()
     val downloadingTrackId by trackActionsViewModel.downloadingTrackId.collectAsStateWithLifecycle()
@@ -171,6 +174,14 @@ fun HomeScreen(
                                         )
                                         onTrackSelected(asTrack, emptyList())
                                     }
+                                )
+                            }
+                        }
+                        if (index == 0 && recentAlbums.isNotEmpty()) {
+                            item(key = "albumes_recientes") {
+                                RecentAlbumsSection(
+                                    albums = recentAlbums,
+                                    onAlbumClick = { album -> onAlbumSelected(album.albumId) }
                                 )
                             }
                         }

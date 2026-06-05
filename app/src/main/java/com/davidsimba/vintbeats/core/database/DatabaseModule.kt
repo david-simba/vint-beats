@@ -6,6 +6,7 @@ import com.davidsimba.vintbeats.feature.library.data.playlist.PlaylistDao
 import com.davidsimba.vintbeats.feature.library.data.album.SavedAlbumDao
 import com.davidsimba.vintbeats.feature.library.data.artist.SavedArtistDao
 import com.davidsimba.vintbeats.feature.library.data.track.TrackDao
+import com.davidsimba.vintbeats.feature.home.data.RecentlyPlayedAlbumDao
 import com.davidsimba.vintbeats.feature.home.data.RecentlyPlayedDao
 import dagger.Module
 import dagger.Provides
@@ -22,7 +23,7 @@ object DatabaseModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): VintBeatsDatabase =
         Room.databaseBuilder(context, VintBeatsDatabase::class.java, "vintbeats.db")
-//            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration()
             .build()
 
     @Provides
@@ -39,4 +40,7 @@ object DatabaseModule {
 
     @Provides
     fun provideRecentlyPlayedDao(db: VintBeatsDatabase): RecentlyPlayedDao = db.recentlyPlayedDao()
+
+    @Provides
+    fun provideRecentlyPlayedAlbumDao(db: VintBeatsDatabase): RecentlyPlayedAlbumDao = db.recentlyPlayedAlbumDao()
 }

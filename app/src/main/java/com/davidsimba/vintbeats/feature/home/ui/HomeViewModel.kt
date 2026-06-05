@@ -7,8 +7,10 @@ import com.davidsimba.vintbeats.core.youtube.ArtistInput
 import com.davidsimba.vintbeats.core.youtube.BackendService
 import com.davidsimba.vintbeats.core.util.toHighRes
 import com.davidsimba.vintbeats.feature.home.data.HomeFeedCache
+import com.davidsimba.vintbeats.feature.home.data.RecentlyPlayedAlbumsRepository
 import com.davidsimba.vintbeats.feature.home.data.RecentlyPlayedRepository
 import com.davidsimba.vintbeats.feature.home.domain.ArtistRadioItem
+import com.davidsimba.vintbeats.feature.home.domain.RecentAlbum
 import com.davidsimba.vintbeats.feature.home.domain.RecentTrack
 import com.davidsimba.vintbeats.feature.home.domain.HomeSectionPlaylists
 import com.davidsimba.vintbeats.feature.home.domain.PlaylistItem
@@ -42,6 +44,7 @@ class HomeViewModel @Inject constructor(
     private val backendService: BackendService,
     private val homeFeedCache: HomeFeedCache,
     private val recentlyPlayedRepository: RecentlyPlayedRepository,
+    private val recentlyPlayedAlbumsRepository: RecentlyPlayedAlbumsRepository,
     onboardingPreferences: OnboardingPreferences,
 ) : ViewModel() {
 
@@ -81,6 +84,9 @@ class HomeViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
 
     val recentTracks: StateFlow<List<RecentTrack>> = recentlyPlayedRepository.getRecent()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val recentAlbums: StateFlow<List<RecentAlbum>> = recentlyPlayedAlbumsRepository.getRecent()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun loadFeed() {

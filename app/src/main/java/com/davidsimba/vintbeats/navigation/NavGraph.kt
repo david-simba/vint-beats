@@ -199,6 +199,9 @@ fun NavGraph(
                         onPlaylistSelected = { id, thumbnailUrl, artistId, artistName ->
                             navController.navigate(Screen.Playlist.route(id, thumbnailUrl, artistId, artistName))
                         },
+                        onAlbumSelected = { id ->
+                            navController.navigate(Screen.Album.route(id))
+                        },
                         onRadioSelected = { radio ->
                             if (radio.tracks.isNotEmpty()) {
                                 playbackViewModel.playTrack(

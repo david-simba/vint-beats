@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.album.data.AlbumRepository
+import com.davidsimba.vintbeats.feature.home.data.RecentlyPlayedAlbumsRepository
 import com.davidsimba.vintbeats.feature.library.domain.album.SavedAlbumRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +18,7 @@ import javax.inject.Inject
 class AlbumViewModel @Inject constructor(
     private val repository: AlbumRepository,
     private val savedAlbumRepository: SavedAlbumRepository,
+    private val recentAlbumsRepository: RecentlyPlayedAlbumsRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -41,6 +43,11 @@ class AlbumViewModel @Inject constructor(
                 }
                 .onFailure { _uiState.value = AlbumUiState.Error(it.message ?: "Failed to load album") }
         }
+    }
+
+    fun notifyPlayed() {
+        val album = (_uiState.value as? AlbumUiState.Success)?.album ?: return
+        viewModelScope.launch { recentAlbumsRepository.save(album) }
     }
 
     fun toggleSave() {
