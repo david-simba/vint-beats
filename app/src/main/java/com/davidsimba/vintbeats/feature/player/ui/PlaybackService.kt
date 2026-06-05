@@ -89,9 +89,24 @@ class PlaybackService : MediaSessionService() {
         )
     }
 
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        when (intent?.action) {
+            ACTION_PLAY_PAUSE -> if (player.isPlaying) player.pause() else player.play()
+            ACTION_SKIP_NEXT -> PlaybackEventBus.emit(PlaybackEvent.SkipNext)
+            ACTION_SKIP_PREVIOUS -> PlaybackEventBus.emit(PlaybackEvent.SkipPrevious)
+        }
+        return super.onStartCommand(intent, flags, startId)
+    }
+
     override fun onTaskRemoved(rootIntent: Intent?) {
         player.stop()
         stopSelf()
+    }
+
+    companion object {
+        const val ACTION_PLAY_PAUSE = "com.davidsimba.vintbeats.PLAY_PAUSE"
+        const val ACTION_SKIP_NEXT = "com.davidsimba.vintbeats.SKIP_NEXT"
+        const val ACTION_SKIP_PREVIOUS = "com.davidsimba.vintbeats.SKIP_PREVIOUS"
     }
 
     override fun onDestroy() {

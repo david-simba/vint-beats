@@ -23,6 +23,7 @@ import com.davidsimba.vintbeats.core.youtube.YouTubeQueueService
 import com.davidsimba.vintbeats.core.youtube.YouTubeStreamService
 import com.davidsimba.vintbeats.feature.home.data.RecentlyPlayedRepository
 import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
+import com.davidsimba.vintbeats.feature.player.widget.NowPlayingWidgetUpdater
 import com.davidsimba.vintbeats.feature.library.domain.track.TrackRepository
 import com.google.common.util.concurrent.ListenableFuture
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -53,6 +54,7 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
     private val queueService: YouTubeQueueService,
     private val sessionPreferences: PlayerSessionPreferences,
     private val recentlyPlayedRepository: RecentlyPlayedRepository,
+    private val widgetUpdater: NowPlayingWidgetUpdater,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -169,6 +171,10 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
                         progressJob?.cancel()
                     }
                 }
+                viewModelScope.launch {
+                    val track = buildCurrentTrack() ?: return@launch
+                    widgetUpdater.update(track.title, track.artist, track.albumImageUrl, isPlaying)
+                }
             }
 
             override fun onPlaybackStateChanged(playbackState: Int) {
@@ -228,6 +234,7 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
         }
         loadFavoriteStatus(track.id)
         viewModelScope.launch { recentlyPlayedRepository.save(track) }
+        viewModelScope.launch { widgetUpdater.update(track.title, track.artist, track.albumImageUrl, false) }
         viewModelScope.launch {
             sessionPreferences.save(
                 trackId = track.id,
@@ -300,6 +307,7 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
             _currentSavedTrack.value = saved
             loadFavoriteStatus(saved.trackId)
             viewModelScope.launch { recentlyPlayedRepository.save(saved) }
+            viewModelScope.launch { widgetUpdater.update(saved.trackTitle, saved.trackArtist, saved.trackThumbnailUrl, false) }
             viewModelScope.launch {
                 sessionPreferences.save(
                     trackId = saved.trackId,

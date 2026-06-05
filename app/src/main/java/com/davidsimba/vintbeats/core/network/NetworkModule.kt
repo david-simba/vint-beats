@@ -1,9 +1,12 @@
 package com.davidsimba.vintbeats.core.network
 
+import android.content.Context
+import coil.ImageLoader
 import com.davidsimba.vintbeats.BuildConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -45,4 +48,9 @@ object NetworkModule {
     @Singleton
     @Named("backendUrl")
     fun provideBackendUrl(): String = BuildConfig.BACKEND_URL
+
+    @Provides
+    @Singleton
+    fun provideImageLoader(@ApplicationContext context: Context): ImageLoader =
+        ImageLoader.Builder(context).build()
 }

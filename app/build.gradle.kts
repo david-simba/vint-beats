@@ -83,6 +83,8 @@ dependencies {
     implementation(libs.androidx.media3.database)
     implementation(libs.reorderable)
     implementation(libs.androidx.palette)
+    implementation(libs.glance.appwidget)
+    implementation(libs.glance.material3)
     implementation("com.github.TeamNewPipe:NewPipeExtractor:dev-SNAPSHOT")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
