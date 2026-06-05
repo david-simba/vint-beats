@@ -45,6 +45,7 @@ import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
 import com.davidsimba.vintbeats.feature.library.domain.track.subtitle
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
+import com.davidsimba.vintbeats.shared.theme.vintageBgGradient
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
 import com.davidsimba.vintbeats.shared.theme.VintageWhite
@@ -65,7 +66,7 @@ fun EditPlaylistScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(VintageBgDark)
+            .background(vintageBgGradient)
             .statusBarsPadding()
     ) {
         Row(

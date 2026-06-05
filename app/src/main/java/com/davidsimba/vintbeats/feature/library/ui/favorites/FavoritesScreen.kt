@@ -46,6 +46,7 @@ import com.davidsimba.vintbeats.shared.components.rememberScrollAppBarAlpha
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
+import com.davidsimba.vintbeats.shared.theme.vintageBgGradient
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,7 +70,7 @@ fun FavoritesScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             state = lazyListState,
-            modifier = Modifier.fillMaxSize().background(VintageBgDark)
+            modifier = Modifier.fillMaxSize().background(vintageBgGradient)
         ) {
             item {
                 CollectionHeader(

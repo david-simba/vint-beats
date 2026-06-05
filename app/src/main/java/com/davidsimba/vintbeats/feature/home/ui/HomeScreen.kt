@@ -35,6 +35,7 @@ import com.davidsimba.vintbeats.feature.home.ui.components.QuickMixSkeleton
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import com.davidsimba.vintbeats.shared.components.TrackOptionsBottomSheet
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
+import com.davidsimba.vintbeats.shared.theme.vintageBgGradient
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageWhite
 import kotlinx.coroutines.flow.filterNotNull
@@ -72,7 +73,7 @@ fun HomeScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(VintageBgDark)
+            .background(vintageBgGradient)
             .statusBarsPadding()
     ) {
         when (val state = uiState) {

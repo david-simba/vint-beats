@@ -56,6 +56,7 @@ import com.davidsimba.vintbeats.shared.components.cards.TrackCard
 import com.davidsimba.vintbeats.shared.components.rememberScrollAppBarAlpha
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
+import com.davidsimba.vintbeats.shared.theme.vintageBgGradient
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageOrangeLight
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
@@ -98,7 +99,7 @@ fun UserPlaylistScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             state = lazyListState,
-            modifier = Modifier.fillMaxSize().background(VintageBgDark),
+            modifier = Modifier.fillMaxSize().background(vintageBgGradient),
         ) {
             item {
                 val coverUri = playlist?.coverImagePath?.let { "file://$it" }
