@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.PlaylistAdd
+import androidx.compose.material.icons.rounded.Queue
 import androidx.compose.material.icons.rounded.DeleteOutline
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.FavoriteBorder
@@ -41,6 +42,7 @@ import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
 import com.davidsimba.vintbeats.feature.library.domain.track.subtitle
 import com.davidsimba.vintbeats.feature.library.domain.track.toTrack
+import com.davidsimba.vintbeats.shared.QueueController
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import com.davidsimba.vintbeats.shared.components.BottomSheet
 import com.davidsimba.vintbeats.shared.components.BottomSheetMenuItem
@@ -159,6 +161,16 @@ fun DownloadsScreen(
                 enabled = false,
                 onClick = {}
             )
+            if (savedTrack.trackId != playingTrackId) {
+                BottomSheetMenuItem(
+                    label = stringResource(R.string.action_add_to_queue),
+                    icon = Icons.Rounded.Queue,
+                    onClick = {
+                        QueueController.addToQueue(track)
+                        selectedTrack = null
+                    }
+                )
+            }
             BottomSheetMenuItem(
                 label = stringResource(R.string.action_remove_download),
                 icon = Icons.Rounded.DeleteOutline,

@@ -34,6 +34,7 @@ import com.davidsimba.vintbeats.feature.home.ui.components.QuickMixSection
 import com.davidsimba.vintbeats.feature.home.ui.components.QuickMixSkeleton
 import com.davidsimba.vintbeats.feature.home.ui.components.RecentAlbumsSection
 import com.davidsimba.vintbeats.feature.home.ui.components.RecentlyPlayedSection
+import com.davidsimba.vintbeats.shared.QueueController
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import com.davidsimba.vintbeats.shared.components.TrackOptionsBottomSheet
 import com.davidsimba.vintbeats.shared.theme.vintageBgGradient
@@ -204,6 +205,7 @@ fun HomeScreen(
             isFavorite = track.id in favoriteTrackIds,
             isDownloaded = track.id in downloadedTrackIds,
             isDownloading = downloadingTrackId == track.id,
+            isCurrentlyPlaying = track.id == playingTrackId,
             onDownload = {
                 trackActionsViewModel.downloadTrack(track)
                 selectedTrack = null
@@ -213,6 +215,10 @@ fun HomeScreen(
                 selectedTrack = null
             },
             onAddToPlaylist = {},
+            onAddToQueue = {
+                QueueController.addToQueue(track)
+                selectedTrack = null
+            },
             onDismiss = { selectedTrack = null }
         )
     }

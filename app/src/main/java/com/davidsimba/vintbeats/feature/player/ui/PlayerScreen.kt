@@ -25,7 +25,6 @@ import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.Equalizer
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.HeartBroken
-import androidx.compose.material.icons.rounded.Queue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.ui.res.stringResource
@@ -46,6 +45,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.shared.components.BottomSheetMenuItem
 import com.davidsimba.vintbeats.shared.components.BottomSheet
+import com.davidsimba.vintbeats.shared.QueueController
 import com.davidsimba.vintbeats.shared.components.TrackOptionsBottomSheet
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import kotlinx.coroutines.launch
@@ -314,12 +314,6 @@ fun PlayerScreen(
                     onClick = {}
                 )
                 BottomSheetMenuItem(
-                    label = stringResource(R.string.action_add_to_queue),
-                    icon = Icons.Rounded.Queue,
-                    enabled = false,
-                    onClick = {}
-                )
-                BottomSheetMenuItem(
                     label = stringResource(
                         if (showEqualizer) R.string.player_option_equalizer_hide
                         else R.string.player_option_equalizer_show
@@ -376,6 +370,10 @@ fun PlayerScreen(
                 selectedQueueTrack = null
             },
             onAddToPlaylist = {},
+            onAddToQueue = {
+                QueueController.addToQueue(track)
+                selectedQueueTrack = null
+            },
             onDismiss = { selectedQueueTrack = null }
         )
     }

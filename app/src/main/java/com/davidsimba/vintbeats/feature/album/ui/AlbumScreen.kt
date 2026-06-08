@@ -38,6 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.album.ui.components.AlbumTrackItem
+import com.davidsimba.vintbeats.shared.QueueController
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import com.davidsimba.vintbeats.shared.components.CollectionAppBar
 import com.davidsimba.vintbeats.shared.components.CollectionHeader
@@ -175,6 +176,10 @@ fun AlbumScreen(
                 selectedTrack = null
             },
             onAddToPlaylist = {},
+            onAddToQueue = {
+                QueueController.addToQueue(track)
+                selectedTrack = null
+            },
             onDismiss = { selectedTrack = null }
         )
     }

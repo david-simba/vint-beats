@@ -42,6 +42,7 @@ import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
 import com.davidsimba.vintbeats.feature.library.domain.track.subtitle
 import com.davidsimba.vintbeats.feature.library.domain.track.toTrack
+import com.davidsimba.vintbeats.shared.QueueController
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import com.davidsimba.vintbeats.shared.components.BottomSheet
 import com.davidsimba.vintbeats.shared.components.BottomSheetMenuItem
@@ -232,6 +233,7 @@ fun UserPlaylistScreen(
             isDownloaded = !savedTrack.audioFilePath.isNullOrEmpty() ||
                 savedTrack.trackId in downloadedTrackIds,
             isDownloading = downloadingTrackId == savedTrack.trackId,
+            isCurrentlyPlaying = savedTrack.trackId == playingTrackId,
             onDownload = {
                 trackActionsViewModel.downloadTrack(track)
                 selectedTrack = null
@@ -241,6 +243,10 @@ fun UserPlaylistScreen(
                 selectedTrack = null
             },
             onAddToPlaylist = {},
+            onAddToQueue = {
+                QueueController.addToQueue(track)
+                selectedTrack = null
+            },
             onDismiss = { selectedTrack = null }
         )
     }

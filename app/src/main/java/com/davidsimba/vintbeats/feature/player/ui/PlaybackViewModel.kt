@@ -16,6 +16,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.davidsimba.vintbeats.core.model.Track
+import com.davidsimba.vintbeats.shared.QueueController
 import com.davidsimba.vintbeats.shared.SnackbarController
 import com.davidsimba.vintbeats.shared.SnackbarEvent
 import com.davidsimba.vintbeats.core.youtube.LrcLibService
@@ -135,6 +136,15 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
                 when (event) {
                     PlaybackEvent.SkipNext -> skipToNext()
                     PlaybackEvent.SkipPrevious -> skipToPrevious()
+                }
+            }
+        }
+
+        viewModelScope.launch {
+            QueueController.events.collect { track ->
+                _queue.value = listOf(track) + _queue.value
+                if (_originalQueue.value.isNotEmpty()) {
+                    _originalQueue.value = listOf(track) + _originalQueue.value
                 }
             }
         }

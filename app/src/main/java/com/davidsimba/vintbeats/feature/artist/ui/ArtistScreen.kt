@@ -40,6 +40,7 @@ import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistAlbumsList
 import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistTopSongItem
 import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistTopSongsEmpty
+import com.davidsimba.vintbeats.shared.QueueController
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import com.davidsimba.vintbeats.shared.components.CollectionAppBar
 import com.davidsimba.vintbeats.shared.components.CollectionHeader
@@ -177,6 +178,10 @@ fun ArtistScreen(
                 selectedTrack = null
             },
             onAddToPlaylist = {},
+            onAddToQueue = {
+                QueueController.addToQueue(track)
+                selectedTrack = null
+            },
             onDismiss = { selectedTrack = null }
         )
     }

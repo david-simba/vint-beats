@@ -5,7 +5,6 @@ import androidx.compose.material.icons.automirrored.rounded.PlaylistAdd
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.HeartBroken
-import androidx.compose.material.icons.rounded.PlaylistAdd
 import androidx.compose.material.icons.rounded.Queue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -18,9 +17,11 @@ fun TrackOptionsBottomSheet(
     isFavorite: Boolean,
     isDownloaded: Boolean,
     isDownloading: Boolean,
+    isCurrentlyPlaying: Boolean = false,
     onDownload: () -> Unit,
     onToggleFavorite: () -> Unit,
     onAddToPlaylist: () -> Unit,
+    onAddToQueue: () -> Unit,
     onDismiss: () -> Unit
 ) {
     BottomSheet(onDismiss = onDismiss) {
@@ -48,11 +49,12 @@ fun TrackOptionsBottomSheet(
             enabled = false,
             onClick = onAddToPlaylist
         )
-        BottomSheetMenuItem(
-            label = stringResource(R.string.action_add_to_queue),
-            icon = Icons.Rounded.Queue,
-            enabled = false,
-            onClick = {}
-        )
+        if (!isCurrentlyPlaying) {
+            BottomSheetMenuItem(
+                label = stringResource(R.string.action_add_to_queue),
+                icon = Icons.Rounded.Queue,
+                onClick = onAddToQueue
+            )
+        }
     }
 }
