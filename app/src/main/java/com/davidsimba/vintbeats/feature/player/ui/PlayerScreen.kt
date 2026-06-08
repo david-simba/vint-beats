@@ -362,6 +362,7 @@ fun PlayerScreen(
                         }
                     },
                     onReorder = viewModel::reorderQueue,
+                    onRemove = viewModel::removeFromQueue,
                 )
             }
         }

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.PlaylistPlay
+import androidx.compose.material.icons.filled.Ballot
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Icon
@@ -38,7 +39,7 @@ fun PlayerTrackInfo(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(start = 24.dp, end = 8.dp, bottom = 8.dp),
+            .padding(start = 24.dp, end = 16.dp, bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
@@ -75,7 +76,7 @@ fun PlayerTrackInfo(
                 modifier = Modifier.size(40.dp)
             ) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Rounded.PlaylistPlay,
+                    imageVector = Icons.Default.Ballot,
                     contentDescription = "Queue",
                     tint = VintageWhite,
                     modifier = Modifier.size(28.dp)

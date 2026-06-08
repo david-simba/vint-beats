@@ -384,6 +384,13 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
         _queue.value = _queue.value.toMutableList().apply { add(to, removeAt(from)) }
     }
 
+    fun removeFromQueue(track: Track) {
+        _queue.value = _queue.value.filter { it.id != track.id }
+        if (_originalQueue.value.isNotEmpty()) {
+            _originalQueue.value = _originalQueue.value.filter { it.id != track.id }
+        }
+    }
+
     fun skipToQueueTrack(track: Track) {
         val queue = _queue.value
         val index = queue.indexOf(track)
