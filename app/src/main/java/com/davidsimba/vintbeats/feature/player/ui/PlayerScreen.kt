@@ -25,6 +25,7 @@ import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.Equalizer
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.HeartBroken
+import androidx.compose.material.icons.rounded.Queue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.ui.res.stringResource
@@ -309,6 +310,12 @@ fun PlayerScreen(
                 BottomSheetMenuItem(
                     label = stringResource(R.string.action_add_to_playlist),
                     icon = Icons.AutoMirrored.Rounded.PlaylistAdd,
+                    enabled = false,
+                    onClick = {}
+                )
+                BottomSheetMenuItem(
+                    label = stringResource(R.string.action_add_to_queue),
+                    icon = Icons.Rounded.Queue,
                     enabled = false,
                     onClick = {}
                 )

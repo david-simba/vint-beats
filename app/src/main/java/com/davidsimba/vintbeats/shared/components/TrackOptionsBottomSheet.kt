@@ -6,6 +6,7 @@ import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.HeartBroken
 import androidx.compose.material.icons.rounded.PlaylistAdd
+import androidx.compose.material.icons.rounded.Queue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
@@ -46,6 +47,12 @@ fun TrackOptionsBottomSheet(
             icon = Icons.AutoMirrored.Rounded.PlaylistAdd,
             enabled = false,
             onClick = onAddToPlaylist
+        )
+        BottomSheetMenuItem(
+            label = stringResource(R.string.action_add_to_queue),
+            icon = Icons.Rounded.Queue,
+            enabled = false,
+            onClick = {}
         )
     }
 }

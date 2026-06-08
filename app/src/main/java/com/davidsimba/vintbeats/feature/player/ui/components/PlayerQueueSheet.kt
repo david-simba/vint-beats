@@ -46,13 +46,13 @@ import sh.calvin.reorderable.ReorderableColumn
 
 @Composable
 fun PlayerQueueSheet(
+    modifier: Modifier = Modifier,
     currentTrack: Track?,
     queue: List<Track>,
     isPlaying: Boolean,
     onTrackClick: (Track) -> Unit,
     onReorder: (from: Int, to: Int) -> Unit,
     onMenuClick: ((Track) -> Unit)? = null,
-    modifier: Modifier = Modifier
 ) {
     var localQueue by remember { mutableStateOf(queue) }
     val scrollState = rememberScrollState()

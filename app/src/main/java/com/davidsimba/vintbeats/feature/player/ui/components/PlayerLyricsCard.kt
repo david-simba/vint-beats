@@ -80,7 +80,7 @@ fun PlayerLyricsCard(
     LaunchedEffect(currentIndex, itemYPositions.size) {
         if (currentIndex < 0) return@LaunchedEffect
         val targetY = itemYPositions[currentIndex] ?: return@LaunchedEffect
-        val offset = (targetY - boxHeightPx / 3).coerceAtLeast(0)
+        val offset = (targetY - boxHeightPx / 4).coerceAtLeast(0)
         if (!initialScrollDone) {
             scrollState.scrollTo(offset)
             initialScrollDone = true

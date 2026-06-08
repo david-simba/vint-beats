@@ -79,7 +79,7 @@ fun PlayerLyricsScreen(
     LaunchedEffect(currentIndex) {
         if (currentIndex >= 0 && !listState.isScrollInProgress) {
             listState.animateScrollToItem(
-                index = (currentIndex - 2).coerceAtLeast(0)
+                index = (currentIndex - 1).coerceAtLeast(0)
             )
         }
     }

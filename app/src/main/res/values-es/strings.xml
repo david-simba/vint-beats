@@ -98,6 +98,7 @@
     <string name="action_remove_favorite">Quitar de favoritos</string>
     <string name="action_add_favorite">Agregar a favoritos</string>
     <string name="action_add_to_playlist">Agregar a playlist</string>
+    <string name="action_add_to_queue">Agregar a la cola</string>
 
     <!-- Home sections -->
     <string name="home_seleccion_rapida">Para ti</string>
