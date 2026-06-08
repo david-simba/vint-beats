@@ -4,14 +4,11 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,10 +22,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.feature.search.ui.components.SearchField
+import com.davidsimba.vintbeats.shared.components.VintCheckbox
 import com.davidsimba.vintbeats.shared.components.cards.TrackCard
 import com.davidsimba.vintbeats.shared.theme.VintageGray
-import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
-import com.davidsimba.vintbeats.shared.theme.VintageOrangeLight
 
 @Composable
 fun AddSongsScreen(
@@ -79,17 +75,10 @@ fun AddSongsScreen(
                         thumbnailUrl = track.albumImageUrl,
                         onClick = null,
                         trailingContent = {
-                            IconButton(
-                                onClick = { if (!isAdded) viewModel.addTrack(track) },
-                                modifier = Modifier.size(36.dp)
-                            ) {
-                                Icon(
-                                    imageVector = if (isAdded) Icons.Rounded.CheckCircle else Icons.Rounded.Add,
-                                    contentDescription = null,
-                                    tint = if (isAdded) VintageOrangeLight else VintageGrayMid,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            }
+                            VintCheckbox(
+                                checked = isAdded,
+                                onCheckedChange = { if (!isAdded) viewModel.addTrack(track) }
+                            )
                         }
                     )
                 }

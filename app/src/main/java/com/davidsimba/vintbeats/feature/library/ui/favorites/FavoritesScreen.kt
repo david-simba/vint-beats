@@ -37,6 +37,7 @@ import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
 import com.davidsimba.vintbeats.feature.library.domain.track.subtitle
 import com.davidsimba.vintbeats.feature.library.domain.track.toTrack
+import com.davidsimba.vintbeats.shared.AddToPlaylistController
 import com.davidsimba.vintbeats.shared.QueueController
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import com.davidsimba.vintbeats.shared.components.CollectionAppBar
@@ -53,6 +54,7 @@ import com.davidsimba.vintbeats.shared.theme.vintageBgGradient
 fun FavoritesScreen(
     onBack: () -> Unit,
     onTrackClick: (Int) -> Unit,
+    onNavigateToAddToPlaylist: () -> Unit = {},
     playingTrackId: String? = null,
     isTrackPlaying: Boolean = false,
     viewModel: FavoritesViewModel = hiltViewModel(),
@@ -155,7 +157,11 @@ fun FavoritesScreen(
                 trackActionsViewModel.toggleFavorite(track)
                 selectedTrack = null
             },
-            onAddToPlaylist = {},
+            onAddToPlaylist = {
+                AddToPlaylistController.pendingTrack = track
+                selectedTrack = null
+                onNavigateToAddToPlaylist()
+            },
             onAddToQueue = {
                 QueueController.addToQueue(track)
                 selectedTrack = null

@@ -40,6 +40,7 @@ import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistAlbumsList
 import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistTopSongItem
 import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistTopSongsEmpty
+import com.davidsimba.vintbeats.shared.AddToPlaylistController
 import com.davidsimba.vintbeats.shared.QueueController
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import com.davidsimba.vintbeats.shared.components.CollectionAppBar
@@ -60,6 +61,7 @@ fun ArtistScreen(
     onTrackSelected: (Track) -> Unit,
     onPlayArtist: (List<Track>) -> Unit,
     onAlbumSelected: (Album) -> Unit,
+    onNavigateToAddToPlaylist: () -> Unit = {},
     viewModel: ArtistViewModel = hiltViewModel(),
     trackActionsViewModel: TrackActionsViewModel = hiltViewModel()
 ) {
@@ -177,7 +179,11 @@ fun ArtistScreen(
                 trackActionsViewModel.toggleFavorite(track)
                 selectedTrack = null
             },
-            onAddToPlaylist = {},
+            onAddToPlaylist = {
+                AddToPlaylistController.pendingTrack = track
+                selectedTrack = null
+                onNavigateToAddToPlaylist()
+            },
             onAddToQueue = {
                 QueueController.addToQueue(track)
                 selectedTrack = null

@@ -38,6 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.album.ui.components.AlbumTrackItem
+import com.davidsimba.vintbeats.shared.AddToPlaylistController
 import com.davidsimba.vintbeats.shared.QueueController
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import com.davidsimba.vintbeats.shared.components.CollectionAppBar
@@ -56,6 +57,7 @@ fun AlbumScreen(
     onBack: () -> Unit,
     onTrackSelected: (Track, List<Track>) -> Unit,
     onPlayAlbum: (List<Track>) -> Unit,
+    onNavigateToAddToPlaylist: () -> Unit = {},
     viewModel: AlbumViewModel = hiltViewModel(),
     trackActionsViewModel: TrackActionsViewModel = hiltViewModel()
 ) {
@@ -175,7 +177,11 @@ fun AlbumScreen(
                 trackActionsViewModel.toggleFavorite(track)
                 selectedTrack = null
             },
-            onAddToPlaylist = {},
+            onAddToPlaylist = {
+                AddToPlaylistController.pendingTrack = track
+                selectedTrack = null
+                onNavigateToAddToPlaylist()
+            },
             onAddToQueue = {
                 QueueController.addToQueue(track)
                 selectedTrack = null

@@ -45,6 +45,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.shared.components.BottomSheetMenuItem
 import com.davidsimba.vintbeats.shared.components.BottomSheet
+import com.davidsimba.vintbeats.shared.AddToPlaylistController
 import com.davidsimba.vintbeats.shared.QueueController
 import com.davidsimba.vintbeats.shared.components.TrackOptionsBottomSheet
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
@@ -69,6 +70,7 @@ import com.davidsimba.vintbeats.shared.theme.VintageRedLight
 fun PlayerScreen(
     onBack: () -> Unit,
     onArtistSelected: (browseId: String) -> Unit,
+    onNavigateToAddToPlaylist: () -> Unit = {},
     viewModel: PlaybackViewModel,
     trackActionsViewModel: TrackActionsViewModel = hiltViewModel()
 ) {
@@ -310,8 +312,14 @@ fun PlayerScreen(
                 BottomSheetMenuItem(
                     label = stringResource(R.string.action_add_to_playlist),
                     icon = Icons.AutoMirrored.Rounded.PlaylistAdd,
-                    enabled = false,
-                    onClick = {}
+                    enabled = trackForCard != null,
+                    onClick = {
+                        scope.launch { sheetState.hide() }.invokeOnCompletion {
+                            showOptionsSheet = false
+                            trackForCard?.let { AddToPlaylistController.pendingTrack = it }
+                            onNavigateToAddToPlaylist()
+                        }
+                    }
                 )
                 BottomSheetMenuItem(
                     label = stringResource(
@@ -369,7 +377,11 @@ fun PlayerScreen(
                 trackActionsViewModel.toggleFavorite(track)
                 selectedQueueTrack = null
             },
-            onAddToPlaylist = {},
+            onAddToPlaylist = {
+                AddToPlaylistController.pendingTrack = track
+                selectedQueueTrack = null
+                onNavigateToAddToPlaylist()
+            },
             onAddToQueue = {
                 QueueController.addToQueue(track)
                 selectedQueueTrack = null

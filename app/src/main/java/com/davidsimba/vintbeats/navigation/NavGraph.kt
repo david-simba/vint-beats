@@ -46,6 +46,7 @@ import androidx.navigation.navArgument
 import com.davidsimba.vintbeats.feature.album.ui.AlbumScreen
 import com.davidsimba.vintbeats.feature.artist.ui.ArtistScreen
 import com.davidsimba.vintbeats.feature.library.ui.addsongs.AddSongsScreen
+import com.davidsimba.vintbeats.feature.library.ui.addtoplaylist.AddToPlaylistScreen
 import com.davidsimba.vintbeats.feature.onboarding.ui.OnboardingScreen
 import com.davidsimba.vintbeats.feature.library.ui.editplaylist.EditPlaylistScreen
 import com.davidsimba.vintbeats.feature.library.ui.createplaylist.CreatePlaylistScreen
@@ -79,6 +80,7 @@ private val bottomNavRoutes = setOf(
     Screen.UserPlaylist.route,
     Screen.AddSongs.route,
     Screen.EditPlaylist.route,
+    Screen.AddToPlaylist.route,
 )
 
 @Composable
@@ -214,6 +216,9 @@ fun NavGraph(
                             navController.navigate(Screen.Onboarding.route) {
                                 launchSingleTop = true
                             }
+                        },
+                        onNavigateToAddToPlaylist = {
+                            navController.navigate(Screen.AddToPlaylist.route)
                         }
                     )
                 }
@@ -302,6 +307,9 @@ fun NavGraph(
                         },
                         onAlbumSelected = { album ->
                             navController.navigate(Screen.Album.route(album.id))
+                        },
+                        onNavigateToAddToPlaylist = {
+                            navController.navigate(Screen.AddToPlaylist.route)
                         }
                     )
                 }
@@ -322,6 +330,9 @@ fun NavGraph(
                             if (tracks.isNotEmpty()) {
                                 playbackViewModel.playTrack(tracks.first(), newQueue = tracks.drop(1))
                             }
+                        },
+                        onNavigateToAddToPlaylist = {
+                            navController.navigate(Screen.AddToPlaylist.route)
                         }
                     )
                 }
@@ -336,6 +347,9 @@ fun NavGraph(
                         onBack = { navController.popBackStack() },
                         onArtistSelected = { browseId ->
                             navController.navigate(Screen.Artist.route(browseId))
+                        },
+                        onNavigateToAddToPlaylist = {
+                            navController.navigate(Screen.AddToPlaylist.route)
                         },
                         viewModel = playbackViewModel
                     )
@@ -364,6 +378,9 @@ fun NavGraph(
                             if (tracks.isNotEmpty()) {
                                 playbackViewModel.playTrack(tracks.first(), newQueue = tracks.drop(1))
                             }
+                        },
+                        onNavigateToAddToPlaylist = {
+                            navController.navigate(Screen.AddToPlaylist.route)
                         }
                     )
                 }
@@ -425,8 +442,11 @@ fun NavGraph(
                             }
                         },
                         onAddSongsClick = { navController.navigate(Screen.AddSongs.route(playlistId)) },
-                    onEditClick = { navController.navigate(Screen.EditPlaylist.route(playlistId)) },
-                    onEditInfoClick = { navController.navigate(Screen.CreatePlaylist.route(playlistId)) },
+                        onEditClick = { navController.navigate(Screen.EditPlaylist.route(playlistId)) },
+                        onEditInfoClick = { navController.navigate(Screen.CreatePlaylist.route(playlistId)) },
+                        onNavigateToAddToPlaylist = {
+                            navController.navigate(Screen.AddToPlaylist.route)
+                        }
                     )
                 }
                 composable(
@@ -450,6 +470,15 @@ fun NavGraph(
                     AddSongsScreen(onBack = { navController.popBackStack() })
                 }
                 composable(
+                    route = Screen.AddToPlaylist.route,
+                    enterTransition = { slideInHorizontally(animationSpec = tween(220), initialOffsetX = { it }) },
+                    exitTransition = { ExitTransition.None },
+                    popEnterTransition = { EnterTransition.None },
+                    popExitTransition = { slideOutHorizontally(animationSpec = tween(220), targetOffsetX = { it }) }
+                ) {
+                    AddToPlaylistScreen(onBack = { navController.popBackStack() })
+                }
+                composable(
                     route = Screen.Downloads.route,
                     enterTransition = { slideInHorizontally(animationSpec = tween(220), initialOffsetX = { it }) },
                     exitTransition = { ExitTransition.None },
@@ -460,7 +489,10 @@ fun NavGraph(
                         playingTrackId = playingTrackId,
                         isTrackPlaying = isTrackPlaying,
                         onBack = { navController.popBackStack() },
-                        onTrackClick = { id -> playbackViewModel.play(id) }
+                        onTrackClick = { id -> playbackViewModel.play(id) },
+                        onNavigateToAddToPlaylist = {
+                            navController.navigate(Screen.AddToPlaylist.route)
+                        }
                     )
                 }
                 composable(
@@ -474,7 +506,10 @@ fun NavGraph(
                         playingTrackId = playingTrackId,
                         isTrackPlaying = isTrackPlaying,
                         onBack = { navController.popBackStack() },
-                        onTrackClick = { id -> playbackViewModel.play(id) }
+                        onTrackClick = { id -> playbackViewModel.play(id) },
+                        onNavigateToAddToPlaylist = {
+                            navController.navigate(Screen.AddToPlaylist.route)
+                        }
                     )
                 }
             }

@@ -34,6 +34,7 @@ import com.davidsimba.vintbeats.feature.home.ui.components.QuickMixSection
 import com.davidsimba.vintbeats.feature.home.ui.components.QuickMixSkeleton
 import com.davidsimba.vintbeats.feature.home.ui.components.RecentAlbumsSection
 import com.davidsimba.vintbeats.feature.home.ui.components.RecentlyPlayedSection
+import com.davidsimba.vintbeats.shared.AddToPlaylistController
 import com.davidsimba.vintbeats.shared.QueueController
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import com.davidsimba.vintbeats.shared.components.TrackOptionsBottomSheet
@@ -53,6 +54,7 @@ fun HomeScreen(
     onAlbumSelected: (id: String) -> Unit = {},
     onRadioSelected: (ArtistRadioItem) -> Unit = {},
     onNavigateToOnboarding: () -> Unit = {},
+    onNavigateToAddToPlaylist: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel(),
     trackActionsViewModel: TrackActionsViewModel = hiltViewModel(),
 ) {
@@ -214,7 +216,11 @@ fun HomeScreen(
                 trackActionsViewModel.toggleFavorite(track)
                 selectedTrack = null
             },
-            onAddToPlaylist = {},
+            onAddToPlaylist = {
+                AddToPlaylistController.pendingTrack = track
+                selectedTrack = null
+                onNavigateToAddToPlaylist()
+            },
             onAddToQueue = {
                 QueueController.addToQueue(track)
                 selectedTrack = null

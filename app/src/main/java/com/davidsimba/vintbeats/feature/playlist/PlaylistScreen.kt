@@ -36,6 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.core.model.Track
+import com.davidsimba.vintbeats.shared.AddToPlaylistController
 import com.davidsimba.vintbeats.shared.QueueController
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import com.davidsimba.vintbeats.shared.components.CollectionAppBar
@@ -54,6 +55,7 @@ fun PlaylistScreen(
     onBack: () -> Unit,
     onTrackSelected: (Track, List<Track>) -> Unit,
     onPlayAll: (List<Track>) -> Unit,
+    onNavigateToAddToPlaylist: () -> Unit = {},
     playingTrackId: String? = null,
     isTrackPlaying: Boolean = false,
     viewModel: PlaylistViewModel = hiltViewModel(),
@@ -169,7 +171,11 @@ fun PlaylistScreen(
                 trackActionsViewModel.toggleFavorite(track)
                 selectedTrack = null
             },
-            onAddToPlaylist = {},
+            onAddToPlaylist = {
+                AddToPlaylistController.pendingTrack = track
+                selectedTrack = null
+                onNavigateToAddToPlaylist()
+            },
             onAddToQueue = {
                 QueueController.addToQueue(track)
                 selectedTrack = null
