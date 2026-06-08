@@ -20,8 +20,11 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.PlaylistAdd
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.Equalizer
+import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material.icons.rounded.HeartBroken
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.ui.res.stringResource
@@ -38,9 +41,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import androidx.activity.compose.BackHandler
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.shared.components.BottomSheetMenuItem
 import com.davidsimba.vintbeats.shared.components.BottomSheet
+import com.davidsimba.vintbeats.shared.components.TrackOptionsBottomSheet
+import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import kotlinx.coroutines.launch
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerBackground
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerControls
@@ -62,7 +68,8 @@ import com.davidsimba.vintbeats.shared.theme.VintageRedLight
 fun PlayerScreen(
     onBack: () -> Unit,
     onArtistSelected: (browseId: String) -> Unit,
-    viewModel: PlaybackViewModel
+    viewModel: PlaybackViewModel,
+    trackActionsViewModel: TrackActionsViewModel = hiltViewModel()
 ) {
     val currentSavedTrack by viewModel.currentSavedTrack.collectAsStateWithLifecycle()
     val unsavedTrack by viewModel.unsavedTrack.collectAsStateWithLifecycle()
@@ -75,9 +82,14 @@ fun PlayerScreen(
     val queue by viewModel.queue.collectAsStateWithLifecycle()
     val history by viewModel.history.collectAsStateWithLifecycle()
 
+    val favoriteTrackIds by trackActionsViewModel.favoriteTrackIds.collectAsStateWithLifecycle()
+    val downloadedTrackIds by trackActionsViewModel.downloadedTrackIds.collectAsStateWithLifecycle()
+    val downloadingTrackId by trackActionsViewModel.downloadingTrackId.collectAsStateWithLifecycle()
+
     var showOptionsSheet by remember { mutableStateOf(false) }
     var showQueueSheet by remember { mutableStateOf(false) }
     var showLyricsScreen by remember { mutableStateOf(false) }
+    var selectedQueueTrack by remember { mutableStateOf<Track?>(null) }
     val showEqualizer by PlayerPreferences.equalizerEnabled.collectAsStateWithLifecycle()
 
     BackHandler(enabled = showLyricsScreen) { showLyricsScreen = false }
@@ -284,6 +296,24 @@ fun PlayerScreen(
                 }
                 BottomSheetMenuItem(
                     label = stringResource(
+                        if (isFavorite) R.string.action_remove_favorite else R.string.action_add_favorite
+                    ),
+                    icon = if (isFavorite) Icons.Rounded.HeartBroken else Icons.Rounded.FavoriteBorder,
+                    onClick = {
+                        scope.launch { sheetState.hide() }.invokeOnCompletion {
+                            showOptionsSheet = false
+                            viewModel.toggleFavorite()
+                        }
+                    }
+                )
+                BottomSheetMenuItem(
+                    label = stringResource(R.string.action_add_to_playlist),
+                    icon = Icons.AutoMirrored.Rounded.PlaylistAdd,
+                    enabled = false,
+                    onClick = {}
+                )
+                BottomSheetMenuItem(
+                    label = stringResource(
                         if (showEqualizer) R.string.player_option_equalizer_hide
                         else R.string.player_option_equalizer_show
                     ),
@@ -313,9 +343,33 @@ fun PlayerScreen(
                             viewModel.skipToQueueTrack(track)
                         }
                     },
-                    onReorder = viewModel::reorderQueue
+                    onReorder = viewModel::reorderQueue,
+                    onMenuClick = { track ->
+                        scope.launch { queueSheetState.hide() }.invokeOnCompletion {
+                            showQueueSheet = false
+                            selectedQueueTrack = track
+                        }
+                    }
                 )
             }
         }
+    }
+
+    selectedQueueTrack?.let { track ->
+        TrackOptionsBottomSheet(
+            isFavorite = track.id in favoriteTrackIds,
+            isDownloaded = track.id in downloadedTrackIds,
+            isDownloading = downloadingTrackId == track.id,
+            onDownload = {
+                trackActionsViewModel.downloadTrack(track)
+                selectedQueueTrack = null
+            },
+            onToggleFavorite = {
+                trackActionsViewModel.toggleFavorite(track)
+                selectedQueueTrack = null
+            },
+            onAddToPlaylist = {},
+            onDismiss = { selectedQueueTrack = null }
+        )
     }
 }
