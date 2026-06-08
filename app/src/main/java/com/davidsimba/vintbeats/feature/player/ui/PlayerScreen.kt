@@ -42,12 +42,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import androidx.activity.compose.BackHandler
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.shared.components.BottomSheetMenuItem
 import com.davidsimba.vintbeats.shared.components.BottomSheet
 import com.davidsimba.vintbeats.shared.AddToPlaylistController
-import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import kotlinx.coroutines.launch
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerBackground
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerControls
@@ -72,7 +70,6 @@ fun PlayerScreen(
     onNavigateToAddToPlaylist: () -> Unit = {},
     onPlayingFromClick: (() -> Unit)? = null,
     viewModel: PlaybackViewModel,
-    trackActionsViewModel: TrackActionsViewModel = hiltViewModel()
 ) {
     val currentSavedTrack by viewModel.currentSavedTrack.collectAsStateWithLifecycle()
     val unsavedTrack by viewModel.unsavedTrack.collectAsStateWithLifecycle()
