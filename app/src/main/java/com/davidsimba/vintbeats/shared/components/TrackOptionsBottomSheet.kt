@@ -46,7 +46,6 @@ fun TrackOptionsBottomSheet(
         BottomSheetMenuItem(
             label = stringResource(R.string.action_add_to_playlist),
             icon = Icons.AutoMirrored.Rounded.PlaylistAdd,
-            enabled = false,
             onClick = onAddToPlaylist
         )
         if (!isCurrentlyPlaying) {

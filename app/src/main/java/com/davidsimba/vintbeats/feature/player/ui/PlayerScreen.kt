@@ -46,8 +46,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.shared.components.BottomSheetMenuItem
 import com.davidsimba.vintbeats.shared.components.BottomSheet
 import com.davidsimba.vintbeats.shared.AddToPlaylistController
-import com.davidsimba.vintbeats.shared.QueueController
-import com.davidsimba.vintbeats.shared.components.TrackOptionsBottomSheet
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import kotlinx.coroutines.launch
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerBackground
@@ -84,12 +82,10 @@ fun PlayerScreen(
     val syncedLyrics by viewModel.syncedLyrics.collectAsStateWithLifecycle()
     val isLoadingLyrics by viewModel.isLoadingLyrics.collectAsStateWithLifecycle()
     val queue by viewModel.queue.collectAsStateWithLifecycle()
+    val isQueueLoading by viewModel.isQueueLoading.collectAsStateWithLifecycle()
     val history by viewModel.history.collectAsStateWithLifecycle()
 
     val playingFrom by viewModel.playingFrom.collectAsStateWithLifecycle()
-    val favoriteTrackIds by trackActionsViewModel.favoriteTrackIds.collectAsStateWithLifecycle()
-    val downloadedTrackIds by trackActionsViewModel.downloadedTrackIds.collectAsStateWithLifecycle()
-    val downloadingTrackId by trackActionsViewModel.downloadingTrackId.collectAsStateWithLifecycle()
 
     var showOptionsSheet by remember { mutableStateOf(false) }
     var showQueueSheet by remember { mutableStateOf(false) }
@@ -349,6 +345,7 @@ fun PlayerScreen(
                     currentTrack = trackForCard,
                     queue = queue,
                     isPlaying = isPlaying,
+                    isQueueLoading = isQueueLoading,
                     onTrackClick = { track ->
                         scope.launch { queueSheetState.hide() }.invokeOnCompletion {
                             showQueueSheet = false

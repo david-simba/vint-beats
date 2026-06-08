@@ -48,6 +48,7 @@ fun PlayerQueueSheet(
     currentTrack: Track?,
     queue: List<Track>,
     isPlaying: Boolean,
+    isQueueLoading: Boolean = false,
     onTrackClick: (Track) -> Unit,
     onReorder: (from: Int, to: Int) -> Unit,
 ) {
@@ -83,11 +84,13 @@ fun PlayerQueueSheet(
         }
 
         if (localQueue.isEmpty()) {
-            Text(
-                text = stringResource(R.string.queue_loading),
-                color = VintageWhite.copy(alpha = 0.4f),
-                fontSize = 14.sp
-            )
+            if (isQueueLoading) {
+                Text(
+                    text = stringResource(R.string.queue_loading),
+                    color = VintageWhite.copy(alpha = 0.4f),
+                    fontSize = 14.sp
+                )
+            }
         } else {
             ReorderableColumn(
                 list = localQueue,
@@ -164,7 +167,7 @@ private fun QueueTrackRow(
             )
         } else {
             Text(
-                text = track.durationText ?: "",
+                text = track.durationText,
                 color = VintageGrayMid,
                 fontSize = 11.sp
             )

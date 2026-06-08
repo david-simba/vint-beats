@@ -90,6 +90,9 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
     private val _queue = MutableStateFlow<List<Track>>(emptyList())
     val queue: StateFlow<List<Track>> = _queue.asStateFlow()
 
+    private val _isQueueLoading = MutableStateFlow(false)
+    val isQueueLoading: StateFlow<Boolean> = _isQueueLoading.asStateFlow()
+
     private val _history = MutableStateFlow<List<Track>>(emptyList())
     val history: StateFlow<List<Track>> = _history.asStateFlow()
 
@@ -270,7 +273,11 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
             }
         }
         if (newQueue == null) {
-            queueFetchJob = viewModelScope.launch { _queue.value = queueService.getUpNextTracks(track.id) }
+            _isQueueLoading.value = true
+            queueFetchJob = viewModelScope.launch {
+                _queue.value = queueService.getUpNextTracks(track.id)
+                _isQueueLoading.value = false
+            }
         }
         playbackJob = viewModelScope.launch {
             _playerState.value = PlayerState.Loading
