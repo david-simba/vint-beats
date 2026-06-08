@@ -39,6 +39,7 @@ import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.album.ui.components.AlbumTrackItem
 import com.davidsimba.vintbeats.shared.AddToPlaylistController
+import com.davidsimba.vintbeats.shared.CollectionPlaybackState
 import com.davidsimba.vintbeats.shared.QueueController
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import com.davidsimba.vintbeats.shared.components.CollectionAppBar
@@ -58,6 +59,7 @@ fun AlbumScreen(
     onTrackSelected: (Track, List<Track>) -> Unit,
     onPlayAlbum: (List<Track>) -> Unit,
     onNavigateToAddToPlaylist: () -> Unit = {},
+    playbackState: CollectionPlaybackState = CollectionPlaybackState(),
     viewModel: AlbumViewModel = hiltViewModel(),
     trackActionsViewModel: TrackActionsViewModel = hiltViewModel()
 ) {
@@ -91,6 +93,7 @@ fun AlbumScreen(
             }
 
             is AlbumUiState.Success -> {
+                val trackIds = state.album.tracks.map { it.id }
                 LazyColumn(state = lazyListState, modifier = Modifier.fillMaxSize().background(VintageBgDark)) {
                     item {
                         CollectionHeader(
@@ -101,8 +104,10 @@ fun AlbumScreen(
                             }.ifBlank { null },
                             imageUrl = state.album.thumbnailUrl,
                             placeholderIcon = Icons.Rounded.Album,
+                            isPlaying = playbackState.isPlayingFrom(trackIds),
                             onPlayAll = if (state.album.tracks.isNotEmpty()) {
                                 {
+                                    playbackState.notifyPlaying(state.album.title)
                                     viewModel.notifyPlayed()
                                     onPlayAlbum(state.album.tracks)
                                 }
@@ -123,6 +128,7 @@ fun AlbumScreen(
                                         index = index + 1,
                                         track = track,
                                         onClick = {
+                                            playbackState.notifyPlaying(state.album.title)
                                             viewModel.notifyPlayed()
                                             onTrackSelected(track, state.album.tracks.drop(index + 1))
                                         },

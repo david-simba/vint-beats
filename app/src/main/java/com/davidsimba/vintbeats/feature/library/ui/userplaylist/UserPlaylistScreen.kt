@@ -43,6 +43,7 @@ import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
 import com.davidsimba.vintbeats.feature.library.domain.track.subtitle
 import com.davidsimba.vintbeats.feature.library.domain.track.toTrack
 import com.davidsimba.vintbeats.shared.AddToPlaylistController
+import com.davidsimba.vintbeats.shared.CollectionPlaybackState
 import com.davidsimba.vintbeats.shared.QueueController
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import com.davidsimba.vintbeats.shared.components.BottomSheet
@@ -72,9 +73,7 @@ fun UserPlaylistScreen(
     onEditClick: () -> Unit,
     onEditInfoClick: () -> Unit,
     onNavigateToAddToPlaylist: () -> Unit = {},
-    onSetPlayingFrom: ((String) -> Unit)? = null,
-    playingTrackId: String? = null,
-    isTrackPlaying: Boolean = false,
+    playbackState: CollectionPlaybackState = CollectionPlaybackState(),
     viewModel: UserPlaylistViewModel = hiltViewModel(),
     trackActionsViewModel: TrackActionsViewModel = hiltViewModel()
 ) {
@@ -92,8 +91,6 @@ fun UserPlaylistScreen(
     LaunchedEffect(isDeleted) {
         if (isDeleted) onBack()
     }
-
-    val isPlayingThisPlaylist = isTrackPlaying && playlist?.tracks?.any { it.trackId == playingTrackId } == true
 
     val title = playlist?.name ?: ""
     val subtitle = when {
@@ -115,10 +112,10 @@ fun UserPlaylistScreen(
                     imageUrl = coverUri,
                     placeholderIcon = Icons.Rounded.LibraryMusic,
                     iconTint = VintageOrangeLight,
-                    isPlaying = isPlayingThisPlaylist,
+                    isPlaying = playbackState.isPlayingFrom(playlist?.tracks?.map { it.trackId } ?: emptyList()),
                     onPlayAll = if (playlist?.tracks?.isNotEmpty() == true) {
                         {
-                            onSetPlayingFrom?.invoke(title)
+                            playbackState.notifyPlaying(title)
                             onPlayAll(playlist!!.tracks)
                         }
                     } else null,
@@ -172,10 +169,10 @@ fun UserPlaylistScreen(
                                 title = track.trackTitle,
                                 artist = track.subtitle(),
                                 thumbnailUrl = track.trackThumbnailUrl,
-                                isActive = track.trackId == playingTrackId,
-                                isPlaying = track.trackId == playingTrackId && isTrackPlaying,
+                                isActive = playbackState.isActive(track.trackId),
+                                isPlaying = playbackState.isPlaying(track.trackId),
                                 onClick = {
-                                    onSetPlayingFrom?.invoke(title)
+                                    playbackState.notifyPlaying(title)
                                     onTrackClick(track.id)
                                 },
                                 trailingContent = {
@@ -245,7 +242,7 @@ fun UserPlaylistScreen(
             isDownloaded = !savedTrack.audioFilePath.isNullOrEmpty() ||
                 savedTrack.trackId in downloadedTrackIds,
             isDownloading = downloadingTrackId == savedTrack.trackId,
-            isCurrentlyPlaying = savedTrack.trackId == playingTrackId,
+            isCurrentlyPlaying = playbackState.isActive(savedTrack.trackId),
             onDownload = {
                 trackActionsViewModel.downloadTrack(track)
                 selectedTrack = null

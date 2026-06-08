@@ -43,6 +43,7 @@ import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
 import com.davidsimba.vintbeats.feature.library.domain.track.subtitle
 import com.davidsimba.vintbeats.feature.library.domain.track.toTrack
 import com.davidsimba.vintbeats.shared.AddToPlaylistController
+import com.davidsimba.vintbeats.shared.CollectionPlaybackState
 import com.davidsimba.vintbeats.shared.QueueController
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import com.davidsimba.vintbeats.shared.components.BottomSheet
@@ -59,9 +60,9 @@ import com.davidsimba.vintbeats.shared.theme.vintageBgGradient
 fun DownloadsScreen(
     onBack: () -> Unit,
     onTrackClick: (Int) -> Unit,
+    onPlayAll: (List<SavedTrack>) -> Unit = {},
     onNavigateToAddToPlaylist: () -> Unit = {},
-    playingTrackId: String? = null,
-    isTrackPlaying: Boolean = false,
+    playbackState: CollectionPlaybackState = CollectionPlaybackState(),
     viewModel: DownloadsViewModel = hiltViewModel(),
     trackActionsViewModel: TrackActionsViewModel = hiltViewModel()
 ) {
@@ -84,7 +85,11 @@ fun DownloadsScreen(
                     title = stringResource(R.string.downloads_title),
                     subtitle = subtitle,
                     imageUrl = null,
-                    placeholderIcon = Icons.Rounded.Download
+                    placeholderIcon = Icons.Rounded.Download,
+                    isPlaying = playbackState.isPlayingFrom(downloads.map { it.trackId }),
+                    onPlayAll = if (downloads.isNotEmpty()) {
+                        { onPlayAll(downloads) }
+                    } else null
                 )
             }
             item {
@@ -111,8 +116,8 @@ fun DownloadsScreen(
                                 title = track.trackTitle,
                                 artist = track.subtitle(),
                                 thumbnailUrl = track.trackThumbnailUrl,
-                                isActive = track.trackId == playingTrackId,
-                                isPlaying = track.trackId == playingTrackId && isTrackPlaying,
+                                isActive = playbackState.isActive(track.trackId),
+                                isPlaying = playbackState.isPlaying(track.trackId),
                                 onClick = { onTrackClick(track.id) },
                                 trailingContent = {
                                     IconButton(
@@ -166,7 +171,7 @@ fun DownloadsScreen(
                     onNavigateToAddToPlaylist()
                 }
             )
-            if (savedTrack.trackId != playingTrackId) {
+            if (!playbackState.isActive(savedTrack.trackId)) {
                 BottomSheetMenuItem(
                     label = stringResource(R.string.action_add_to_queue),
                     icon = Icons.Rounded.Queue,

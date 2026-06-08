@@ -37,6 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.shared.AddToPlaylistController
+import com.davidsimba.vintbeats.shared.CollectionPlaybackState
 import com.davidsimba.vintbeats.shared.QueueController
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import com.davidsimba.vintbeats.shared.components.CollectionAppBar
@@ -56,9 +57,7 @@ fun PlaylistScreen(
     onTrackSelected: (Track, List<Track>) -> Unit,
     onPlayAll: (List<Track>) -> Unit,
     onNavigateToAddToPlaylist: () -> Unit = {},
-    onSetPlayingFrom: ((String) -> Unit)? = null,
-    playingTrackId: String? = null,
-    isTrackPlaying: Boolean = false,
+    playbackState: CollectionPlaybackState = CollectionPlaybackState(),
     viewModel: PlaylistViewModel = hiltViewModel(),
     trackActionsViewModel: TrackActionsViewModel = hiltViewModel()
 ) {
@@ -94,7 +93,6 @@ fun PlaylistScreen(
             is PlaylistUiState.Success -> {
                 val detail = state.detail
                 val subtitle = stringResource(R.string.playlist_count, detail.tracks.size)
-                val isPlayingThisPlaylist = isTrackPlaying && detail.tracks.any { it.id == playingTrackId }
 
                 LazyColumn(
                     state = lazyListState,
@@ -106,10 +104,10 @@ fun PlaylistScreen(
                             subtitle = subtitle,
                             imageUrl = detail.thumbnailUrl,
                             placeholderIcon = Icons.Rounded.LibraryMusic,
-                            isPlaying = isPlayingThisPlaylist,
+                            isPlaying = playbackState.isPlayingFrom(detail.tracks.map { it.id }),
                             onPlayAll = if (detail.tracks.isNotEmpty()) {
                                 {
-                                    onSetPlayingFrom?.invoke(detail.title)
+                                    playbackState.notifyPlaying(detail.title)
                                     onPlayAll(detail.tracks)
                                 }
                             } else null
@@ -128,10 +126,10 @@ fun PlaylistScreen(
                                     title = track.title,
                                     artist = track.artist,
                                     thumbnailUrl = track.albumImageUrl,
-                                    isActive = track.id == playingTrackId,
-                                    isPlaying = track.id == playingTrackId && isTrackPlaying,
+                                    isActive = playbackState.isActive(track.id),
+                                    isPlaying = playbackState.isPlaying(track.id),
                                     onClick = {
-                                        onSetPlayingFrom?.invoke(detail.title)
+                                        playbackState.notifyPlaying(detail.title)
                                         onTrackSelected(track, detail.tracks.drop(index + 1))
                                     },
                                     trailingContent = {
@@ -169,7 +167,7 @@ fun PlaylistScreen(
             isFavorite = track.id in favoriteTrackIds,
             isDownloaded = track.id in downloadedTrackIds,
             isDownloading = downloadingTrackId == track.id,
-            isCurrentlyPlaying = track.id == playingTrackId,
+            isCurrentlyPlaying = playbackState.isActive(track.id),
             onDownload = {
                 trackActionsViewModel.downloadTrack(track)
                 selectedTrack = null

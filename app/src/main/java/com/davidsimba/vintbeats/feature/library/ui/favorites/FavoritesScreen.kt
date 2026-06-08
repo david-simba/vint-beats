@@ -38,6 +38,7 @@ import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
 import com.davidsimba.vintbeats.feature.library.domain.track.subtitle
 import com.davidsimba.vintbeats.feature.library.domain.track.toTrack
 import com.davidsimba.vintbeats.shared.AddToPlaylistController
+import com.davidsimba.vintbeats.shared.CollectionPlaybackState
 import com.davidsimba.vintbeats.shared.QueueController
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import com.davidsimba.vintbeats.shared.components.CollectionAppBar
@@ -54,9 +55,9 @@ import com.davidsimba.vintbeats.shared.theme.vintageBgGradient
 fun FavoritesScreen(
     onBack: () -> Unit,
     onTrackClick: (Int) -> Unit,
+    onPlayAll: (List<SavedTrack>) -> Unit = {},
     onNavigateToAddToPlaylist: () -> Unit = {},
-    playingTrackId: String? = null,
-    isTrackPlaying: Boolean = false,
+    playbackState: CollectionPlaybackState = CollectionPlaybackState(),
     viewModel: FavoritesViewModel = hiltViewModel(),
     trackActionsViewModel: TrackActionsViewModel = hiltViewModel()
 ) {
@@ -82,7 +83,11 @@ fun FavoritesScreen(
                     subtitle = subtitle,
                     imageUrl = null,
                     placeholderIcon = Icons.Rounded.Favorite,
-                    iconTint = VintageRedLight
+                    iconTint = VintageRedLight,
+                    isPlaying = playbackState.isPlayingFrom(favorites.map { it.trackId }),
+                    onPlayAll = if (favorites.isNotEmpty()) {
+                        { onPlayAll(favorites) }
+                    } else null
                 )
             }
             item {
@@ -109,8 +114,8 @@ fun FavoritesScreen(
                                 title = track.trackTitle,
                                 artist = track.subtitle(),
                                 thumbnailUrl = track.trackThumbnailUrl,
-                                isActive = track.trackId == playingTrackId,
-                                isPlaying = track.trackId == playingTrackId && isTrackPlaying,
+                                isActive = playbackState.isActive(track.trackId),
+                                isPlaying = playbackState.isPlaying(track.trackId),
                                 onClick = { onTrackClick(track.id) },
                                 trailingContent = {
                                     IconButton(
@@ -148,7 +153,7 @@ fun FavoritesScreen(
             isDownloaded = !savedTrack.audioFilePath.isNullOrEmpty() ||
                 savedTrack.trackId in downloadedTrackIds,
             isDownloading = downloadingTrackId == savedTrack.trackId,
-            isCurrentlyPlaying = savedTrack.trackId == playingTrackId,
+            isCurrentlyPlaying = playbackState.isActive(savedTrack.trackId),
             onDownload = {
                 trackActionsViewModel.downloadTrack(track)
                 selectedTrack = null

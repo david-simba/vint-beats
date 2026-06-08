@@ -59,6 +59,7 @@ import com.davidsimba.vintbeats.feature.player.ui.PlaybackViewModel
 import com.davidsimba.vintbeats.feature.player.ui.PlayerScreen
 import com.davidsimba.vintbeats.feature.player.ui.PlayerState
 import com.davidsimba.vintbeats.feature.player.ui.PlayingFrom
+import com.davidsimba.vintbeats.shared.CollectionPlaybackState
 import com.davidsimba.vintbeats.feature.playlist.PlaylistScreen
 import com.davidsimba.vintbeats.feature.search.ui.SearchActiveScreen
 import com.davidsimba.vintbeats.feature.search.ui.SearchScreen
@@ -197,6 +198,7 @@ fun NavGraph(
                         playingTrackId = playingTrackId,
                         isTrackPlaying = isTrackPlaying,
                         onTrackSelected = { track, queue ->
+                            playbackViewModel.setPlayingFrom(null)
                             playbackViewModel.playTrack(track, newQueue = queue)
                         },
                         onPlaylistSelected = { id, thumbnailUrl, artistId, artistName ->
@@ -276,6 +278,7 @@ fun NavGraph(
                                 navController.popBackStack()
                             },
                             onTrackSelected = { track ->
+                                playbackViewModel.setPlayingFrom(null)
                                 playbackViewModel.playTrack(track)
                             },
                             onArtistSelected = { artist ->
@@ -299,10 +302,12 @@ fun NavGraph(
                     ArtistScreen(
                         onBack = { navController.popBackStack() },
                         onTrackSelected = { track ->
+                            playbackViewModel.setPlayingFrom(null)
                             playbackViewModel.playTrack(track)
                         },
                         onPlayArtist = { tracks ->
                             if (tracks.isNotEmpty()) {
+                                playbackViewModel.setPlayingFrom(null)
                                 playbackViewModel.playTrack(tracks.first(), newQueue = tracks.drop(1))
                             }
                         },
@@ -321,7 +326,8 @@ fun NavGraph(
                     exitTransition = { ExitTransition.None },
                     popEnterTransition = { EnterTransition.None },
                     popExitTransition = { slideOutHorizontally(animationSpec = tween(220), targetOffsetX = { it }) }
-                ) {
+                ) { backStackEntry ->
+                    val browseId = backStackEntry.arguments?.getString("browseId") ?: ""
                     AlbumScreen(
                         onBack = { navController.popBackStack() },
                         onTrackSelected = { track, queue ->
@@ -334,7 +340,14 @@ fun NavGraph(
                         },
                         onNavigateToAddToPlaylist = {
                             navController.navigate(Screen.AddToPlaylist.route)
-                        }
+                        },
+                        playbackState = CollectionPlaybackState(
+                            playingTrackId = playingTrackId,
+                            isTrackPlaying = isTrackPlaying,
+                            onSetPlayingFrom = { name ->
+                                playbackViewModel.setPlayingFrom(PlayingFrom(name, Screen.Album.route(browseId)))
+                            }
+                        ),
                     )
                 }
                 composable(
@@ -378,8 +391,6 @@ fun NavGraph(
                     val artistName = backStackEntry.arguments?.getString("artistName")
                     val playlistRoute = Screen.Playlist.route(playlistId, thumbnailUrl, artistId, artistName)
                     PlaylistScreen(
-                        playingTrackId = playingTrackId,
-                        isTrackPlaying = isTrackPlaying,
                         onBack = { navController.popBackStack() },
                         onTrackSelected = { track, queue ->
                             playbackViewModel.playTrack(track, newQueue = queue.filter { it.id != track.id })
@@ -392,9 +403,13 @@ fun NavGraph(
                         onNavigateToAddToPlaylist = {
                             navController.navigate(Screen.AddToPlaylist.route)
                         },
-                        onSetPlayingFrom = { name ->
-                            playbackViewModel.setPlayingFrom(PlayingFrom(name, playlistRoute))
-                        }
+                        playbackState = CollectionPlaybackState(
+                            playingTrackId = playingTrackId,
+                            isTrackPlaying = isTrackPlaying,
+                            onSetPlayingFrom = { name ->
+                                playbackViewModel.setPlayingFrom(PlayingFrom(name, playlistRoute))
+                            }
+                        ),
                     )
                 }
                 composable(
@@ -445,8 +460,6 @@ fun NavGraph(
                 ) {
                     val playlistId = it.arguments?.getInt("playlistId") ?: return@composable
                     UserPlaylistScreen(
-                        playingTrackId = playingTrackId,
-                        isTrackPlaying = isTrackPlaying,
                         onBack = { navController.popBackStack() },
                         onTrackClick = { id -> playbackViewModel.play(id) },
                         onPlayAll = { tracks ->
@@ -460,9 +473,13 @@ fun NavGraph(
                         onNavigateToAddToPlaylist = {
                             navController.navigate(Screen.AddToPlaylist.route)
                         },
-                        onSetPlayingFrom = { name ->
-                            playbackViewModel.setPlayingFrom(PlayingFrom(name, Screen.UserPlaylist.route(playlistId)))
-                        }
+                        playbackState = CollectionPlaybackState(
+                            playingTrackId = playingTrackId,
+                            isTrackPlaying = isTrackPlaying,
+                            onSetPlayingFrom = { name ->
+                                playbackViewModel.setPlayingFrom(PlayingFrom(name, Screen.UserPlaylist.route(playlistId)))
+                            }
+                        ),
                     )
                 }
                 composable(
@@ -501,14 +518,29 @@ fun NavGraph(
                     popEnterTransition = { EnterTransition.None },
                     popExitTransition = { slideOutHorizontally(animationSpec = tween(220), targetOffsetX = { it }) }
                 ) {
+                    val downloadsLabel = stringResource(R.string.downloads_title)
                     DownloadsScreen(
-                        playingTrackId = playingTrackId,
-                        isTrackPlaying = isTrackPlaying,
                         onBack = { navController.popBackStack() },
-                        onTrackClick = { id -> playbackViewModel.play(id) },
+                        onTrackClick = { id ->
+                            playbackViewModel.setPlayingFrom(PlayingFrom(downloadsLabel, Screen.Downloads.route))
+                            playbackViewModel.play(id)
+                        },
+                        onPlayAll = { tracks ->
+                            if (tracks.isNotEmpty()) {
+                                playbackViewModel.setPlayingFrom(PlayingFrom(downloadsLabel, Screen.Downloads.route))
+                                playbackViewModel.play(tracks.first().id)
+                            }
+                        },
                         onNavigateToAddToPlaylist = {
                             navController.navigate(Screen.AddToPlaylist.route)
-                        }
+                        },
+                        playbackState = CollectionPlaybackState(
+                            playingTrackId = playingTrackId,
+                            isTrackPlaying = isTrackPlaying,
+                            onSetPlayingFrom = { name ->
+                                playbackViewModel.setPlayingFrom(PlayingFrom(name, Screen.Downloads.route))
+                            }
+                        ),
                     )
                 }
                 composable(
@@ -518,14 +550,29 @@ fun NavGraph(
                     popEnterTransition = { EnterTransition.None },
                     popExitTransition = { slideOutHorizontally(animationSpec = tween(220), targetOffsetX = { it }) }
                 ) {
+                    val favoritesLabel = stringResource(R.string.favorites_title)
                     FavoritesScreen(
-                        playingTrackId = playingTrackId,
-                        isTrackPlaying = isTrackPlaying,
                         onBack = { navController.popBackStack() },
-                        onTrackClick = { id -> playbackViewModel.play(id) },
+                        onTrackClick = { id ->
+                            playbackViewModel.setPlayingFrom(PlayingFrom(favoritesLabel, Screen.Favorites.route))
+                            playbackViewModel.play(id)
+                        },
+                        onPlayAll = { tracks ->
+                            if (tracks.isNotEmpty()) {
+                                playbackViewModel.setPlayingFrom(PlayingFrom(favoritesLabel, Screen.Favorites.route))
+                                playbackViewModel.play(tracks.first().id)
+                            }
+                        },
                         onNavigateToAddToPlaylist = {
                             navController.navigate(Screen.AddToPlaylist.route)
-                        }
+                        },
+                        playbackState = CollectionPlaybackState(
+                            playingTrackId = playingTrackId,
+                            isTrackPlaying = isTrackPlaying,
+                            onSetPlayingFrom = { name ->
+                                playbackViewModel.setPlayingFrom(PlayingFrom(name, Screen.Favorites.route))
+                            }
+                        ),
                     )
                 }
             }
