@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.runtime.remember
 import coil.compose.AsyncImage
 import kotlin.math.roundToInt
 
@@ -23,11 +24,13 @@ fun PlayerBackground(
     backgroundColor: Color = Color.Black,
     modifier: Modifier = Modifier
 ) {
-    val gradient = Brush.verticalGradient(
-        0f to Color.Black.copy(alpha = 0.18f),
-        0.55f to Color.Black.copy(alpha = 0.38f),
-        1f to backgroundColor
-    )
+    val gradient = remember(backgroundColor) {
+        Brush.verticalGradient(
+            0f to Color.Black.copy(alpha = 0.18f),
+            0.55f to Color.Black.copy(alpha = 0.38f),
+            1f to backgroundColor
+        )
+    }
 
     Box(modifier = modifier) {
         AsyncImage(

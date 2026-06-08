@@ -2,7 +2,6 @@ package com.davidsimba.vintbeats.feature.player.ui.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
@@ -18,11 +17,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-
 import androidx.compose.material.icons.rounded.Fullscreen
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,8 +29,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -41,9 +38,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,34 +52,24 @@ fun PlayerLyricsCard(
     modifier: Modifier = Modifier,
     lines: List<LyricLine>,
     isLoading: Boolean = false,
-    positionMs: Long,
+    currentIndex: Int,
     cardBgColor: Color = VintageBgBase,
     onExpand: () -> Unit = {}
 ) {
-    val currentIndex = remember(lines, positionMs) {
-        if (lines.isEmpty()) -1
-        else lines.indexOfLast { it.timeMs <= positionMs }
-    }
-
-    val scrollState = rememberScrollState()
-    val itemYPositions = remember { mutableStateMapOf<Int, Int>() }
-    var boxHeightPx by remember { mutableIntStateOf(0) }
+    val listState = rememberLazyListState()
     var initialScrollDone by remember(lines) { mutableStateOf(false) }
 
     LaunchedEffect(lines) {
-        scrollState.scrollTo(0)
-        itemYPositions.clear()
+        listState.scrollToItem(0)
     }
 
-    LaunchedEffect(currentIndex, itemYPositions.size) {
+    LaunchedEffect(currentIndex) {
         if (currentIndex < 0) return@LaunchedEffect
-        val targetY = itemYPositions[currentIndex] ?: return@LaunchedEffect
-        val offset = (targetY - boxHeightPx / 4).coerceAtLeast(0)
         if (!initialScrollDone) {
-            scrollState.scrollTo(offset)
+            listState.scrollToItem(maxOf(0, currentIndex - 1))
             initialScrollDone = true
-        } else if (!scrollState.isScrollInProgress) {
-            scrollState.animateScrollTo(offset)
+        } else if (!listState.isScrollInProgress) {
+            listState.animateScrollToItem(maxOf(0, currentIndex - 1))
         }
     }
 
@@ -126,29 +110,23 @@ fun PlayerLyricsCard(
                 lineHeight = 22.sp
             )
         } else {
-            Box(modifier = Modifier.fillMaxWidth().height(250.dp).onSizeChanged { boxHeightPx = it.height }) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .verticalScroll(scrollState, enabled = false)
+            Box(modifier = Modifier.fillMaxWidth().height(250.dp)) {
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.fillMaxWidth(),
+                    userScrollEnabled = false,
                 ) {
-                    lines.forEachIndexed { index, line ->
+                    itemsIndexed(lines, key = { index, _ -> index }) { index, line ->
                         val isCurrent = index == currentIndex
                         val color by animateColorAsState(
-                            targetValue = if (isCurrent) VintageWhite
-                                          else VintageWhite.copy(alpha = 0.32f),
+                            targetValue = if (isCurrent) VintageWhite else VintageWhite.copy(alpha = 0.32f),
                             animationSpec = tween(250),
-                            label = "lyric_card_color_$index"
+                            label = "lyric_color"
                         )
                         val scale by animateFloatAsState(
                             targetValue = if (isCurrent) 1.06f else 1f,
                             animationSpec = tween(250),
-                            label = "lyric_card_scale_$index"
-                        )
-                        val linePad by animateDpAsState(
-                            targetValue = if (isCurrent) 12.dp else 6.dp,
-                            animationSpec = tween(250),
-                            label = "lyric_card_pad_$index"
+                            label = "lyric_scale"
                         )
                         Text(
                             text = line.text,
@@ -158,22 +136,21 @@ fun PlayerLyricsCard(
                             lineHeight = 22.sp,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = linePad, bottom = linePad, end = 12.dp)
+                                .padding(vertical = if (isCurrent) 12.dp else 6.dp)
+                                .padding(end = 12.dp)
                                 .graphicsLayer {
                                     scaleX = scale
                                     scaleY = scale
                                     transformOrigin = TransformOrigin(0f, 0.5f)
                                 }
-                                .onGloballyPositioned { coords ->
-                                    itemYPositions[index] = coords.positionInParent().y.toInt()
-                                }
                         )
                     }
-                    Spacer(Modifier.height(60.dp))
+                    item { Spacer(Modifier.height(60.dp)) }
                 }
 
-                val topFadeAlpha by animateFloatAsState(
-                    targetValue = if (scrollState.value > 0) 1f else 0f,
+                val topAlpha by animateFloatAsState(
+                    targetValue = if (listState.firstVisibleItemIndex > 0 ||
+                        listState.firstVisibleItemScrollOffset > 0) 1f else 0f,
                     animationSpec = tween(200),
                     label = "top_fade"
                 )
@@ -183,22 +160,16 @@ fun PlayerLyricsCard(
                         .height(52.dp)
                         .background(
                             Brush.verticalGradient(
-                                listOf(
-                                    cardBgColor.copy(alpha = topFadeAlpha),
-                                    Color.Transparent
-                                )
+                                listOf(cardBgColor.copy(alpha = topAlpha), Color.Transparent)
                             )
                         )
                 )
-
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp)
                         .align(Alignment.BottomCenter)
-                        .background(
-                            Brush.verticalGradient(listOf(Color.Transparent, cardBgColor))
-                        )
+                        .background(Brush.verticalGradient(listOf(Color.Transparent, cardBgColor)))
                 )
             }
         }

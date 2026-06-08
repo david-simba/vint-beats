@@ -64,15 +64,12 @@ fun PlayerLyricsScreen(
     positionMs: Long,
     durationMs: Long,
     isPlaying: Boolean,
+    currentIndex: Int,
     track: Track?,
     onClose: () -> Unit,
     onSeek: (Long) -> Unit,
     onTogglePlayPause: () -> Unit,
 ) {
-    val currentIndex = remember(lines, positionMs) {
-        if (lines.isEmpty()) -1
-        else lines.indexOfLast { it.timeMs <= positionMs }
-    }
 
     val listState = rememberLazyListState()
 

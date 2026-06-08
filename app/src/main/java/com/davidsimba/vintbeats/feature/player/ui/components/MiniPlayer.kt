@@ -86,17 +86,6 @@ fun MiniPlayer(
     val isLoading = playerState is PlayerState.Loading
     val progress = if (durationMs > 0) (positionMs.toFloat() / durationMs).coerceIn(0f, 1f) else 0f
 
-    val shimmerTransition = rememberInfiniteTransition(label = "mini_shimmer")
-    val shimmerOffset by shimmerTransition.animateFloat(
-        initialValue = -0.4f,
-        targetValue = 1.1f,
-        animationSpec = InfiniteRepeatableSpec(
-            animation = tween(durationMillis = 1200, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "mini_shimmer_offset"
-    )
-
     val coroutineScope = rememberCoroutineScope()
     val offsetX = remember { Animatable(0f) }
     var componentWidth by remember { mutableFloatStateOf(0f) }
@@ -272,42 +261,70 @@ fun MiniPlayer(
                 }
             }
 
-            Canvas(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(4.dp)
-            ) {
-                val w = size.width
-                val h = size.height
-                val trackH = 4.dp.toPx()
-                val cy = h / 2f
+            MiniPlayerProgressBar(
+                isLoading = isLoading,
+                progress = progress,
+                modifier = Modifier.fillMaxWidth().height(4.dp)
+            )
+        }
+    }
+}
 
+@Composable
+private fun MiniPlayerProgressBar(
+    isLoading: Boolean,
+    progress: Float,
+    modifier: Modifier = Modifier,
+) {
+    if (isLoading) {
+        val shimmerTransition = rememberInfiniteTransition(label = "mini_shimmer")
+        val shimmerOffset by shimmerTransition.animateFloat(
+            initialValue = -0.4f,
+            targetValue = 1.1f,
+            animationSpec = InfiniteRepeatableSpec(
+                animation = tween(durationMillis = 1200, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart
+            ),
+            label = "mini_shimmer_offset"
+        )
+        Canvas(modifier = modifier) {
+            val w = size.width
+            val trackH = 4.dp.toPx()
+            val cy = size.height / 2f
+            drawRect(
+                color = VintageWhite.copy(alpha = 0.15f),
+                topLeft = Offset(0f, cy - trackH / 2),
+                size = Size(w, trackH)
+            )
+            val segmentW = w * 0.35f
+            val start = w * shimmerOffset
+            val drawStart = maxOf(start, 0f)
+            val drawEnd = minOf(start + segmentW, w)
+            val drawWidth = drawEnd - drawStart
+            if (drawWidth > 0f) {
                 drawRect(
-                    color = VintageWhite.copy(alpha = 0.15f),
-                    topLeft = Offset(0f, cy - trackH / 2),
-                    size = Size(w, trackH)
+                    color = VintageWhite.copy(alpha = 0.45f),
+                    topLeft = Offset(drawStart, cy - trackH / 2),
+                    size = Size(drawWidth, trackH)
                 )
-
-                if (isLoading) {
-                    val segmentW = w * 0.35f
-                    val start = w * shimmerOffset
-                    val drawStart = maxOf(start, 0f)
-                    val drawEnd = minOf(start + segmentW, w)
-                    val drawWidth = drawEnd - drawStart
-                    if (drawWidth > 0f) {
-                        drawRect(
-                            color = VintageWhite.copy(alpha = 0.45f),
-                            topLeft = Offset(drawStart, cy - trackH / 2),
-                            size = Size(drawWidth, trackH)
-                        )
-                    }
-                } else if (progress > 0f) {
-                    drawRect(
-                        color = VintageRedLight,
-                        topLeft = Offset(0f, cy - trackH / 2),
-                        size = Size(w * progress, trackH)
-                    )
-                }
+            }
+        }
+    } else {
+        Canvas(modifier = modifier) {
+            val w = size.width
+            val trackH = 4.dp.toPx()
+            val cy = size.height / 2f
+            drawRect(
+                color = VintageWhite.copy(alpha = 0.15f),
+                topLeft = Offset(0f, cy - trackH / 2),
+                size = Size(w, trackH)
+            )
+            if (progress > 0f) {
+                drawRect(
+                    color = VintageRedLight,
+                    topLeft = Offset(0f, cy - trackH / 2),
+                    size = Size(w * progress, trackH)
+                )
             }
         }
     }

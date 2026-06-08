@@ -281,7 +281,7 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
         }
         playbackJob = viewModelScope.launch {
             _playerState.value = PlayerState.Loading
-            val localPath = repository.getTrackByVideoId(track.id)?.audioFilePath
+            val localPath = withContext(Dispatchers.IO) { repository.getTrackByVideoId(track.id)?.audioFilePath }
             val uri: String = if (!localPath.isNullOrEmpty() && File(localPath).exists()) {
                 Log.d(TAG, "playTrack: ${track.id} → local file $localPath")
                 Uri.fromFile(File(localPath)).toString()
@@ -322,7 +322,7 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
         _queue.value = emptyList()
         playbackJob = viewModelScope.launch {
             _playerState.value = PlayerState.Loading
-            val saved = repository.getTrack(savedTrackId) ?: run {
+            val saved = withContext(Dispatchers.IO) { repository.getTrack(savedTrackId) } ?: run {
                 _playerState.value = PlayerState.Error("Not found")
                 return@launch
             }
@@ -408,7 +408,7 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
 
     private fun loadFavoriteStatus(trackId: String) {
         viewModelScope.launch {
-            _isFavorite.value = repository.isFavoriteTrack(trackId)
+            _isFavorite.value = withContext(Dispatchers.IO) { repository.isFavoriteTrack(trackId) }
         }
     }
 

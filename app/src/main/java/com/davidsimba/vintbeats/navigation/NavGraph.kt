@@ -119,8 +119,6 @@ fun NavGraph(
     val isSaved by playbackViewModel.isSaved.collectAsStateWithLifecycle()
     val unsavedTrack by playbackViewModel.unsavedTrack.collectAsStateWithLifecycle()
     val playbackState by playbackViewModel.playerState.collectAsStateWithLifecycle()
-    val positionMs by playbackViewModel.positionMs.collectAsStateWithLifecycle()
-    val durationMs by playbackViewModel.durationMs.collectAsStateWithLifecycle()
     val queue by playbackViewModel.queue.collectAsStateWithLifecycle()
     val history by playbackViewModel.history.collectAsStateWithLifecycle()
     val nextTrack = queue.firstOrNull()
@@ -156,6 +154,8 @@ fun NavGraph(
     Scaffold(
         contentWindowInsets = WindowInsets(0),
         bottomBar = {
+            val positionMs by playbackViewModel.positionMs.collectAsStateWithLifecycle()
+            val durationMs by playbackViewModel.durationMs.collectAsStateWithLifecycle()
             Column(modifier = if (!showBottomBar) Modifier.navigationBarsPadding() else Modifier) {
                 if (showMiniPlayer && miniTitle != null) {
                     MiniPlayer(

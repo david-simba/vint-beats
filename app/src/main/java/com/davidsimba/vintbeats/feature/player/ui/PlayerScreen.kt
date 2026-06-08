@@ -30,6 +30,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.ui.res.stringResource
 import com.davidsimba.vintbeats.R
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -123,11 +124,18 @@ fun PlayerScreen(
     val previousTrack = history.lastOrNull()
 
     val paletteColor = rememberPaletteColor(trackForCard?.albumImageUrl)
-    val cardBgColor = run {
+    val cardBgColor = remember(paletteColor) {
         val hsl = FloatArray(3)
         ColorUtils.colorToHSL(paletteColor.toArgb(), hsl)
         hsl[2] = (hsl[2] + 0.06f).coerceAtMost(0.35f)
         Color(ColorUtils.HSLToColor(hsl))
+    }
+
+    val currentLyricIndex by remember(syncedLyrics) {
+        derivedStateOf {
+            if (syncedLyrics.isEmpty()) -1
+            else syncedLyrics.indexOfLast { it.timeMs <= positionMs }
+        }
     }
 
     val outerScrollState = rememberScrollState()
@@ -239,7 +247,7 @@ fun PlayerScreen(
                     PlayerLyricsCard(
                         lines = syncedLyrics,
                         isLoading = isLoadingLyrics,
-                        positionMs = positionMs,
+                        currentIndex = currentLyricIndex,
                         cardBgColor = cardBgColor,
                         onExpand = { showLyricsScreen = true },
                         modifier = Modifier
@@ -266,6 +274,7 @@ fun PlayerScreen(
                     positionMs = positionMs,
                     durationMs = durationMs,
                     isPlaying = isPlaying,
+                    currentIndex = currentLyricIndex,
                     track = trackForCard,
                     onClose = { showLyricsScreen = false },
                     onSeek = viewModel::seekTo,
