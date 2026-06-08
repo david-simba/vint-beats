@@ -34,6 +34,8 @@
     <!-- Search -->
     <string name="search_title">Search</string>
     <string name="search_placeholder">Search songs, artists…</string>
+    <string name="search_recent_title">Recent searches</string>
+    <string name="search_clear_history">Clear history</string>
 
     <!-- Explore -->
     <string name="explore_title">Explore</string>

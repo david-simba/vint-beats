@@ -35,6 +35,8 @@
     <!-- Search -->
     <string name="search_title">Buscar</string>
     <string name="search_placeholder">Buscar canciones, artistas…</string>
+    <string name="search_recent_title">Búsquedas recientes</string>
+    <string name="search_clear_history">Borrar historial</string>
 
     <!-- Explore -->
     <string name="explore_title">Explorar</string>

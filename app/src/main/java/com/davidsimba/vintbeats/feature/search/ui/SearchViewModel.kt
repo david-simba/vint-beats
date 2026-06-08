@@ -2,7 +2,9 @@ package com.davidsimba.vintbeats.feature.search.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.davidsimba.vintbeats.feature.search.data.SearchHistoryDataStore
 import com.davidsimba.vintbeats.feature.search.domain.ExploreCategory
+import com.davidsimba.vintbeats.feature.search.domain.RecentSearch
 import com.davidsimba.vintbeats.core.youtube.BackendService
 import com.davidsimba.vintbeats.core.youtube.CategoryPlaylistsResult
 import com.davidsimba.vintbeats.feature.search.domain.SearchRepository
@@ -11,6 +13,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -18,6 +21,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,7 +36,8 @@ sealed interface CategorySheetState {
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val repository: SearchRepository,
-    private val backendService: BackendService
+    private val backendService: BackendService,
+    private val historyDataStore: SearchHistoryDataStore,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<SearchUiState>(SearchUiState.Idle)
@@ -46,6 +51,9 @@ class SearchViewModel @Inject constructor(
 
     private val _categorySheet = MutableStateFlow<CategorySheetState>(CategorySheetState.Hidden)
     val categorySheet: StateFlow<CategorySheetState> = _categorySheet.asStateFlow()
+
+    val recentSearches: StateFlow<List<RecentSearch>> = historyDataStore.items
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     init {
         _query
@@ -61,6 +69,18 @@ class SearchViewModel @Inject constructor(
     fun onQueryChange(query: String) {
         _query.value = query
         if (query.isEmpty()) _uiState.value = SearchUiState.Idle
+    }
+
+    fun saveRecentSearch(item: RecentSearch) {
+        viewModelScope.launch { historyDataStore.add(item) }
+    }
+
+    fun removeRecentSearch(item: RecentSearch) {
+        viewModelScope.launch { historyDataStore.remove(item) }
+    }
+
+    fun clearHistory() {
+        viewModelScope.launch { historyDataStore.clear() }
     }
 
     fun openCategory(category: ExploreCategory) {
