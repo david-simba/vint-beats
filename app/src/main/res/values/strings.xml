@@ -47,6 +47,7 @@
     <string name="label_album">Album</string>
 
     <!-- Artist -->
+    <string name="artist_discover_more">Discover more</string>
     <string name="artist_top_songs">Top Songs</string>
     <string name="artist_albums">Albums</string>
     <string name="artist_no_songs">No songs available.</string>
@@ -85,6 +86,7 @@
     <string name="home_recientes">Escuchado recientemente</string>
     <string name="home_albumes_recientes">Álbumes recientes</string>
     <string name="home_radio">Radio</string>
+    <string name="mix_this_is">This is</string>
 
     <!-- Common -->
     <string name="action_back">Back</string>

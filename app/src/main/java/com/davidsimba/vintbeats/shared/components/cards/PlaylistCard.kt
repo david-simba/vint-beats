@@ -1,4 +1,4 @@
-package com.davidsimba.vintbeats.feature.home.ui.components
+package com.davidsimba.vintbeats.shared.components.cards
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -21,6 +22,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -28,22 +30,38 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.R
-import com.davidsimba.vintbeats.feature.home.domain.PlaylistItem
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
+import com.davidsimba.vintbeats.shared.theme.VintageBlue
+import com.davidsimba.vintbeats.shared.theme.VintageBlueDeep
+import com.davidsimba.vintbeats.shared.theme.VintageGreen
+import com.davidsimba.vintbeats.shared.theme.VintageGreenDeep
+import com.davidsimba.vintbeats.shared.theme.VintageOrange
+import com.davidsimba.vintbeats.shared.theme.VintageOrangeDeep
+import com.davidsimba.vintbeats.shared.theme.VintageRed
+import com.davidsimba.vintbeats.shared.theme.VintageRedDeep
 import com.davidsimba.vintbeats.shared.theme.VintageWhite
+import kotlin.math.absoluteValue
+
+private val accentColors = listOf(VintageRed, VintageOrange, VintageGreen, VintageBlue)
+private val accentDeepColors = listOf(VintageRedDeep, VintageOrangeDeep, VintageGreenDeep, VintageBlueDeep)
+internal fun playlistAccentFor(id: String) = accentColors[id.hashCode().absoluteValue % accentColors.size]
+internal fun playlistAccentDeepFor(id: String) = accentDeepColors[id.hashCode().absoluteValue % accentDeepColors.size]
 
 @Composable
 fun PlaylistCard(
-    playlist: PlaylistItem,
-    showStripe: Boolean = true,
+    modifier: Modifier = Modifier,
+    id: String,
+    name: String,
+    thumbnailUrl: String?,
     onClick: () -> Unit,
+    showStripe: Boolean = true,
 ) {
     if (!showStripe) {
         AsyncImage(
-            model = playlist.thumbnailUrl,
-            contentDescription = playlist.title,
+            model = thumbnailUrl,
+            contentDescription = name,
             contentScale = ContentScale.Crop,
-            modifier = Modifier
+            modifier = modifier
                 .width(180.dp)
                 .height(180.dp)
                 .clip(RoundedCornerShape(8.dp))
@@ -52,24 +70,33 @@ fun PlaylistCard(
         return
     }
 
-    val accent = accentColorFor(playlist.id)
-    val accentDeep = accentDeepColorFor(playlist.id)
+    val accent = playlistAccentFor(id)
+    val accentDeep = playlistAccentDeepFor(id)
+
     Box(
-        modifier = Modifier
+        modifier = modifier
             .width(180.dp)
             .height(180.dp)
             .clip(RoundedCornerShape(8.dp))
             .clickable(onClick = onClick)
     ) {
         Column(modifier = Modifier.matchParentSize()) {
-            Box(modifier = Modifier.fillMaxWidth().weight(1f).background(
-                Brush.verticalGradient(listOf(accent, accentDeep))
-            ))
-            Box(modifier = Modifier.fillMaxWidth().weight(1f).background(VintageWhite))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .background(Brush.verticalGradient(listOf(accent, accentDeep)))
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .background(VintageWhite)
+            )
         }
 
         Text(
-            text = "This is",
+            text = stringResource(R.string.mix_this_is),
             color = VintageWhite,
             fontSize = 12.sp,
             fontWeight = FontWeight.SemiBold,
@@ -90,8 +117,8 @@ fun PlaylistCard(
         )
 
         AsyncImage(
-            model = playlist.thumbnailUrl,
-            contentDescription = playlist.title,
+            model = thumbnailUrl,
+            contentDescription = name,
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .height(100.dp)
@@ -102,7 +129,7 @@ fun PlaylistCard(
         )
 
         Text(
-            text = playlist.artistName ?: playlist.title,
+            text = name,
             color = VintageBgDark,
             fontSize = 14.sp,
             fontWeight = FontWeight.ExtraBold,

@@ -305,6 +305,13 @@ fun NavGraph(
                             playbackViewModel.setPlayingFrom(null)
                             playbackViewModel.playTrack(track)
                         },
+                        onPlayMixTrack = { track, queue ->
+                            playbackViewModel.setPlayingFrom(null)
+                            playbackViewModel.playTrack(track, newQueue = queue)
+                        },
+                        onMixPlaylistSelected = { playlistId ->
+                            navController.navigate(Screen.Playlist.route(playlistId))
+                        },
                         onPlayArtist = { tracks ->
                             if (tracks.isNotEmpty()) {
                                 playbackViewModel.setPlayingFrom(null)

@@ -28,12 +28,12 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhite
 fun AlbumCard(album: Album, onClick: () -> Unit) {
     Column(
         modifier = Modifier
-            .width(200.dp)
+            .width(180.dp)
             .clickable(onClick = onClick)
     ) {
         Box(
             modifier = Modifier
-                .size(200.dp)
+                .size(180.dp)
                 .clip(RoundedCornerShape(8.dp))
                 .background(VintageGrayDeep)
         ) {

@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.davidsimba.vintbeats.feature.home.domain.HomeSectionPlaylists
+import com.davidsimba.vintbeats.shared.components.cards.PlaylistCard
 import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
 
 @Composable
@@ -39,7 +40,9 @@ fun PlaylistSection(
                 val showStripe = !section.title.lowercase().contains("descubre")
                 Column {
                     PlaylistCard(
-                        playlist = playlist,
+                        id = playlist.id,
+                        name = playlist.artistName ?: playlist.title,
+                        thumbnailUrl = playlist.thumbnailUrl,
                         showStripe = showStripe,
                         onClick = {
                             onPlaylistSelected(

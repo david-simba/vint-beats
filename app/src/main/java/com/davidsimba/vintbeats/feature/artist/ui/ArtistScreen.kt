@@ -40,6 +40,7 @@ import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistAlbumsList
 import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistTopSongItem
 import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistTopSongsEmpty
+import com.davidsimba.vintbeats.shared.components.MixRadioRow
 import com.davidsimba.vintbeats.shared.AddToPlaylistController
 import com.davidsimba.vintbeats.shared.QueueController
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
@@ -59,6 +60,8 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhite
 fun ArtistScreen(
     onBack: () -> Unit,
     onTrackSelected: (Track) -> Unit,
+    onPlayMixTrack: (Track, List<Track>) -> Unit = { _, _ -> },
+    onMixPlaylistSelected: (playlistId: String) -> Unit = {},
     onPlayArtist: (List<Track>) -> Unit,
     onAlbumSelected: (Album) -> Unit,
     onNavigateToAddToPlaylist: () -> Unit = {},
@@ -99,7 +102,7 @@ fun ArtistScreen(
                     item {
                         CollectionHeader(
                             title = state.artist.name,
-                            subtitle = null,
+                            subtitle = stringResource(R.string.label_artist),
                             imageUrl = state.artist.thumbnailUrl.toHighRes(),
                             placeholderIcon = Icons.Rounded.Person,
                             imageAlignment = Alignment.TopCenter,
@@ -136,6 +139,31 @@ fun ArtistScreen(
                                 ArtistAlbumsList(
                                     albums = state.albums,
                                     onAlbumClick = { album -> onAlbumSelected(album) }
+                                )
+                            }
+
+                            if (state.mix != null || state.radio != null) {
+                                Spacer(Modifier.height(12.dp))
+                                SectionLabel(stringResource(R.string.artist_discover_more))
+                                Spacer(Modifier.height(8.dp))
+                                MixRadioRow(
+                                    artistId = state.artist.id,
+                                    artistName = state.artist.name,
+                                    mixThumbnailUrl = state.mix?.thumbnailUrl.toHighRes(),
+                                    radioImages = state.radio?.artistImages ?: emptyList(),
+                                    onMixClick = {
+                                        val mix = state.mix ?: return@MixRadioRow
+                                        if (mix.playlistId != null) {
+                                            onMixPlaylistSelected(mix.playlistId)
+                                        } else if (mix.tracks.isNotEmpty()) {
+                                            onPlayMixTrack(mix.tracks.first(), mix.tracks.drop(1))
+                                        }
+                                    },
+                                    onRadioClick = {
+                                        state.radio?.tracks?.let { tracks ->
+                                            if (tracks.isNotEmpty()) onPlayMixTrack(tracks.first(), tracks.drop(1))
+                                        }
+                                    },
                                 )
                             }
 

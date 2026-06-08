@@ -48,6 +48,7 @@
     <string name="label_album">Álbum</string>
 
     <!-- Artist -->
+    <string name="artist_discover_more">Descubre más</string>
     <string name="artist_top_songs">Top Canciones</string>
     <string name="artist_albums">Álbums</string>
     <string name="artist_no_songs">No hay canciones disponibles.</string>
@@ -82,6 +83,7 @@
     <string name="home_greeting">Hola, %s!</string>
     <string name="home_empty">Guarda artistas para personalizar tu home</string>
     <string name="home_radio">Radio</string>
+    <string name="mix_this_is">This is</string>
 
     <!-- Common -->
     <string name="action_back">Atrás</string>

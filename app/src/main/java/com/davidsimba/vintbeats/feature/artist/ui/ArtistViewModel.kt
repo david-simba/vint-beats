@@ -43,7 +43,9 @@ class ArtistViewModel @Inject constructor(
                         artist = detail.artist,
                         topTracks = detail.topTracks,
                         songsBrowseId = detail.songsBrowseId,
-                        albums = detail.albums
+                        albums = detail.albums,
+                        mix = detail.mix,
+                        radio = detail.radio,
                     )
                     _isSaved.value = savedArtistRepository.isSaved(detail.artist.id)
                 }

@@ -5,6 +5,8 @@ import com.davidsimba.vintbeats.core.model.Artist
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.album.data.AlbumDetail
 import com.davidsimba.vintbeats.feature.artist.data.ArtistDetail
+import com.davidsimba.vintbeats.feature.artist.data.ArtistMix
+import com.davidsimba.vintbeats.feature.artist.data.ArtistRadio
 import com.davidsimba.vintbeats.feature.home.domain.HomeSectionPlaylists
 import com.davidsimba.vintbeats.feature.player.ui.LyricLine
 import com.davidsimba.vintbeats.feature.playlist.PlaylistDetail
@@ -66,7 +68,27 @@ class BackendService @Inject constructor(
         val topTracks: List<Track> = gson.fromJson(root.getAsJsonArray("topTracks"), trackType) ?: emptyList()
         val albums: List<Album> = gson.fromJson(root.getAsJsonArray("albums"), albumType) ?: emptyList()
         val songsBrowseId = root.get("songsBrowseId")?.takeIf { !it.isJsonNull }?.asString
-        ArtistDetail(artist, topTracks, songsBrowseId, albums)
+
+        val mix: ArtistMix? = root.get("mix")?.takeIf { !it.isJsonNull }?.asJsonObject?.let { m ->
+            val mixTrackType = object : TypeToken<List<Track>>() {}.type
+            ArtistMix(
+                title = m.get("title")?.asString ?: "",
+                thumbnailUrl = m.get("thumbnailUrl")?.takeIf { !it.isJsonNull }?.asString,
+                tracks = gson.fromJson(m.getAsJsonArray("tracks"), mixTrackType) ?: emptyList(),
+                playlistId = m.get("playlistId")?.takeIf { !it.isJsonNull }?.asString,
+            )
+        }
+
+        val radio: ArtistRadio? = root.get("radio")?.takeIf { !it.isJsonNull }?.asJsonObject?.let { r ->
+            val imageType = object : TypeToken<List<String>>() {}.type
+            val radioTrackType = object : TypeToken<List<Track>>() {}.type
+            ArtistRadio(
+                artistImages = gson.fromJson(r.getAsJsonArray("artistImages"), imageType) ?: emptyList(),
+                tracks = gson.fromJson(r.getAsJsonArray("tracks"), radioTrackType) ?: emptyList()
+            )
+        }
+
+        ArtistDetail(artist, topTracks, songsBrowseId, albums, mix, radio)
     }
 
     suspend fun getArtistSongs(songsBrowseId: String): List<Track> =
