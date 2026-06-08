@@ -100,6 +100,7 @@
     <string name="action_add_to_playlist">Agregar a playlist</string>
     <string name="action_add_to_queue">Agregar a la cola</string>
     <string name="add_to_playlist_empty">Aún no tienes playlists creadas</string>
+    <string name="playing_from_label">Reproduciéndose desde</string>
 
     <!-- Home sections -->
     <string name="home_seleccion_rapida">Para ti</string>

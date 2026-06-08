@@ -1,7 +1,5 @@
 package com.davidsimba.vintbeats.feature.player.ui.components
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,30 +8,33 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.PlaylistPlay
+import androidx.compose.material.icons.automirrored.rounded.QueueMusic
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.davidsimba.vintbeats.shared.components.VintClickableText
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
 import com.davidsimba.vintbeats.shared.theme.VintageWhite
 
 @Composable
 fun PlayerTrackInfo(
+    modifier: Modifier = Modifier,
     title: String,
     artist: String,
     isFavorite: Boolean,
     onToggleFavorite: () -> Unit,
+    onQueueOpen: (() -> Unit)? = null,
     onArtistClick: (() -> Unit)? = null,
-    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
@@ -51,26 +52,36 @@ fun PlayerTrackInfo(
                 overflow = TextOverflow.Ellipsis
             )
             Spacer(Modifier.height(2.dp))
-            Text(
+            VintClickableText(
                 text = artist,
+                onClick = onArtistClick,
                 color = VintageWhite.copy(alpha = if (onArtistClick != null) 1f else 0.7f),
                 fontSize = 14.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = if (onArtistClick != null) Modifier.clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() },
-                    onClick = onArtistClick
-                ) else Modifier
             )
         }
-        IconButton(onClick = onToggleFavorite) {
+        IconButton(
+            onClick = onToggleFavorite,
+            modifier = Modifier.size(40.dp)
+        ) {
             Icon(
                 imageVector = if (isFavorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
                 contentDescription = "Favorite",
                 tint = if (isFavorite) VintageRedLight else VintageWhite,
                 modifier = Modifier.size(28.dp)
             )
+        }
+        if (onQueueOpen != null) {
+            IconButton(
+                onClick = onQueueOpen,
+                modifier = Modifier.size(40.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Rounded.PlaylistPlay,
+                    contentDescription = "Queue",
+                    tint = VintageWhite,
+                    modifier = Modifier.size(28.dp)
+                )
+            }
         }
     }
 }

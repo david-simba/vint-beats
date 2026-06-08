@@ -72,6 +72,7 @@ fun UserPlaylistScreen(
     onEditClick: () -> Unit,
     onEditInfoClick: () -> Unit,
     onNavigateToAddToPlaylist: () -> Unit = {},
+    onSetPlayingFrom: ((String) -> Unit)? = null,
     playingTrackId: String? = null,
     isTrackPlaying: Boolean = false,
     viewModel: UserPlaylistViewModel = hiltViewModel(),
@@ -91,6 +92,8 @@ fun UserPlaylistScreen(
     LaunchedEffect(isDeleted) {
         if (isDeleted) onBack()
     }
+
+    val isPlayingThisPlaylist = isTrackPlaying && playlist?.tracks?.any { it.trackId == playingTrackId } == true
 
     val title = playlist?.name ?: ""
     val subtitle = when {
@@ -112,8 +115,12 @@ fun UserPlaylistScreen(
                     imageUrl = coverUri,
                     placeholderIcon = Icons.Rounded.LibraryMusic,
                     iconTint = VintageOrangeLight,
+                    isPlaying = isPlayingThisPlaylist,
                     onPlayAll = if (playlist?.tracks?.isNotEmpty() == true) {
-                        { onPlayAll(playlist!!.tracks) }
+                        {
+                            onSetPlayingFrom?.invoke(title)
+                            onPlayAll(playlist!!.tracks)
+                        }
                     } else null,
                 )
             }
@@ -167,7 +174,10 @@ fun UserPlaylistScreen(
                                 thumbnailUrl = track.trackThumbnailUrl,
                                 isActive = track.trackId == playingTrackId,
                                 isPlaying = track.trackId == playingTrackId && isTrackPlaying,
-                                onClick = { onTrackClick(track.id) },
+                                onClick = {
+                                    onSetPlayingFrom?.invoke(title)
+                                    onTrackClick(track.id)
+                                },
                                 trailingContent = {
                                     IconButton(
                                         onClick = { selectedTrack = track },

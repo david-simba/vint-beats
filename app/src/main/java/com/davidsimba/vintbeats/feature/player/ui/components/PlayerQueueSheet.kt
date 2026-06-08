@@ -15,9 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.DragIndicator
-import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -52,7 +50,6 @@ fun PlayerQueueSheet(
     isPlaying: Boolean,
     onTrackClick: (Track) -> Unit,
     onReorder: (from: Int, to: Int) -> Unit,
-    onMenuClick: ((Track) -> Unit)? = null,
 ) {
     var localQueue by remember { mutableStateOf(queue) }
     val scrollState = rememberScrollState()
@@ -105,7 +102,6 @@ fun PlayerQueueSheet(
                     isCurrentTrack = false,
                     modifier = Modifier.draggableHandle(),
                     onClick = { onTrackClick(track) },
-                    onMenuClick = onMenuClick?.let { { it(track) } }
                 )
             }
         }
@@ -118,7 +114,6 @@ private fun QueueTrackRow(
     isCurrentTrack: Boolean,
     modifier: Modifier,
     onClick: (() -> Unit)?,
-    onMenuClick: (() -> Unit)? = null,
     isPlaying: Boolean = false
 ) {
     Row(
@@ -167,21 +162,9 @@ private fun QueueTrackRow(
                 barCount = 4,
                 modifier = Modifier.width(24.dp)
             )
-        } else if (onMenuClick != null) {
-            IconButton(
-                onClick = onMenuClick,
-                modifier = Modifier.size(36.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.MoreVert,
-                    contentDescription = null,
-                    tint = VintageGrayMid,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
         } else {
             Text(
-                text = track.durationText,
+                text = track.durationText ?: "",
                 color = VintageGrayMid,
                 fontSize = 11.sp
             )

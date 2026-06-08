@@ -113,6 +113,11 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
 
     private val _originalQueue = MutableStateFlow<List<Track>>(emptyList())
 
+    private val _playingFrom = MutableStateFlow<PlayingFrom?>(null)
+    val playingFrom: StateFlow<PlayingFrom?> = _playingFrom.asStateFlow()
+
+    fun setPlayingFrom(source: PlayingFrom?) { _playingFrom.value = source }
+
     private val lyricsCache = mutableMapOf<String, List<LyricLine>>()
     private var prefetchJob: Job? = null
     private var progressJob: Job? = null
@@ -603,3 +608,5 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
         private const val TAG = "PlaybackViewModel"
     }
 }
+
+data class PlayingFrom(val name: String, val route: String? = null)

@@ -71,6 +71,7 @@ fun PlayerScreen(
     onBack: () -> Unit,
     onArtistSelected: (browseId: String) -> Unit,
     onNavigateToAddToPlaylist: () -> Unit = {},
+    onPlayingFromClick: (() -> Unit)? = null,
     viewModel: PlaybackViewModel,
     trackActionsViewModel: TrackActionsViewModel = hiltViewModel()
 ) {
@@ -85,6 +86,7 @@ fun PlayerScreen(
     val queue by viewModel.queue.collectAsStateWithLifecycle()
     val history by viewModel.history.collectAsStateWithLifecycle()
 
+    val playingFrom by viewModel.playingFrom.collectAsStateWithLifecycle()
     val favoriteTrackIds by trackActionsViewModel.favoriteTrackIds.collectAsStateWithLifecycle()
     val downloadedTrackIds by trackActionsViewModel.downloadedTrackIds.collectAsStateWithLifecycle()
     val downloadingTrackId by trackActionsViewModel.downloadingTrackId.collectAsStateWithLifecycle()
@@ -92,7 +94,6 @@ fun PlayerScreen(
     var showOptionsSheet by remember { mutableStateOf(false) }
     var showQueueSheet by remember { mutableStateOf(false) }
     var showLyricsScreen by remember { mutableStateOf(false) }
-    var selectedQueueTrack by remember { mutableStateOf<Track?>(null) }
     val showEqualizer by PlayerPreferences.equalizerEnabled.collectAsStateWithLifecycle()
 
     BackHandler(enabled = showLyricsScreen) { showLyricsScreen = false }
@@ -180,8 +181,9 @@ fun PlayerScreen(
                     ) {
                         PlayerTopBar(
                             onBack = onBack,
-                            onQueueOpen = { showQueueSheet = true },
-                            onMoreOptions = { showOptionsSheet = true }
+                            onMoreOptions = { showOptionsSheet = true },
+                            playingFromName = playingFrom?.name,
+                            onPlayingFromClick = onPlayingFromClick
                         )
 
                         Spacer(Modifier.weight(1f))
@@ -192,6 +194,7 @@ fun PlayerScreen(
                                 artist = it.artist,
                                 isFavorite = isFavorite,
                                 onToggleFavorite = viewModel::toggleFavorite,
+                                onQueueOpen = { showQueueSheet = true },
                                 onArtistClick = it.artistId?.let { id -> { onArtistSelected(id) } }
                             )
                         }
@@ -353,40 +356,9 @@ fun PlayerScreen(
                         }
                     },
                     onReorder = viewModel::reorderQueue,
-                    onMenuClick = { track ->
-                        scope.launch { queueSheetState.hide() }.invokeOnCompletion {
-                            showQueueSheet = false
-                            selectedQueueTrack = track
-                        }
-                    }
                 )
             }
         }
     }
 
-    selectedQueueTrack?.let { track ->
-        TrackOptionsBottomSheet(
-            isFavorite = track.id in favoriteTrackIds,
-            isDownloaded = track.id in downloadedTrackIds,
-            isDownloading = downloadingTrackId == track.id,
-            onDownload = {
-                trackActionsViewModel.downloadTrack(track)
-                selectedQueueTrack = null
-            },
-            onToggleFavorite = {
-                trackActionsViewModel.toggleFavorite(track)
-                selectedQueueTrack = null
-            },
-            onAddToPlaylist = {
-                AddToPlaylistController.pendingTrack = track
-                selectedQueueTrack = null
-                onNavigateToAddToPlaylist()
-            },
-            onAddToQueue = {
-                QueueController.addToQueue(track)
-                selectedQueueTrack = null
-            },
-            onDismiss = { selectedQueueTrack = null }
-        )
-    }
 }

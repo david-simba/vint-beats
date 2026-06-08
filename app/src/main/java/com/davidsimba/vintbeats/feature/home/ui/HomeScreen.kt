@@ -167,7 +167,7 @@ fun HomeScreen(
                                 RecentlyPlayedSection(
                                     tracks = recentTracks,
                                     onTrackClick = { recent ->
-                                        val asTrack = com.davidsimba.vintbeats.core.model.Track(
+                                        val asTrack = Track(
                                             id = recent.trackId,
                                             title = recent.title,
                                             artist = recent.artist,

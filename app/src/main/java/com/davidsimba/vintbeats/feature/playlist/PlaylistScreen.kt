@@ -56,6 +56,7 @@ fun PlaylistScreen(
     onTrackSelected: (Track, List<Track>) -> Unit,
     onPlayAll: (List<Track>) -> Unit,
     onNavigateToAddToPlaylist: () -> Unit = {},
+    onSetPlayingFrom: ((String) -> Unit)? = null,
     playingTrackId: String? = null,
     isTrackPlaying: Boolean = false,
     viewModel: PlaylistViewModel = hiltViewModel(),
@@ -93,6 +94,7 @@ fun PlaylistScreen(
             is PlaylistUiState.Success -> {
                 val detail = state.detail
                 val subtitle = stringResource(R.string.playlist_count, detail.tracks.size)
+                val isPlayingThisPlaylist = isTrackPlaying && detail.tracks.any { it.id == playingTrackId }
 
                 LazyColumn(
                     state = lazyListState,
@@ -104,8 +106,12 @@ fun PlaylistScreen(
                             subtitle = subtitle,
                             imageUrl = detail.thumbnailUrl,
                             placeholderIcon = Icons.Rounded.LibraryMusic,
+                            isPlaying = isPlayingThisPlaylist,
                             onPlayAll = if (detail.tracks.isNotEmpty()) {
-                                { onPlayAll(detail.tracks) }
+                                {
+                                    onSetPlayingFrom?.invoke(detail.title)
+                                    onPlayAll(detail.tracks)
+                                }
                             } else null
                         )
                     }
@@ -125,6 +131,7 @@ fun PlaylistScreen(
                                     isActive = track.id == playingTrackId,
                                     isPlaying = track.id == playingTrackId && isTrackPlaying,
                                     onClick = {
+                                        onSetPlayingFrom?.invoke(detail.title)
                                         onTrackSelected(track, detail.tracks.drop(index + 1))
                                     },
                                     trailingContent = {

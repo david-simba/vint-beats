@@ -58,6 +58,7 @@ import com.davidsimba.vintbeats.feature.home.ui.HomeScreen
 import com.davidsimba.vintbeats.feature.player.ui.PlaybackViewModel
 import com.davidsimba.vintbeats.feature.player.ui.PlayerScreen
 import com.davidsimba.vintbeats.feature.player.ui.PlayerState
+import com.davidsimba.vintbeats.feature.player.ui.PlayingFrom
 import com.davidsimba.vintbeats.feature.playlist.PlaylistScreen
 import com.davidsimba.vintbeats.feature.search.ui.SearchActiveScreen
 import com.davidsimba.vintbeats.feature.search.ui.SearchScreen
@@ -343,6 +344,7 @@ fun NavGraph(
                     popEnterTransition = { EnterTransition.None },
                     popExitTransition = { slideOutVertically(animationSpec = tween(200), targetOffsetY = { it }) }
                 ) {
+                    val playingFrom by playbackViewModel.playingFrom.collectAsStateWithLifecycle()
                     PlayerScreen(
                         onBack = { navController.popBackStack() },
                         onArtistSelected = { browseId ->
@@ -350,6 +352,9 @@ fun NavGraph(
                         },
                         onNavigateToAddToPlaylist = {
                             navController.navigate(Screen.AddToPlaylist.route)
+                        },
+                        onPlayingFromClick = playingFrom?.route?.let { route ->
+                            { navController.navigate(route) { launchSingleTop = true } }
                         },
                         viewModel = playbackViewModel
                     )
@@ -366,7 +371,12 @@ fun NavGraph(
                     exitTransition = { ExitTransition.None },
                     popEnterTransition = { EnterTransition.None },
                     popExitTransition = { slideOutHorizontally(animationSpec = tween(220), targetOffsetX = { it }) }
-                ) {
+                ) { backStackEntry ->
+                    val playlistId = backStackEntry.arguments?.getString("playlistId") ?: ""
+                    val thumbnailUrl = backStackEntry.arguments?.getString("thumbnailUrl")
+                    val artistId = backStackEntry.arguments?.getString("artistId")
+                    val artistName = backStackEntry.arguments?.getString("artistName")
+                    val playlistRoute = Screen.Playlist.route(playlistId, thumbnailUrl, artistId, artistName)
                     PlaylistScreen(
                         playingTrackId = playingTrackId,
                         isTrackPlaying = isTrackPlaying,
@@ -381,6 +391,9 @@ fun NavGraph(
                         },
                         onNavigateToAddToPlaylist = {
                             navController.navigate(Screen.AddToPlaylist.route)
+                        },
+                        onSetPlayingFrom = { name ->
+                            playbackViewModel.setPlayingFrom(PlayingFrom(name, playlistRoute))
                         }
                     )
                 }
@@ -446,6 +459,9 @@ fun NavGraph(
                         onEditInfoClick = { navController.navigate(Screen.CreatePlaylist.route(playlistId)) },
                         onNavigateToAddToPlaylist = {
                             navController.navigate(Screen.AddToPlaylist.route)
+                        },
+                        onSetPlayingFrom = { name ->
+                            playbackViewModel.setPlayingFrom(PlayingFrom(name, Screen.UserPlaylist.route(playlistId)))
                         }
                     )
                 }

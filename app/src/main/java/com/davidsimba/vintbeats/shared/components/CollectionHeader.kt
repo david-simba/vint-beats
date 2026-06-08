@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -47,6 +48,7 @@ fun CollectionHeader(
     iconTint: Color = VintageWhite,
     containerHeight: Dp = 420.dp,
     imageAlignment: Alignment = Alignment.Center,
+    isPlaying: Boolean = false,
     onPlayAll: (() -> Unit)? = null,
 ) {
     Box(
@@ -142,7 +144,7 @@ fun CollectionHeader(
                         modifier = Modifier.size(52.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Rounded.PlayArrow,
+                            imageVector = if (isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
                             contentDescription = stringResource(R.string.action_play_all),
                             tint = VintageWhite,
                             modifier = Modifier.size(30.dp)
