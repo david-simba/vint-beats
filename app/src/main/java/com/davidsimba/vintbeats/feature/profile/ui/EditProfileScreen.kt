@@ -42,10 +42,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.canhub.cropper.CropImageContract
-import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
+import com.davidsimba.vintbeats.core.util.VintCropImageContract
+import com.davidsimba.vintbeats.core.util.VintCropImageContractOptions
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.feature.profile.ui.components.ProfileAvatar
 import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
@@ -66,7 +66,7 @@ fun EditProfileScreen(
     var editName by remember(name) { mutableStateOf(name) }
     val focusManager = LocalFocusManager.current
 
-    val cropImage = rememberLauncherForActivityResult(CropImageContract()) { result ->
+    val cropImage = rememberLauncherForActivityResult(VintCropImageContract()) { result ->
         if (result.isSuccessful) {
             result.uriContent?.let { viewModel.onImagePicked(it) }
         }
@@ -76,7 +76,7 @@ fun EditProfileScreen(
         onResult = { uri ->
             uri?.let {
                 cropImage.launch(
-                    CropImageContractOptions(
+                    VintCropImageContractOptions(
                         uri = it,
                         cropImageOptions = CropImageOptions(
                             aspectRatioX = 1,

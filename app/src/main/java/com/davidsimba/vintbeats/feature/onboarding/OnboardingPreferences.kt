@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
@@ -24,6 +25,7 @@ class OnboardingPreferences @Inject constructor(
     val isComplete: Flow<Boolean> = dataStore.data.map { it[KEY_COMPLETE] ?: false }
     val userName: Flow<String> = dataStore.data.map { it[KEY_NAME] ?: "" }
     val photoUri: Flow<String?> = dataStore.data.map { it[KEY_PHOTO_URI] }
+    val photoVersion: Flow<Long> = dataStore.data.map { it[KEY_PHOTO_VERSION] ?: 0L }
 
     suspend fun setComplete(complete: Boolean) {
         dataStore.edit { it[KEY_COMPLETE] = complete }
@@ -37,6 +39,7 @@ class OnboardingPreferences @Inject constructor(
         dataStore.edit { prefs ->
             if (uri != null) prefs[KEY_PHOTO_URI] = uri
             else prefs.remove(KEY_PHOTO_URI)
+            prefs[KEY_PHOTO_VERSION] = System.currentTimeMillis()
         }
     }
 
@@ -44,5 +47,6 @@ class OnboardingPreferences @Inject constructor(
         private val KEY_COMPLETE = booleanPreferencesKey("onboarding_complete")
         private val KEY_NAME = stringPreferencesKey("user_name")
         private val KEY_PHOTO_URI = stringPreferencesKey("photo_uri")
+        private val KEY_PHOTO_VERSION = longPreferencesKey("photo_version")
     }
 }

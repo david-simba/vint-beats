@@ -58,10 +58,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import com.canhub.cropper.CropImageContract
-import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
+import com.davidsimba.vintbeats.core.util.VintCropImageContract
+import com.davidsimba.vintbeats.core.util.VintCropImageContractOptions
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.core.model.Artist
 import com.davidsimba.vintbeats.feature.search.ui.components.SearchField
@@ -104,7 +104,7 @@ private fun NameStep(viewModel: OnboardingViewModel) {
     val name by viewModel.name.collectAsStateWithLifecycle()
     val photoPath by viewModel.photoPath.collectAsStateWithLifecycle()
 
-    val cropImage = rememberLauncherForActivityResult(CropImageContract()) { result ->
+    val cropImage = rememberLauncherForActivityResult(VintCropImageContract()) { result ->
         if (result.isSuccessful) {
             result.uriContent?.let { viewModel.onPhotoSelected(it) }
         }
@@ -114,7 +114,7 @@ private fun NameStep(viewModel: OnboardingViewModel) {
         onResult = { uri ->
             uri?.let {
                 cropImage.launch(
-                    CropImageContractOptions(
+                    VintCropImageContractOptions(
                         uri = it,
                         cropImageOptions = CropImageOptions(
                             aspectRatioX = 1,

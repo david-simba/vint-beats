@@ -3,8 +3,8 @@ package com.davidsimba.vintbeats.feature.library.ui.createplaylist
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import com.canhub.cropper.CropImageContract
-import com.canhub.cropper.CropImageContractOptions
+import com.davidsimba.vintbeats.core.util.VintCropImageContract
+import com.davidsimba.vintbeats.core.util.VintCropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
 import androidx.compose.foundation.background
@@ -61,7 +61,7 @@ fun CreatePlaylistScreen(
     onCreated: (Int) -> Unit,
     viewModel: CreatePlaylistViewModel = hiltViewModel(),
 ) {
-    val cropImage = rememberLauncherForActivityResult(CropImageContract()) { result ->
+    val cropImage = rememberLauncherForActivityResult(VintCropImageContract()) { result ->
         if (result.isSuccessful) {
             result.uriContent?.let { viewModel.onImagePicked(it) }
         }
@@ -72,7 +72,7 @@ fun CreatePlaylistScreen(
         onResult = { uri ->
             uri?.let {
                 cropImage.launch(
-                    CropImageContractOptions(
+                    VintCropImageContractOptions(
                         uri = it,
                         cropImageOptions = CropImageOptions(
                             aspectRatioX = 1,

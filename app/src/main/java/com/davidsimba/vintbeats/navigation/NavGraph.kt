@@ -131,7 +131,7 @@ fun NavGraph(
     val isTrackPlaying = playbackState is PlayerState.Playing
 
     val hasActivePlayback = (isSaved && currentSavedTrack != null) || (!isSaved && unsavedTrack != null)
-    val showMiniPlayer = hasActivePlayback && currentRoute != Screen.Player.route
+    val showMiniPlayer = hasActivePlayback && currentRoute != Screen.Player.route && currentRoute != Screen.EditProfile.route
 
     val miniTitle: String?
     val miniArtist: String

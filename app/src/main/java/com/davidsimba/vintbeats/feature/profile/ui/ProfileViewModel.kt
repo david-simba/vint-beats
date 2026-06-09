@@ -8,10 +8,8 @@ import com.davidsimba.vintbeats.feature.onboarding.OnboardingPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -30,8 +28,8 @@ class ProfileViewModel @Inject constructor(
     val photoPath: StateFlow<String?> = prefs.photoUri
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
-    private val _photoVersion = MutableStateFlow(System.currentTimeMillis())
-    val photoVersion: StateFlow<Long> = _photoVersion.asStateFlow()
+    val photoVersion: StateFlow<Long> = prefs.photoVersion
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0L)
 
     fun saveName(name: String) {
         viewModelScope.launch { prefs.setName(name.trim()) }
@@ -48,10 +46,7 @@ class ProfileViewModel @Inject constructor(
                     file.absolutePath
                 }.getOrNull()
             }
-            path?.let {
-                prefs.setPhotoUri(it)
-                _photoVersion.value = System.currentTimeMillis()
-            }
+            path?.let { prefs.setPhotoUri(it) }
         }
     }
 }
