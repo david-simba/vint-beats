@@ -23,6 +23,7 @@ class OnboardingPreferences @Inject constructor(
 
     val isComplete: Flow<Boolean> = dataStore.data.map { it[KEY_COMPLETE] ?: false }
     val userName: Flow<String> = dataStore.data.map { it[KEY_NAME] ?: "" }
+    val photoUri: Flow<String?> = dataStore.data.map { it[KEY_PHOTO_URI] }
 
     suspend fun setComplete(complete: Boolean) {
         dataStore.edit { it[KEY_COMPLETE] = complete }
@@ -32,8 +33,16 @@ class OnboardingPreferences @Inject constructor(
         dataStore.edit { it[KEY_NAME] = name }
     }
 
+    suspend fun setPhotoUri(uri: String?) {
+        dataStore.edit { prefs ->
+            if (uri != null) prefs[KEY_PHOTO_URI] = uri
+            else prefs.remove(KEY_PHOTO_URI)
+        }
+    }
+
     companion object {
         private val KEY_COMPLETE = booleanPreferencesKey("onboarding_complete")
         private val KEY_NAME = stringPreferencesKey("user_name")
+        private val KEY_PHOTO_URI = stringPreferencesKey("photo_uri")
     }
 }

@@ -1,6 +1,9 @@
 package com.davidsimba.vintbeats.feature.onboarding.ui
 
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -29,6 +32,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.CameraAlt
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Button
@@ -42,6 +46,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -53,6 +58,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
+import com.canhub.cropper.CropImageView
+import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.core.model.Artist
 import com.davidsimba.vintbeats.feature.search.ui.components.SearchField
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
@@ -60,6 +70,7 @@ import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageWhite
 import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
+import java.io.File
 
 @Composable
 fun OnboardingScreen(
@@ -91,6 +102,38 @@ fun OnboardingScreen(
 @Composable
 private fun NameStep(viewModel: OnboardingViewModel) {
     val name by viewModel.name.collectAsStateWithLifecycle()
+    val photoPath by viewModel.photoPath.collectAsStateWithLifecycle()
+
+    val cropImage = rememberLauncherForActivityResult(CropImageContract()) { result ->
+        if (result.isSuccessful) {
+            result.uriContent?.let { viewModel.onPhotoSelected(it) }
+        }
+    }
+    val imagePicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri ->
+            uri?.let {
+                cropImage.launch(
+                    CropImageContractOptions(
+                        uri = it,
+                        cropImageOptions = CropImageOptions(
+                            aspectRatioX = 1,
+                            aspectRatioY = 1,
+                            fixAspectRatio = true,
+                            guidelines = CropImageView.Guidelines.ON,
+                            activityBackgroundColor = 0xFF121212.toInt(),
+                            toolbarColor = 0xFF121212.toInt(),
+                            toolbarTitleColor = 0xFFFFFFFF.toInt(),
+                            toolbarBackButtonColor = 0xFFFFFFFF.toInt(),
+                            borderLineColor = 0xFFDD7733.toInt(),
+                            borderCornerColor = 0xFFDD7733.toInt(),
+                            guidelinesColor = 0x44DD7733,
+                        ),
+                    )
+                )
+            }
+        },
+    )
 
     Column(
         modifier = Modifier
@@ -99,23 +142,62 @@ private fun NameStep(viewModel: OnboardingViewModel) {
             .statusBarsPadding()
             .padding(horizontal = 20.dp)
             .padding(top = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        Box(
+            modifier = Modifier
+                .size(72.dp)
+                .clip(CircleShape)
+                .background(VintageGrayDeep)
+                .clickable {
+                    imagePicker.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                },
+            contentAlignment = Alignment.Center,
+        ) {
+            if (photoPath != null) {
+                AsyncImage(
+                    model = File(photoPath!!),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.matchParentSize(),
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Rounded.CameraAlt,
+                    contentDescription = null,
+                    tint = VintageGrayMid,
+                    modifier = Modifier.size(28.dp),
+                )
+            }
+        }
         Text(
-            text = "Bienvenido a Vint",
+            text = stringResource(R.string.onboarding_add_photo),
+            color = VintageGrayDeep,
+            fontSize = 12.sp,
+            modifier = Modifier.padding(top = 8.dp, bottom = 28.dp),
+        )
+
+        Text(
+            text = stringResource(R.string.onboarding_welcome),
             color = VintageWhite,
             fontSize = 28.sp,
             fontWeight = FontWeight.Black,
+            modifier = Modifier.fillMaxWidth(),
         )
         Text(
-            text = "¿Cómo te llamas?",
+            text = stringResource(R.string.onboarding_name_question),
             color = VintageGrayMid,
             fontSize = 15.sp,
-            modifier = Modifier.padding(top = 6.dp, bottom = 24.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 6.dp, bottom = 24.dp),
         )
         OutlinedTextField(
             value = name,
             onValueChange = viewModel::onNameChange,
-            placeholder = { Text("Tu nombre", color = VintageGrayDeep) },
+            placeholder = { Text(stringResource(R.string.onboarding_name_hint), color = VintageGrayDeep) },
             singleLine = true,
             shape = RoundedCornerShape(12.dp),
             colors = OutlinedTextFieldDefaults.colors(
@@ -149,7 +231,7 @@ private fun NameStep(viewModel: OnboardingViewModel) {
                 .fillMaxWidth()
                 .height(52.dp)
         ) {
-            Text(text = "Continuar", fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
+            Text(text = stringResource(R.string.onboarding_continue), fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
         }
     }
 }
@@ -180,13 +262,13 @@ private fun ArtistsStep(viewModel: OnboardingViewModel, onDone: () -> Unit) {
             }
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Elige tus artistas",
+                    text = stringResource(R.string.onboarding_pick_artists),
                     color = VintageWhite,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Black,
                 )
                 Text(
-                    text = "Selecciona al menos 3",
+                    text = stringResource(R.string.onboarding_pick_artists_subtitle),
                     color = VintageGrayMid,
                     fontSize = 13.sp,
                 )
@@ -249,7 +331,10 @@ private fun ArtistsStep(viewModel: OnboardingViewModel, onDone: () -> Unit) {
                 .padding(horizontal = 20.dp, vertical = 16.dp)
                 .height(52.dp)
         ) {
-            val label = if (selected.size < 3) "Selecciona ${3 - selected.size} más" else "Listo (${selected.size})"
+            val label = if (selected.size < 3)
+                stringResource(R.string.onboarding_select_more, 3 - selected.size)
+            else
+                stringResource(R.string.onboarding_done_count, selected.size)
             Text(text = label, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
         }
     }

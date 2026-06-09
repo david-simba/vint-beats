@@ -6,6 +6,25 @@
     <string name="nav_home">Inicio</string>
     <string name="nav_search">Buscar</string>
     <string name="nav_library">Biblioteca</string>
+    <string name="nav_profile">Perfil</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_welcome">Bienvenido a Vint</string>
+    <string name="onboarding_name_question">¿Cómo te llamas?</string>
+    <string name="onboarding_name_hint">Tu nombre</string>
+    <string name="onboarding_add_photo">Añadir foto (opcional)</string>
+    <string name="onboarding_continue">Continuar</string>
+    <string name="onboarding_pick_artists">Elige tus artistas</string>
+    <string name="onboarding_pick_artists_subtitle">Selecciona al menos 3</string>
+    <string name="onboarding_done_count">Listo (%d)</string>
+    <string name="onboarding_select_more">Selecciona %d más</string>
+
+    <!-- Profile -->
+    <string name="profile_title">Perfil</string>
+    <string name="profile_edit_button">Editar</string>
+    <string name="edit_profile_title">Editar perfil</string>
+    <string name="edit_profile_save">Guardar</string>
+    <string name="edit_profile_label_name">Nombre</string>
 
     <!-- Library -->
     <string name="library_title">Biblioteca</string>

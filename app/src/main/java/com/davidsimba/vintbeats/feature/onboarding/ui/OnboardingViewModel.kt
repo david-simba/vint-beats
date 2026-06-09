@@ -1,5 +1,7 @@
 package com.davidsimba.vintbeats.feature.onboarding.ui
 
+import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidsimba.vintbeats.core.model.Artist
@@ -7,6 +9,8 @@ import com.davidsimba.vintbeats.feature.library.domain.artist.SavedArtistReposit
 import com.davidsimba.vintbeats.feature.onboarding.OnboardingPreferences
 import com.davidsimba.vintbeats.feature.search.domain.SearchRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +21,8 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
@@ -25,6 +31,7 @@ class OnboardingViewModel @Inject constructor(
     private val searchRepository: SearchRepository,
     private val artistRepository: SavedArtistRepository,
     private val onboardingPreferences: OnboardingPreferences,
+    @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
     private val _query = MutableStateFlow("")
@@ -44,6 +51,9 @@ class OnboardingViewModel @Inject constructor(
 
     private val _selected = MutableStateFlow<List<Artist>>(emptyList())
     val selected: StateFlow<List<Artist>> = _selected.asStateFlow()
+
+    private val _photoPath = MutableStateFlow<String?>(null)
+    val photoPath: StateFlow<String?> = _photoPath.asStateFlow()
 
     init {
         _query
@@ -73,11 +83,27 @@ class OnboardingViewModel @Inject constructor(
 
     fun isSelected(artistId: String) = _selected.value.any { it.id == artistId }
 
+    fun onPhotoSelected(uri: Uri) {
+        viewModelScope.launch {
+            val path = withContext(Dispatchers.IO) {
+                runCatching {
+                    val file = File(context.filesDir, "profile_photo.jpg")
+                    context.contentResolver.openInputStream(uri)?.use { input ->
+                        file.outputStream().use { input.copyTo(it) }
+                    }
+                    file.absolutePath
+                }.getOrNull()
+            }
+            _photoPath.value = path
+        }
+    }
+
     fun complete(onDone: () -> Unit) {
         val artists = _selected.value
         if (artists.size < 3 || _name.value.isBlank()) return
         viewModelScope.launch {
             onboardingPreferences.setName(_name.value.trim())
+            _photoPath.value?.let { onboardingPreferences.setPhotoUri(it) }
             artists.forEach { artistRepository.saveArtist(it.id, it.name, it.thumbnailUrl) }
             onboardingPreferences.setComplete(true)
             onDone()

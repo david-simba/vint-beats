@@ -45,6 +45,8 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.davidsimba.vintbeats.feature.album.ui.AlbumScreen
 import com.davidsimba.vintbeats.feature.artist.ui.ArtistScreen
+import com.davidsimba.vintbeats.feature.profile.ui.EditProfileScreen
+import com.davidsimba.vintbeats.feature.profile.ui.ProfileScreen
 import com.davidsimba.vintbeats.feature.library.ui.addsongs.AddSongsScreen
 import com.davidsimba.vintbeats.feature.library.ui.addtoplaylist.AddToPlaylistScreen
 import com.davidsimba.vintbeats.feature.onboarding.ui.OnboardingScreen
@@ -83,6 +85,7 @@ private val bottomNavRoutes = setOf(
     Screen.AddSongs.route,
     Screen.EditPlaylist.route,
     Screen.AddToPlaylist.route,
+    Screen.Profile.route,
 )
 
 @Composable
@@ -549,6 +552,25 @@ fun NavGraph(
                             }
                         ),
                     )
+                }
+                composable(
+                    route = Screen.Profile.route,
+                    popExitTransition = { fadeOut(animationSpec = tween(180)) }
+                ) {
+                    ProfileScreen(
+                        onNavigateToEdit = {
+                            navController.navigate(Screen.EditProfile.route)
+                        }
+                    )
+                }
+                composable(
+                    route = Screen.EditProfile.route,
+                    enterTransition = { slideInHorizontally(animationSpec = tween(220), initialOffsetX = { it }) },
+                    exitTransition = { ExitTransition.None },
+                    popEnterTransition = { EnterTransition.None },
+                    popExitTransition = { slideOutHorizontally(animationSpec = tween(220), targetOffsetX = { it }) }
+                ) {
+                    EditProfileScreen(onBack = { navController.popBackStack() })
                 }
                 composable(
                     route = Screen.Favorites.route,

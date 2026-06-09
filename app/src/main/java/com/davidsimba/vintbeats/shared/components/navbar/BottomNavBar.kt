@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Headset
 import androidx.compose.material.icons.rounded.LibraryMusic
+import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -44,7 +45,8 @@ data class BottomNavBarItem(
 val bottomNavItems = listOf(
     BottomNavBarItem(Screen.Home, R.string.nav_home, Icons.Rounded.Headset),
     BottomNavBarItem(Screen.Search, R.string.nav_search, Icons.Rounded.Search),
-    BottomNavBarItem(Screen.Library, R.string.nav_library, Icons.Rounded.LibraryMusic)
+    BottomNavBarItem(Screen.Library, R.string.nav_library, Icons.Rounded.LibraryMusic),
+    BottomNavBarItem(Screen.Profile, R.string.nav_profile, Icons.Rounded.Person),
 )
 
 @Composable
