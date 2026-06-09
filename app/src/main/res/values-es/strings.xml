@@ -31,12 +31,12 @@
     <string name="profile_auto_download_title">Descargar al añadir a favoritos</string>
     <string name="profile_auto_download_subtitle">Las canciones se descargarán automáticamente</string>
     <string name="profile_equalizer_title">Mostrar ecualizador</string>
-    <string name="profile_equalizer_subtitle">Visualizador el ecualizador mientras se reproduce</string>
+    <string name="profile_equalizer_subtitle">Visualizador el ecualizador en la pantalla del reproductor</string>
     <string name="profile_section_about">Acerca de</string>
     <string name="profile_support_creator">Apoya al creador</string>
     <string name="profile_support_creator_sub">Ayuda a mantener la app</string>
     <string name="profile_about">Acerca de Vint</string>
-    <string name="profile_about_sub">Versión, info del desarrollador</string>
+    <string name="profile_about_sub">Versión, info de la app</string>
     <string name="profile_terms">Términos y condiciones</string>
     <string name="profile_terms_sub">Política de uso de la app</string>
 
@@ -61,7 +61,6 @@
     <!-- About screen -->
     <string name="about_tagline">Tu música, sin límites</string>
     <string name="about_description">Vint es una app de música que te permite descubrir, guardar y disfrutar tus canciones y artistas favoritos, todo en un solo lugar.</string>
-    <string name="about_made_by">Hecho por</string>
     <string name="about_version">Versión</string>
 
     <!-- Library -->

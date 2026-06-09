@@ -35,7 +35,7 @@
     <string name="profile_support_creator">Support the creator</string>
     <string name="profile_support_creator_sub">Help keep the app running</string>
     <string name="profile_about">About Vint</string>
-    <string name="profile_about_sub">Version, developer info</string>
+    <string name="profile_about_sub">Version, app info</string>
     <string name="profile_terms">Terms &amp; Conditions</string>
     <string name="profile_terms_sub">App usage policy</string>
 
@@ -60,7 +60,6 @@
     <!-- About screen -->
     <string name="about_tagline">Your music, without limits</string>
     <string name="about_description">Vint is a music app that lets you discover, save and enjoy your favorite songs and artists, all in one place.</string>
-    <string name="about_made_by">Made by</string>
     <string name="about_version">Version</string>
 
     <!-- Library -->

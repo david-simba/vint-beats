@@ -1,7 +1,6 @@
 package com.davidsimba.vintbeats.feature.profile.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -123,23 +122,12 @@ fun AboutScreen(onBack: () -> Unit) {
             color = VintageGrayDeep,
             modifier = Modifier.padding(horizontal = 20.dp),
         )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 20.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = "${stringResource(R.string.about_made_by)} David Simba",
-                color = VintageGrayMid,
-                fontSize = 13.sp,
-            )
-            Text(
-                text = "© 2026",
-                color = VintageGrayMid,
-                fontSize = 13.sp,
-            )
-        }
+        Text(
+            text = "© 2026 Vint",
+            color = VintageGrayMid,
+            fontSize = 13.sp,
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 20.dp),
+            textAlign = TextAlign.Center,
+        )
     }
 }

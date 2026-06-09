@@ -60,13 +60,13 @@ fun ProfileScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 12.dp),
+                .padding(horizontal = 20.dp).padding(top = 6.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             ProfileAvatar(
                 photoPath = photoPath,
                 photoVersion = photoVersion,
-                size = 72.dp,
+                size = 80.dp,
             )
 
             Spacer(Modifier.width(20.dp))
