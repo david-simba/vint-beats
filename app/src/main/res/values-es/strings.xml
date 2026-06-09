@@ -26,6 +26,13 @@
     <string name="edit_profile_save">Guardar</string>
     <string name="edit_profile_label_name">Nombre</string>
 
+    <!-- Profile settings -->
+    <string name="profile_section_settings">Ajustes</string>
+    <string name="profile_auto_download_title">Descargar al añadir a favoritos</string>
+    <string name="profile_auto_download_subtitle">Las canciones se descargarán automáticamente</string>
+    <string name="profile_equalizer_title">Mostrar ecualizador</string>
+    <string name="profile_equalizer_subtitle">Visualizador activo mientras se reproduce</string>
+
     <!-- Library -->
     <string name="library_title">Biblioteca</string>
     <string name="library_empty">Aún no tienes canciones guardadas</string>

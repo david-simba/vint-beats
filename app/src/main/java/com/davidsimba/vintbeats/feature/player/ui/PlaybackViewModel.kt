@@ -26,6 +26,7 @@ import com.davidsimba.vintbeats.feature.home.data.RecentlyPlayedRepository
 import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
 import com.davidsimba.vintbeats.feature.player.widget.NowPlayingWidgetUpdater
 import com.davidsimba.vintbeats.feature.library.domain.track.TrackRepository
+import com.davidsimba.vintbeats.feature.onboarding.OnboardingPreferences
 import com.google.common.util.concurrent.ListenableFuture
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -56,6 +57,7 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
     private val sessionPreferences: PlayerSessionPreferences,
     private val recentlyPlayedRepository: RecentlyPlayedRepository,
     private val widgetUpdater: NowPlayingWidgetUpdater,
+    private val prefs: OnboardingPreferences,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -101,6 +103,9 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
 
     private val _isFavorite = MutableStateFlow(false)
     val isFavorite: StateFlow<Boolean> = _isFavorite.asStateFlow()
+
+    val equalizerEnabled: StateFlow<Boolean> = prefs.showEqualizer
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     private val _repeatMode = MutableStateFlow(Player.REPEAT_MODE_OFF)
     val repeatMode: StateFlow<Int> = _repeatMode.asStateFlow()
@@ -404,12 +409,20 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
         playTrack(track, newQueue = queue.drop(index + 1), preserveHistory = true)
     }
 
+    fun toggleEqualizer() {
+        viewModelScope.launch { prefs.setShowEqualizer(!equalizerEnabled.value) }
+    }
+
     fun toggleFavorite() {
         val track = buildCurrentTrack() ?: return
-        _isFavorite.value = !_isFavorite.value
+        val wasAlreadyFavorite = _isFavorite.value
+        _isFavorite.value = !wasAlreadyFavorite
         viewModelScope.launch {
             repository.toggleFavorite(track)
             _isFavorite.value = repository.isFavoriteTrack(track.id)
+            if (!wasAlreadyFavorite && prefs.autoDownloadFavorites.first()) {
+                downloadCurrentTrack()
+            }
         }
     }
 

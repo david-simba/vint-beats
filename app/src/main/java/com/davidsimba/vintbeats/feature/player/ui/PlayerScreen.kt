@@ -88,7 +88,7 @@ fun PlayerScreen(
     var showOptionsSheet by remember { mutableStateOf(false) }
     var showQueueSheet by remember { mutableStateOf(false) }
     var showLyricsScreen by remember { mutableStateOf(false) }
-    val showEqualizer by PlayerPreferences.equalizerEnabled.collectAsStateWithLifecycle()
+    val showEqualizer by viewModel.equalizerEnabled.collectAsStateWithLifecycle()
 
     BackHandler(enabled = showLyricsScreen) { showLyricsScreen = false }
     val isFavorite by viewModel.isFavorite.collectAsStateWithLifecycle()
@@ -335,7 +335,7 @@ fun PlayerScreen(
                     onClick = {
                         scope.launch { sheetState.hide() }.invokeOnCompletion {
                             showOptionsSheet = false
-                            PlayerPreferences.toggleEqualizer()
+                            viewModel.toggleEqualizer()
                         }
                     }
                 )
