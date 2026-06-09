@@ -30,7 +30,7 @@ fun SettingSectionHeader(title: String) {
         color = VintageGrayMid,
         fontSize = 11.sp,
         fontWeight = FontWeight.Medium,
-        modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp).padding(top = 12.dp),
+        modifier = Modifier.padding(horizontal = 20.dp).padding(top = 24.dp, bottom = 4.dp),
     )
 }
 
