@@ -37,6 +37,7 @@ import com.davidsimba.vintbeats.shared.theme.vintageBgGradient
 fun ProfileScreen(
     onNavigateToEdit: () -> Unit,
     onNavigateToAbout: () -> Unit,
+    onNavigateToTerms: () -> Unit,
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
     val name by viewModel.name.collectAsStateWithLifecycle()
@@ -111,11 +112,19 @@ fun ProfileScreen(
         )
 
         SettingSectionHeader(stringResource(R.string.profile_section_about))
-        SettingNavRow(title = stringResource(R.string.profile_support_creator))
+        SettingNavRow(
+            title = stringResource(R.string.profile_support_creator),
+            subtitle = stringResource(R.string.profile_support_creator_sub),
+        )
         SettingNavRow(
             title = stringResource(R.string.profile_about),
+            subtitle = stringResource(R.string.profile_about_sub),
             onClick = onNavigateToAbout,
         )
-        SettingNavRow(title = stringResource(R.string.profile_terms))
+        SettingNavRow(
+            title = stringResource(R.string.profile_terms),
+            subtitle = stringResource(R.string.profile_terms_sub),
+            onClick = onNavigateToTerms,
+        )
     }
 }

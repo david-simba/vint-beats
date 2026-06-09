@@ -79,21 +79,30 @@ fun SettingRow(
 @Composable
 fun SettingNavRow(
     title: String,
+    subtitle: String? = null,
     onClick: () -> Unit = {},
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
-            .padding(horizontal = 20.dp, vertical = 14.dp),
+            .padding(horizontal = 20.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            text = title,
-            color = VintageWhiteWarm,
-            fontSize = 15.sp,
-            modifier = Modifier.weight(1f),
-        )
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                color = VintageWhiteWarm,
+                fontSize = 15.sp,
+            )
+            if (subtitle != null) {
+                Text(
+                    text = subtitle,
+                    color = VintageGrayMid,
+                    fontSize = 12.sp,
+                )
+            }
+        }
         Icon(
             imageVector = Icons.Rounded.ChevronRight,
             contentDescription = null,
