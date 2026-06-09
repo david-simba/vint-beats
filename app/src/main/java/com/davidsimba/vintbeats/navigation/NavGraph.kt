@@ -45,6 +45,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.davidsimba.vintbeats.feature.album.ui.AlbumScreen
 import com.davidsimba.vintbeats.feature.artist.ui.ArtistScreen
+import com.davidsimba.vintbeats.feature.profile.ui.AboutScreen
 import com.davidsimba.vintbeats.feature.profile.ui.EditProfileScreen
 import com.davidsimba.vintbeats.feature.profile.ui.ProfileScreen
 import com.davidsimba.vintbeats.feature.library.ui.addsongs.AddSongsScreen
@@ -131,7 +132,7 @@ fun NavGraph(
     val isTrackPlaying = playbackState is PlayerState.Playing
 
     val hasActivePlayback = (isSaved && currentSavedTrack != null) || (!isSaved && unsavedTrack != null)
-    val showMiniPlayer = hasActivePlayback && currentRoute != Screen.Player.route && currentRoute != Screen.EditProfile.route
+    val showMiniPlayer = hasActivePlayback && currentRoute != Screen.Player.route && currentRoute != Screen.EditProfile.route && currentRoute != Screen.About.route
 
     val miniTitle: String?
     val miniArtist: String
@@ -558,9 +559,8 @@ fun NavGraph(
                     popExitTransition = { fadeOut(animationSpec = tween(180)) }
                 ) {
                     ProfileScreen(
-                        onNavigateToEdit = {
-                            navController.navigate(Screen.EditProfile.route)
-                        }
+                        onNavigateToEdit = { navController.navigate(Screen.EditProfile.route) },
+                        onNavigateToAbout = { navController.navigate(Screen.About.route) },
                     )
                 }
                 composable(
@@ -571,6 +571,15 @@ fun NavGraph(
                     popExitTransition = { slideOutHorizontally(animationSpec = tween(220), targetOffsetX = { it }) }
                 ) {
                     EditProfileScreen(onBack = { navController.popBackStack() })
+                }
+                composable(
+                    route = Screen.About.route,
+                    enterTransition = { slideInHorizontally(animationSpec = tween(220), initialOffsetX = { it }) },
+                    exitTransition = { ExitTransition.None },
+                    popEnterTransition = { EnterTransition.None },
+                    popExitTransition = { slideOutHorizontally(animationSpec = tween(220), targetOffsetX = { it }) }
+                ) {
+                    AboutScreen(onBack = { navController.popBackStack() })
                 }
                 composable(
                     route = Screen.Favorites.route,

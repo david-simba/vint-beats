@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
@@ -24,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.feature.profile.ui.components.ProfileAvatar
+import com.davidsimba.vintbeats.feature.profile.ui.components.SettingNavRow
 import com.davidsimba.vintbeats.feature.profile.ui.components.SettingRow
 import com.davidsimba.vintbeats.feature.profile.ui.components.SettingSectionHeader
 import com.davidsimba.vintbeats.shared.components.Header
@@ -35,6 +36,7 @@ import com.davidsimba.vintbeats.shared.theme.vintageBgGradient
 @Composable
 fun ProfileScreen(
     onNavigateToEdit: () -> Unit,
+    onNavigateToAbout: () -> Unit,
     viewModel: ProfileViewModel = hiltViewModel(),
 ) {
     val name by viewModel.name.collectAsStateWithLifecycle()
@@ -107,5 +109,13 @@ fun ProfileScreen(
                 )
             },
         )
+
+        SettingSectionHeader(stringResource(R.string.profile_section_about))
+        SettingNavRow(title = stringResource(R.string.profile_support_creator))
+        SettingNavRow(
+            title = stringResource(R.string.profile_about),
+            onClick = onNavigateToAbout,
+        )
+        SettingNavRow(title = stringResource(R.string.profile_terms))
     }
 }

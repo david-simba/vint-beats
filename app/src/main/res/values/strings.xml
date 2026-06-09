@@ -31,6 +31,16 @@
     <string name="profile_auto_download_subtitle">Songs will download automatically</string>
     <string name="profile_equalizer_title">Show equalizer</string>
     <string name="profile_equalizer_subtitle">Visualizer shown while playing</string>
+    <string name="profile_section_about">About</string>
+    <string name="profile_support_creator">Support the creator</string>
+    <string name="profile_about">About Vint</string>
+    <string name="profile_terms">Terms &amp; Conditions</string>
+
+    <!-- About screen -->
+    <string name="about_tagline">Your music, without limits</string>
+    <string name="about_description">Vint is a music app that lets you discover, save and enjoy your favorite songs and artists, all in one place.</string>
+    <string name="about_made_by">Made by</string>
+    <string name="about_version">Version</string>
 
     <!-- Library -->
     <string name="library_title">Library</string>

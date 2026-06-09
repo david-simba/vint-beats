@@ -48,5 +48,6 @@ sealed class Screen(val route: String) {
     data object AddToPlaylist : Screen("add_to_playlist")
     data object Profile : Screen("profile")
     data object EditProfile : Screen("edit_profile")
+    data object About : Screen("about")
     data object Onboarding : Screen("onboarding")
 }
