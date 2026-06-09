@@ -69,6 +69,7 @@ fun SettingRow(
                     text = subtitle,
                     color = VintageGrayMid,
                     fontSize = 12.sp,
+                    modifier = Modifier.padding(end = 6.dp)
                 )
             }
         }
