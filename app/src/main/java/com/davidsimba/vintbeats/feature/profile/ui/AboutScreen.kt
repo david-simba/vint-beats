@@ -2,6 +2,7 @@ package com.davidsimba.vintbeats.feature.profile.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -122,12 +123,22 @@ fun AboutScreen(onBack: () -> Unit) {
             color = VintageGrayDeep,
             modifier = Modifier.padding(horizontal = 20.dp),
         )
-        Text(
-            text = "© 2026 Vint",
-            color = VintageGrayMid,
-            fontSize = 13.sp,
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 20.dp),
-            textAlign = TextAlign.Center,
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 20.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                text = stringResource(R.string.about_created_by),
+                color = VintageGrayMid,
+                fontSize = 13.sp,
+            )
+            Text(
+                text = stringResource(R.string.about_copyright),
+                color = VintageGrayMid,
+                fontSize = 13.sp,
+            )
+        }
     }
 }

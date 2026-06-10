@@ -61,6 +61,8 @@
     <string name="about_tagline">Your music, without limits</string>
     <string name="about_description">Vint is a music app that lets you discover, save and enjoy your favorite songs and artists, all in one place.</string>
     <string name="about_version">Version</string>
+    <string name="about_created_by">Created by David Simba</string>
+    <string name="about_copyright">© 2026 Vint</string>
 
     <!-- Library -->
     <string name="library_title">Library</string>
