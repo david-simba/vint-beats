@@ -17,11 +17,8 @@ A modern Android music app built with Jetpack Compose. Stream, download, and org
 
 <br/>
 
-<img src="https://skillicons.dev/icons?i=kotlin,androidstudio,gradle,git" height="40"/>
-
-<br/><br/>
-
 [![Ko-fi](https://img.shields.io/badge/Support%20on%20Ko--fi-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/davidsimbaec)
+[![Download APK](https://img.shields.io/badge/Download%20APK-latest-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/davidsimba/VintBeats/releases/latest)
 
 </div>
 
