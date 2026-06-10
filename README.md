@@ -1,0 +1,133 @@
+<div align="center">
+
+# 🎵 Vint
+
+**Your music, without limits.**
+
+A modern Android music app built with Jetpack Compose. Stream, download, and organize your favorite music — all in one place.
+
+<br/>
+
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.0-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)](https://kotlinlang.org)
+[![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-Material3-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white)](https://developer.android.com/jetpack/compose)
+[![Android](https://img.shields.io/badge/Android-8.0%2B-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com)
+[![Min SDK](https://img.shields.io/badge/Min%20SDK-26-orange?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com)
+
+<br/>
+
+<p align="center">
+  <img src="https://skillicons.dev/icons?i=kotlin,androidstudio,gradle,git" height="40"/>
+</p>
+
+</div>
+
+---
+
+## About
+
+Vint is a music streaming and library app for Android. It streams audio using NewPipe Extractor as the primary source with a custom backend as fallback, supports offline downloads, synced lyrics, playlists, favorites, and a home screen widget — all wrapped in a clean vintage-inspired UI.
+
+---
+
+## Features
+
+- 🔍 **Search** — Find tracks, artists and albums
+- 🎧 **Streaming** — High-bitrate audio via NewPipe Extractor with backend fallback
+- ⬇️ **Downloads** — Save songs offline in `.m4a` format
+- ❤️ **Favorites** — Mark and access your favorite tracks instantly
+- 📋 **Playlists** — Create and manage personal playlists with custom covers
+- 🎤 **Synced Lyrics** — Real-time scrolling lyrics via LrcLib
+- 🎵 **Queue & History** — Full playback queue management with shuffle and history
+- 🏠 **Home Screen Widget** — Now Playing widget with media controls
+- 🎚️ **Equalizer** — System equalizer integration
+- ⚡ **Auto-download Favorites** — Automatically download songs when favorited
+- 🎨 **Dynamic Palette** — UI accent colors extracted from album art
+- 👤 **Profile** — Personalized profile with photo and display name
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Language | Kotlin 2.0 |
+| UI | Jetpack Compose, Material 3 |
+| Architecture | MVVM + Clean Architecture |
+| Dependency Injection | Hilt |
+| Database | Room |
+| Preferences | DataStore |
+| Networking | Retrofit + OkHttp |
+| Audio Extraction | NewPipe Extractor |
+| Media Playback | Media3 (ExoPlayer) + MediaSession |
+| Image Loading | Coil |
+| Security | AndroidX Security Crypto |
+| Widget | Glance AppWidget |
+| Navigation | Jetpack Navigation Compose |
+
+---
+
+## Architecture
+
+```
+app/
+├── core/           # Database, network, models, player setup
+├── feature/        # One package per screen (home, search, player, library, profile...)
+│   ├── home/
+│   ├── search/
+│   ├── player/
+│   ├── library/
+│   ├── album/
+│   ├── artist/
+│   ├── playlist/
+│   ├── profile/
+│   └── onboarding/
+├── navigation/     # NavGraph + Screen routes
+└── shared/         # Shared components, ViewModels, theme
+```
+
+Each feature follows the pattern: `data` → `domain` → `ui`, with Hilt injecting dependencies across layers.
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Android Studio Ladybug or newer
+- JDK 11+
+- Android device or emulator with API 26+
+
+### Setup
+
+1. Clone the repository
+   ```bash
+   git clone https://github.com/davidsimba/VintBeats.git
+   cd VintBeats
+   ```
+
+2. Add your backend URL and signing config to `local.properties`
+   ```properties
+   BACKEND_URL=https://your-backend.com
+   KEYSTORE_PATH=/path/to/vintbeats.jks
+   KEYSTORE_PASSWORD=yourpassword
+   KEY_ALIAS=vintbeats
+   KEY_PASSWORD=yourpassword
+   ```
+
+3. Sync Gradle and run the project
+
+---
+
+## Support
+
+If you find Vint useful, consider supporting development:
+
+[![Ko-fi](https://img.shields.io/badge/Support%20on%20Ko--fi-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/davidsimbaec)
+
+---
+
+<div align="center">
+
+Made with ❤️ by **David Simba** · © 2026 Vint
+
+</div>
