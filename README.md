@@ -15,10 +15,8 @@ A modern Android music app built with Jetpack Compose. Stream, download, and org
 [![Android](https://img.shields.io/badge/Android-8.0%2B-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com)
 [![Min SDK](https://img.shields.io/badge/Min%20SDK-26-orange?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com)
 
-<br/>
-
 [![Ko-fi](https://img.shields.io/badge/Support%20on%20Ko--fi-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/davidsimbaec)
-[![Download APK](https://img.shields.io/badge/Download%20APK-latest-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/davidsimba/VintBeats/releases/latest)
+[![Download APK](https://img.shields.io/badge/Download%20APK-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/davidsimba/VintBeats/releases/latest)
 
 </div>
 
