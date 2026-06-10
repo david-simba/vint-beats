@@ -1,5 +1,6 @@
 package com.davidsimba.vintbeats.feature.search.ui
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,7 +24,7 @@ import com.davidsimba.vintbeats.feature.search.ui.components.exploreGrid
 import com.davidsimba.vintbeats.shared.components.Header
 import com.davidsimba.vintbeats.shared.theme.VintageBgDark
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun SearchScreen(
     onSearchTap: () -> Unit,

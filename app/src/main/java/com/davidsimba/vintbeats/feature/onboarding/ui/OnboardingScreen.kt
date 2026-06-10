@@ -1,5 +1,6 @@
 package com.davidsimba.vintbeats.feature.onboarding.ui
 
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -236,6 +237,7 @@ private fun NameStep(viewModel: OnboardingViewModel) {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ArtistsStep(viewModel: OnboardingViewModel, onDone: () -> Unit) {
     val query by viewModel.query.collectAsStateWithLifecycle()

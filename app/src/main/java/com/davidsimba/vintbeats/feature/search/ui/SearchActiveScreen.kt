@@ -1,6 +1,7 @@
 package com.davidsimba.vintbeats.feature.search.ui
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -55,6 +56,7 @@ import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
 import com.davidsimba.vintbeats.shared.theme.VintageRedLight
 import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SearchActiveScreen(
     onBack: () -> Unit,
