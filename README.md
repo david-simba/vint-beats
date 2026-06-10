@@ -57,7 +57,7 @@ Vint is a music streaming and library app for Android. It streams audio using Ne
 | Preferences | DataStore |
 | Networking | Retrofit + OkHttp |
 | Audio Extraction | NewPipe Extractor |
-| Media Playback | Media3 (ExoPlayer) + MediaSession |
+| Media Playback | Media3 (ExoPlayer) + MediaSession + custom streaming backend |
 | Image Loading | Coil |
 | Security | AndroidX Security Crypto |
 | Widget | Glance AppWidget |
@@ -85,35 +85,6 @@ app/
 ```
 
 Each feature follows the pattern: `data` → `domain` → `ui`, with Hilt injecting dependencies across layers.
-
----
-
-## Getting Started
-
-### Prerequisites
-
-- Android Studio Ladybug or newer
-- JDK 11+
-- Android device or emulator with API 26+
-
-### Setup
-
-1. Clone the repository
-   ```bash
-   git clone https://github.com/davidsimba/VintBeats.git
-   cd VintBeats
-   ```
-
-2. Add your backend URL and signing config to `local.properties`
-   ```properties
-   BACKEND_URL=https://your-backend.com
-   KEYSTORE_PATH=/path/to/vintbeats.jks
-   KEYSTORE_PASSWORD=yourpassword
-   KEY_ALIAS=vintbeats
-   KEY_PASSWORD=yourpassword
-   ```
-
-3. Sync Gradle and run the project
 
 ---
 
