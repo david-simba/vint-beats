@@ -145,6 +145,14 @@ private fun NameStep(viewModel: OnboardingViewModel) {
             .padding(top = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        Text(
+            text = stringResource(R.string.onboarding_welcome),
+            color = VintageWhite,
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Black,
+            modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
+        )
+
         Box(
             modifier = Modifier
                 .size(72.dp)
@@ -181,19 +189,12 @@ private fun NameStep(viewModel: OnboardingViewModel) {
         )
 
         Text(
-            text = stringResource(R.string.onboarding_welcome),
-            color = VintageWhite,
-            fontSize = 28.sp,
-            fontWeight = FontWeight.Black,
-            modifier = Modifier.fillMaxWidth(),
-        )
-        Text(
             text = stringResource(R.string.onboarding_name_question),
             color = VintageGrayMid,
             fontSize = 15.sp,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 6.dp, bottom = 24.dp),
+                .padding(bottom = 24.dp),
         )
         OutlinedTextField(
             value = name,
