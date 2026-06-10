@@ -67,7 +67,7 @@ import com.davidsimba.vintbeats.shared.theme.VintageWhite
 @Composable
 fun UserPlaylistScreen(
     onBack: () -> Unit,
-    onTrackClick: (Int) -> Unit,
+    onTrackClick: (Int, List<SavedTrack>) -> Unit,
     onPlayAll: (List<SavedTrack>) -> Unit,
     onAddSongsClick: () -> Unit,
     onEditClick: () -> Unit,
@@ -173,7 +173,7 @@ fun UserPlaylistScreen(
                                 isPlaying = playbackState.isPlaying(track.trackId),
                                 onClick = {
                                     playbackState.notifyPlaying(title)
-                                    onTrackClick(track.id)
+                                    onTrackClick(track.id, playlist!!.tracks)
                                 },
                                 trailingContent = {
                                     IconButton(

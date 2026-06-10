@@ -5,6 +5,7 @@ import com.davidsimba.vintbeats.feature.library.domain.track.TrackRepository
 import com.davidsimba.vintbeats.core.model.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.io.File
 import javax.inject.Inject
 
 class TrackRepositoryImpl @Inject constructor(
@@ -43,7 +44,10 @@ class TrackRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun deleteTrack(id: Int) = dao.deleteById(id)
+    override suspend fun deleteTrack(id: Int) {
+        dao.getById(id)?.audioFilePath?.let { File(it).delete() }
+        dao.deleteById(id)
+    }
 
     override suspend fun removeFavorite(id: Int) {
         val track = dao.getById(id) ?: return

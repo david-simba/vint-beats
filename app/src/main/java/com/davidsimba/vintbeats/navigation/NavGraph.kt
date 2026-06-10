@@ -131,6 +131,7 @@ fun NavGraph(
     val isFavorite by playbackViewModel.isFavorite.collectAsStateWithLifecycle()
     val playingTrackId by playbackViewModel.currentlyPlayingTrackId.collectAsStateWithLifecycle()
     val isTrackPlaying = playbackState is PlayerState.Playing
+    val playingFrom by playbackViewModel.playingFrom.collectAsStateWithLifecycle()
 
     val hasActivePlayback = (isSaved && currentSavedTrack != null) || (!isSaved && unsavedTrack != null)
     val showMiniPlayer = hasActivePlayback && currentRoute != Screen.Player.route && currentRoute != Screen.EditProfile.route && currentRoute != Screen.About.route && currentRoute != Screen.Terms.route
@@ -473,10 +474,10 @@ fun NavGraph(
                     val playlistId = it.arguments?.getInt("playlistId") ?: return@composable
                     UserPlaylistScreen(
                         onBack = { navController.popBackStack() },
-                        onTrackClick = { id -> playbackViewModel.play(id) },
+                        onTrackClick = { id, queue -> playbackViewModel.play(id, queue) },
                         onPlayAll = { tracks ->
                             if (tracks.isNotEmpty()) {
-                                playbackViewModel.play(tracks.first().id)
+                                playbackViewModel.play(tracks.first().id, tracks)
                             }
                         },
                         onAddSongsClick = { navController.navigate(Screen.AddSongs.route(playlistId)) },
@@ -488,6 +489,8 @@ fun NavGraph(
                         playbackState = CollectionPlaybackState(
                             playingTrackId = playingTrackId,
                             isTrackPlaying = isTrackPlaying,
+                            playingFromRoute = playingFrom?.route,
+                            thisRoute = Screen.UserPlaylist.route(playlistId),
                             onSetPlayingFrom = { name ->
                                 playbackViewModel.setPlayingFrom(PlayingFrom(name, Screen.UserPlaylist.route(playlistId)))
                             }
@@ -533,14 +536,14 @@ fun NavGraph(
                     val downloadsLabel = stringResource(R.string.downloads_title)
                     DownloadsScreen(
                         onBack = { navController.popBackStack() },
-                        onTrackClick = { id ->
+                        onTrackClick = { id, queue ->
                             playbackViewModel.setPlayingFrom(PlayingFrom(downloadsLabel, Screen.Downloads.route))
-                            playbackViewModel.play(id)
+                            playbackViewModel.play(id, queue)
                         },
                         onPlayAll = { tracks ->
                             if (tracks.isNotEmpty()) {
                                 playbackViewModel.setPlayingFrom(PlayingFrom(downloadsLabel, Screen.Downloads.route))
-                                playbackViewModel.play(tracks.first().id)
+                                playbackViewModel.play(tracks.first().id, tracks)
                             }
                         },
                         onNavigateToAddToPlaylist = {
@@ -549,6 +552,8 @@ fun NavGraph(
                         playbackState = CollectionPlaybackState(
                             playingTrackId = playingTrackId,
                             isTrackPlaying = isTrackPlaying,
+                            playingFromRoute = playingFrom?.route,
+                            thisRoute = Screen.Downloads.route,
                             onSetPlayingFrom = { name ->
                                 playbackViewModel.setPlayingFrom(PlayingFrom(name, Screen.Downloads.route))
                             }
@@ -602,14 +607,14 @@ fun NavGraph(
                     val favoritesLabel = stringResource(R.string.favorites_title)
                     FavoritesScreen(
                         onBack = { navController.popBackStack() },
-                        onTrackClick = { id ->
+                        onTrackClick = { id, queue ->
                             playbackViewModel.setPlayingFrom(PlayingFrom(favoritesLabel, Screen.Favorites.route))
-                            playbackViewModel.play(id)
+                            playbackViewModel.play(id, queue)
                         },
                         onPlayAll = { tracks ->
                             if (tracks.isNotEmpty()) {
                                 playbackViewModel.setPlayingFrom(PlayingFrom(favoritesLabel, Screen.Favorites.route))
-                                playbackViewModel.play(tracks.first().id)
+                                playbackViewModel.play(tracks.first().id, tracks)
                             }
                         },
                         onNavigateToAddToPlaylist = {
@@ -618,6 +623,8 @@ fun NavGraph(
                         playbackState = CollectionPlaybackState(
                             playingTrackId = playingTrackId,
                             isTrackPlaying = isTrackPlaying,
+                            playingFromRoute = playingFrom?.route,
+                            thisRoute = Screen.Favorites.route,
                             onSetPlayingFrom = { name ->
                                 playbackViewModel.setPlayingFrom(PlayingFrom(name, Screen.Favorites.route))
                             }

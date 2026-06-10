@@ -54,7 +54,7 @@ import com.davidsimba.vintbeats.shared.theme.vintageBgGradient
 @Composable
 fun FavoritesScreen(
     onBack: () -> Unit,
-    onTrackClick: (Int) -> Unit,
+    onTrackClick: (Int, List<SavedTrack>) -> Unit,
     onPlayAll: (List<SavedTrack>) -> Unit = {},
     onNavigateToAddToPlaylist: () -> Unit = {},
     playbackState: CollectionPlaybackState = CollectionPlaybackState(),
@@ -116,7 +116,7 @@ fun FavoritesScreen(
                                 thumbnailUrl = track.trackThumbnailUrl,
                                 isActive = playbackState.isActive(track.trackId),
                                 isPlaying = playbackState.isPlaying(track.trackId),
-                                onClick = { onTrackClick(track.id) },
+                                onClick = { onTrackClick(track.id, favorites) },
                                 trailingContent = {
                                     IconButton(
                                         onClick = { selectedTrack = track },

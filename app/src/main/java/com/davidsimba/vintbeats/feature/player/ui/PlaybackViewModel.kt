@@ -311,8 +311,21 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
         }
     }
 
-    fun play(savedTrackId: Int) {
-        if (_currentSavedTrack.value?.id == savedTrackId && mediaController?.isPlaying == true) return
+    fun play(savedTrackId: Int, contextQueue: List<SavedTrack>? = null) {
+        if (_currentSavedTrack.value?.id == savedTrackId && mediaController?.isPlaying == true) {
+            if (contextQueue != null) {
+                _queue.value = contextQueue
+                    .filter { it.id != savedTrackId }
+                    .map {
+                        Track(
+                            id = it.trackId, title = it.trackTitle, artist = it.trackArtist,
+                            albumImageUrl = it.trackThumbnailUrl, previewUrl = null,
+                            durationText = it.trackDurationText
+                        )
+                    }
+            }
+            return
+        }
         _history.value = emptyList()
         playbackJob?.cancel()
         progressJob?.cancel()
@@ -350,7 +363,8 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
                 _isLoadingLyrics.value = false
             }
             viewModelScope.launch {
-                _queue.value = repository.getAllTracks().first()
+                val source = contextQueue ?: repository.getAllTracks().first()
+                _queue.value = source
                     .filter { it.id != savedTrackId }
                     .map {
                         Track(
