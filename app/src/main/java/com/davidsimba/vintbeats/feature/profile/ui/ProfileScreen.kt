@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -45,6 +46,7 @@ fun ProfileScreen(
     val photoVersion by viewModel.photoVersion.collectAsStateWithLifecycle()
     val autoDownload by viewModel.autoDownloadFavorites.collectAsStateWithLifecycle()
     val equalizerEnabled by viewModel.equalizerEnabled.collectAsStateWithLifecycle()
+    val uriHandler = LocalUriHandler.current
 
     Column(
         modifier = Modifier
@@ -115,6 +117,7 @@ fun ProfileScreen(
         SettingNavRow(
             title = stringResource(R.string.profile_support_creator),
             subtitle = stringResource(R.string.profile_support_creator_sub),
+            onClick = { uriHandler.openUri("https://ko-fi.com/davidsimbaec") },
         )
         SettingNavRow(
             title = stringResource(R.string.profile_about),
