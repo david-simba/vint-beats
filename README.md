@@ -28,6 +28,12 @@ Vint is a music streaming and library app for Android. It streams audio using Ne
 
 ---
 
+<div align="center">
+  <img src="assets/vint_screenshot.png"/>
+</div>
+
+---
+
 ## Features
 
 - 🔍 **Search** — Find tracks, artists and albums
