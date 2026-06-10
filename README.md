@@ -1,6 +1,8 @@
 <div align="center">
 
-# 🎵 Vint
+<img src="app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" width="120"/>
+
+# Vint
 
 **Your music, without limits.**
 
@@ -15,9 +17,11 @@ A modern Android music app built with Jetpack Compose. Stream, download, and org
 
 <br/>
 
-<p align="center">
-  <img src="https://skillicons.dev/icons?i=kotlin,androidstudio,gradle,git" height="40"/>
-</p>
+<img src="https://skillicons.dev/icons?i=kotlin,androidstudio,gradle,git" height="40"/>
+
+<br/><br/>
+
+[![Ko-fi](https://img.shields.io/badge/Support%20on%20Ko--fi-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/davidsimbaec)
 
 </div>
 
