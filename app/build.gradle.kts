@@ -30,9 +30,19 @@ android {
         buildConfigField("String", "BACKEND_URL", "\"${localProps.getProperty("BACKEND_URL", "http://10.0.2.2:3000")}\"")
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file(localProps.getProperty("KEYSTORE_PATH", ""))
+            storePassword = localProps.getProperty("KEYSTORE_PASSWORD", "")
+            keyAlias = localProps.getProperty("KEY_ALIAS", "")
+            keyPassword = localProps.getProperty("KEY_PASSWORD", "")
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

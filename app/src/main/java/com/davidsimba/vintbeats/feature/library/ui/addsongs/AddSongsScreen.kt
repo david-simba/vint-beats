@@ -1,6 +1,7 @@
 package com.davidsimba.vintbeats.feature.library.ui.addsongs
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +27,7 @@ import com.davidsimba.vintbeats.shared.components.VintCheckbox
 import com.davidsimba.vintbeats.shared.components.cards.TrackCard
 import com.davidsimba.vintbeats.shared.theme.VintageGray
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AddSongsScreen(
     onBack: () -> Unit,
