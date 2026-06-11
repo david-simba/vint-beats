@@ -140,6 +140,18 @@ If you find Vint useful, consider supporting development:
 
 ---
 
+---
+
+## Legal
+
+Vint is an open-source Android application intended for personal and educational use.
+
+The application does not host, store, or distribute copyrighted audio content. Vint acts as a client that retrieves publicly available information and media streams from third-party sources.
+
+All trademarks, music, artwork, and other copyrighted materials remain the property of their respective owners.
+
+---
+
 <div align="center">
 
 Made by **David Simba** · © 2026 Vint
