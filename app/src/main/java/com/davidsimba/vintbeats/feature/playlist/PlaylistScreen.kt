@@ -64,7 +64,7 @@ fun PlaylistScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val favoriteTrackIds by trackActionsViewModel.favoriteTrackIds.collectAsStateWithLifecycle()
     val downloadedTrackIds by trackActionsViewModel.downloadedTrackIds.collectAsStateWithLifecycle()
-    val downloadingTrackId by trackActionsViewModel.downloadingTrackId.collectAsStateWithLifecycle()
+    val downloadingTrackIds by trackActionsViewModel.downloadingTrackIds.collectAsStateWithLifecycle()
     val lazyListState = rememberLazyListState()
     val appBarAlpha = rememberScrollAppBarAlpha(lazyListState)
 
@@ -166,7 +166,7 @@ fun PlaylistScreen(
         TrackOptionsBottomSheet(
             isFavorite = track.id in favoriteTrackIds,
             isDownloaded = track.id in downloadedTrackIds,
-            isDownloading = downloadingTrackId == track.id,
+            isDownloading = downloadingTrackIds.contains(track.id),
             isCurrentlyPlaying = playbackState.isActive(track.id),
             onDownload = {
                 trackActionsViewModel.downloadTrack(track)

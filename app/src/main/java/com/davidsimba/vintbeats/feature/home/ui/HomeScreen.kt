@@ -65,7 +65,7 @@ fun HomeScreen(
     val recentAlbums by viewModel.recentAlbums.collectAsStateWithLifecycle()
     val favoriteTrackIds by trackActionsViewModel.favoriteTrackIds.collectAsStateWithLifecycle()
     val downloadedTrackIds by trackActionsViewModel.downloadedTrackIds.collectAsStateWithLifecycle()
-    val downloadingTrackId by trackActionsViewModel.downloadingTrackId.collectAsStateWithLifecycle()
+    val downloadingTrackIds by trackActionsViewModel.downloadingTrackIds.collectAsStateWithLifecycle()
 
     var selectedTrack by remember { mutableStateOf<Track?>(null) }
 
@@ -206,7 +206,7 @@ fun HomeScreen(
         TrackOptionsBottomSheet(
             isFavorite = track.id in favoriteTrackIds,
             isDownloaded = track.id in downloadedTrackIds,
-            isDownloading = downloadingTrackId == track.id,
+            isDownloading = downloadingTrackIds.contains(track.id),
             isCurrentlyPlaying = track.id == playingTrackId,
             onDownload = {
                 trackActionsViewModel.downloadTrack(track)

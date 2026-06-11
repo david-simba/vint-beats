@@ -10,6 +10,9 @@ interface TrackRepository {
     suspend fun getTrack(id: Int): SavedTrack?
     suspend fun getTrackByVideoId(trackId: String): SavedTrack?
     suspend fun saveTrack(track: Track, audioFilePath: String?)
+    suspend fun startDownload(track: Track)
+    suspend fun finishDownload(trackId: String, audioFilePath: String?)
+    suspend fun resetStuckDownloads()
     suspend fun deleteTrack(id: Int)
     suspend fun removeFavorite(id: Int)
     suspend fun toggleFavorite(track: Track)

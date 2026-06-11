@@ -67,13 +67,15 @@ fun DownloadsScreen(
     trackActionsViewModel: TrackActionsViewModel = hiltViewModel()
 ) {
     val downloads by viewModel.downloads.collectAsStateWithLifecycle()
+    val downloadProgress by trackActionsViewModel.downloadProgress.collectAsStateWithLifecycle()
     val lazyListState = rememberLazyListState()
     val appBarAlpha = rememberScrollAppBarAlpha(lazyListState)
 
     var selectedTrack by remember { mutableStateOf<SavedTrack?>(null) }
 
-    val subtitle = if (downloads.isEmpty()) stringResource(R.string.downloads_empty_short)
-                   else stringResource(R.string.downloads_count, downloads.size)
+    val completedDownloads = downloads.filter { !it.isDownloading }
+    val subtitle = if (completedDownloads.isEmpty()) stringResource(R.string.downloads_empty_short)
+                   else stringResource(R.string.downloads_count, completedDownloads.size)
 
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -86,9 +88,9 @@ fun DownloadsScreen(
                     subtitle = subtitle,
                     imageUrl = null,
                     placeholderIcon = Icons.Rounded.Download,
-                    isPlaying = playbackState.isPlayingFrom(downloads.map { it.trackId }),
-                    onPlayAll = if (downloads.isNotEmpty()) {
-                        { onPlayAll(downloads) }
+                    isPlaying = playbackState.isPlayingFrom(completedDownloads.map { it.trackId }),
+                    onPlayAll = if (completedDownloads.isNotEmpty()) {
+                        { onPlayAll(completedDownloads) }
                     } else null
                 )
             }
@@ -118,7 +120,9 @@ fun DownloadsScreen(
                                 thumbnailUrl = track.trackThumbnailUrl,
                                 isActive = playbackState.isActive(track.trackId),
                                 isPlaying = playbackState.isPlaying(track.trackId),
-                                onClick = { onTrackClick(track.id, downloads) },
+                                isDownloading = track.isDownloading,
+                                downloadProgress = if (track.isDownloading) downloadProgress[track.trackId] else null,
+                                onClick = if (track.isDownloading) null else ({ onTrackClick(track.id, downloads.filter { !it.isDownloading }) }),
                                 trailingContent = {
                                     IconButton(
                                         onClick = { selectedTrack = track },

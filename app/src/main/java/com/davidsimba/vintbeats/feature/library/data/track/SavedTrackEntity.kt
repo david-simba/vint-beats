@@ -14,7 +14,8 @@ data class SavedTrackEntity(
     val trackDurationText: String,
     val savedAt: Long = System.currentTimeMillis(),
     val audioFilePath: String? = null,
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean = false,
+    val isDownloading: Boolean = false
 ) {
     fun toDomain() = SavedTrack(
         id = id,
@@ -25,6 +26,7 @@ data class SavedTrackEntity(
         trackDurationText = trackDurationText,
         savedAt = savedAt,
         audioFilePath = audioFilePath,
-        isFavorite = isFavorite
+        isFavorite = isFavorite,
+        isDownloading = isDownloading
     )
 }

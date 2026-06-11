@@ -128,6 +128,7 @@
     <!-- Download snackbar -->
     <string name="download_started">Song is downloading</string>
     <string name="download_success">Song downloaded successfully</string>
+    <string name="download_error">Download failed, please try again</string>
 
     <!-- Library filters -->
     <string name="library_filter_yours">100% You</string>

@@ -26,7 +26,7 @@ import com.davidsimba.vintbeats.feature.library.data.track.TrackDao
         RecentlyPlayedEntity::class,
         RecentlyPlayedAlbumEntity::class,
     ],
-    version = 3,
+    version = 1,
     exportSchema = false
 )
 abstract class VintBeatsDatabase : RoomDatabase() {

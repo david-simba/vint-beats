@@ -39,6 +39,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -58,6 +59,7 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
     private val recentlyPlayedRepository: RecentlyPlayedRepository,
     private val widgetUpdater: NowPlayingWidgetUpdater,
     private val prefs: OnboardingPreferences,
+    private val progressStore: com.davidsimba.vintbeats.shared.DownloadProgressStore,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -98,8 +100,9 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
     private val _history = MutableStateFlow<List<Track>>(emptyList())
     val history: StateFlow<List<Track>> = _history.asStateFlow()
 
-    private val _isDownloading = MutableStateFlow(false)
-    val isDownloading: StateFlow<Boolean> = _isDownloading.asStateFlow()
+    val isDownloading: StateFlow<Boolean> = currentSavedTrack
+        .map { it?.isDownloading ?: false }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     private val _isFavorite = MutableStateFlow(false)
     val isFavorite: StateFlow<Boolean> = _isFavorite.asStateFlow()
@@ -447,28 +450,43 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
     }
 
     fun downloadCurrentTrack() {
-        if (_isDownloading.value) return
+        if (isDownloading.value) return
         val track = if (!_isSaved.value) {
             _unsavedTrack.value ?: return
         } else {
-            val saved = _currentSavedTrack.value?.takeIf { it.audioFilePath.isNullOrEmpty() } ?: return
+            val saved = _currentSavedTrack.value?.takeIf { it.audioFilePath.isNullOrEmpty() && !it.isDownloading } ?: return
             Track(
                 id = saved.trackId, title = saved.trackTitle, artist = saved.trackArtist,
                 albumImageUrl = saved.trackThumbnailUrl, previewUrl = null, durationText = saved.trackDurationText
             )
         }
         viewModelScope.launch {
-            _isDownloading.value = true
-            SnackbarController.emit(SnackbarEvent.DownloadStarted)
-            val streamUrl = currentStreamUrl ?: streamService.getAudioStreamUrl(track.id)
-            val audioFilePath = streamService.downloadAudio(track.id, streamUrl, context.filesDir)
-            repository.saveTrack(track, audioFilePath)
-            val saved = repository.getAllTracks().first().find { it.trackId == track.id }
-            _currentSavedTrack.value = saved
-            _unsavedTrack.value = null
-            _isSaved.value = true
-            _isDownloading.value = false
-            SnackbarController.emit(SnackbarEvent.DownloadSuccess)
+            try {
+                repository.startDownload(track)
+                val saved = repository.getAllTracks().first().find { it.trackId == track.id }
+                if (saved != null) {
+                    _currentSavedTrack.value = saved
+                    _unsavedTrack.value = null
+                    _isSaved.value = true
+                }
+                SnackbarController.emit(SnackbarEvent.DownloadStarted)
+                val streamUrl = currentStreamUrl ?: streamService.getAudioStreamUrl(track.id)
+                val audioFilePath = streamService.downloadAudio(
+                    videoId = track.id,
+                    streamUrl = streamUrl,
+                    destDir = context.filesDir,
+                    onProgress = { progressStore.set(track.id, it) }
+                )
+                progressStore.remove(track.id)
+                repository.finishDownload(track.id, audioFilePath)
+                if (audioFilePath == null) {
+                    SnackbarController.emit(SnackbarEvent.DownloadError)
+                }
+            } catch (e: Exception) {
+                progressStore.remove(track.id)
+                repository.finishDownload(track.id, null)
+                SnackbarController.emit(SnackbarEvent.DownloadError)
+            }
         }
     }
 

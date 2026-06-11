@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Alignment
@@ -35,13 +36,16 @@ fun TrackCard(
     imageSize: Dp = 44.dp,
     isActive: Boolean = false,
     isPlaying: Boolean = false,
+    isDownloading: Boolean = false,
+    downloadProgress: Float? = null,
     onClick: (() -> Unit)? = null,
     trailingContent: (@Composable () -> Unit)? = null
 ) {
+    val effectiveOnClick = if (isDownloading) null else onClick
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
+            .then(if (effectiveOnClick != null) Modifier.clickable(onClick = effectiveOnClick) else Modifier)
             .padding(horizontal = 16.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(14.dp)
@@ -58,7 +62,30 @@ fun TrackCard(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.matchParentSize()
             )
-            if (isActive) {
+            if (isDownloading) {
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(Color.Black.copy(alpha = 0.45f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (downloadProgress != null) {
+                        CircularProgressIndicator(
+                            progress = { downloadProgress },
+                            modifier = Modifier.size(imageSize * 0.45f),
+                            color = VintageWhite,
+                            trackColor = VintageWhite.copy(alpha = 0.25f),
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(imageSize * 0.45f),
+                            color = VintageWhite,
+                            strokeWidth = 2.dp
+                        )
+                    }
+                }
+            } else if (isActive) {
                 Box(
                     modifier = Modifier
                         .matchParentSize()
@@ -87,6 +114,8 @@ fun TrackCard(
             artistSize = 12.sp
         )
 
-        trailingContent?.invoke()
+        if (!isDownloading) {
+            trailingContent?.invoke()
+        }
     }
 }

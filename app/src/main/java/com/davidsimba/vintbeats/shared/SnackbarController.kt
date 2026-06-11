@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 sealed class SnackbarEvent {
     object DownloadStarted : SnackbarEvent()
     object DownloadSuccess : SnackbarEvent()
+    object DownloadError : SnackbarEvent()
 }
 
 object SnackbarController {

@@ -110,6 +110,7 @@ fun NavGraph(
     var snackbarEvent by remember { mutableStateOf<SnackbarEvent?>(null) }
     val downloadStartedMsg = stringResource(R.string.download_started)
     val downloadSuccessMsg = stringResource(R.string.download_success)
+    val downloadErrorMsg = stringResource(R.string.download_error)
 
     LaunchedEffect(Unit) {
         SnackbarController.events.collect { event ->
@@ -637,6 +638,7 @@ fun NavGraph(
                 message = when (snackbarEvent) {
                     is SnackbarEvent.DownloadStarted -> downloadStartedMsg
                     is SnackbarEvent.DownloadSuccess -> downloadSuccessMsg
+                    is SnackbarEvent.DownloadError -> downloadErrorMsg
                     null -> ""
                 },
                 icon = when (snackbarEvent) {

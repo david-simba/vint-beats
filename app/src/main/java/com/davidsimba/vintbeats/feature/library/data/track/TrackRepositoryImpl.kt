@@ -44,6 +44,42 @@ class TrackRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun startDownload(track: Track) {
+        val existing = dao.getByTrackId(track.id)
+        if (existing != null) {
+            dao.setDownloading(track.id, true)
+        } else {
+            dao.insert(
+                SavedTrackEntity(
+                    trackId = track.id,
+                    trackTitle = track.title,
+                    trackArtist = track.artist,
+                    trackThumbnailUrl = track.albumImageUrl,
+                    trackDurationText = track.durationText,
+                    isFavorite = false,
+                    isDownloading = true
+                )
+            )
+        }
+    }
+
+    override suspend fun finishDownload(trackId: String, audioFilePath: String?) {
+        if (audioFilePath != null) {
+            dao.setAudioFilePath(trackId, audioFilePath)
+        } else {
+            val existing = dao.getByTrackId(trackId)
+            if (existing != null && !existing.isFavorite && existing.audioFilePath == null) {
+                dao.deleteById(existing.id)
+            } else {
+                dao.setDownloading(trackId, false)
+            }
+        }
+    }
+
+    override suspend fun resetStuckDownloads() {
+        dao.resetStuckDownloads()
+    }
+
     override suspend fun deleteTrack(id: Int) {
         dao.getById(id)?.audioFilePath?.let { File(it).delete() }
         dao.deleteById(id)

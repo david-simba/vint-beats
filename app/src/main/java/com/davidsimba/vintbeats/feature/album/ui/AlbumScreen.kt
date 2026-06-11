@@ -67,7 +67,7 @@ fun AlbumScreen(
     val isSaved by viewModel.isSaved.collectAsStateWithLifecycle()
     val favoriteTrackIds by trackActionsViewModel.favoriteTrackIds.collectAsStateWithLifecycle()
     val downloadedTrackIds by trackActionsViewModel.downloadedTrackIds.collectAsStateWithLifecycle()
-    val downloadingTrackId by trackActionsViewModel.downloadingTrackId.collectAsStateWithLifecycle()
+    val downloadingTrackIds by trackActionsViewModel.downloadingTrackIds.collectAsStateWithLifecycle()
     val lazyListState = rememberLazyListState()
 
     val appBarAlpha = rememberScrollAppBarAlpha(lazyListState)
@@ -174,7 +174,7 @@ fun AlbumScreen(
         TrackOptionsBottomSheet(
             isFavorite = track.id in favoriteTrackIds,
             isDownloaded = track.id in downloadedTrackIds,
-            isDownloading = downloadingTrackId == track.id,
+            isDownloading = downloadingTrackIds.contains(track.id),
             onDownload = {
                 trackActionsViewModel.downloadTrack(track)
                 selectedTrack = null

@@ -42,42 +42,67 @@ class YouTubeStreamService @Inject constructor(
         url
     }
 
-    suspend fun downloadAudio(videoId: String, streamUrl: String, destDir: File): String? =
-        withContext(Dispatchers.IO) {
-            try {
-                val dir = File(destDir, "audio").also { it.mkdirs() }
-                val file = File(dir, "$videoId.m4a")
-                if (file.exists() && file.length() > 0) {
-                    Log.d(TAG, "[$videoId] Already cached at ${file.path}")
-                    return@withContext file.path
-                }
-                val downloadClient = client.newBuilder()
-                    .readTimeout(120, TimeUnit.SECONDS)
-                    .build()
-                val request = Request.Builder().url(streamUrl).build()
-                downloadClient.newCall(request).execute().use { response ->
-                    if (!response.isSuccessful) {
-                        Log.e(TAG, "[$videoId] Download HTTP ${response.code}")
-                        return@withContext null
-                    }
-                    val body = response.body ?: run {
-                        Log.e(TAG, "[$videoId] Download: empty body")
-                        return@withContext null
-                    }
-                    file.outputStream().buffered().use { out ->
-                        body.byteStream().copyTo(out)
-                    }
-                    if (file.length() == 0L) {
-                        Log.e(TAG, "[$videoId] Download: file empty after write")
-                        file.delete()
-                        return@withContext null
-                    }
-                    Log.d(TAG, "[$videoId] Downloaded ${file.length() / 1024}KB → ${file.path}")
-                    file.path
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "[$videoId] Download error: ${e::class.simpleName}: ${e.message}")
-                null
+    suspend fun downloadAudio(
+        videoId: String,
+        streamUrl: String,
+        destDir: File,
+        onProgress: ((Float) -> Unit)? = null
+    ): String? = withContext(Dispatchers.IO) {
+        val dir = File(destDir, "audio").also { it.mkdirs() }
+        val file = File(dir, "$videoId.m4a")
+        val tempFile = File(dir, "$videoId.tmp")
+        try {
+            if (file.exists() && file.length() > 0) {
+                Log.d(TAG, "[$videoId] Already cached at ${file.path}")
+                return@withContext file.path
             }
+            if (tempFile.exists()) tempFile.delete()
+            val downloadClient = OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(120, TimeUnit.SECONDS)
+                .build()
+            val request = Request.Builder().url(streamUrl).build()
+            downloadClient.newCall(request).execute().use { response ->
+                if (!response.isSuccessful) {
+                    Log.e(TAG, "[$videoId] Download HTTP ${response.code}")
+                    return@withContext null
+                }
+                val body = response.body ?: run {
+                    Log.e(TAG, "[$videoId] Download: empty body")
+                    return@withContext null
+                }
+                val contentLength = body.contentLength()
+                var bytesCopied = 0L
+                var lastReported = -0.02f
+                val buffer = ByteArray(8 * 1024)
+                tempFile.outputStream().buffered().use { out ->
+                    val input = body.byteStream()
+                    var bytes = input.read(buffer)
+                    while (bytes >= 0) {
+                        out.write(buffer, 0, bytes)
+                        bytesCopied += bytes
+                        if (onProgress != null && contentLength > 0) {
+                            val progress = bytesCopied.toFloat() / contentLength.toFloat()
+                            if (progress - lastReported >= 0.01f) {
+                                onProgress(progress)
+                                lastReported = progress
+                            }
+                        }
+                        bytes = input.read(buffer)
+                    }
+                }
+                if (tempFile.length() == 0L) {
+                    Log.e(TAG, "[$videoId] Download: file empty after write")
+                    tempFile.delete()
+                    return@withContext null
+                }
+                tempFile.renameTo(file)
+                Log.d(TAG, "[$videoId] Downloaded ${file.length() / 1024}KB → ${file.path}")
+                file.path
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "[$videoId] Download error: ${e::class.simpleName}: ${e.message}")
+            null
         }
+    }
 }

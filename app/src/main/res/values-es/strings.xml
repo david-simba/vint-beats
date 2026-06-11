@@ -62,6 +62,8 @@
     <string name="about_tagline">Tu música, sin límites</string>
     <string name="about_description">Vint es una app de música que te permite descubrir, guardar y disfrutar tus canciones y artistas favoritos, todo en un solo lugar.</string>
     <string name="about_version">Versión</string>
+    <string name="about_created_by">Creado por David Simba</string>
+    <string name="about_copyright">© 2026 Vint</string>
 
     <!-- Library -->
     <string name="library_title">Biblioteca</string>
@@ -127,6 +129,7 @@
     <!-- Download snackbar -->
     <string name="download_started">La canción se está descargando</string>
     <string name="download_success">Canción descargada con éxito ;)</string>
+    <string name="download_error">Error al descargar, inténtalo de nuevo</string>`
 
     <!-- Library filters -->
     <string name="library_filter_yours">100% Tú</string>
