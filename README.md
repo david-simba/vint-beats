@@ -36,19 +36,19 @@ Vint is a music streaming and library app for Android. It streams audio using Ne
 
 ## Features
 
-- 🔍 **Search** — Find tracks, artists and albums
-- 🎧 **Streaming** — High-bitrate audio via NewPipe Extractor with backend fallback
-- ⬇️ **Downloads** — Save songs offline in `.m4a` format with real-time progress
-- ❤️ **Favorites** — Mark and access your favorite tracks instantly
-- 📋 **Playlists** — Create and manage personal playlists with custom covers
-- 🎤 **Synced Lyrics** — Real-time scrolling lyrics via LrcLib
-- 🎵 **Queue & History** — Full playback queue management with shuffle and history
-- 🏠 **Home Screen Widget** — Now Playing widget with media controls
-- 🎚️ **Equalizer** — System equalizer integration
-- ⚡ **Auto-download Favorites** — Automatically download songs when favorited
-- 🎨 **Dynamic Palette** — UI accent colors extracted from album art
-- 👤 **Profile** — Personalized profile with photo and display name
-- 🌐 **Language Support** — Available in English and Spanish
+- **Search** — Find tracks, artists and albums
+- **Streaming** — High-bitrate audio via NewPipe Extractor with backend fallback
+- **Downloads** — Save songs offline in `.m4a` format with real-time progress
+- **Favorites** — Mark and access your favorite tracks instantly
+- **Playlists** — Create and manage personal playlists with custom covers
+- **Synced Lyrics** — Real-time scrolling lyrics via LrcLib
+- **Queue & History** — Full playback queue management with shuffle and history
+- **Home Screen Widget** — Now Playing widget with media controls
+- **Equalizer** — System equalizer integration
+- **Auto-download Favorites** — Automatically download songs when favorited
+- **Dynamic Palette** — UI accent colors extracted from album art
+- **Profile** — Personalized profile with photo and display name
+- **Language Support** — Available in English and Spanish
 
 ---
 
@@ -137,8 +137,6 @@ Vint App
 If you find Vint useful, consider supporting development:
 
 [![Ko-fi](https://img.shields.io/badge/Support%20on%20Ko--fi-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/davidsimbaec)
-
----
 
 ---
 
