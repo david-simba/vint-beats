@@ -95,7 +95,7 @@ dependencies {
     implementation(libs.androidx.palette)
     implementation(libs.glance.appwidget)
     implementation(libs.glance.material3)
-    implementation("com.github.TeamNewPipe:NewPipeExtractor:dev-SNAPSHOT")
+    implementation("com.github.TeamNewPipe:NewPipeExtractor:v0.26.5")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
