@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.davidsimba.vintbeats.R
+import com.davidsimba.vintbeats.feature.player.R
 import com.davidsimba.vintbeats.core.designsystem.components.inputs.ClickableText
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
 

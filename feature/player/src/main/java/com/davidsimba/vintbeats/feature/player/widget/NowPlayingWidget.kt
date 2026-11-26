@@ -38,7 +38,7 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextDefaults
 import androidx.glance.unit.ColorProvider
-import com.davidsimba.vintbeats.R
+import com.davidsimba.vintbeats.feature.player.R
 import java.io.File
 
 @SuppressLint("RestrictedApi")

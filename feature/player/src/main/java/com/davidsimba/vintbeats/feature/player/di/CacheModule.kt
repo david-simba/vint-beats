@@ -1,4 +1,4 @@
-package com.davidsimba.vintbeats.core.player
+package com.davidsimba.vintbeats.feature.player.di
 
 import android.content.Context
 import androidx.annotation.OptIn

@@ -116,12 +116,8 @@
     <string name="album_play">Reproducir álbum</string>
 
     <!-- Queue -->
-    <string name="queue_up_next">A continuación</string>
-    <string name="queue_loading">Cargando canciones…</string>
 
     <!-- Player options -->
-    <string name="player_option_equalizer_hide">Ocultar ecualizador</string>
-    <string name="player_option_equalizer_show">Mostrar ecualizador</string>
 
     <!-- Download snackbar -->
     <string name="download_started">La canción se está descargando</string>
@@ -152,7 +148,6 @@
     <string name="save_playlist_action">Guardar</string>
     <string name="action_remove_download">Eliminar canción</string>
     <string name="add_to_playlist_empty">Aún no tienes playlists creadas</string>
-    <string name="playing_from_label">Reproduciéndose desde</string>
 
     <!-- Home sections -->
     <string name="home_seleccion_rapida">Para ti</string>

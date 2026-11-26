@@ -30,7 +30,7 @@ import androidx.compose.material.icons.rounded.HeartBroken
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.ui.res.stringResource
-import com.davidsimba.vintbeats.R
+import com.davidsimba.vintbeats.feature.player.R
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
