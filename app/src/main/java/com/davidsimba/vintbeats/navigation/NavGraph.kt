@@ -213,7 +213,8 @@ fun NavGraph(
                         },
                         onNavigateToAddToPlaylist = {
                             navController.navigate(Screen.AddToPlaylist.route)
-                        }
+                        },
+                        onFavoritesClick = { navController.navigate(Screen.Favorites.route) }
                     )
                 }
                 composable(

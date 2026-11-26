@@ -3,6 +3,7 @@ package com.davidsimba.vintbeats.core.database
 import android.content.Context
 import androidx.room.Room
 import com.davidsimba.vintbeats.core.database.dao.PlaylistDao
+import com.davidsimba.vintbeats.core.database.dao.RecentCollectionDao
 import com.davidsimba.vintbeats.core.database.dao.SavedAlbumDao
 import com.davidsimba.vintbeats.core.database.dao.SavedArtistDao
 import com.davidsimba.vintbeats.core.database.dao.TrackDao
@@ -23,6 +24,7 @@ object DatabaseModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): VintBeatsDatabase =
         Room.databaseBuilder(context, VintBeatsDatabase::class.java, "vintbeats.db")
+            .addMigrations(MIGRATION_1_2)
             .fallbackToDestructiveMigration()
             .build()
 
@@ -43,4 +45,7 @@ object DatabaseModule {
 
     @Provides
     fun provideRecentlyPlayedAlbumDao(db: VintBeatsDatabase): RecentlyPlayedAlbumDao = db.recentlyPlayedAlbumDao()
+
+    @Provides
+    fun provideRecentCollectionDao(db: VintBeatsDatabase): RecentCollectionDao = db.recentCollectionDao()
 }

@@ -2,6 +2,8 @@ package com.davidsimba.vintbeats.core.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.davidsimba.vintbeats.core.database.dao.RecentCollectionDao
+import com.davidsimba.vintbeats.core.database.entity.RecentCollectionEntity
 import com.davidsimba.vintbeats.core.database.dao.RecentlyPlayedAlbumDao
 import com.davidsimba.vintbeats.core.database.entity.RecentlyPlayedAlbumEntity
 import com.davidsimba.vintbeats.core.database.dao.RecentlyPlayedDao
@@ -25,8 +27,9 @@ import com.davidsimba.vintbeats.core.database.dao.TrackDao
         SavedArtistEntity::class,
         RecentlyPlayedEntity::class,
         RecentlyPlayedAlbumEntity::class,
+        RecentCollectionEntity::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class VintBeatsDatabase : RoomDatabase() {
@@ -36,4 +39,5 @@ abstract class VintBeatsDatabase : RoomDatabase() {
     abstract fun savedArtistDao(): SavedArtistDao
     abstract fun recentlyPlayedDao(): RecentlyPlayedDao
     abstract fun recentlyPlayedAlbumDao(): RecentlyPlayedAlbumDao
+    abstract fun recentCollectionDao(): RecentCollectionDao
 }

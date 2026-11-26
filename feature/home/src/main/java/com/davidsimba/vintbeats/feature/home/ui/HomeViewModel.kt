@@ -8,10 +8,14 @@ import com.davidsimba.vintbeats.core.network.BackendService
 import com.davidsimba.vintbeats.core.common.toHighRes
 import com.davidsimba.vintbeats.feature.home.data.HomeFeedCache
 import com.davidsimba.vintbeats.core.data.recent.RecentlyPlayedAlbumsRepository
+import com.davidsimba.vintbeats.core.data.recent.RecentCollectionsRepository
 import com.davidsimba.vintbeats.core.data.recent.RecentlyPlayedRepository
 import com.davidsimba.vintbeats.feature.home.domain.ArtistRadioItem
 import com.davidsimba.vintbeats.core.model.RecentAlbum
+import com.davidsimba.vintbeats.core.model.RecentCollection
+import com.davidsimba.vintbeats.core.model.RecentCollectionKind
 import com.davidsimba.vintbeats.core.model.RecentTrack
+import com.davidsimba.vintbeats.feature.home.domain.QuickAccessItem
 import com.davidsimba.vintbeats.core.model.HomeSectionPlaylists
 import com.davidsimba.vintbeats.core.model.PlaylistItem
 import com.davidsimba.vintbeats.core.data.library.SavedArtistRepository
@@ -43,6 +47,7 @@ class HomeViewModel @Inject constructor(
     private val artistRepository: SavedArtistRepository,
     private val backendService: BackendService,
     private val homeFeedCache: HomeFeedCache,
+    private val recentCollectionsRepository: RecentCollectionsRepository,
     private val recentlyPlayedRepository: RecentlyPlayedRepository,
     private val recentlyPlayedAlbumsRepository: RecentlyPlayedAlbumsRepository,
     onboardingPreferences: OnboardingPreferences,
@@ -83,11 +88,35 @@ class HomeViewModel @Inject constructor(
     val userName: StateFlow<String> = onboardingPreferences.userName
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
 
-    val recentTracks: StateFlow<List<RecentTrack>> = recentlyPlayedRepository.getRecent()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
-
     val recentAlbums: StateFlow<List<RecentAlbum>> = recentlyPlayedAlbumsRepository.getRecent()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    private val recentTracks: StateFlow<List<RecentTrack>> = recentlyPlayedRepository.getRecent()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    private val recentCollections: StateFlow<List<RecentCollection>> = recentCollectionsRepository.getRecent()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    /** "Canciones que te gustan" primero; luego álbumes, canciones y playlists recientes, intercalados y sin duplicados. */
+    val quickAccess: StateFlow<List<QuickAccessItem>> = combine(recentAlbums, recentTracks, recentCollections) { albums, tracks, collections ->
+        val albumItems = albums.map { QuickAccessItem.Album(it.albumId, it.title, it.thumbnailUrl) }
+        val playlistItems = collections.filter { it.kind == RecentCollectionKind.PLAYLIST }.map {
+            QuickAccessItem.Playlist(it.collectionId, it.title, it.thumbnailUrl, it.artistId, it.artistName)
+        }
+        val trackItems = tracks.map { QuickAccessItem.Track(it.trackId, it.title, it.artist, it.thumbnailUrl) }
+        val lists = listOf<List<QuickAccessItem>>(albumItems, trackItems, playlistItems)
+        val interleaved = (0 until lists.maxOf { it.size }).flatMap { i -> lists.mapNotNull { it.getOrNull(i) } }
+        (listOf(QuickAccessItem.Favorites) + interleaved).distinctBy { it.key }.take(6)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf(QuickAccessItem.Favorites))
+
+    fun recordPlaylist(id: String, thumbnailUrl: String?, artistId: String?, artistName: String?) {
+        val known = _paraPlaylists.value.firstOrNull { it.id == id }
+            ?: _extraSections.value.flatMap { it.playlists }.firstOrNull { it.id == id }
+        val title = artistName ?: known?.title ?: return
+        viewModelScope.launch {
+            recentCollectionsRepository.save(RecentCollectionKind.PLAYLIST, id, title, thumbnailUrl, artistId, artistName)
+        }
+    }
 
     fun loadFeed() {
         if (_paraPlaylists.value.isNotEmpty() || _quickMix.value.isNotEmpty()) return

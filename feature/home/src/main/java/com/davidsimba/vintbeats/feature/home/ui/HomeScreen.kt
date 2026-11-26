@@ -24,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.home.domain.ArtistRadioItem
+import com.davidsimba.vintbeats.feature.home.domain.QuickAccessItem
 import com.davidsimba.vintbeats.feature.home.ui.components.ArtistRadioSection
 import com.davidsimba.vintbeats.feature.home.ui.components.ArtistRadioSkeleton
 import com.davidsimba.vintbeats.feature.home.ui.components.HomeHeader
@@ -32,7 +33,7 @@ import com.davidsimba.vintbeats.feature.home.ui.components.PlaylistSection
 import com.davidsimba.vintbeats.feature.home.ui.components.QuickMixSection
 import com.davidsimba.vintbeats.feature.home.ui.components.QuickMixSkeleton
 import com.davidsimba.vintbeats.feature.home.ui.components.RecentAlbumsSection
-import com.davidsimba.vintbeats.feature.home.ui.components.RecentlyPlayedSection
+import com.davidsimba.vintbeats.feature.home.ui.components.QuickAccessSection
 import com.davidsimba.vintbeats.core.ui.AddToPlaylistController
 import com.davidsimba.vintbeats.core.common.QueueController
 import com.davidsimba.vintbeats.core.ui.TrackActionsViewModel
@@ -54,17 +55,23 @@ fun HomeScreen(
     onRadioSelected: (ArtistRadioItem) -> Unit = {},
     onNavigateToOnboarding: () -> Unit = {},
     onNavigateToAddToPlaylist: () -> Unit = {},
+    onFavoritesClick: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel(),
     trackActionsViewModel: TrackActionsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val needsOnboarding by viewModel.needsOnboarding.collectAsStateWithLifecycle()
     val userName by viewModel.userName.collectAsStateWithLifecycle()
-    val recentTracks by viewModel.recentTracks.collectAsStateWithLifecycle()
+    val quickAccess by viewModel.quickAccess.collectAsStateWithLifecycle()
     val recentAlbums by viewModel.recentAlbums.collectAsStateWithLifecycle()
     val favoriteTrackIds by trackActionsViewModel.favoriteTrackIds.collectAsStateWithLifecycle()
     val downloadedTrackIds by trackActionsViewModel.downloadedTrackIds.collectAsStateWithLifecycle()
     val downloadingTrackIds by trackActionsViewModel.downloadingTrackIds.collectAsStateWithLifecycle()
+
+    val openPlaylist: (String, String?, String?, String?) -> Unit = { id, thumbnailUrl, artistId, artistName ->
+        viewModel.recordPlaylist(id, thumbnailUrl, artistId, artistName)
+        onPlaylistSelected(id, thumbnailUrl, artistId, artistName)
+    }
 
     var selectedTrack by remember { mutableStateOf<Track?>(null) }
 
@@ -116,6 +123,31 @@ fun HomeScreen(
                 ) {
                     item { HomeHeader(userName = userName) }
 
+                    item(key = "accesos_rapidos") {
+                        QuickAccessSection(
+                            items = quickAccess,
+                            onItemClick = { item ->
+                                when (item) {
+                                    is QuickAccessItem.Favorites -> onFavoritesClick()
+                                    is QuickAccessItem.Album -> onAlbumSelected(item.albumId)
+                                    is QuickAccessItem.Playlist ->
+                                        openPlaylist(item.playlistId, item.thumbnailUrl, item.artistId, item.artistName)
+                                    is QuickAccessItem.Track -> onTrackSelected(
+                                        Track(
+                                            id = item.trackId,
+                                            title = item.title,
+                                            artist = item.artist,
+                                            albumImageUrl = item.thumbnailUrl,
+                                            previewUrl = null,
+                                            durationText = "",
+                                        ),
+                                        emptyList(),
+                                    )
+                                }
+                            },
+                        )
+                    }
+
                     item {
                         if (state.quickMix.isNotEmpty()) {
                             QuickMixSection(
@@ -134,26 +166,8 @@ fun HomeScreen(
                         item(key = section.title) {
                             PlaylistSection(
                                 section = section,
-                                onPlaylistSelected = onPlaylistSelected
+                                onPlaylistSelected = openPlaylist
                             )
-                        }
-                        if (index == 0 && recentTracks.isNotEmpty()) {
-                            item(key = "recientes") {
-                                RecentlyPlayedSection(
-                                    tracks = recentTracks,
-                                    onTrackClick = { recent ->
-                                        val asTrack = Track(
-                                            id = recent.trackId,
-                                            title = recent.title,
-                                            artist = recent.artist,
-                                            albumImageUrl = recent.thumbnailUrl,
-                                            previewUrl = null,
-                                            durationText = ""
-                                        )
-                                        onTrackSelected(asTrack, emptyList())
-                                    }
-                                )
-                            }
                         }
                         if (index == 0 && recentAlbums.isNotEmpty()) {
                             item(key = "albumes_recientes") {
