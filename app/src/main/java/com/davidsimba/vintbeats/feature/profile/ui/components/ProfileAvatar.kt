@@ -18,10 +18,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.davidsimba.vintbeats.shared.theme.VintageBgDark
-import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
-import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
-import com.davidsimba.vintbeats.shared.theme.VintageWhite
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgDark
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayDeep
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
 import java.io.File
 
 @Composable

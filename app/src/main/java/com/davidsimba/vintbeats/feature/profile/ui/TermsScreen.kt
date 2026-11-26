@@ -25,10 +25,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.davidsimba.vintbeats.R
-import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
-import com.davidsimba.vintbeats.shared.theme.VintageWhite
-import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
-import com.davidsimba.vintbeats.shared.theme.vintageBgGradient
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhiteWarm
+import com.davidsimba.vintbeats.core.designsystem.theme.vintageBgGradient
 
 @Composable
 fun TermsScreen(onBack: () -> Unit) {

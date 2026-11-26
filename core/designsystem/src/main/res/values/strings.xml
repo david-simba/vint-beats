@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="label_song">Song</string>
+    <string name="player_option_download">Download</string>
+    <string name="player_option_downloading">Downloading</string>
+    <string name="home_radio">Radio</string>
+    <string name="mix_this_is">This is</string>
+    <string name="action_back">Back</string>
+    <string name="action_play_all">Play all</string>
+    <string name="action_remove_favorite">Remove from favorites</string>
+    <string name="action_add_favorite">Add to favorites</string>
+    <string name="action_add_to_playlist">Add to playlist</string>
+    <string name="action_add_to_queue">Add to queue</string>
+</resources>

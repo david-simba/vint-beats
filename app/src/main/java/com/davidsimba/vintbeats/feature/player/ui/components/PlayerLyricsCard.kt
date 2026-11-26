@@ -42,10 +42,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.davidsimba.vintbeats.feature.player.ui.LyricLine
-import com.davidsimba.vintbeats.shared.components.cards.Card
-import com.davidsimba.vintbeats.shared.theme.VintageBgBase
-import com.davidsimba.vintbeats.shared.theme.VintageWhite
-import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
+import com.davidsimba.vintbeats.core.designsystem.components.cards.Card
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgBase
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhiteWarm
 
 @Composable
 fun PlayerLyricsCard(

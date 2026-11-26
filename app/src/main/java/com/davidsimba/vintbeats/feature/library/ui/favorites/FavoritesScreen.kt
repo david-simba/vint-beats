@@ -41,14 +41,14 @@ import com.davidsimba.vintbeats.shared.AddToPlaylistController
 import com.davidsimba.vintbeats.shared.CollectionPlaybackState
 import com.davidsimba.vintbeats.shared.QueueController
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
-import com.davidsimba.vintbeats.shared.components.CollectionAppBar
-import com.davidsimba.vintbeats.shared.components.CollectionHeader
-import com.davidsimba.vintbeats.shared.components.TrackOptionsBottomSheet
-import com.davidsimba.vintbeats.shared.components.cards.TrackCard
-import com.davidsimba.vintbeats.shared.components.rememberScrollAppBarAlpha
-import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
-import com.davidsimba.vintbeats.shared.theme.VintageRedLight
-import com.davidsimba.vintbeats.shared.theme.vintageBgGradient
+import com.davidsimba.vintbeats.core.designsystem.components.CollectionAppBar
+import com.davidsimba.vintbeats.core.designsystem.components.CollectionHeader
+import com.davidsimba.vintbeats.core.designsystem.components.TrackOptionsBottomSheet
+import com.davidsimba.vintbeats.core.designsystem.components.cards.TrackCard
+import com.davidsimba.vintbeats.core.designsystem.components.rememberScrollAppBarAlpha
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageRedLight
+import com.davidsimba.vintbeats.core.designsystem.theme.vintageBgGradient
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

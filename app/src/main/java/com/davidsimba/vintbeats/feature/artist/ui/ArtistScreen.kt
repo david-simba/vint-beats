@@ -40,20 +40,20 @@ import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistAlbumsList
 import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistTopSongItem
 import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistTopSongsEmpty
-import com.davidsimba.vintbeats.shared.components.MixRadioRow
+import com.davidsimba.vintbeats.core.designsystem.components.MixRadioRow
 import com.davidsimba.vintbeats.shared.AddToPlaylistController
 import com.davidsimba.vintbeats.shared.QueueController
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
-import com.davidsimba.vintbeats.shared.components.CollectionAppBar
-import com.davidsimba.vintbeats.shared.components.CollectionHeader
-import com.davidsimba.vintbeats.shared.components.SectionLabel
-import com.davidsimba.vintbeats.shared.components.TrackOptionsBottomSheet
-import com.davidsimba.vintbeats.shared.components.rememberScrollAppBarAlpha
-import com.davidsimba.vintbeats.shared.theme.VintageBgDark
+import com.davidsimba.vintbeats.core.designsystem.components.CollectionAppBar
+import com.davidsimba.vintbeats.core.designsystem.components.CollectionHeader
+import com.davidsimba.vintbeats.core.designsystem.components.SectionLabel
+import com.davidsimba.vintbeats.core.designsystem.components.TrackOptionsBottomSheet
+import com.davidsimba.vintbeats.core.designsystem.components.rememberScrollAppBarAlpha
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgDark
 import com.davidsimba.vintbeats.core.util.toHighRes
-import com.davidsimba.vintbeats.shared.theme.VintageGray
-import com.davidsimba.vintbeats.shared.theme.VintageRedLight
-import com.davidsimba.vintbeats.shared.theme.VintageWhite
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageGray
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageRedLight
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

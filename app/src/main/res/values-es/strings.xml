@@ -101,7 +101,6 @@
     <string name="explore_playlists_error">No se pudieron cargar las listas</string>
 
     <!-- Labels -->
-    <string name="label_song">Canción</string>
     <string name="label_artist">Artista</string>
     <string name="label_album">Álbum</string>
 
@@ -121,8 +120,6 @@
     <string name="queue_loading">Cargando canciones…</string>
 
     <!-- Player options -->
-    <string name="player_option_download">Descargar</string>
-    <string name="player_option_downloading">Descargando</string>
     <string name="player_option_equalizer_hide">Ocultar ecualizador</string>
     <string name="player_option_equalizer_show">Mostrar ecualizador</string>
 
@@ -141,12 +138,8 @@
     <!-- Home -->
     <string name="home_greeting">Hola, %s!</string>
     <string name="home_empty">Guarda artistas para personalizar tu home</string>
-    <string name="home_radio">Radio</string>
-    <string name="mix_this_is">This is</string>
 
     <!-- Common -->
-    <string name="action_back">Atrás</string>
-    <string name="action_play_all">Reproducir todo</string>
     <string name="action_add_songs">Agregar canciones</string>
     <string name="action_edit_playlist">Editar</string>
     <string name="edit_playlist_title">Editar playlist</string>
@@ -158,10 +151,6 @@
     <string name="action_cancel">Cancelar</string>
     <string name="save_playlist_action">Guardar</string>
     <string name="action_remove_download">Eliminar canción</string>
-    <string name="action_remove_favorite">Quitar de favoritos</string>
-    <string name="action_add_favorite">Agregar a favoritos</string>
-    <string name="action_add_to_playlist">Agregar a playlist</string>
-    <string name="action_add_to_queue">Agregar a la cola</string>
     <string name="add_to_playlist_empty">Aún no tienes playlists creadas</string>
     <string name="playing_from_label">Reproduciéndose desde</string>
 

@@ -1,5 +1,7 @@
 package com.davidsimba.vintbeats.feature.home.ui.components
 
+import com.davidsimba.vintbeats.core.designsystem.R as DsR
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,8 +20,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.feature.home.domain.ArtistRadioItem
-import com.davidsimba.vintbeats.shared.components.cards.RadioCard
-import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
+import com.davidsimba.vintbeats.core.designsystem.components.cards.RadioCard
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhiteWarm
 
 @Composable
 fun ArtistRadioSection(
@@ -28,7 +30,7 @@ fun ArtistRadioSection(
 ) {
     Column(modifier = Modifier.padding(bottom = 28.dp)) {
         Text(
-            text = stringResource(R.string.home_radio),
+            text = stringResource(DsR.string.home_radio),
             color = VintageWhiteWarm,
             fontSize = 17.sp,
             fontWeight = FontWeight.SemiBold,

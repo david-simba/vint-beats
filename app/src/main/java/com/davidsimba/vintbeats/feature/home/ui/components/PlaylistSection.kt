@@ -15,8 +15,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.davidsimba.vintbeats.feature.home.domain.HomeSectionPlaylists
-import com.davidsimba.vintbeats.shared.components.cards.PlaylistCard
-import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
+import com.davidsimba.vintbeats.core.designsystem.components.cards.PlaylistCard
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhiteWarm
 
 @Composable
 fun PlaylistSection(

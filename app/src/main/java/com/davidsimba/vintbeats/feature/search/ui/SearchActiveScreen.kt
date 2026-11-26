@@ -1,5 +1,7 @@
 package com.davidsimba.vintbeats.feature.search.ui
 
+import com.davidsimba.vintbeats.core.designsystem.R as DsR
+
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -48,13 +50,13 @@ import com.davidsimba.vintbeats.feature.search.domain.RecentSearch
 import com.davidsimba.vintbeats.feature.search.ui.components.AlbumRow
 import com.davidsimba.vintbeats.feature.search.ui.components.ArtistRow
 import com.davidsimba.vintbeats.feature.search.ui.components.SearchField
-import com.davidsimba.vintbeats.shared.components.TrackInfo
-import com.davidsimba.vintbeats.shared.components.cards.TrackCard
-import com.davidsimba.vintbeats.shared.theme.VintageBgDark
-import com.davidsimba.vintbeats.shared.theme.VintageGray
-import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
-import com.davidsimba.vintbeats.shared.theme.VintageRedLight
-import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
+import com.davidsimba.vintbeats.core.designsystem.components.TrackInfo
+import com.davidsimba.vintbeats.core.designsystem.components.cards.TrackCard
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgDark
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageGray
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageRedLight
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhiteWarm
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -85,7 +87,7 @@ fun SearchActiveScreen(
                         IconButton(onClick = onBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                                contentDescription = stringResource(R.string.action_back),
+                                contentDescription = stringResource(DsR.string.action_back),
                                 tint = VintageBgDark
                             )
                         }

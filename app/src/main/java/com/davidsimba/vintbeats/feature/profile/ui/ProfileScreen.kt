@@ -28,11 +28,11 @@ import com.davidsimba.vintbeats.feature.profile.ui.components.ProfileAvatar
 import com.davidsimba.vintbeats.feature.profile.ui.components.SettingNavRow
 import com.davidsimba.vintbeats.feature.profile.ui.components.SettingRow
 import com.davidsimba.vintbeats.feature.profile.ui.components.SettingSectionHeader
-import com.davidsimba.vintbeats.shared.components.Header
-import com.davidsimba.vintbeats.shared.components.VintSwitch
-import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
-import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
-import com.davidsimba.vintbeats.shared.theme.vintageBgGradient
+import com.davidsimba.vintbeats.core.designsystem.components.Header
+import com.davidsimba.vintbeats.core.designsystem.components.VintSwitch
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhiteWarm
+import com.davidsimba.vintbeats.core.designsystem.theme.vintageBgGradient
 
 @Composable
 fun ProfileScreen(

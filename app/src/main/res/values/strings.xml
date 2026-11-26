@@ -100,7 +100,6 @@
     <string name="explore_playlists_error">Couldn\'t load playlists</string>
 
     <!-- Labels -->
-    <string name="label_song">Song</string>
     <string name="label_artist">Artist</string>
     <string name="label_album">Album</string>
 
@@ -120,8 +119,6 @@
     <string name="queue_loading">Loading up next tracks…</string>
 
     <!-- Player options -->
-    <string name="player_option_download">Download</string>
-    <string name="player_option_downloading">Downloading</string>
     <string name="player_option_equalizer_hide">Hide equalizer</string>
     <string name="player_option_equalizer_show">Show equalizer</string>
 
@@ -144,12 +141,8 @@
     <string name="home_tus_artistas">Artistas que escuchas</string>
     <string name="home_recientes">Escuchado recientemente</string>
     <string name="home_albumes_recientes">Álbumes recientes</string>
-    <string name="home_radio">Radio</string>
-    <string name="mix_this_is">This is</string>
 
     <!-- Common -->
-    <string name="action_back">Back</string>
-    <string name="action_play_all">Play all</string>
     <string name="action_add_songs">Add songs</string>
     <string name="action_edit_playlist">Edit</string>
     <string name="edit_playlist_title">Edit playlist</string>
@@ -161,10 +154,6 @@
     <string name="action_cancel">Cancel</string>
     <string name="save_playlist_action">Save</string>
     <string name="action_remove_download">Delete song</string>
-    <string name="action_remove_favorite">Remove from favorites</string>
-    <string name="action_add_favorite">Add to favorites</string>
-    <string name="action_add_to_playlist">Add to playlist</string>
-    <string name="action_add_to_queue">Add to queue</string>
     <string name="add_to_playlist_empty">No playlists created yet</string>
     <string name="playing_from_label">Playing from</string>
 </resources>

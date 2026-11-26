@@ -41,14 +41,14 @@ import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.feature.library.ui.components.LibraryCardGrid
 import com.davidsimba.vintbeats.feature.library.ui.components.LibraryCardList
 import com.davidsimba.vintbeats.feature.library.ui.components.LibraryItem
-import com.davidsimba.vintbeats.shared.components.ImageShape
-import com.davidsimba.vintbeats.shared.components.VintFilterChip
-import com.davidsimba.vintbeats.shared.theme.VintageBlueLight
-import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
-import com.davidsimba.vintbeats.shared.theme.VintageOrangeLight
-import com.davidsimba.vintbeats.shared.theme.VintageRedLight
-import com.davidsimba.vintbeats.shared.theme.VintageTealLight
-import com.davidsimba.vintbeats.shared.theme.VintageWhite
+import com.davidsimba.vintbeats.core.designsystem.components.ImageShape
+import com.davidsimba.vintbeats.core.designsystem.components.VintFilterChip
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageBlueLight
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageOrangeLight
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageRedLight
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageTealLight
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
 
 @Composable
 fun LibraryScreen(

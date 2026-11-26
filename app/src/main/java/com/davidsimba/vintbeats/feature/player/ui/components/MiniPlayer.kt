@@ -56,11 +56,11 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.player.ui.PlayerState
-import com.davidsimba.vintbeats.shared.components.TrackInfo
-import com.davidsimba.vintbeats.shared.components.background.Background
-import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
-import com.davidsimba.vintbeats.shared.theme.VintageRedLight
-import com.davidsimba.vintbeats.shared.theme.VintageWhite
+import com.davidsimba.vintbeats.core.designsystem.components.TrackInfo
+import com.davidsimba.vintbeats.core.designsystem.components.background.Background
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayDeep
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageRedLight
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 

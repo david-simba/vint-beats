@@ -21,8 +21,8 @@ import com.davidsimba.vintbeats.feature.search.domain.PlaylistSummary
 import com.davidsimba.vintbeats.feature.search.ui.components.CategorySheetContent
 import com.davidsimba.vintbeats.feature.search.ui.components.SearchField
 import com.davidsimba.vintbeats.feature.search.ui.components.exploreGrid
-import com.davidsimba.vintbeats.shared.components.Header
-import com.davidsimba.vintbeats.shared.theme.VintageBgDark
+import com.davidsimba.vintbeats.core.designsystem.components.Header
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgDark
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable

@@ -16,3 +16,7 @@
 local.properties
 *.jks
 *.keystore
+
+# Build outputs de todos los módulos
+build/
+.kotlin/

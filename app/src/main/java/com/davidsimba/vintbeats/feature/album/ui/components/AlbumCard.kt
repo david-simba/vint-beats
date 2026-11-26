@@ -20,9 +20,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.core.model.Album
-import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
-import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
-import com.davidsimba.vintbeats.shared.theme.VintageWhite
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayDeep
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
 
 @Composable
 fun AlbumCard(album: Album, onClick: () -> Unit) {
@@ -56,9 +56,9 @@ fun AlbumCard(album: Album, onClick: () -> Unit) {
             overflow = TextOverflow.Ellipsis
         )
 
-        if (!album.year.isNullOrBlank()) {
+        album.year?.takeIf { it.isNotBlank() }?.let { year ->
             Text(
-                text = album.year,
+                text = year,
                 color = VintageGrayMid,
                 fontSize = 12.sp
             )

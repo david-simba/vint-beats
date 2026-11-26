@@ -1,5 +1,7 @@
 package com.davidsimba.vintbeats.feature.library.ui.addsongs
 
+import com.davidsimba.vintbeats.core.designsystem.R as DsR
+
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
@@ -23,9 +25,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.feature.search.ui.components.SearchField
-import com.davidsimba.vintbeats.shared.components.VintCheckbox
-import com.davidsimba.vintbeats.shared.components.cards.TrackCard
-import com.davidsimba.vintbeats.shared.theme.VintageGray
+import com.davidsimba.vintbeats.core.designsystem.components.VintCheckbox
+import com.davidsimba.vintbeats.core.designsystem.components.cards.TrackCard
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageGray
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -51,8 +53,8 @@ fun AddSongsScreen(
                         IconButton(onClick = onBack) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                                contentDescription = stringResource(R.string.action_back),
-                                tint = com.davidsimba.vintbeats.shared.theme.VintageBgDark
+                                contentDescription = stringResource(DsR.string.action_back),
+                                tint = com.davidsimba.vintbeats.core.designsystem.theme.VintageBgDark
                             )
                         }
                     }

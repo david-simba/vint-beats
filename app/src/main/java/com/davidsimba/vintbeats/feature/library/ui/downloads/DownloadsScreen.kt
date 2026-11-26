@@ -1,5 +1,7 @@
 package com.davidsimba.vintbeats.feature.library.ui.downloads
 
+import com.davidsimba.vintbeats.core.designsystem.R as DsR
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,14 +48,14 @@ import com.davidsimba.vintbeats.shared.AddToPlaylistController
 import com.davidsimba.vintbeats.shared.CollectionPlaybackState
 import com.davidsimba.vintbeats.shared.QueueController
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
-import com.davidsimba.vintbeats.shared.components.BottomSheet
-import com.davidsimba.vintbeats.shared.components.BottomSheetMenuItem
-import com.davidsimba.vintbeats.shared.components.CollectionAppBar
-import com.davidsimba.vintbeats.shared.components.CollectionHeader
-import com.davidsimba.vintbeats.shared.components.cards.TrackCard
-import com.davidsimba.vintbeats.shared.components.rememberScrollAppBarAlpha
-import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
-import com.davidsimba.vintbeats.shared.theme.vintageBgGradient
+import com.davidsimba.vintbeats.core.designsystem.components.BottomSheet
+import com.davidsimba.vintbeats.core.designsystem.components.BottomSheetMenuItem
+import com.davidsimba.vintbeats.core.designsystem.components.CollectionAppBar
+import com.davidsimba.vintbeats.core.designsystem.components.CollectionHeader
+import com.davidsimba.vintbeats.core.designsystem.components.cards.TrackCard
+import com.davidsimba.vintbeats.core.designsystem.components.rememberScrollAppBarAlpha
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid
+import com.davidsimba.vintbeats.core.designsystem.theme.vintageBgGradient
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -157,8 +159,8 @@ fun DownloadsScreen(
         BottomSheet(onDismiss = { selectedTrack = null }) {
             BottomSheetMenuItem(
                 label = stringResource(
-                    if (savedTrack.isFavorite) R.string.action_remove_favorite
-                    else R.string.action_add_favorite
+                    if (savedTrack.isFavorite) DsR.string.action_remove_favorite
+                    else DsR.string.action_add_favorite
                 ),
                 icon = if (savedTrack.isFavorite) Icons.Rounded.HeartBroken else Icons.Rounded.FavoriteBorder,
                 onClick = {
@@ -167,7 +169,7 @@ fun DownloadsScreen(
                 }
             )
             BottomSheetMenuItem(
-                label = stringResource(R.string.action_add_to_playlist),
+                label = stringResource(DsR.string.action_add_to_playlist),
                 icon = Icons.AutoMirrored.Rounded.PlaylistAdd,
                 onClick = {
                     AddToPlaylistController.pendingTrack = track
@@ -177,7 +179,7 @@ fun DownloadsScreen(
             )
             if (!playbackState.isActive(savedTrack.trackId)) {
                 BottomSheetMenuItem(
-                    label = stringResource(R.string.action_add_to_queue),
+                    label = stringResource(DsR.string.action_add_to_queue),
                     icon = Icons.Rounded.Queue,
                     onClick = {
                         QueueController.addToQueue(track)

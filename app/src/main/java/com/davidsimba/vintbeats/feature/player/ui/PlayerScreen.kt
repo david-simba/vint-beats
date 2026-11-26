@@ -1,5 +1,7 @@
 package com.davidsimba.vintbeats.feature.player.ui
 
+import com.davidsimba.vintbeats.core.designsystem.R as DsR
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -43,8 +45,8 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import androidx.activity.compose.BackHandler
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.davidsimba.vintbeats.shared.components.BottomSheetMenuItem
-import com.davidsimba.vintbeats.shared.components.BottomSheet
+import com.davidsimba.vintbeats.core.designsystem.components.BottomSheetMenuItem
+import com.davidsimba.vintbeats.core.designsystem.components.BottomSheet
 import com.davidsimba.vintbeats.shared.AddToPlaylistController
 import kotlinx.coroutines.launch
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerBackground
@@ -58,9 +60,9 @@ import com.davidsimba.vintbeats.core.model.Track
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.graphics.ColorUtils
-import com.davidsimba.vintbeats.shared.components.EqualizerBars
-import com.davidsimba.vintbeats.shared.components.background.rememberPaletteColor
-import com.davidsimba.vintbeats.shared.theme.VintageRedLight
+import com.davidsimba.vintbeats.core.designsystem.components.EqualizerBars
+import com.davidsimba.vintbeats.core.designsystem.components.background.rememberPaletteColor
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageRedLight
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -289,8 +291,8 @@ fun PlayerScreen(
                 if (!hasLocalFile) {
                     BottomSheetMenuItem(
                         label = stringResource(
-                            if (isDownloading) R.string.player_option_downloading
-                            else R.string.player_option_download
+                            if (isDownloading) DsR.string.player_option_downloading
+                            else DsR.string.player_option_download
                         ),
                         icon = Icons.Rounded.Download,
                         enabled = !isDownloading,
@@ -304,7 +306,7 @@ fun PlayerScreen(
                 }
                 BottomSheetMenuItem(
                     label = stringResource(
-                        if (isFavorite) R.string.action_remove_favorite else R.string.action_add_favorite
+                        if (isFavorite) DsR.string.action_remove_favorite else DsR.string.action_add_favorite
                     ),
                     icon = if (isFavorite) Icons.Rounded.HeartBroken else Icons.Rounded.FavoriteBorder,
                     onClick = {
@@ -315,7 +317,7 @@ fun PlayerScreen(
                     }
                 )
                 BottomSheetMenuItem(
-                    label = stringResource(R.string.action_add_to_playlist),
+                    label = stringResource(DsR.string.action_add_to_playlist),
                     icon = Icons.AutoMirrored.Rounded.PlaylistAdd,
                     enabled = trackForCard != null,
                     onClick = {

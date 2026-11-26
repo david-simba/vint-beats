@@ -15,7 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.navigation.compose.rememberNavController
 import com.davidsimba.vintbeats.navigation.NavGraph
 import com.davidsimba.vintbeats.navigation.Screen
-import com.davidsimba.vintbeats.shared.theme.VintBeatsTheme
+import com.davidsimba.vintbeats.core.designsystem.theme.VintBeatsTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

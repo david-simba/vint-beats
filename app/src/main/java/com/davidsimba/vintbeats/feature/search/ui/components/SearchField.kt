@@ -24,9 +24,9 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.davidsimba.vintbeats.shared.theme.VintageBgDark
-import com.davidsimba.vintbeats.shared.theme.VintageGray
-import com.davidsimba.vintbeats.shared.theme.VintageWhite
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgDark
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageGray
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
 
 @Composable
 fun SearchField(

@@ -1,5 +1,7 @@
 package com.davidsimba.vintbeats.feature.library.ui.createplaylist
 
+import com.davidsimba.vintbeats.core.designsystem.R as DsR
+
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -48,11 +50,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.R
-import com.davidsimba.vintbeats.shared.theme.VintageBgDark
-import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
-import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
-import com.davidsimba.vintbeats.shared.theme.VintageWhite
-import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgDark
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayDeep
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhiteWarm
 import java.io.File
 
 @Composable
@@ -111,7 +113,7 @@ fun CreatePlaylistScreen(
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                    contentDescription = stringResource(R.string.action_back),
+                    contentDescription = stringResource(DsR.string.action_back),
                     tint = VintageWhite,
                     modifier = Modifier.size(20.dp),
                 )

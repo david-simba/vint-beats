@@ -1,5 +1,7 @@
 package com.davidsimba.vintbeats.feature.library.ui.editplaylist
 
+import com.davidsimba.vintbeats.core.designsystem.R as DsR
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,12 +45,12 @@ import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
 import com.davidsimba.vintbeats.feature.library.domain.track.subtitle
-import com.davidsimba.vintbeats.shared.theme.VintageGrayDeep
-import com.davidsimba.vintbeats.shared.theme.vintageBgGradient
-import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
-import com.davidsimba.vintbeats.shared.theme.VintageRedLight
-import com.davidsimba.vintbeats.shared.theme.VintageWhite
-import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayDeep
+import com.davidsimba.vintbeats.core.designsystem.theme.vintageBgGradient
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageRedLight
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhiteWarm
 import sh.calvin.reorderable.ReorderableColumn
 
 @Composable
@@ -77,7 +79,7 @@ fun EditPlaylistScreen(
             IconButton(onClick = onBack) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                    contentDescription = stringResource(R.string.action_back),
+                    contentDescription = stringResource(DsR.string.action_back),
                     tint = VintageWhite,
                     modifier = Modifier.size(20.dp)
                 )

@@ -17,8 +17,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.davidsimba.vintbeats.R
-import com.davidsimba.vintbeats.shared.components.VintClickableText
-import com.davidsimba.vintbeats.shared.theme.VintageWhite
+import com.davidsimba.vintbeats.core.designsystem.components.VintClickableText
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
 
 @Composable
 fun PlayerTopBar(

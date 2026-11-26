@@ -1,5 +1,7 @@
 package com.davidsimba.vintbeats.feature.library.ui.addtoplaylist
 
+import com.davidsimba.vintbeats.core.designsystem.R as DsR
+
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,13 +39,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.feature.library.domain.playlist.Playlist
-import com.davidsimba.vintbeats.shared.theme.VintageBgDark
-import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
-import com.davidsimba.vintbeats.shared.theme.VintageOrangeLight
-import com.davidsimba.vintbeats.shared.components.VintCheckbox
-import com.davidsimba.vintbeats.shared.components.VintPrimaryButton
-import com.davidsimba.vintbeats.shared.theme.VintageWhite
-import com.davidsimba.vintbeats.shared.theme.VintageWhiteWarm
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgDark
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageOrangeLight
+import com.davidsimba.vintbeats.core.designsystem.components.VintCheckbox
+import com.davidsimba.vintbeats.core.designsystem.components.VintPrimaryButton
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhiteWarm
 
 @Composable
 fun AddToPlaylistScreen(
@@ -77,12 +79,12 @@ fun AddToPlaylistScreen(
                     IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                            contentDescription = stringResource(R.string.action_back),
+                            contentDescription = stringResource(DsR.string.action_back),
                             tint = VintageWhite
                         )
                     }
                     Text(
-                        text = stringResource(R.string.action_add_to_playlist),
+                        text = stringResource(DsR.string.action_add_to_playlist),
                         color = VintageWhiteWarm,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold,

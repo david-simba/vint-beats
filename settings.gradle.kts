@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             content {
@@ -21,4 +22,7 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Vint Beats"
+
 include(":app")
+include(":core:model")
+include(":core:designsystem")

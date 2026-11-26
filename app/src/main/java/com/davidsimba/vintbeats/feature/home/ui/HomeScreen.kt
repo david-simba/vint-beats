@@ -37,10 +37,10 @@ import com.davidsimba.vintbeats.feature.home.ui.components.RecentlyPlayedSection
 import com.davidsimba.vintbeats.shared.AddToPlaylistController
 import com.davidsimba.vintbeats.shared.QueueController
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
-import com.davidsimba.vintbeats.shared.components.TrackOptionsBottomSheet
-import com.davidsimba.vintbeats.shared.theme.vintageBgGradient
-import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
-import com.davidsimba.vintbeats.shared.theme.VintageWhite
+import com.davidsimba.vintbeats.core.designsystem.components.TrackOptionsBottomSheet
+import com.davidsimba.vintbeats.core.designsystem.theme.vintageBgGradient
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 

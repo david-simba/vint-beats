@@ -35,19 +35,19 @@ import com.davidsimba.vintbeats.feature.search.domain.ExploreCategory
 import com.davidsimba.vintbeats.feature.search.domain.PlaylistSummary
 import com.davidsimba.vintbeats.feature.search.ui.CategorySheetState
 import androidx.compose.material3.CircularProgressIndicator
-import com.davidsimba.vintbeats.shared.components.TrackInfo
-import com.davidsimba.vintbeats.shared.components.cards.CategoryCard
-import com.davidsimba.vintbeats.shared.components.cards.CategoryCardSkeleton
-import com.davidsimba.vintbeats.shared.theme.VintageBgDark
-import com.davidsimba.vintbeats.shared.theme.VintageBlue
-import com.davidsimba.vintbeats.shared.theme.VintageBrownLight
-import com.davidsimba.vintbeats.shared.theme.VintageGray
-import com.davidsimba.vintbeats.shared.theme.VintageGreen
-import com.davidsimba.vintbeats.shared.theme.VintageOrange
-import com.davidsimba.vintbeats.shared.theme.VintageRed
-import com.davidsimba.vintbeats.shared.theme.VintageTeal
-import com.davidsimba.vintbeats.shared.theme.VintageWhite
-import com.davidsimba.vintbeats.shared.theme.VintageYellow
+import com.davidsimba.vintbeats.core.designsystem.components.TrackInfo
+import com.davidsimba.vintbeats.core.designsystem.components.cards.CategoryCard
+import com.davidsimba.vintbeats.core.designsystem.components.cards.CategoryCardSkeleton
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgDark
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageBlue
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageBrownLight
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageGray
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageGreen
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageOrange
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageRed
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageTeal
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageYellow
 
 private val categoryColors = listOf(
     VintageRed, VintageOrange, VintageYellow,

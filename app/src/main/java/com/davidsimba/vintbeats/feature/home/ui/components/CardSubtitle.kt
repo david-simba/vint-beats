@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.davidsimba.vintbeats.shared.theme.VintageGrayMid
+import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid
 
 @Composable
 fun CardSubtitle(text: String) {
