@@ -29,15 +29,13 @@ import com.davidsimba.vintbeats.feature.home.ui.components.ArtistRadioSection
 import com.davidsimba.vintbeats.feature.home.ui.components.ArtistRadioSkeleton
 import com.davidsimba.vintbeats.feature.home.ui.components.HomeHeader
 import com.davidsimba.vintbeats.feature.home.ui.components.HomeSectionSkeleton
+import com.davidsimba.vintbeats.feature.home.ui.components.HomeTrackOptionsSheet
 import com.davidsimba.vintbeats.feature.home.ui.components.PlaylistSection
 import com.davidsimba.vintbeats.feature.home.ui.components.QuickMixSection
 import com.davidsimba.vintbeats.feature.home.ui.components.QuickMixSkeleton
 import com.davidsimba.vintbeats.feature.home.ui.components.RecentAlbumsSection
 import com.davidsimba.vintbeats.feature.home.ui.components.QuickAccessSection
-import com.davidsimba.vintbeats.core.ui.AddToPlaylistController
-import com.davidsimba.vintbeats.core.common.QueueController
 import com.davidsimba.vintbeats.core.ui.TrackActionsViewModel
-import com.davidsimba.vintbeats.core.designsystem.components.track.TrackOptionsBottomSheet
 import com.davidsimba.vintbeats.core.designsystem.theme.Fondo
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid
 import kotlinx.coroutines.flow.filterNotNull
@@ -56,6 +54,7 @@ fun HomeScreen(
     onNavigateToOnboarding: () -> Unit = {},
     onNavigateToAddToPlaylist: () -> Unit = {},
     onFavoritesClick: () -> Unit = {},
+    onQuickMixClick: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel(),
     trackActionsViewModel: TrackActionsViewModel = hiltViewModel(),
 ) {
@@ -64,9 +63,6 @@ fun HomeScreen(
     val userName by viewModel.userName.collectAsStateWithLifecycle()
     val quickAccess by viewModel.quickAccess.collectAsStateWithLifecycle()
     val recentAlbums by viewModel.recentAlbums.collectAsStateWithLifecycle()
-    val favoriteTrackIds by trackActionsViewModel.favoriteTrackIds.collectAsStateWithLifecycle()
-    val downloadedTrackIds by trackActionsViewModel.downloadedTrackIds.collectAsStateWithLifecycle()
-    val downloadingTrackIds by trackActionsViewModel.downloadingTrackIds.collectAsStateWithLifecycle()
 
     val openPlaylist: (String, String?, String?, String?) -> Unit = { id, thumbnailUrl, artistId, artistName ->
         viewModel.recordPlaylist(id, thumbnailUrl, artistId, artistName)
@@ -154,8 +150,7 @@ fun HomeScreen(
                                 tracks = state.quickMix,
                                 onTrackSelected = onTrackSelected,
                                 onMenuClick = { selectedTrack = it },
-                                playingTrackId = playingTrackId,
-                                isTrackPlaying = isTrackPlaying,
+                                onSeeAllClick = onQuickMixClick,
                             )
                         } else {
                             QuickMixSkeleton()
@@ -192,29 +187,12 @@ fun HomeScreen(
     }
 
     selectedTrack?.let { track ->
-        TrackOptionsBottomSheet(
-            isFavorite = track.id in favoriteTrackIds,
-            isDownloaded = track.id in downloadedTrackIds,
-            isDownloading = downloadingTrackIds.contains(track.id),
-            isCurrentlyPlaying = track.id == playingTrackId,
-            onDownload = {
-                trackActionsViewModel.downloadTrack(track)
-                selectedTrack = null
-            },
-            onToggleFavorite = {
-                trackActionsViewModel.toggleFavorite(track)
-                selectedTrack = null
-            },
-            onAddToPlaylist = {
-                AddToPlaylistController.pendingTrack = track
-                selectedTrack = null
-                onNavigateToAddToPlaylist()
-            },
-            onAddToQueue = {
-                QueueController.addToQueue(track)
-                selectedTrack = null
-            },
-            onDismiss = { selectedTrack = null }
+        HomeTrackOptionsSheet(
+            track = track,
+            playingTrackId = playingTrackId,
+            onDismiss = { selectedTrack = null },
+            onNavigateToAddToPlaylist = onNavigateToAddToPlaylist,
+            trackActionsViewModel = trackActionsViewModel,
         )
     }
 }

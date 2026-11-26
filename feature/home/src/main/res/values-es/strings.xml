@@ -8,4 +8,7 @@
     <string name="home_buenos_dias">Buenos días</string>
     <string name="home_buenas_tardes">Buenas tardes</string>
     <string name="home_buenas_noches">Buenas noches</string>
+    <string name="home_ver_todo">Ver todo</string>
+    <string name="home_volver">Volver</string>
+    <string name="home_mas_opciones">Más opciones</string>
 </resources>

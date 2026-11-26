@@ -30,6 +30,7 @@ sealed class Screen(val route: String) {
             return if (params.isEmpty()) base else "$base?${params.joinToString("&")}"
         }
     }
+    data object QuickMix : Screen("quick_mix")
     data object Favorites : Screen("favorites")
     data object Downloads : Screen("downloads")
     data object CreatePlaylist : Screen("create_playlist?playlistId={playlistId}") {

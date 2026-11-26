@@ -59,6 +59,7 @@ import com.davidsimba.vintbeats.feature.library.ui.favorites.FavoritesScreen
 import com.davidsimba.vintbeats.feature.library.ui.library.LibraryScreen
 import com.davidsimba.vintbeats.feature.library.ui.userplaylist.UserPlaylistScreen
 import com.davidsimba.vintbeats.feature.home.ui.HomeScreen
+import com.davidsimba.vintbeats.feature.home.ui.QuickMixScreen
 import com.davidsimba.vintbeats.feature.player.ui.PlaybackViewModel
 import com.davidsimba.vintbeats.player.playSaved
 import com.davidsimba.vintbeats.core.ui.AddToPlaylistController
@@ -77,6 +78,7 @@ import com.davidsimba.vintbeats.core.designsystem.R as DsR
 
 private val bottomNavRoutes = setOf(
     Screen.Home.route,
+    Screen.QuickMix.route,
     Screen.Search.route,
     Screen.SearchActive.route,
     Screen.Library.route,
@@ -214,7 +216,21 @@ fun NavGraph(
                         onNavigateToAddToPlaylist = {
                             navController.navigate(Screen.AddToPlaylist.route)
                         },
-                        onFavoritesClick = { navController.navigate(Screen.Favorites.route) }
+                        onFavoritesClick = { navController.navigate(Screen.Favorites.route) },
+                        onQuickMixClick = { navController.navigate(Screen.QuickMix.route) }
+                    )
+                }
+                composable(route = Screen.QuickMix.route) {
+                    val homeEntry = remember(it) { navController.getBackStackEntry(Screen.Home.route) }
+                    QuickMixScreen(
+                        playingTrackId = playingTrackId,
+                        onBack = { navController.popBackStack() },
+                        onTrackSelected = { track, queue ->
+                            playbackViewModel.setPlayingFrom(null)
+                            playbackViewModel.playTrack(track, newQueue = queue)
+                        },
+                        onNavigateToAddToPlaylist = { navController.navigate(Screen.AddToPlaylist.route) },
+                        viewModel = hiltViewModel(homeEntry),
                     )
                 }
                 composable(
