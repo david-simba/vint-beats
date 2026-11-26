@@ -7,6 +7,8 @@ android {
 }
 
 dependencies {
+    api(project(":core:model"))
+    implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.activity.compose)
     implementation(libs.image.cropper)
 }

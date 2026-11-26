@@ -39,7 +39,7 @@ import com.davidsimba.vintbeats.core.model.subtitle
 import com.davidsimba.vintbeats.core.model.toTrack
 import com.davidsimba.vintbeats.shared.AddToPlaylistController
 import com.davidsimba.vintbeats.shared.CollectionPlaybackState
-import com.davidsimba.vintbeats.shared.QueueController
+import com.davidsimba.vintbeats.core.common.QueueController
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import com.davidsimba.vintbeats.core.designsystem.components.collection.CollectionAppBar
 import com.davidsimba.vintbeats.core.designsystem.components.collection.CollectionHeader

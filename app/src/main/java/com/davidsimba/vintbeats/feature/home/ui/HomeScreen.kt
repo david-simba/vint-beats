@@ -35,7 +35,7 @@ import com.davidsimba.vintbeats.feature.home.ui.components.QuickMixSkeleton
 import com.davidsimba.vintbeats.feature.home.ui.components.RecentAlbumsSection
 import com.davidsimba.vintbeats.feature.home.ui.components.RecentlyPlayedSection
 import com.davidsimba.vintbeats.shared.AddToPlaylistController
-import com.davidsimba.vintbeats.shared.QueueController
+import com.davidsimba.vintbeats.core.common.QueueController
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
 import com.davidsimba.vintbeats.core.designsystem.components.track.TrackOptionsBottomSheet
 import com.davidsimba.vintbeats.core.designsystem.theme.vintageBgGradient

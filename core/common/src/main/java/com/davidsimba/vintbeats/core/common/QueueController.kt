@@ -1,4 +1,4 @@
-package com.davidsimba.vintbeats.shared
+package com.davidsimba.vintbeats.core.common
 
 import com.davidsimba.vintbeats.core.model.Track
 import kotlinx.coroutines.flow.MutableSharedFlow

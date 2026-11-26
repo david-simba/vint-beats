@@ -22,7 +22,6 @@ import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.currentState
-import com.davidsimba.vintbeats.MainActivity
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
@@ -60,7 +59,7 @@ class NowPlayingWidget : GlanceAppWidget() {
         val isPlaying = prefs[NowPlayingWidgetUpdater.KEY_IS_PLAYING] ?: false
         val coverPath = prefs[NowPlayingWidgetUpdater.KEY_COVER_PATH]
         val context = LocalContext.current
-        val openIntent = Intent(context, MainActivity::class.java).apply {
+        val openIntent = (context.packageManager.getLaunchIntentForPackage(context.packageName) ?: Intent()).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
 

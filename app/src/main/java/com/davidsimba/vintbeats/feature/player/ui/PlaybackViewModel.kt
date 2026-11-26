@@ -15,52 +15,55 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
+import com.davidsimba.vintbeats.core.common.QueueController
+import com.davidsimba.vintbeats.core.model.LyricLine
 import com.davidsimba.vintbeats.core.model.Track
-import com.davidsimba.vintbeats.shared.QueueController
-import com.davidsimba.vintbeats.shared.SnackbarController
-import com.davidsimba.vintbeats.shared.SnackbarEvent
-import com.davidsimba.vintbeats.core.network.LrcLibService
-import com.davidsimba.vintbeats.core.network.YouTubeQueueService
-import com.davidsimba.vintbeats.stream.YouTubeStreamService
-import com.davidsimba.vintbeats.feature.home.data.RecentlyPlayedRepository
-import com.davidsimba.vintbeats.core.model.SavedTrack
+import com.davidsimba.vintbeats.feature.player.contract.LyricsProvider
+import com.davidsimba.vintbeats.feature.player.contract.PlaybackObserver
+import com.davidsimba.vintbeats.feature.player.contract.PlayerLibrary
+import com.davidsimba.vintbeats.feature.player.contract.PlayerSettings
+import com.davidsimba.vintbeats.feature.player.contract.StreamResolver
+import com.davidsimba.vintbeats.feature.player.contract.TrackLibraryStatus
+import com.davidsimba.vintbeats.feature.player.contract.UpNextProvider
 import com.davidsimba.vintbeats.feature.player.widget.NowPlayingWidgetUpdater
-import com.davidsimba.vintbeats.feature.library.domain.track.TrackRepository
-import com.davidsimba.vintbeats.feature.onboarding.OnboardingPreferences
 import com.google.common.util.concurrent.ListenableFuture
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
-import com.davidsimba.vintbeats.core.model.LyricLine
 
+/**
+ * Reproduce una cola de [Track]. No sabe de biblioteca, descargas ni de dónde sale el audio:
+ * todo eso entra por las interfaces de `feature.player.contract`.
+ */
 @HiltViewModel
 class PlaybackViewModel @OptIn(UnstableApi::class)
 @Inject constructor(
-    private val repository: TrackRepository,
-    private val streamService: YouTubeStreamService,
-    private val backendService: com.davidsimba.vintbeats.core.network.BackendService,
-    private val lrcLibService: LrcLibService,
-    private val queueService: YouTubeQueueService,
+    private val streamResolver: StreamResolver,
+    private val lyricsProvider: LyricsProvider,
+    private val upNextProvider: UpNextProvider,
+    private val library: PlayerLibrary,
+    private val settings: PlayerSettings,
+    private val observer: PlaybackObserver,
     private val sessionPreferences: PlayerSessionPreferences,
-    private val recentlyPlayedRepository: RecentlyPlayedRepository,
     private val widgetUpdater: NowPlayingWidgetUpdater,
-    private val prefs: OnboardingPreferences,
-    private val progressStore: com.davidsimba.vintbeats.shared.DownloadProgressStore,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -68,14 +71,31 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
     private var controllerFuture: ListenableFuture<MediaController>
     private var currentStreamUrl: String? = null
 
-    private val _currentSavedTrack = MutableStateFlow<SavedTrack?>(null)
-    val currentSavedTrack: StateFlow<SavedTrack?> = _currentSavedTrack.asStateFlow()
+    private val _currentTrack = MutableStateFlow<Track?>(null)
+    val currentTrack: StateFlow<Track?> = _currentTrack.asStateFlow()
 
-    private val _unsavedTrack = MutableStateFlow<Track?>(null)
-    val unsavedTrack: StateFlow<Track?> = _unsavedTrack.asStateFlow()
+    val currentlyPlayingTrackId: StateFlow<String?> = _currentTrack
+        .map { it?.id }
+        .distinctUntilChanged()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
-    private val _isSaved = MutableStateFlow(true)
-    val isSaved: StateFlow<Boolean> = _isSaved.asStateFlow()
+    /** Estado de la canción actual en la biblioteca (favorito, descarga, archivo local). */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val libraryStatus: StateFlow<TrackLibraryStatus> = currentlyPlayingTrackId
+        .flatMapLatest { id -> if (id == null) flowOf(TrackLibraryStatus()) else library.status(id) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TrackLibraryStatus())
+
+    val isFavorite: StateFlow<Boolean> = libraryStatus
+        .map { it.isFavorite }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+    val isDownloading: StateFlow<Boolean> = libraryStatus
+        .map { it.isDownloading }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+    val hasLocalFile: StateFlow<Boolean> = libraryStatus
+        .map { it.hasLocalFile }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     private val _playerState = MutableStateFlow<PlayerState>(PlayerState.Idle)
     val playerState: StateFlow<PlayerState> = _playerState.asStateFlow()
@@ -101,14 +121,7 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
     private val _history = MutableStateFlow<List<Track>>(emptyList())
     val history: StateFlow<List<Track>> = _history.asStateFlow()
 
-    val isDownloading: StateFlow<Boolean> = currentSavedTrack
-        .map { it?.isDownloading ?: false }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
-
-    private val _isFavorite = MutableStateFlow(false)
-    val isFavorite: StateFlow<Boolean> = _isFavorite.asStateFlow()
-
-    val equalizerEnabled: StateFlow<Boolean> = prefs.showEqualizer
+    val equalizerEnabled: StateFlow<Boolean> = settings.showEqualizer
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     private val _repeatMode = MutableStateFlow(Player.REPEAT_MODE_OFF)
@@ -116,12 +129,6 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
 
     private val _shuffleEnabled = MutableStateFlow(false)
     val shuffleEnabled: StateFlow<Boolean> = _shuffleEnabled.asStateFlow()
-
-    val currentlyPlayingTrackId: StateFlow<String?> = combine(
-        isSaved, currentSavedTrack, unsavedTrack
-    ) { saved, savedTrack, unsaved ->
-        if (saved) savedTrack?.trackId else unsaved?.id
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     private val _originalQueue = MutableStateFlow<List<Track>>(emptyList())
 
@@ -167,17 +174,6 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
         }
 
         restoreLastTrack()
-
-        // Keep currentSavedTrack in sync with DB (e.g. downloaded from another screen)
-        viewModelScope.launch {
-            repository.getAllTracks().collect { tracks ->
-                val current = _currentSavedTrack.value ?: return@collect
-                val updated = tracks.find { it.id == current.id }
-                if (updated != null && updated != current) {
-                    _currentSavedTrack.value = updated
-                }
-            }
-        }
     }
 
     private fun setupControllerListener(controller: MediaController) {
@@ -199,7 +195,7 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
                     }
                 }
                 viewModelScope.launch {
-                    val track = buildCurrentTrack() ?: return@launch
+                    val track = _currentTrack.value ?: return@launch
                     widgetUpdater.update(track.title, track.artist, track.albumImageUrl, isPlaying)
                 }
             }
@@ -229,17 +225,20 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
 
     fun playTrack(track: Track, newQueue: List<Track>? = null, preserveHistory: Boolean = false) {
         Log.d(TAG, "playTrack: ${track.id} '${track.title}'")
-        if (_unsavedTrack.value?.id == track.id && mediaController?.isPlaying == true) {
+        if (_currentTrack.value?.id == track.id && mediaController?.isPlaying == true) {
             Log.d(TAG, "playTrack: skipped (already playing)")
+            // Misma canción sonando: solo se adopta la cola del nuevo contexto.
+            if (newQueue != null) {
+                _queue.value = newQueue.filter { it.id != track.id }
+                _originalQueue.value = emptyList()
+            }
             return
         }
         if (!preserveHistory) _history.value = emptyList()
         queueFetchJob?.cancel()
         playbackJob?.cancel()
         progressJob?.cancel()
-        _unsavedTrack.value = track
-        _currentSavedTrack.value = null
-        _isSaved.value = false
+        _currentTrack.value = track
         currentStreamUrl = null
         _syncedLyrics.value = emptyList()
         _isLoadingLyrics.value = true
@@ -259,8 +258,7 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
                 _originalQueue.value = emptyList()
             }
         }
-        loadFavoriteStatus(track.id)
-        viewModelScope.launch { recentlyPlayedRepository.save(track) }
+        viewModelScope.launch { observer.onTrackStarted(track) }
         viewModelScope.launch { widgetUpdater.update(track.title, track.artist, track.albumImageUrl, false) }
         viewModelScope.launch {
             sessionPreferences.save(
@@ -268,7 +266,6 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
                 title = track.title,
                 artist = track.artist,
                 thumbnail = track.albumImageUrl,
-                isSaved = false,
             )
         }
         viewModelScope.launch {
@@ -277,25 +274,25 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
                 _syncedLyrics.value = cached
                 _isLoadingLyrics.value = false
             } else {
-                _syncedLyrics.value = loadLyrics(track.title, track.artist)
+                _syncedLyrics.value = lyricsProvider.syncedLyrics(track.title, track.artist)
                 _isLoadingLyrics.value = false
             }
         }
         if (newQueue == null) {
             _isQueueLoading.value = true
             queueFetchJob = viewModelScope.launch {
-                _queue.value = queueService.getUpNextTracks(track.id)
+                _queue.value = upNextProvider.upNext(track.id)
                 _isQueueLoading.value = false
             }
         }
         playbackJob = viewModelScope.launch {
             _playerState.value = PlayerState.Loading
-            val localPath = withContext(Dispatchers.IO) { repository.getTrackByVideoId(track.id)?.audioFilePath }
+            val localPath = withContext(Dispatchers.IO) { library.status(track.id).first().localAudioPath }
             val uri: String = if (!localPath.isNullOrEmpty() && File(localPath).exists()) {
                 Log.d(TAG, "playTrack: ${track.id} → local file $localPath")
                 Uri.fromFile(File(localPath)).toString()
             } else {
-                val streamUrl = streamService.getAudioStreamUrl(track.id)
+                val streamUrl = streamResolver.resolve(track.id)
                 Log.d(TAG, "playTrack: ${track.id} → stream $streamUrl")
                 currentStreamUrl = streamUrl
                 streamUrl
@@ -315,94 +312,6 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
         }
     }
 
-    fun play(savedTrackId: Int, contextQueue: List<SavedTrack>? = null) {
-        if (_currentSavedTrack.value?.id == savedTrackId && mediaController?.isPlaying == true) {
-            if (contextQueue != null) {
-                _queue.value = contextQueue
-                    .filter { it.id != savedTrackId }
-                    .map {
-                        Track(
-                            id = it.trackId, title = it.trackTitle, artist = it.trackArtist,
-                            albumImageUrl = it.trackThumbnailUrl, previewUrl = null,
-                            durationText = it.trackDurationText
-                        )
-                    }
-            }
-            return
-        }
-        _history.value = emptyList()
-        playbackJob?.cancel()
-        progressJob?.cancel()
-        mediaController?.stop()
-        _unsavedTrack.value = null
-        _isSaved.value = true
-        currentStreamUrl = null
-        _syncedLyrics.value = emptyList()
-        _isLoadingLyrics.value = true
-        _positionMs.value = 0L
-        _durationMs.value = 0L
-        _queue.value = emptyList()
-        playbackJob = viewModelScope.launch {
-            _playerState.value = PlayerState.Loading
-            val saved = withContext(Dispatchers.IO) { repository.getTrack(savedTrackId) } ?: run {
-                _playerState.value = PlayerState.Error("Not found")
-                return@launch
-            }
-            _currentSavedTrack.value = saved
-            loadFavoriteStatus(saved.trackId)
-            viewModelScope.launch { recentlyPlayedRepository.save(saved) }
-            viewModelScope.launch { widgetUpdater.update(saved.trackTitle, saved.trackArtist, saved.trackThumbnailUrl, false) }
-            viewModelScope.launch {
-                sessionPreferences.save(
-                    trackId = saved.trackId,
-                    title = saved.trackTitle,
-                    artist = saved.trackArtist,
-                    thumbnail = saved.trackThumbnailUrl,
-                    isSaved = true,
-                    savedDbId = saved.id,
-                )
-            }
-            viewModelScope.launch {
-                _syncedLyrics.value = loadLyrics(saved.trackTitle, saved.trackArtist)
-                _isLoadingLyrics.value = false
-            }
-            viewModelScope.launch {
-                val source = contextQueue ?: repository.getAllTracks().first()
-                _queue.value = source
-                    .filter { it.id != savedTrackId }
-                    .map {
-                        Track(
-                            id = it.trackId, title = it.trackTitle, artist = it.trackArtist,
-                            albumImageUrl = it.trackThumbnailUrl, previewUrl = null,
-                            durationText = it.trackDurationText
-                        )
-                    }
-            }
-
-            val uri = if (!saved.audioFilePath.isNullOrEmpty() && File(saved.audioFilePath).exists()) {
-                Log.d(TAG, "Playing local file: ${saved.audioFilePath}")
-                Uri.fromFile(File(saved.audioFilePath))
-            } else {
-                Log.d(TAG, "Streaming ${saved.trackId}")
-                val streamUrl = streamService.getAudioStreamUrl(saved.trackId)
-                currentStreamUrl = streamUrl
-                streamUrl.toUri()
-            }
-
-            val mediaItem = buildMediaItem(uri.toString(), saved.trackTitle, saved.trackArtist, saved.trackThumbnailUrl)
-            withContext(Dispatchers.Main) {
-                val controller = mediaController ?: run {
-                    _playerState.value = PlayerState.Error("Player not ready")
-                    return@withContext
-                }
-                controller.setMediaItem(mediaItem)
-                controller.prepare()
-                controller.play()
-                // PlayerState.Playing se asigna en onIsPlayingChanged cuando ExoPlayer realmente reproduce
-            }
-        }
-    }
-
     fun reorderQueue(from: Int, to: Int) {
         _queue.value = _queue.value.toMutableList().apply { add(to, removeAt(from)) }
     }
@@ -419,7 +328,7 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
         val index = queue.indexOf(track)
         if (index < 0) return
         val skipped = queue.take(index)
-        buildCurrentTrack()?.let { current ->
+        _currentTrack.value?.let { current ->
             _history.value = _history.value + current + skipped
         } ?: run {
             _history.value = _history.value + skipped
@@ -428,67 +337,18 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
     }
 
     fun toggleEqualizer() {
-        viewModelScope.launch { prefs.setShowEqualizer(!equalizerEnabled.value) }
+        viewModelScope.launch { settings.setShowEqualizer(!equalizerEnabled.value) }
     }
 
     fun toggleFavorite() {
-        val track = buildCurrentTrack() ?: return
-        val wasAlreadyFavorite = _isFavorite.value
-        _isFavorite.value = !wasAlreadyFavorite
-        viewModelScope.launch {
-            repository.toggleFavorite(track)
-            _isFavorite.value = repository.isFavoriteTrack(track.id)
-            if (!wasAlreadyFavorite && prefs.autoDownloadFavorites.first()) {
-                downloadCurrentTrack()
-            }
-        }
-    }
-
-    private fun loadFavoriteStatus(trackId: String) {
-        viewModelScope.launch {
-            _isFavorite.value = withContext(Dispatchers.IO) { repository.isFavoriteTrack(trackId) }
-        }
+        val track = _currentTrack.value ?: return
+        viewModelScope.launch { library.toggleFavorite(track) }
     }
 
     fun downloadCurrentTrack() {
-        if (isDownloading.value) return
-        val track = if (!_isSaved.value) {
-            _unsavedTrack.value ?: return
-        } else {
-            val saved = _currentSavedTrack.value?.takeIf { it.audioFilePath.isNullOrEmpty() && !it.isDownloading } ?: return
-            Track(
-                id = saved.trackId, title = saved.trackTitle, artist = saved.trackArtist,
-                albumImageUrl = saved.trackThumbnailUrl, previewUrl = null, durationText = saved.trackDurationText
-            )
-        }
-        viewModelScope.launch {
-            try {
-                repository.startDownload(track)
-                val saved = repository.getAllTracks().first().find { it.trackId == track.id }
-                if (saved != null) {
-                    _currentSavedTrack.value = saved
-                    _unsavedTrack.value = null
-                    _isSaved.value = true
-                }
-                SnackbarController.emit(SnackbarEvent.DownloadStarted)
-                val streamUrl = currentStreamUrl ?: streamService.getAudioStreamUrl(track.id)
-                val audioFilePath = streamService.downloadAudio(
-                    videoId = track.id,
-                    streamUrl = streamUrl,
-                    destDir = context.filesDir,
-                    onProgress = { progressStore.set(track.id, it) }
-                )
-                progressStore.remove(track.id)
-                repository.finishDownload(track.id, audioFilePath)
-                if (audioFilePath == null) {
-                    SnackbarController.emit(SnackbarEvent.DownloadError)
-                }
-            } catch (e: Exception) {
-                progressStore.remove(track.id)
-                repository.finishDownload(track.id, null)
-                SnackbarController.emit(SnackbarEvent.DownloadError)
-            }
-        }
+        val track = _currentTrack.value ?: return
+        if (libraryStatus.value.isDownloading || libraryStatus.value.hasLocalFile) return
+        viewModelScope.launch { library.download(track, currentStreamUrl) }
     }
 
     fun toggleShuffle() {
@@ -522,13 +382,8 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
     }
 
     private fun loadAndPlay() {
-        if (_isSaved.value) {
-            val saved = _currentSavedTrack.value ?: return
-            play(saved.id)
-        } else {
-            val track = _unsavedTrack.value ?: return
-            playTrack(track)
-        }
+        val track = _currentTrack.value ?: return
+        playTrack(track, newQueue = _queue.value.takeIf { it.isNotEmpty() })
     }
 
     fun seekTo(positionMs: Long) {
@@ -546,7 +401,7 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
             _playerState.value = PlayerState.Idle
             return
         }
-        buildCurrentTrack()?.let { _history.value = _history.value + it }
+        _currentTrack.value?.let { _history.value = _history.value + it }
         val next = queue.first()
         Log.d(TAG, "skipToNext: playing next → ${next.id} '${next.title}'")
         playTrack(next, newQueue = queue.drop(1), preserveHistory = true)
@@ -563,20 +418,9 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
             return
         }
         val previous = history.last()
-        val newQueue = buildCurrentTrack()?.let { listOf(it) + _queue.value } ?: _queue.value
+        val newQueue = _currentTrack.value?.let { listOf(it) + _queue.value } ?: _queue.value
         _history.value = history.dropLast(1)
         playTrack(previous, newQueue = newQueue, preserveHistory = true)
-    }
-
-    private fun buildCurrentTrack(): Track? = if (_isSaved.value) {
-        _currentSavedTrack.value?.let {
-            Track(
-                id = it.trackId, title = it.trackTitle, artist = it.trackArtist,
-                albumImageUrl = it.trackThumbnailUrl, previewUrl = null, durationText = it.trackDurationText
-            )
-        }
-    } else {
-        _unsavedTrack.value
     }
 
     private fun buildMediaItem(uri: String, title: String, artist: String, artworkUrl: String?): MediaItem =
@@ -594,31 +438,16 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
     private fun restoreLastTrack() {
         viewModelScope.launch {
             val last = sessionPreferences.lastTrack.firstOrNull() ?: return@launch
-            if (_currentSavedTrack.value != null || _unsavedTrack.value != null) return@launch
-            if (last.isSaved && last.savedDbId != -1) {
-                val saved = repository.getTrack(last.savedDbId) ?: return@launch
-                _currentSavedTrack.value = saved
-                _isSaved.value = true
-                loadFavoriteStatus(saved.trackId)
-            } else {
-                _unsavedTrack.value = Track(
-                    id = last.trackId,
-                    title = last.title,
-                    artist = last.artist,
-                    albumImageUrl = last.thumbnail,
-                    previewUrl = null,
-                    durationText = ""
-                )
-                _isSaved.value = false
-                loadFavoriteStatus(last.trackId)
-            }
+            if (_currentTrack.value != null) return@launch
+            _currentTrack.value = Track(
+                id = last.trackId,
+                title = last.title,
+                artist = last.artist,
+                albumImageUrl = last.thumbnail,
+                previewUrl = null,
+                durationText = ""
+            )
         }
-    }
-
-    private suspend fun loadLyrics(title: String, artist: String): List<LyricLine> {
-        val fromBackend = backendService.getLyrics(title, artist)
-        if (fromBackend.isNotEmpty()) return fromBackend
-        return lrcLibService.getSyncedLyrics(title, artist)
     }
 
     private fun startProgressUpdates() {
@@ -642,13 +471,13 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
         prefetchJob = viewModelScope.launch {
             for (track in adjacent) {
                 launch {
-                    Log.d(TAG, "prefetch: warming backend stream for ${track.id}")
-                    backendService.warmStream(track.id)
+                    Log.d(TAG, "prefetch: warming stream for ${track.id}")
+                    streamResolver.prefetch(track.id)
                 }
                 if (!lyricsCache.containsKey(track.id)) {
                     launch {
                         Log.d(TAG, "prefetch: lyrics for ${track.id}")
-                        lyricsCache[track.id] = loadLyrics(track.title, track.artist)
+                        lyricsCache[track.id] = lyricsProvider.syncedLyrics(track.title, track.artist)
                     }
                 }
             }

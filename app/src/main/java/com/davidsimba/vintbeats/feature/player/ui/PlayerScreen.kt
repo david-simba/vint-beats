@@ -47,7 +47,6 @@ import androidx.activity.compose.BackHandler
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.core.designsystem.components.feedback.BottomSheetMenuItem
 import com.davidsimba.vintbeats.core.designsystem.components.feedback.BottomSheet
-import com.davidsimba.vintbeats.shared.AddToPlaylistController
 import kotlinx.coroutines.launch
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerBackground
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerControls
@@ -69,13 +68,12 @@ import com.davidsimba.vintbeats.core.designsystem.theme.VintageRedLight
 fun PlayerScreen(
     onBack: () -> Unit,
     onArtistSelected: (browseId: String) -> Unit,
-    onNavigateToAddToPlaylist: () -> Unit = {},
+    onAddToPlaylist: (Track) -> Unit = {},
     onPlayingFromClick: (() -> Unit)? = null,
     viewModel: PlaybackViewModel,
 ) {
-    val currentSavedTrack by viewModel.currentSavedTrack.collectAsStateWithLifecycle()
-    val unsavedTrack by viewModel.unsavedTrack.collectAsStateWithLifecycle()
-    val isSaved by viewModel.isSaved.collectAsStateWithLifecycle()
+    val currentTrack by viewModel.currentTrack.collectAsStateWithLifecycle()
+    val hasLocalFile by viewModel.hasLocalFile.collectAsStateWithLifecycle()
     val playerState by viewModel.playerState.collectAsStateWithLifecycle()
     val positionMs by viewModel.positionMs.collectAsStateWithLifecycle()
     val durationMs by viewModel.durationMs.collectAsStateWithLifecycle()
@@ -108,16 +106,7 @@ fun PlayerScreen(
     val isPlaying = playerState is PlayerState.Playing
     val isLoading = playerState is PlayerState.Loading
 
-    val trackForCard: Track? = if (isSaved) {
-        currentSavedTrack?.let {
-            Track(
-                id = it.trackId, title = it.trackTitle, artist = it.trackArtist,
-                albumImageUrl = it.trackThumbnailUrl, previewUrl = null, durationText = it.trackDurationText
-            )
-        }
-    } else {
-        unsavedTrack
-    }
+    val trackForCard: Track? = currentTrack
 
     val nextTrack = queue.firstOrNull()
     val previousTrack = history.lastOrNull()
@@ -287,7 +276,6 @@ fun PlayerScreen(
                 onDismiss = { showOptionsSheet = false },
                 sheetState = sheetState
             ) {
-                val hasLocalFile = isSaved && !currentSavedTrack?.audioFilePath.isNullOrEmpty()
                 if (!hasLocalFile) {
                     BottomSheetMenuItem(
                         label = stringResource(
@@ -323,8 +311,7 @@ fun PlayerScreen(
                     onClick = {
                         scope.launch { sheetState.hide() }.invokeOnCompletion {
                             showOptionsSheet = false
-                            trackForCard?.let { AddToPlaylistController.pendingTrack = it }
-                            onNavigateToAddToPlaylist()
+                            trackForCard?.let(onAddToPlaylist)
                         }
                     }
                 )

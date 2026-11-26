@@ -60,6 +60,8 @@ import com.davidsimba.vintbeats.feature.library.ui.library.LibraryScreen
 import com.davidsimba.vintbeats.feature.library.ui.userplaylist.UserPlaylistScreen
 import com.davidsimba.vintbeats.feature.home.ui.HomeScreen
 import com.davidsimba.vintbeats.feature.player.ui.PlaybackViewModel
+import com.davidsimba.vintbeats.player.playSaved
+import com.davidsimba.vintbeats.shared.AddToPlaylistController
 import com.davidsimba.vintbeats.feature.player.ui.PlayerScreen
 import com.davidsimba.vintbeats.feature.player.ui.PlayerState
 import com.davidsimba.vintbeats.feature.player.ui.PlayingFrom
@@ -121,9 +123,7 @@ fun NavGraph(
     }
 
     val playbackViewModel: PlaybackViewModel = hiltViewModel()
-    val currentSavedTrack by playbackViewModel.currentSavedTrack.collectAsStateWithLifecycle()
-    val isSaved by playbackViewModel.isSaved.collectAsStateWithLifecycle()
-    val unsavedTrack by playbackViewModel.unsavedTrack.collectAsStateWithLifecycle()
+    val currentTrack by playbackViewModel.currentTrack.collectAsStateWithLifecycle()
     val playbackState by playbackViewModel.playerState.collectAsStateWithLifecycle()
     val queue by playbackViewModel.queue.collectAsStateWithLifecycle()
     val history by playbackViewModel.history.collectAsStateWithLifecycle()
@@ -134,29 +134,12 @@ fun NavGraph(
     val isTrackPlaying = playbackState is PlayerState.Playing
     val playingFrom by playbackViewModel.playingFrom.collectAsStateWithLifecycle()
 
-    val hasActivePlayback = (isSaved && currentSavedTrack != null) || (!isSaved && unsavedTrack != null)
+    val hasActivePlayback = currentTrack != null
     val showMiniPlayer = hasActivePlayback && currentRoute != Screen.Player.route && currentRoute != Screen.EditProfile.route && currentRoute != Screen.About.route && currentRoute != Screen.Terms.route
 
-    val miniTitle: String?
-    val miniArtist: String
-    val miniThumbnail: String?
-    when {
-        isSaved && currentSavedTrack != null -> {
-            miniTitle = currentSavedTrack!!.trackTitle
-            miniArtist = currentSavedTrack!!.trackArtist
-            miniThumbnail = currentSavedTrack!!.trackThumbnailUrl
-        }
-        !isSaved && unsavedTrack != null -> {
-            miniTitle = unsavedTrack!!.title
-            miniArtist = unsavedTrack!!.artist
-            miniThumbnail = unsavedTrack!!.albumImageUrl
-        }
-        else -> {
-            miniTitle = null
-            miniArtist = ""
-            miniThumbnail = null
-        }
-    }
+    val miniTitle: String? = currentTrack?.title
+    val miniArtist: String = currentTrack?.artist ?: ""
+    val miniThumbnail: String? = currentTrack?.albumImageUrl
 
     Scaffold(
         contentWindowInsets = WindowInsets(0),
@@ -377,7 +360,8 @@ fun NavGraph(
                         onArtistSelected = { browseId ->
                             navController.navigate(Screen.Artist.route(browseId))
                         },
-                        onNavigateToAddToPlaylist = {
+                        onAddToPlaylist = { track ->
+                            AddToPlaylistController.pendingTrack = track
                             navController.navigate(Screen.AddToPlaylist.route)
                         },
                         onPlayingFromClick = playingFrom?.route?.let { route ->
@@ -475,10 +459,10 @@ fun NavGraph(
                     val playlistId = it.arguments?.getInt("playlistId") ?: return@composable
                     UserPlaylistScreen(
                         onBack = { navController.popBackStack() },
-                        onTrackClick = { id, queue -> playbackViewModel.play(id, queue) },
+                        onTrackClick = { id, queue -> playbackViewModel.playSaved(id, queue) },
                         onPlayAll = { tracks ->
                             if (tracks.isNotEmpty()) {
-                                playbackViewModel.play(tracks.first().id, tracks)
+                                playbackViewModel.playSaved(tracks.first().id, tracks)
                             }
                         },
                         onAddSongsClick = { navController.navigate(Screen.AddSongs.route(playlistId)) },
@@ -539,12 +523,12 @@ fun NavGraph(
                         onBack = { navController.popBackStack() },
                         onTrackClick = { id, queue ->
                             playbackViewModel.setPlayingFrom(PlayingFrom(downloadsLabel, Screen.Downloads.route))
-                            playbackViewModel.play(id, queue)
+                            playbackViewModel.playSaved(id, queue)
                         },
                         onPlayAll = { tracks ->
                             if (tracks.isNotEmpty()) {
                                 playbackViewModel.setPlayingFrom(PlayingFrom(downloadsLabel, Screen.Downloads.route))
-                                playbackViewModel.play(tracks.first().id, tracks)
+                                playbackViewModel.playSaved(tracks.first().id, tracks)
                             }
                         },
                         onNavigateToAddToPlaylist = {
@@ -610,12 +594,12 @@ fun NavGraph(
                         onBack = { navController.popBackStack() },
                         onTrackClick = { id, queue ->
                             playbackViewModel.setPlayingFrom(PlayingFrom(favoritesLabel, Screen.Favorites.route))
-                            playbackViewModel.play(id, queue)
+                            playbackViewModel.playSaved(id, queue)
                         },
                         onPlayAll = { tracks ->
                             if (tracks.isNotEmpty()) {
                                 playbackViewModel.setPlayingFrom(PlayingFrom(favoritesLabel, Screen.Favorites.route))
-                                playbackViewModel.play(tracks.first().id, tracks)
+                                playbackViewModel.playSaved(tracks.first().id, tracks)
                             }
                         },
                         onNavigateToAddToPlaylist = {

@@ -1,15 +1,11 @@
 package com.davidsimba.vintbeats.shared
 
-import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidsimba.vintbeats.core.model.Track
-import com.davidsimba.vintbeats.stream.YouTubeStreamService
 import com.davidsimba.vintbeats.feature.library.domain.track.TrackRepository
 import com.davidsimba.vintbeats.feature.onboarding.OnboardingPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -21,10 +17,9 @@ import javax.inject.Inject
 @HiltViewModel
 class TrackActionsViewModel @Inject constructor(
     private val repository: TrackRepository,
-    private val streamService: YouTubeStreamService,
+    private val downloader: TrackDownloader,
     private val prefs: OnboardingPreferences,
-    private val progressStore: DownloadProgressStore,
-    @ApplicationContext private val context: Context
+    progressStore: DownloadProgressStore,
 ) : ViewModel() {
 
     val favoriteTrackIds: StateFlow<Set<String>> = repository.getFavoriteTracks()
@@ -54,28 +49,6 @@ class TrackActionsViewModel @Inject constructor(
 
     fun downloadTrack(track: Track) {
         if (downloadingTrackIds.value.contains(track.id)) return
-        viewModelScope.launch {
-            try {
-                repository.startDownload(track)
-                SnackbarController.emit(SnackbarEvent.DownloadStarted)
-                val streamUrl = streamService.getAudioStreamUrl(track.id)
-                val audioFilePath = streamService.downloadAudio(
-                    videoId = track.id,
-                    streamUrl = streamUrl,
-                    destDir = context.filesDir,
-                    onProgress = { progressStore.set(track.id, it) }
-                )
-                progressStore.remove(track.id)
-                repository.finishDownload(track.id, audioFilePath)
-                if (audioFilePath == null) {
-                    SnackbarController.emit(SnackbarEvent.DownloadError)
-                }
-            } catch (e: Exception) {
-                Log.e("TrackActionsVM", "[${track.id}] download failed: ${e::class.simpleName}: ${e.message}", e)
-                progressStore.remove(track.id)
-                repository.finishDownload(track.id, null)
-                SnackbarController.emit(SnackbarEvent.DownloadError)
-            }
-        }
+        viewModelScope.launch { downloader.download(track) }
     }
 }

@@ -13,7 +13,6 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
-import com.davidsimba.vintbeats.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -65,9 +64,10 @@ class PlaybackService : MediaSessionService() {
             }
         })
 
-        val activityIntent = Intent(this, MainActivity::class.java).apply {
+        // El service no conoce la Activity de la app: usa su intent de lanzamiento.
+        val activityIntent = (packageManager.getLaunchIntentForPackage(packageName) ?: Intent()).apply {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
-            putExtra(MainActivity.EXTRA_OPEN_PLAYER, true)
+            putExtra(PlayerLaunch.EXTRA_OPEN_PLAYER, true)
         }
         val pendingIntent = PendingIntent.getActivity(
             this, 0, activityIntent,

@@ -1,5 +1,6 @@
 package com.davidsimba.vintbeats
 
+import com.davidsimba.vintbeats.feature.player.ui.PlayerLaunch
 import android.Manifest
 import android.content.Intent
 import android.os.Build
@@ -22,7 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     companion object {
-        const val EXTRA_OPEN_PLAYER = "open_player"
+        const val EXTRA_OPEN_PLAYER = PlayerLaunch.EXTRA_OPEN_PLAYER
     }
 
     private val notificationPermissionLauncher = registerForActivityResult(
