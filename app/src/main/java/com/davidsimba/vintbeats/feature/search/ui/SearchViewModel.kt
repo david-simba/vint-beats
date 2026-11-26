@@ -7,7 +7,7 @@ import com.davidsimba.vintbeats.core.model.ExploreCategory
 import com.davidsimba.vintbeats.feature.search.domain.RecentSearch
 import com.davidsimba.vintbeats.core.network.BackendService
 import com.davidsimba.vintbeats.core.network.CategoryPlaylistsResult
-import com.davidsimba.vintbeats.feature.search.domain.SearchRepository
+import com.davidsimba.vintbeats.core.data.search.SearchRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.async

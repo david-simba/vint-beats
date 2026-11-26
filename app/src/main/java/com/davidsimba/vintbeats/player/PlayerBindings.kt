@@ -5,9 +5,9 @@ import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.core.network.BackendService
 import com.davidsimba.vintbeats.core.network.LrcLibService
 import com.davidsimba.vintbeats.core.network.YouTubeQueueService
-import com.davidsimba.vintbeats.feature.home.data.RecentlyPlayedRepository
-import com.davidsimba.vintbeats.feature.library.domain.track.TrackRepository
-import com.davidsimba.vintbeats.feature.onboarding.OnboardingPreferences
+import com.davidsimba.vintbeats.core.data.recent.RecentlyPlayedRepository
+import com.davidsimba.vintbeats.core.data.library.TrackRepository
+import com.davidsimba.vintbeats.core.data.preferences.OnboardingPreferences
 import com.davidsimba.vintbeats.feature.player.contract.LyricsProvider
 import com.davidsimba.vintbeats.feature.player.contract.PlaybackObserver
 import com.davidsimba.vintbeats.feature.player.contract.PlayerLibrary
@@ -15,8 +15,8 @@ import com.davidsimba.vintbeats.feature.player.contract.PlayerSettings
 import com.davidsimba.vintbeats.feature.player.contract.StreamResolver
 import com.davidsimba.vintbeats.feature.player.contract.TrackLibraryStatus
 import com.davidsimba.vintbeats.feature.player.contract.UpNextProvider
-import com.davidsimba.vintbeats.shared.TrackDownloader
-import com.davidsimba.vintbeats.stream.YouTubeStreamService
+import com.davidsimba.vintbeats.core.data.download.TrackDownloader
+import com.davidsimba.vintbeats.core.data.stream.YouTubeStreamService
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

@@ -3,7 +3,7 @@ package com.davidsimba.vintbeats.feature.library.ui.editplaylist
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.davidsimba.vintbeats.feature.library.domain.playlist.PlaylistRepository
+import com.davidsimba.vintbeats.core.data.library.PlaylistRepository
 import com.davidsimba.vintbeats.core.model.SavedTrack
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted

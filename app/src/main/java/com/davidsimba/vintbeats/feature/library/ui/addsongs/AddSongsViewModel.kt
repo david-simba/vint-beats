@@ -4,9 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidsimba.vintbeats.core.model.Track
-import com.davidsimba.vintbeats.feature.library.domain.playlist.PlaylistRepository
-import com.davidsimba.vintbeats.feature.library.domain.track.TrackRepository
-import com.davidsimba.vintbeats.feature.search.domain.SearchRepository
+import com.davidsimba.vintbeats.core.data.library.PlaylistRepository
+import com.davidsimba.vintbeats.core.data.library.TrackRepository
+import com.davidsimba.vintbeats.core.data.search.SearchRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow

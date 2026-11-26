@@ -5,9 +5,9 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidsimba.vintbeats.core.model.Artist
-import com.davidsimba.vintbeats.feature.library.domain.artist.SavedArtistRepository
-import com.davidsimba.vintbeats.feature.onboarding.OnboardingPreferences
-import com.davidsimba.vintbeats.feature.search.domain.SearchRepository
+import com.davidsimba.vintbeats.core.data.library.SavedArtistRepository
+import com.davidsimba.vintbeats.core.data.preferences.OnboardingPreferences
+import com.davidsimba.vintbeats.core.data.search.SearchRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers

@@ -2,10 +2,10 @@ package com.davidsimba.vintbeats.feature.library.ui.addtoplaylist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.davidsimba.vintbeats.feature.library.domain.playlist.Playlist
-import com.davidsimba.vintbeats.feature.library.domain.playlist.PlaylistRepository
-import com.davidsimba.vintbeats.feature.library.domain.track.TrackRepository
-import com.davidsimba.vintbeats.shared.AddToPlaylistController
+import com.davidsimba.vintbeats.core.data.library.Playlist
+import com.davidsimba.vintbeats.core.data.library.PlaylistRepository
+import com.davidsimba.vintbeats.core.data.library.TrackRepository
+import com.davidsimba.vintbeats.core.ui.AddToPlaylistController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

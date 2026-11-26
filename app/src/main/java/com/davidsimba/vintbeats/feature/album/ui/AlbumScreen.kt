@@ -38,10 +38,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.album.ui.components.AlbumTrackItem
-import com.davidsimba.vintbeats.shared.AddToPlaylistController
-import com.davidsimba.vintbeats.shared.CollectionPlaybackState
+import com.davidsimba.vintbeats.core.ui.AddToPlaylistController
+import com.davidsimba.vintbeats.core.ui.CollectionPlaybackState
 import com.davidsimba.vintbeats.core.common.QueueController
-import com.davidsimba.vintbeats.shared.TrackActionsViewModel
+import com.davidsimba.vintbeats.core.ui.TrackActionsViewModel
 import com.davidsimba.vintbeats.core.designsystem.components.collection.CollectionAppBar
 import com.davidsimba.vintbeats.core.designsystem.components.collection.CollectionHeader
 import com.davidsimba.vintbeats.core.designsystem.components.track.TrackOptionsBottomSheet

@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.album.data.AlbumRepository
-import com.davidsimba.vintbeats.feature.home.data.RecentlyPlayedAlbumsRepository
-import com.davidsimba.vintbeats.feature.library.domain.album.SavedAlbumRepository
+import com.davidsimba.vintbeats.core.data.recent.RecentlyPlayedAlbumsRepository
+import com.davidsimba.vintbeats.core.data.library.SavedAlbumRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

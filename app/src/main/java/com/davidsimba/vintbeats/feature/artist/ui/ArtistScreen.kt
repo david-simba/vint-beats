@@ -41,9 +41,9 @@ import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistAlbumsList
 import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistTopSongItem
 import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistTopSongsEmpty
 import com.davidsimba.vintbeats.core.designsystem.components.collection.MixRadioRow
-import com.davidsimba.vintbeats.shared.AddToPlaylistController
+import com.davidsimba.vintbeats.core.ui.AddToPlaylistController
 import com.davidsimba.vintbeats.core.common.QueueController
-import com.davidsimba.vintbeats.shared.TrackActionsViewModel
+import com.davidsimba.vintbeats.core.ui.TrackActionsViewModel
 import com.davidsimba.vintbeats.core.designsystem.components.collection.CollectionAppBar
 import com.davidsimba.vintbeats.core.designsystem.components.collection.CollectionHeader
 import com.davidsimba.vintbeats.core.designsystem.components.layout.SectionLabel

@@ -19,7 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.core.model.PlaylistSummary
 import com.davidsimba.vintbeats.feature.search.ui.components.CategorySheetContent
-import com.davidsimba.vintbeats.feature.search.ui.components.SearchField
+import com.davidsimba.vintbeats.core.designsystem.components.inputs.SearchField
 import com.davidsimba.vintbeats.feature.search.ui.components.exploreGrid
 import com.davidsimba.vintbeats.core.designsystem.components.layout.Header
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgDark

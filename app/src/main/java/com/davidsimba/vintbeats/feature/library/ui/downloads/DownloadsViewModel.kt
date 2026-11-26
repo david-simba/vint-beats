@@ -3,7 +3,7 @@ package com.davidsimba.vintbeats.feature.library.ui.downloads
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidsimba.vintbeats.core.model.SavedTrack
-import com.davidsimba.vintbeats.feature.library.domain.track.TrackRepository
+import com.davidsimba.vintbeats.core.data.library.TrackRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

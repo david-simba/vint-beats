@@ -29,8 +29,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.davidsimba.vintbeats.R
-import com.davidsimba.vintbeats.shared.SnackbarController
-import com.davidsimba.vintbeats.shared.SnackbarEvent
+import com.davidsimba.vintbeats.core.common.SnackbarController
+import com.davidsimba.vintbeats.core.common.SnackbarEvent
 import com.davidsimba.vintbeats.core.designsystem.components.feedback.SnackbarPosition
 import com.davidsimba.vintbeats.core.designsystem.components.feedback.Snackbar
 import kotlinx.coroutines.delay
@@ -61,11 +61,11 @@ import com.davidsimba.vintbeats.feature.library.ui.userplaylist.UserPlaylistScre
 import com.davidsimba.vintbeats.feature.home.ui.HomeScreen
 import com.davidsimba.vintbeats.feature.player.ui.PlaybackViewModel
 import com.davidsimba.vintbeats.player.playSaved
-import com.davidsimba.vintbeats.shared.AddToPlaylistController
+import com.davidsimba.vintbeats.core.ui.AddToPlaylistController
 import com.davidsimba.vintbeats.feature.player.ui.PlayerScreen
 import com.davidsimba.vintbeats.feature.player.ui.PlayerState
 import com.davidsimba.vintbeats.feature.player.ui.PlayingFrom
-import com.davidsimba.vintbeats.shared.CollectionPlaybackState
+import com.davidsimba.vintbeats.core.ui.CollectionPlaybackState
 import com.davidsimba.vintbeats.feature.playlist.PlaylistScreen
 import com.davidsimba.vintbeats.feature.search.ui.SearchActiveScreen
 import com.davidsimba.vintbeats.feature.search.ui.SearchScreen

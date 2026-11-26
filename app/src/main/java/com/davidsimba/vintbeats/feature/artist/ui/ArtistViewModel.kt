@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.artist.data.ArtistRepository
-import com.davidsimba.vintbeats.feature.library.domain.artist.SavedArtistRepository
+import com.davidsimba.vintbeats.core.data.library.SavedArtistRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.R
-import com.davidsimba.vintbeats.feature.search.ui.components.SearchField
+import com.davidsimba.vintbeats.core.designsystem.components.inputs.SearchField
 import com.davidsimba.vintbeats.core.designsystem.components.inputs.Checkbox
 import com.davidsimba.vintbeats.core.designsystem.components.track.TrackCard
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGray

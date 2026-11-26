@@ -1,0 +1,124 @@
+package com.davidsimba.vintbeats.core.data.library
+
+import com.davidsimba.vintbeats.core.model.SavedTrack
+import com.davidsimba.vintbeats.core.data.library.TrackRepository
+import com.davidsimba.vintbeats.core.model.Track
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import java.io.File
+import javax.inject.Inject
+import com.davidsimba.vintbeats.core.database.dao.TrackDao
+import com.davidsimba.vintbeats.core.database.entity.SavedTrackEntity
+
+class TrackRepositoryImpl @Inject constructor(
+    private val dao: TrackDao
+) : TrackRepository {
+
+    override fun getAllTracks(): Flow<List<SavedTrack>> =
+        dao.getAllTracks().map { it.map(SavedTrackEntity::toDomain) }
+
+    override fun getDownloadedTracks(): Flow<List<SavedTrack>> =
+        dao.getDownloadedTracks().map { it.map(SavedTrackEntity::toDomain) }
+
+    override fun getFavoriteTracks(): Flow<List<SavedTrack>> =
+        dao.getFavoriteTracks().map { it.map(SavedTrackEntity::toDomain) }
+
+    override suspend fun getTrack(id: Int): SavedTrack? =
+        dao.getById(id)?.toDomain()
+
+    override suspend fun getTrackByVideoId(trackId: String): SavedTrack? =
+        dao.getByTrackId(trackId)?.toDomain()
+
+    override suspend fun saveTrack(track: Track, audioFilePath: String?) {
+        val existing = dao.getByTrackId(track.id)
+        dao.insert(
+            SavedTrackEntity(
+                id = existing?.id ?: 0,
+                trackId = track.id,
+                trackTitle = track.title,
+                trackArtist = track.artist,
+                trackThumbnailUrl = track.albumImageUrl,
+                trackDurationText = track.durationText,
+                savedAt = existing?.savedAt ?: System.currentTimeMillis(),
+                audioFilePath = audioFilePath,
+                isFavorite = existing?.isFavorite ?: false
+            )
+        )
+    }
+
+    override suspend fun startDownload(track: Track) {
+        val existing = dao.getByTrackId(track.id)
+        if (existing != null) {
+            dao.setDownloading(track.id, true)
+        } else {
+            dao.insert(
+                SavedTrackEntity(
+                    trackId = track.id,
+                    trackTitle = track.title,
+                    trackArtist = track.artist,
+                    trackThumbnailUrl = track.albumImageUrl,
+                    trackDurationText = track.durationText,
+                    isFavorite = false,
+                    isDownloading = true
+                )
+            )
+        }
+    }
+
+    override suspend fun finishDownload(trackId: String, audioFilePath: String?) {
+        if (audioFilePath != null) {
+            dao.setAudioFilePath(trackId, audioFilePath)
+        } else {
+            val existing = dao.getByTrackId(trackId)
+            if (existing != null && !existing.isFavorite && existing.audioFilePath == null) {
+                dao.deleteById(existing.id)
+            } else {
+                dao.setDownloading(trackId, false)
+            }
+        }
+    }
+
+    override suspend fun resetStuckDownloads() {
+        dao.resetStuckDownloads()
+    }
+
+    override suspend fun deleteTrack(id: Int) {
+        dao.getById(id)?.audioFilePath?.let { File(it).delete() }
+        dao.deleteById(id)
+    }
+
+    override suspend fun removeFavorite(id: Int) {
+        val track = dao.getById(id) ?: return
+        if (track.audioFilePath == null) {
+            dao.deleteById(id)
+        } else {
+            dao.setFavorite(id, false)
+        }
+    }
+
+    override suspend fun toggleFavorite(track: Track) {
+        val existing = dao.getByTrackId(track.id)
+        if (existing == null) {
+            dao.insert(
+                SavedTrackEntity(
+                    trackId = track.id,
+                    trackTitle = track.title,
+                    trackArtist = track.artist,
+                    trackThumbnailUrl = track.albumImageUrl,
+                    trackDurationText = track.durationText,
+                    isFavorite = true
+                )
+            )
+        } else {
+            val newFavorite = !existing.isFavorite
+            if (!newFavorite && existing.audioFilePath == null) {
+                dao.deleteById(existing.id)
+            } else {
+                dao.setFavorite(existing.id, newFavorite)
+            }
+        }
+    }
+
+    override suspend fun isFavoriteTrack(trackId: String): Boolean =
+        dao.getByTrackId(trackId)?.isFavorite ?: false
+}

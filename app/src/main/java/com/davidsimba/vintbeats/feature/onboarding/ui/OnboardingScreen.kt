@@ -65,7 +65,7 @@ import com.davidsimba.vintbeats.core.common.VintCropImageContract
 import com.davidsimba.vintbeats.core.common.VintCropImageContractOptions
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.core.model.Artist
-import com.davidsimba.vintbeats.feature.search.ui.components.SearchField
+import com.davidsimba.vintbeats.core.designsystem.components.inputs.SearchField
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgDark
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid

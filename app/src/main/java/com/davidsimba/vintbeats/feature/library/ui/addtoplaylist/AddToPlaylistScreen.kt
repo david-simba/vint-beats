@@ -38,7 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.R
-import com.davidsimba.vintbeats.feature.library.domain.playlist.Playlist
+import com.davidsimba.vintbeats.core.data.library.Playlist
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgDark
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageOrangeLight
