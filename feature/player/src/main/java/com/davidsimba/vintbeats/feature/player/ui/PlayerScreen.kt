@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -24,7 +25,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.PlaylistAdd
 import androidx.compose.material.icons.rounded.Download
+import androidx.compose.material.icons.rounded.CropSquare
 import androidx.compose.material.icons.rounded.Equalizer
+import androidx.compose.material.icons.rounded.Image
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.HeartBroken
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -49,6 +52,7 @@ import com.davidsimba.vintbeats.core.designsystem.components.feedback.BottomShee
 import com.davidsimba.vintbeats.core.designsystem.components.feedback.BottomSheet
 import kotlinx.coroutines.launch
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerBackground
+import com.davidsimba.vintbeats.feature.player.ui.components.PlayerCover
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerControls
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerQueueSheet
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerTopBar
@@ -89,6 +93,7 @@ fun PlayerScreen(
     var showQueueSheet by remember { mutableStateOf(false) }
     var showLyricsScreen by remember { mutableStateOf(false) }
     val showEqualizer by viewModel.equalizerEnabled.collectAsStateWithLifecycle()
+    val coverAsBackground by viewModel.coverAsBackground.collectAsStateWithLifecycle()
 
     BackHandler(enabled = showLyricsScreen) { showLyricsScreen = false }
     val isFavorite by viewModel.isFavorite.collectAsStateWithLifecycle()
@@ -156,15 +161,17 @@ fun PlayerScreen(
                         .fillMaxWidth()
                         .height(screenHeight)
                 ) {
-                    PlayerBackground(
-                        currentImageUrl = trackForCard?.albumImageUrl,
-                        nextImageUrl = nextTrack?.albumImageUrl,
-                        previousImageUrl = previousTrack?.albumImageUrl,
-                        offsetX = offsetX.value,
-                        componentWidth = componentWidth,
-                        backgroundColor = paletteColor,
-                        modifier = Modifier.fillMaxSize()
-                    )
+                    if (coverAsBackground) {
+                        PlayerBackground(
+                            currentImageUrl = trackForCard?.albumImageUrl,
+                            nextImageUrl = nextTrack?.albumImageUrl,
+                            previousImageUrl = previousTrack?.albumImageUrl,
+                            offsetX = offsetX.value,
+                            componentWidth = componentWidth,
+                            backgroundColor = paletteColor,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -178,7 +185,26 @@ fun PlayerScreen(
                             onPlayingFromClick = onPlayingFromClick
                         )
 
-                        Spacer(Modifier.weight(1f))
+                        if (coverAsBackground) {
+                            Spacer(Modifier.weight(1f))
+                        } else {
+                            BoxWithConstraints(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 24.dp, vertical = 12.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                PlayerCover(
+                                    currentImageUrl = trackForCard?.albumImageUrl,
+                                    nextImageUrl = nextTrack?.albumImageUrl,
+                                    previousImageUrl = previousTrack?.albumImageUrl,
+                                    offsetX = offsetX.value,
+                                    componentWidth = componentWidth,
+                                    modifier = Modifier.size(minOf(maxWidth, maxHeight))
+                                )
+                            }
+                        }
 
                         trackForCard?.let {
                             PlayerTrackInfo(
@@ -312,6 +338,19 @@ fun PlayerScreen(
                         scope.launch { sheetState.hide() }.invokeOnCompletion {
                             showOptionsSheet = false
                             trackForCard?.let(onAddToPlaylist)
+                        }
+                    }
+                )
+                BottomSheetMenuItem(
+                    label = stringResource(
+                        if (coverAsBackground) R.string.player_option_cover_square
+                        else R.string.player_option_cover_background
+                    ),
+                    icon = if (coverAsBackground) Icons.Rounded.CropSquare else Icons.Rounded.Image,
+                    onClick = {
+                        scope.launch { sheetState.hide() }.invokeOnCompletion {
+                            showOptionsSheet = false
+                            viewModel.toggleCoverStyle()
                         }
                     }
                 )

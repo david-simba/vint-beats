@@ -52,6 +52,10 @@ interface PlayerLibrary {
 interface PlayerSettings {
     val showEqualizer: Flow<Boolean>
     suspend fun setShowEqualizer(show: Boolean)
+
+    /** false (por defecto): portada como cuadro sobre el player; true: portada a pantalla completa de fondo. */
+    val coverAsBackground: Flow<Boolean>
+    suspend fun setCoverAsBackground(asBackground: Boolean)
 }
 
 /** Avisa al host de que empezó una canción (historial reciente, etc.). */

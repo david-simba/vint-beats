@@ -90,6 +90,8 @@ class AppPlayerSettings @Inject constructor(
 ) : PlayerSettings {
     override val showEqualizer: Flow<Boolean> = prefs.showEqualizer
     override suspend fun setShowEqualizer(show: Boolean) = prefs.setShowEqualizer(show)
+    override val coverAsBackground: Flow<Boolean> = prefs.coverAsBackground
+    override suspend fun setCoverAsBackground(asBackground: Boolean) = prefs.setCoverAsBackground(asBackground)
 }
 
 class AppPlaybackObserver @Inject constructor(

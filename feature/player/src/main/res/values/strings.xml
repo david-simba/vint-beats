@@ -11,4 +11,6 @@
     <string name="mini_player_play">Play</string>
     <string name="mini_player_pause">Pause</string>
     <string name="mini_player_next">Next</string>
+    <string name="player_option_cover_square">Show cover as a square</string>
+    <string name="player_option_cover_background">Show cover as background</string>
 </resources>

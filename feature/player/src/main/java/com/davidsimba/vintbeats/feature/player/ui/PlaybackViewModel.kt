@@ -124,6 +124,9 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
     val equalizerEnabled: StateFlow<Boolean> = settings.showEqualizer
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
+    val coverAsBackground: StateFlow<Boolean> = settings.coverAsBackground
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
     private val _repeatMode = MutableStateFlow(Player.REPEAT_MODE_OFF)
     val repeatMode: StateFlow<Int> = _repeatMode.asStateFlow()
 
@@ -334,6 +337,10 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
             _history.value = _history.value + skipped
         }
         playTrack(track, newQueue = queue.drop(index + 1), preserveHistory = true)
+    }
+
+    fun toggleCoverStyle() {
+        viewModelScope.launch { settings.setCoverAsBackground(!coverAsBackground.value) }
     }
 
     fun toggleEqualizer() {

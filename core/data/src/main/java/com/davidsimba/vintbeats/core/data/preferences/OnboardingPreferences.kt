@@ -28,6 +28,7 @@ class OnboardingPreferences @Inject constructor(
     val photoVersion: Flow<Long> = dataStore.data.map { it[KEY_PHOTO_VERSION] ?: 0L }
     val autoDownloadFavorites: Flow<Boolean> = dataStore.data.map { it[KEY_AUTO_DOWNLOAD_FAVORITES] ?: false }
     val showEqualizer: Flow<Boolean> = dataStore.data.map { it[KEY_SHOW_EQUALIZER] ?: false }
+    val coverAsBackground: Flow<Boolean> = dataStore.data.map { it[KEY_COVER_AS_BACKGROUND] ?: false }
 
     suspend fun setComplete(complete: Boolean) {
         dataStore.edit { it[KEY_COMPLETE] = complete }
@@ -53,6 +54,10 @@ class OnboardingPreferences @Inject constructor(
         dataStore.edit { it[KEY_SHOW_EQUALIZER] = enabled }
     }
 
+    suspend fun setCoverAsBackground(enabled: Boolean) {
+        dataStore.edit { it[KEY_COVER_AS_BACKGROUND] = enabled }
+    }
+
     companion object {
         private val KEY_COMPLETE = booleanPreferencesKey("onboarding_complete")
         private val KEY_NAME = stringPreferencesKey("user_name")
@@ -60,5 +65,6 @@ class OnboardingPreferences @Inject constructor(
         private val KEY_PHOTO_VERSION = longPreferencesKey("photo_version")
         private val KEY_AUTO_DOWNLOAD_FAVORITES = booleanPreferencesKey("auto_download_favorites")
         private val KEY_SHOW_EQUALIZER = booleanPreferencesKey("show_equalizer")
+        private val KEY_COVER_AS_BACKGROUND = booleanPreferencesKey("cover_as_background")
     }
 }
