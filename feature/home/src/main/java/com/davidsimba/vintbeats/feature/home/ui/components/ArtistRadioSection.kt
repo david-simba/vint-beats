@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import com.davidsimba.vintbeats.feature.home.domain.ArtistRadioItem
 import com.davidsimba.vintbeats.core.designsystem.components.cards.RadioCard
 import com.davidsimba.vintbeats.core.designsystem.theme.TextoPrincipal
+import com.davidsimba.vintbeats.feature.home.R
 
 @Composable
 fun ArtistRadioSection(
@@ -51,7 +52,7 @@ fun ArtistRadioSection(
                         onClick = { onRadioSelected(radio) },
                         modifier = Modifier.width(180.dp),
                     )
-                    CardSubtitle(text = "Playlist · $artistLine")
+                    CardSubtitle(text = stringResource(R.string.home_playlist_de, artistLine))
                 }
             }
         }

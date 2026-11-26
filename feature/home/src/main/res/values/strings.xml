@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="home_albumes_recientes">Álbumes recientes</string>
+    <string name="home_albumes_recientes">Recent albums</string>
     <string name="home_empty">Save artists to personalize your home</string>
-    <string name="home_greeting">Hello, %s!</string>
-    <string name="home_canciones_que_te_gustan">Canciones que te gustan</string>
-    <string name="home_seleccion_rapida">Para ti</string>
-    <string name="home_buenos_dias">Buenos días</string>
-    <string name="home_buenas_tardes">Buenas tardes</string>
-    <string name="home_buenas_noches">Buenas noches</string>
-    <string name="home_ver_todo">Ver todo</string>
-    <string name="home_volver">Volver</string>
-    <string name="home_mas_opciones">Más opciones</string>
-    <string name="home_tus_artistas">Tus artistas</string>
-    <string name="home_lo_mejor_de_tus_artistas">Lo mejor de tus artistas</string>
+    <string name="home_canciones_que_te_gustan">Liked songs</string>
+    <string name="home_seleccion_rapida">For you</string>
+    <string name="home_buenos_dias">Good morning</string>
+    <string name="home_buenas_tardes">Good afternoon</string>
+    <string name="home_buenas_noches">Good evening</string>
+    <string name="home_ver_todo">See all</string>
+    <string name="home_volver">Back</string>
+    <string name="home_mas_opciones">More options</string>
+    <string name="home_tus_artistas">Your artists</string>
+    <string name="home_lo_mejor_de_tus_artistas">The best of your artists</string>
     <string name="home_playlist_de">Playlist · %1$s</string>
-    <string name="home_ver_perfil">Ver perfil de %1$s</string>
+    <string name="home_ver_perfil">View %1$s’s profile</string>
 </resources>

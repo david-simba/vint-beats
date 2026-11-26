@@ -2,7 +2,6 @@
 <resources>
     <string name="home_albumes_recientes">Álbumes recientes</string>
     <string name="home_empty">Guarda artistas para personalizar tu home</string>
-    <string name="home_greeting">Hola, %s!</string>
     <string name="home_canciones_que_te_gustan">Canciones que te gustan</string>
     <string name="home_seleccion_rapida">Para ti</string>
     <string name="home_buenos_dias">Buenos días</string>

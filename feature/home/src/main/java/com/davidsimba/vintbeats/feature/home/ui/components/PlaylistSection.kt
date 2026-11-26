@@ -11,12 +11,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.davidsimba.vintbeats.core.model.HomeSectionPlaylists
 import com.davidsimba.vintbeats.core.designsystem.components.cards.PlaylistCard
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhiteWarm
+import com.davidsimba.vintbeats.feature.home.R
 
 @Composable
 fun PlaylistSection(
@@ -54,7 +56,7 @@ fun PlaylistSection(
                         }
                     )
                     if (showStripe) {
-                        CardSubtitle(text = "Playlist · ${playlist.artistName ?: playlist.title}")
+                        CardSubtitle(text = stringResource(R.string.home_playlist_de, playlist.artistName ?: playlist.title))
                     }
                 }
             }
