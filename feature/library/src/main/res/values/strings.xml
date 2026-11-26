@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_add_songs">Add songs</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_delete_playlist">Delete playlist</string>
+    <string name="action_edit_info">Edit info</string>
+    <string name="action_edit_playlist">Edit</string>
+    <string name="action_remove_download">Delete song</string>
+    <string name="add_to_playlist_empty">No playlists created yet</string>
+    <string name="alert_delete_playlist_message">This action cannot be undone.</string>
+    <string name="alert_delete_playlist_title">Delete playlist?</string>
+    <string name="create_playlist_action">Create</string>
+    <string name="create_playlist_title">New Playlist</string>
+    <string name="downloads_count">%d songs</string>
+    <string name="downloads_empty">No downloaded songs yet</string>
+    <string name="downloads_empty_short">No songs downloaded yet</string>
+    <string name="edit_playlist_title">Edit playlist</string>
+    <string name="favorites_count">%d songs</string>
+    <string name="favorites_empty">No favorite songs yet</string>
+    <string name="favorites_empty_short">No songs added yet</string>
+    <string name="library_empty">No songs saved yet</string>
+    <string name="library_filter_albums">Albums</string>
+    <string name="library_filter_albums_empty">No saved albums yet</string>
+    <string name="library_filter_artists">Artists</string>
+    <string name="library_filter_artists_empty">No saved artists yet</string>
+    <string name="library_filter_yours">100% You</string>
+    <string name="library_title">Library</string>
+    <string name="playlist_add_photo">Add photo</string>
+    <string name="playlist_empty_short">No songs yet</string>
+    <string name="playlist_name_hint">Playlist name</string>
+    <string name="save_playlist_action">Save</string>
+</resources>

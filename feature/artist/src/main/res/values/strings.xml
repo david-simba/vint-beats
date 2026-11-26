@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="artist_albums">Albums</string>
+    <string name="artist_discover_more">Discover more</string>
+    <string name="artist_no_songs">No songs available.</string>
+    <string name="artist_top_songs">Top Songs</string>
+</resources>

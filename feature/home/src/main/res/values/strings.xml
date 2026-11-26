@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_albumes_recientes">Álbumes recientes</string>
+    <string name="home_empty">Save artists to personalize your home</string>
+    <string name="home_greeting">Hello, %s!</string>
+    <string name="home_recientes">Escuchado recientemente</string>
+    <string name="home_seleccion_rapida">Para ti</string>
+</resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="explore_playlists_error">No se pudieron cargar las listas</string>
+    <string name="label_album">Álbum</string>
+    <string name="search_clear_history">Borrar historial</string>
+    <string name="search_recent_title">Búsquedas recientes</string>
+    <string name="search_title">Buscar</string>
+</resources>

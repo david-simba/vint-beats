@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_add_photo">Añadir foto (opcional)</string>
+    <string name="onboarding_continue">Continuar</string>
+    <string name="onboarding_done_count">Listo (%d)</string>
+    <string name="onboarding_name_hint">Tu nombre</string>
+    <string name="onboarding_name_question">¿Cómo te llamas?</string>
+    <string name="onboarding_pick_artists">Elige tus artistas</string>
+    <string name="onboarding_pick_artists_subtitle">Selecciona al menos 3</string>
+    <string name="onboarding_select_more">Selecciona %d más</string>
+    <string name="onboarding_welcome">Bienvenido a Vint</string>
+</resources>

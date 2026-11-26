@@ -73,6 +73,7 @@ import com.davidsimba.vintbeats.feature.search.ui.SearchViewModel
 import com.davidsimba.vintbeats.feature.player.ui.components.MiniPlayer
 import com.davidsimba.vintbeats.core.designsystem.components.background.Background
 import com.davidsimba.vintbeats.navigation.navbar.BottomNavBar
+import com.davidsimba.vintbeats.core.designsystem.R as DsR
 
 private val bottomNavRoutes = setOf(
     Screen.Home.route,
@@ -518,7 +519,7 @@ fun NavGraph(
                     popEnterTransition = { EnterTransition.None },
                     popExitTransition = { slideOutHorizontally(animationSpec = tween(220), targetOffsetX = { it }) }
                 ) {
-                    val downloadsLabel = stringResource(R.string.downloads_title)
+                    val downloadsLabel = stringResource(DsR.string.downloads_title)
                     DownloadsScreen(
                         onBack = { navController.popBackStack() },
                         onTrackClick = { id, queue ->
@@ -589,7 +590,7 @@ fun NavGraph(
                     popEnterTransition = { EnterTransition.None },
                     popExitTransition = { slideOutHorizontally(animationSpec = tween(220), targetOffsetX = { it }) }
                 ) {
-                    val favoritesLabel = stringResource(R.string.favorites_title)
+                    val favoritesLabel = stringResource(DsR.string.favorites_title)
                     FavoritesScreen(
                         onBack = { navController.popBackStack() },
                         onTrackClick = { id, queue ->

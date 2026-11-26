@@ -3,115 +3,40 @@
     <string name="app_name">Vint</string>
 
     <!-- Bottom navigation -->
-    <string name="nav_home">Inicio</string>
     <string name="nav_search">Buscar</string>
     <string name="nav_library">Biblioteca</string>
     <string name="nav_profile">Perfil</string>
 
     <!-- Onboarding -->
-    <string name="onboarding_welcome">Bienvenido a Vint</string>
-    <string name="onboarding_name_question">¿Cómo te llamas?</string>
-    <string name="onboarding_name_hint">Tu nombre</string>
-    <string name="onboarding_add_photo">Añadir foto (opcional)</string>
-    <string name="onboarding_continue">Continuar</string>
-    <string name="onboarding_pick_artists">Elige tus artistas</string>
-    <string name="onboarding_pick_artists_subtitle">Selecciona al menos 3</string>
-    <string name="onboarding_done_count">Listo (%d)</string>
-    <string name="onboarding_select_more">Selecciona %d más</string>
 
     <!-- Profile -->
-    <string name="profile_title">Perfil</string>
-    <string name="profile_edit_button">Editar</string>
-    <string name="edit_profile_title">Editar perfil</string>
-    <string name="edit_profile_save">Guardar</string>
-    <string name="edit_profile_label_name">Nombre</string>
 
     <!-- Profile settings -->
-    <string name="profile_section_settings">Ajustes</string>
-    <string name="profile_auto_download_title">Descargar al añadir a favoritos</string>
-    <string name="profile_auto_download_subtitle">Las canciones se descargarán automáticamente</string>
-    <string name="profile_equalizer_title">Mostrar ecualizador</string>
-    <string name="profile_equalizer_subtitle">Visualizar el ecualizador en la pantalla del reproductor</string>
-    <string name="profile_section_about">Acerca de</string>
-    <string name="profile_support_creator">Apoya al creador</string>
-    <string name="profile_support_creator_sub">Ayuda a mantener la app</string>
-    <string name="profile_about">Acerca de Vint</string>
-    <string name="profile_about_sub">Versión, info de la app</string>
-    <string name="profile_terms">Términos y condiciones</string>
-    <string name="profile_terms_sub">Política de uso de la app</string>
 
     <!-- Terms screen -->
-    <string name="terms_title">Términos y condiciones</string>
-    <string name="terms_last_updated">Última actualización: Junio 2026</string>
-    <string name="terms_acceptance_title">1. Aceptación de los términos</string>
-    <string name="terms_acceptance_body">Al usar Vint, aceptas estos términos. Si no estás de acuerdo, por favor no uses la app.</string>
-    <string name="terms_service_title">2. Descripción del servicio</string>
-    <string name="terms_service_body">Vint es una app de música personal que te permite descubrir, guardar y escuchar música. El contenido de audio se transmite desde fuentes de terceros y Vint no aloja ningún archivo de música.</string>
-    <string name="terms_content_title">3. Contenido y derechos de autor</string>
-    <string name="terms_content_body">Todo el contenido musical es propiedad de sus respectivos titulares. Vint no reclama la propiedad de ningún contenido de audio. El uso de la app es exclusivamente personal y no comercial.</string>
-    <string name="terms_data_title">4. Datos del usuario</string>
-    <string name="terms_data_body">Vint almacena tus preferencias y archivos descargados localmente en tu dispositivo. No se envían datos personales a servidores externos sin tu conocimiento.</string>
-    <string name="terms_liability_title">5. Limitación de responsabilidad</string>
-    <string name="terms_liability_body">Vint se proporciona \"tal cual\" sin garantías de ningún tipo. El desarrollador no se hace responsable de ningún daño derivado del uso o la imposibilidad de uso de la app.</string>
-    <string name="terms_changes_title">6. Cambios en los términos</string>
-    <string name="terms_changes_body">Estos términos pueden actualizarse en cualquier momento. El uso continuado de la app tras los cambios implica la aceptación de los nuevos términos.</string>
-    <string name="terms_contact_title">7. Contacto</string>
-    <string name="terms_contact_body">Para consultas sobre estos términos, escríbenos a: vintbeats.app@gmail.com</string>
 
     <!-- About screen -->
-    <string name="about_tagline">Tu música, sin límites</string>
-    <string name="about_description">Vint es una app de música que te permite descubrir, guardar y disfrutar tus canciones y artistas favoritos, todo en un solo lugar.</string>
-    <string name="about_version">Versión</string>
-    <string name="about_created_by">Creado por David Simba</string>
-    <string name="about_copyright">© 2026 Vint</string>
 
     <!-- Library -->
-    <string name="library_title">Biblioteca</string>
-    <string name="library_empty">Aún no tienes canciones guardadas</string>
 
     <!-- Favorites -->
-    <string name="favorites_title">Favoritos</string>
-    <string name="favorites_empty">Aún no tienes canciones favoritas</string>
-    <string name="favorites_empty_short">Aún no hay canciones</string>
-    <string name="favorites_count">%d canciones</string>
 
     <!-- Playlists -->
-    <string name="create_playlist_title">Nueva playlist</string>
-    <string name="create_playlist_action">Crear</string>
-    <string name="playlist_name_hint">Nombre de la playlist</string>
-    <string name="playlist_add_photo">Añadir foto</string>
     <string name="playlist_empty">Aún no hay canciones en esta playlist</string>
-    <string name="playlist_empty_short">Sin canciones aún</string>
-    <string name="playlist_count">%d canciones</string>
 
     <!-- Downloads -->
-    <string name="downloads_title">Descargas</string>
-    <string name="downloads_empty">Aún no tienes canciones descargadas</string>
-    <string name="downloads_empty_short">Aún no hay descargas</string>
-    <string name="downloads_count">%d canciones</string>
 
     <!-- Search -->
-    <string name="search_title">Buscar</string>
-    <string name="search_recent_title">Búsquedas recientes</string>
-    <string name="search_clear_history">Borrar historial</string>
 
     <!-- Explore -->
     <string name="explore_title">Explorar</string>
-    <string name="explore_playlists_error">No se pudieron cargar las listas</string>
 
     <!-- Labels -->
-    <string name="label_artist">Artista</string>
-    <string name="label_album">Álbum</string>
 
     <!-- Artist -->
-    <string name="artist_discover_more">Descubre más</string>
-    <string name="artist_top_songs">Top Canciones</string>
-    <string name="artist_albums">Álbums</string>
-    <string name="artist_no_songs">No hay canciones disponibles.</string>
     <string name="artist_play">Reproducir artista</string>
 
     <!-- Album -->
-    <string name="album_no_tracks">No hay pistas disponibles.</string>
     <string name="album_play">Reproducir álbum</string>
 
     <!-- Queue -->
@@ -124,33 +49,11 @@
     <string name="download_error">Error al descargar, inténtalo de nuevo</string>`
 
     <!-- Library filters -->
-    <string name="library_filter_yours">100% Tú</string>
-    <string name="library_filter_albums">Álbums</string>
-    <string name="library_filter_artists">Artistas</string>
-    <string name="library_filter_albums_empty">No tienes álbums guardados</string>
-    <string name="library_filter_artists_empty">No tienes artistas guardados</string>
 
     <!-- Home -->
-    <string name="home_greeting">Hola, %s!</string>
-    <string name="home_empty">Guarda artistas para personalizar tu home</string>
 
     <!-- Common -->
-    <string name="action_add_songs">Agregar canciones</string>
-    <string name="action_edit_playlist">Editar</string>
-    <string name="edit_playlist_title">Editar playlist</string>
-    <string name="action_edit_info">Editar info</string>
-    <string name="action_delete_playlist">Eliminar playlist</string>
-    <string name="alert_delete_playlist_title">¿Eliminar playlist?</string>
-    <string name="alert_delete_playlist_message">Esta acción no se puede deshacer.</string>
-    <string name="action_delete">Eliminar</string>
-    <string name="action_cancel">Cancelar</string>
-    <string name="save_playlist_action">Guardar</string>
-    <string name="action_remove_download">Eliminar canción</string>
-    <string name="add_to_playlist_empty">Aún no tienes playlists creadas</string>
 
     <!-- Home sections -->
-    <string name="home_seleccion_rapida">Para ti</string>
     <string name="home_tus_artistas">Artistas que escuchas</string>
-    <string name="home_recientes">Escuchado recientemente</string>
-    <string name="home_albumes_recientes">Álbumes recientes</string>
 </resources>

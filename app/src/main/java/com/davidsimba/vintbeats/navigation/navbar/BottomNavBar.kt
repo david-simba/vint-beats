@@ -35,6 +35,7 @@ import com.davidsimba.vintbeats.navigation.Screen
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgDark
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGray
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
+import com.davidsimba.vintbeats.core.designsystem.R as DsR
 
 data class BottomNavBarItem(
     val screen: Screen,
@@ -43,7 +44,7 @@ data class BottomNavBarItem(
 )
 
 val bottomNavItems = listOf(
-    BottomNavBarItem(Screen.Home, R.string.nav_home, Icons.Rounded.Headset),
+    BottomNavBarItem(Screen.Home, DsR.string.nav_home, Icons.Rounded.Headset),
     BottomNavBarItem(Screen.Search, R.string.nav_search, Icons.Rounded.Search),
     BottomNavBarItem(Screen.Library, R.string.nav_library, Icons.Rounded.LibraryMusic),
     BottomNavBarItem(Screen.Profile, R.string.nav_profile, Icons.Rounded.Person),

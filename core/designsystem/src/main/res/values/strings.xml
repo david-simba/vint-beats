@@ -12,4 +12,9 @@
     <string name="action_add_to_playlist">Add to playlist</string>
     <string name="action_add_to_queue">Add to queue</string>
     <string name="search_placeholder">Search songs, artists…</string>
+    <string name="playlist_count">%d songs</string>
+    <string name="label_artist">Artist</string>
+    <string name="nav_home">Home</string>
+    <string name="downloads_title">Downloads</string>
+    <string name="favorites_title">Favorites</string>
 </resources>

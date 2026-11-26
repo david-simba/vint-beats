@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_add_songs">Agregar canciones</string>
+    <string name="action_cancel">Cancelar</string>
+    <string name="action_delete">Eliminar</string>
+    <string name="action_delete_playlist">Eliminar playlist</string>
+    <string name="action_edit_info">Editar info</string>
+    <string name="action_edit_playlist">Editar</string>
+    <string name="action_remove_download">Eliminar canción</string>
+    <string name="add_to_playlist_empty">Aún no tienes playlists creadas</string>
+    <string name="alert_delete_playlist_message">Esta acción no se puede deshacer.</string>
+    <string name="alert_delete_playlist_title">¿Eliminar playlist?</string>
+    <string name="create_playlist_action">Crear</string>
+    <string name="create_playlist_title">Nueva playlist</string>
+    <string name="downloads_count">%d canciones</string>
+    <string name="downloads_empty">Aún no tienes canciones descargadas</string>
+    <string name="downloads_empty_short">Aún no hay descargas</string>
+    <string name="edit_playlist_title">Editar playlist</string>
+    <string name="favorites_count">%d canciones</string>
+    <string name="favorites_empty">Aún no tienes canciones favoritas</string>
+    <string name="favorites_empty_short">Aún no hay canciones</string>
+    <string name="library_empty">Aún no tienes canciones guardadas</string>
+    <string name="library_filter_albums">Álbums</string>
+    <string name="library_filter_albums_empty">No tienes álbums guardados</string>
+    <string name="library_filter_artists">Artistas</string>
+    <string name="library_filter_artists_empty">No tienes artistas guardados</string>
+    <string name="library_filter_yours">100% Tú</string>
+    <string name="library_title">Biblioteca</string>
+    <string name="playlist_add_photo">Añadir foto</string>
+    <string name="playlist_empty_short">Sin canciones aún</string>
+    <string name="playlist_name_hint">Nombre de la playlist</string>
+    <string name="save_playlist_action">Guardar</string>
+</resources>

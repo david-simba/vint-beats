@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="artist_albums">Álbums</string>
+    <string name="artist_discover_more">Descubre más</string>
+    <string name="artist_no_songs">No hay canciones disponibles.</string>
+    <string name="artist_top_songs">Top Canciones</string>
+</resources>
