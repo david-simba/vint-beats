@@ -61,7 +61,7 @@ fun ArtistsSection(
                 Column(
                     modifier = Modifier
                         .width(AVATAR_SIZE)
-                        .clip(RoundedCornerShape(12.dp))
+                        .clip(RoundedCornerShape(8.dp))
                         .semantics(mergeDescendants = true) { contentDescription = description }
                         .clickable(role = Role.Button) { onArtistClick(artistId) },
                     horizontalAlignment = Alignment.CenterHorizontally,

@@ -26,7 +26,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -56,7 +55,6 @@ fun PlaylistCard(
     thumbnailUrl: String?,
     onClick: () -> Unit,
     showStripe: Boolean = true,
-    cornerRadius: Dp = 8.dp,
 ) {
     if (!showStripe) {
         AsyncImage(
@@ -66,7 +64,7 @@ fun PlaylistCard(
             modifier = modifier
                 .width(180.dp)
                 .height(180.dp)
-                .clip(RoundedCornerShape(cornerRadius))
+                .clip(RoundedCornerShape(8.dp))
                 .clickable(onClick = onClick)
         )
         return
@@ -79,7 +77,7 @@ fun PlaylistCard(
         modifier = modifier
             .width(180.dp)
             .height(180.dp)
-            .clip(RoundedCornerShape(cornerRadius))
+            .clip(RoundedCornerShape(8.dp))
             .clickable(onClick = onClick)
     ) {
         Column(modifier = Modifier.matchParentSize()) {

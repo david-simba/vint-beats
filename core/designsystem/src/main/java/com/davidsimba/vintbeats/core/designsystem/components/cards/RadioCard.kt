@@ -48,7 +48,7 @@ fun RadioCard(
         modifier = modifier
             .width(180.dp)
             .height(180.dp)
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(8.dp))
             .background(Brush.verticalGradient(listOf(accent, accentDeep)))
             .clickable(onClick = onClick)
     ) {
