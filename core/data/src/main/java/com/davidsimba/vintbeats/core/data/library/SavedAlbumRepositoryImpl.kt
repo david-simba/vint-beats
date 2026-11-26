@@ -1,7 +1,6 @@
 package com.davidsimba.vintbeats.core.data.library
 
 import com.davidsimba.vintbeats.core.model.SavedAlbum
-import com.davidsimba.vintbeats.core.data.library.SavedAlbumRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

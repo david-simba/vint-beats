@@ -5,7 +5,6 @@ import com.davidsimba.vintbeats.core.model.Artist
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.core.network.YouTubeArtistService
 import com.davidsimba.vintbeats.core.network.YouTubeSearchService
-import com.davidsimba.vintbeats.core.data.search.SearchRepository
 import javax.inject.Inject
 
 class SearchRepositoryImpl @Inject constructor(

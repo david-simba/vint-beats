@@ -1,6 +1,5 @@
 package com.davidsimba.vintbeats.core.model
 
-import com.davidsimba.vintbeats.core.model.Track
 
 data class AlbumDetail(
     val id: String,

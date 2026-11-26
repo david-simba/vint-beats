@@ -1,12 +1,11 @@
 package com.davidsimba.vintbeats.core.data.library
 
+import com.davidsimba.vintbeats.core.database.dao.SavedArtistDao
+import com.davidsimba.vintbeats.core.database.entity.SavedArtistEntity
 import com.davidsimba.vintbeats.core.model.SavedArtist
-import com.davidsimba.vintbeats.core.data.library.SavedArtistRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
-import com.davidsimba.vintbeats.core.database.dao.SavedArtistDao
-import com.davidsimba.vintbeats.core.database.entity.SavedArtistEntity
 
 class SavedArtistRepositoryImpl @Inject constructor(
     private val dao: SavedArtistDao

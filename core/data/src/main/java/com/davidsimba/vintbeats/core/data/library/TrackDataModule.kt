@@ -1,13 +1,5 @@
 package com.davidsimba.vintbeats.core.data.library
 
-import com.davidsimba.vintbeats.core.data.library.SavedAlbumRepositoryImpl
-import com.davidsimba.vintbeats.core.data.library.SavedArtistRepositoryImpl
-import com.davidsimba.vintbeats.core.data.library.PlaylistRepositoryImpl
-import com.davidsimba.vintbeats.core.data.library.TrackRepositoryImpl
-import com.davidsimba.vintbeats.core.data.library.SavedAlbumRepository
-import com.davidsimba.vintbeats.core.data.library.SavedArtistRepository
-import com.davidsimba.vintbeats.core.data.library.PlaylistRepository
-import com.davidsimba.vintbeats.core.data.library.TrackRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

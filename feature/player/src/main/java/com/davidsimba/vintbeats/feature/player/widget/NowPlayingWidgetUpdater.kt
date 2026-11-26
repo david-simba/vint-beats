@@ -2,7 +2,6 @@ package com.davidsimba.vintbeats.feature.player.widget
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.glance.appwidget.state.updateAppWidgetState

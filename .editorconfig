@@ -1,0 +1,6 @@
+root = true
+
+[*.{kt,kts}]
+# Se parte de cero y se activan las reglas de una en una.
+ktlint_standard = disabled
+ktlint_standard_no-unused-imports = enabled

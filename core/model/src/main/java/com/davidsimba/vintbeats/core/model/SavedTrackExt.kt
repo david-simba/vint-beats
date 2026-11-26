@@ -1,6 +1,5 @@
 package com.davidsimba.vintbeats.core.model
 
-import com.davidsimba.vintbeats.core.model.Track
 
 fun SavedTrack.subtitle(): String =
     if (trackDurationText.isNotEmpty()) "$trackArtist • $trackDurationText"
