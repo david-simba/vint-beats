@@ -40,3 +40,10 @@ val VintageTealLight = Color(0xFF66CCCC)
 val VintageBlue = Color(0xFF5577BB)
 val VintageBlueDeep = Color(0xFF334488)
 val VintageBlueLight = Color(0xFF7799DD)
+
+// Tokens del rediseño (Home, barra inferior y mini player)
+val colorAcento = VintageRed
+val Fondo = Color(0xFF0E0E10)
+val Superficie = Color(0xFF1C1C1F)
+val TextoPrincipal = Color(0xFFF4F4F5)
+val TextoSecundario = Color(0xFFA1A1AA)

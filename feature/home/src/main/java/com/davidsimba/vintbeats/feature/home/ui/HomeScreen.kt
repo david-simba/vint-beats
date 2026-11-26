@@ -18,7 +18,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -27,6 +26,7 @@ import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.home.domain.ArtistRadioItem
 import com.davidsimba.vintbeats.feature.home.ui.components.ArtistRadioSection
 import com.davidsimba.vintbeats.feature.home.ui.components.ArtistRadioSkeleton
+import com.davidsimba.vintbeats.feature.home.ui.components.HomeHeader
 import com.davidsimba.vintbeats.feature.home.ui.components.HomeSectionSkeleton
 import com.davidsimba.vintbeats.feature.home.ui.components.PlaylistSection
 import com.davidsimba.vintbeats.feature.home.ui.components.QuickMixSection
@@ -37,13 +37,11 @@ import com.davidsimba.vintbeats.core.ui.AddToPlaylistController
 import com.davidsimba.vintbeats.core.common.QueueController
 import com.davidsimba.vintbeats.core.ui.TrackActionsViewModel
 import com.davidsimba.vintbeats.core.designsystem.components.track.TrackOptionsBottomSheet
-import com.davidsimba.vintbeats.core.designsystem.theme.vintageBgGradient
+import com.davidsimba.vintbeats.core.designsystem.theme.Fondo
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import com.davidsimba.vintbeats.feature.home.R
-import com.davidsimba.vintbeats.core.designsystem.R as DsR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -83,7 +81,7 @@ fun HomeScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(vintageBgGradient)
+            .background(Fondo)
             .statusBarsPadding()
     ) {
         when (val state = uiState) {
@@ -92,19 +90,7 @@ fun HomeScreen(
                     contentPadding = PaddingValues(bottom = 100.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    item {
-                        Text(
-                            text = if (userName.isNotBlank()) {
-                                stringResource(R.string.home_greeting, userName)
-                            } else {
-                                stringResource(DsR.string.nav_home)
-                            },
-                            color = VintageWhite,
-                            fontSize = 28.sp,
-                            fontWeight = FontWeight.Black,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                        )
-                    }
+                    item { HomeHeader(userName = userName) }
                     item { QuickMixSkeleton() }
                     item { HomeSectionSkeleton() }
                     item { ArtistRadioSkeleton() }
@@ -128,19 +114,7 @@ fun HomeScreen(
                     contentPadding = PaddingValues(bottom = 100.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    item {
-                        Text(
-                            text = if (userName.isNotBlank()) {
-                                stringResource(R.string.home_greeting, userName)
-                            } else {
-                                stringResource(DsR.string.nav_home)
-                            },
-                            color = VintageWhite,
-                            fontSize = 28.sp,
-                            fontWeight = FontWeight.Black,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp)
-                        )
-                    }
+                    item { HomeHeader(userName = userName) }
 
                     item {
                         if (state.quickMix.isNotEmpty()) {
