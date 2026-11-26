@@ -26,6 +26,8 @@ import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.home.domain.ArtistRadioItem
 import com.davidsimba.vintbeats.feature.home.domain.QuickAccessItem
 import com.davidsimba.vintbeats.feature.home.ui.components.ArtistRadioSection
+import com.davidsimba.vintbeats.feature.home.ui.components.ArtistsSection
+import com.davidsimba.vintbeats.feature.home.ui.components.BestOfArtistsSection
 import com.davidsimba.vintbeats.feature.home.ui.components.ArtistRadioSkeleton
 import com.davidsimba.vintbeats.feature.home.ui.components.HomeHeader
 import com.davidsimba.vintbeats.feature.home.ui.components.HomeSectionSkeleton
@@ -54,6 +56,7 @@ fun HomeScreen(
     onNavigateToOnboarding: () -> Unit = {},
     onNavigateToAddToPlaylist: () -> Unit = {},
     onFavoritesClick: () -> Unit = {},
+    onArtistClick: (artistId: String) -> Unit = {},
     onQuickMixClick: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel(),
     trackActionsViewModel: TrackActionsViewModel = hiltViewModel(),
@@ -159,10 +162,21 @@ fun HomeScreen(
 
                     state.sections.forEachIndexed { index, section ->
                         item(key = section.title) {
-                            PlaylistSection(
-                                section = section,
-                                onPlaylistSelected = openPlaylist
-                            )
+                            if (section.isPrimary) {
+                                BestOfArtistsSection(
+                                    artists = section.playlists,
+                                    onPlaylistSelected = openPlaylist,
+                                )
+                                ArtistsSection(
+                                    artists = section.playlists,
+                                    onArtistClick = onArtistClick,
+                                )
+                            } else {
+                                PlaylistSection(
+                                    section = section,
+                                    onPlaylistSelected = openPlaylist
+                                )
+                            }
                         }
                         if (index == 0 && recentAlbums.isNotEmpty()) {
                             item(key = "albumes_recientes") {

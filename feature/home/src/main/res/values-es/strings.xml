@@ -11,4 +11,8 @@
     <string name="home_ver_todo">Ver todo</string>
     <string name="home_volver">Volver</string>
     <string name="home_mas_opciones">Más opciones</string>
+    <string name="home_tus_artistas">Tus artistas</string>
+    <string name="home_lo_mejor_de_tus_artistas">Lo mejor de tus artistas</string>
+    <string name="home_playlist_de">Playlist · %1$s</string>
+    <string name="home_ver_perfil">Ver perfil de %1$s</string>
 </resources>

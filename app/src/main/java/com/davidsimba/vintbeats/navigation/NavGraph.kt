@@ -217,7 +217,8 @@ fun NavGraph(
                             navController.navigate(Screen.AddToPlaylist.route)
                         },
                         onFavoritesClick = { navController.navigate(Screen.Favorites.route) },
-                        onQuickMixClick = { navController.navigate(Screen.QuickMix.route) }
+                        onQuickMixClick = { navController.navigate(Screen.QuickMix.route) },
+                        onArtistClick = { id -> navController.navigate(Screen.Artist.route(id)) }
                     )
                 }
                 composable(route = Screen.QuickMix.route) {

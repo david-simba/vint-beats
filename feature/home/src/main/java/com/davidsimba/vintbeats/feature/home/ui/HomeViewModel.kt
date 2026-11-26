@@ -133,7 +133,7 @@ class HomeViewModel @Inject constructor(
             _paraPlaylists.value = artists.map { artist ->
                 PlaylistItem(
                     id = artist.artistId,
-                    title = "This Is ${artist.name}",
+                    title = artist.name,
                     subtitle = "",
                     thumbnailUrl = artist.thumbnailUrl.toHighRes(),
                     artistId = artist.artistId,
