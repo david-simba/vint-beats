@@ -3,8 +3,6 @@ package com.davidsimba.vintbeats.feature.home.ui.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -17,25 +15,35 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.davidsimba.vintbeats.core.model.HomeSectionPlaylists
 import com.davidsimba.vintbeats.core.designsystem.components.cards.PlaylistCard
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhiteWarm
+import com.davidsimba.vintbeats.core.designsystem.theme.TextoPrincipal
 import com.davidsimba.vintbeats.feature.home.R
+
+/** Las secciones del feed llegan del backend con su título en español; aquí se localizan las conocidas. */
+internal fun isFansSection(title: String) = title.contains("fans", ignoreCase = true)
+
+@Composable
+private fun sectionTitle(title: String): String = when {
+    isFansSection(title) -> stringResource(R.string.home_fans_tambien_escuchan)
+    title.contains("descubre", ignoreCase = true) -> stringResource(R.string.home_descubre)
+    else -> title
+}
 
 @Composable
 fun PlaylistSection(
     section: HomeSectionPlaylists,
     onPlaylistSelected: (id: String, thumbnailUrl: String?, artistId: String?, artistName: String?) -> Unit,
 ) {
-    Column(modifier = Modifier.padding(bottom = 28.dp)) {
+    Column(modifier = Modifier.padding(bottom = 32.dp)) {
         Text(
-            text = section.title,
-            color = VintageWhiteWarm,
-            fontSize = 17.sp,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+            text = sectionTitle(section.title),
+            color = TextoPrincipal,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.ExtraBold,
+            modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 12.dp)
         )
-        Spacer(Modifier.height(10.dp))
+        // Sin padding a la derecha: el carrusel llega hasta el borde de la pantalla.
         LazyRow(
-            contentPadding = PaddingValues(horizontal = 16.dp),
+            contentPadding = PaddingValues(start = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(section.playlists, key = { it.id }) { playlist ->

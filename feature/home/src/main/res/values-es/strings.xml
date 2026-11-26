@@ -14,4 +14,6 @@
     <string name="home_lo_mejor_de_tus_artistas">Lo mejor de tus artistas</string>
     <string name="home_playlist_de">Playlist · %1$s</string>
     <string name="home_ver_perfil">Ver perfil de %1$s</string>
+    <string name="home_fans_tambien_escuchan">Fans también escuchan</string>
+    <string name="home_descubre">Descubre</string>
 </resources>

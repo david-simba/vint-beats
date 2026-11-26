@@ -148,19 +148,25 @@ class HomeViewModel @Inject constructor(
                 if (cached.quickMix.isNotEmpty()) _quickMix.value = cached.quickMix
                 if (cached.extraSections.isNotEmpty()) _extraSections.value = cached.extraSections
                 if (cached.artistRadios.isNotEmpty()) _artistRadios.value = cached.artistRadios
-                return@launch
+                // Only a complete feed is final for the day: a part that failed earlier is requested again.
+                val complete = cached.quickMix.isNotEmpty() &&
+                    cached.extraSections.isNotEmpty() &&
+                    cached.artistRadios.isNotEmpty()
+                if (complete) return@launch
             }
 
-            // Cache miss: fetch all three in parallel, update UI as each completes
+            // Fetch whatever is still missing (everything on a cache miss), updating the UI as each part completes
             val artistInputs = artists.map { ArtistInput(it.artistId, it.name, it.thumbnailUrl) }
 
             val mixDeferred = async {
+                if (_quickMix.value.isNotEmpty()) return@async _quickMix.value
                 val mix = backendService.getQuickMix(artistInputs)
                 if (mix.isNotEmpty()) _quickMix.value = mix
                 mix
             }
 
             val extraDeferred = async {
+                if (_extraSections.value.isNotEmpty()) return@async _extraSections.value
                 val extra = backendService
                     .getHomeFeedPlaylists(artistInputs)
                     .filter { !it.title.startsWith("Porque") }
@@ -169,6 +175,7 @@ class HomeViewModel @Inject constructor(
             }
 
             val radiosDeferred = async {
+                if (_artistRadios.value.isNotEmpty()) return@async _artistRadios.value
                 val radios = mutableListOf<ArtistRadioItem>()
                 artists.forEach { artist ->
                     val result = backendService.getArtistRadio(artist.artistId)

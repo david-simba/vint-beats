@@ -33,6 +33,7 @@ import com.davidsimba.vintbeats.feature.home.ui.components.HomeHeader
 import com.davidsimba.vintbeats.feature.home.ui.components.HomeSectionSkeleton
 import com.davidsimba.vintbeats.feature.home.ui.components.HomeTrackOptionsSheet
 import com.davidsimba.vintbeats.feature.home.ui.components.PlaylistSection
+import com.davidsimba.vintbeats.feature.home.ui.components.isFansSection
 import com.davidsimba.vintbeats.feature.home.ui.components.QuickMixSection
 import com.davidsimba.vintbeats.feature.home.ui.components.QuickMixSkeleton
 import com.davidsimba.vintbeats.feature.home.ui.components.RecentAlbumsSection
@@ -160,43 +161,50 @@ fun HomeScreen(
                         }
                     }
 
-                    state.sections.forEachIndexed { index, section ->
+                    val primary = state.sections.firstOrNull { it.isPrimary }
+                    val fans = state.sections.firstOrNull { !it.isPrimary && isFansSection(it.title) }
+                    val others = state.sections.filter { !it.isPrimary && it != fans }
+
+                    primary?.let { section ->
                         item(key = section.title) {
-                            if (section.isPrimary) {
-                                BestOfArtistsSection(
-                                    artists = section.playlists,
-                                    onPlaylistSelected = openPlaylist,
-                                )
-                            } else {
-                                PlaylistSection(
-                                    section = section,
-                                    onPlaylistSelected = openPlaylist
-                                )
-                            }
+                            BestOfArtistsSection(
+                                artists = section.playlists,
+                                onPlaylistSelected = openPlaylist,
+                            )
                         }
-                        if (index == 0 && recentAlbums.isNotEmpty()) {
-                            item(key = "albumes_recientes") {
-                                RecentAlbumsSection(
-                                    albums = recentAlbums,
-                                    onAlbumClick = { album -> onAlbumSelected(album.albumId) }
-                                )
-                            }
+                    }
+                    fans?.let { section ->
+                        item(key = section.title) {
+                            PlaylistSection(section = section, onPlaylistSelected = openPlaylist)
                         }
-                        if (index == 0 && section.isPrimary) {
-                            item(key = "tus_artistas") {
-                                ArtistsSection(
-                                    artists = section.playlists,
-                                    onArtistClick = onArtistClick,
-                                )
-                            }
+                    }
+                    if (recentAlbums.isNotEmpty()) {
+                        item(key = "albumes_recientes") {
+                            RecentAlbumsSection(
+                                albums = recentAlbums,
+                                onAlbumClick = { album -> onAlbumSelected(album.albumId) }
+                            )
                         }
-                        if (index == 0 && state.artistRadios.isNotEmpty()) {
-                            item(key = "radio") {
-                                ArtistRadioSection(
-                                    radios = state.artistRadios,
-                                    onRadioSelected = onRadioSelected,
-                                )
-                            }
+                    }
+                    primary?.let { section ->
+                        item(key = "tus_artistas") {
+                            ArtistsSection(
+                                artists = section.playlists,
+                                onArtistClick = onArtistClick,
+                            )
+                        }
+                    }
+                    if (state.artistRadios.isNotEmpty()) {
+                        item(key = "radio") {
+                            ArtistRadioSection(
+                                radios = state.artistRadios,
+                                onRadioSelected = onRadioSelected,
+                            )
+                        }
+                    }
+                    others.forEach { section ->
+                        item(key = section.title) {
+                            PlaylistSection(section = section, onPlaylistSelected = openPlaylist)
                         }
                     }
                 }
