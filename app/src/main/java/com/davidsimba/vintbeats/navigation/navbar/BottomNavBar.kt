@@ -7,15 +7,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Headset
-import androidx.compose.material.icons.rounded.LibraryMusic
-import androidx.compose.material.icons.rounded.Person
-import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.LibraryMusic
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,9 +34,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.navigation.Screen
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgDark
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageGray
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
+import com.davidsimba.vintbeats.core.designsystem.theme.Fondo
+import com.davidsimba.vintbeats.core.designsystem.theme.TextoSecundario
+import com.davidsimba.vintbeats.core.designsystem.theme.colorAcentoBarra
 import com.davidsimba.vintbeats.core.designsystem.R as DsR
 
 data class BottomNavBarItem(
@@ -44,10 +46,10 @@ data class BottomNavBarItem(
 )
 
 val bottomNavItems = listOf(
-    BottomNavBarItem(Screen.Home, DsR.string.nav_home, Icons.Rounded.Headset),
-    BottomNavBarItem(Screen.Search, R.string.nav_search, Icons.Rounded.Search),
-    BottomNavBarItem(Screen.Library, R.string.nav_library, Icons.Rounded.LibraryMusic),
-    BottomNavBarItem(Screen.Profile, R.string.nav_profile, Icons.Rounded.Person),
+    BottomNavBarItem(Screen.Home, DsR.string.nav_home, Icons.Outlined.Home),
+    BottomNavBarItem(Screen.Search, R.string.nav_search, Icons.Outlined.Search),
+    BottomNavBarItem(Screen.Library, R.string.nav_library, Icons.Outlined.LibraryMusic),
+    BottomNavBarItem(Screen.Profile, R.string.nav_profile, Icons.Outlined.Person),
 )
 
 @Composable
@@ -58,21 +60,22 @@ fun BottomNavBar(navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(VintageBgDark)
-            .padding(top = 6.dp)
+            .background(Fondo)
+            .padding(top = 12.dp)
             .navigationBarsPadding(),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
         bottomNavItems.forEach { item ->
             val selected = currentRoute == item.screen.route
-            val tint = if (selected) VintageWhite else VintageGray
+            val tint = if (selected) colorAcentoBarra else TextoSecundario
             val label = stringResource(item.label)
 
             Column(
                 modifier = Modifier
                     .clip(RoundedCornerShape(12.dp))
-                    .clickable {
+                    .heightIn(min = 40.dp)
+                    .clickable(role = Role.Tab) {
                         if (currentRoute != item.screen.route) {
                             if (item.screen == Screen.Home) {
                                 navController.popBackStack(Screen.Home.route, inclusive = false)
@@ -92,7 +95,7 @@ fun BottomNavBar(navController: NavController) {
             ) {
                 Icon(
                     imageVector = item.icon,
-                    contentDescription = label,
+                    contentDescription = null,
                     tint = tint,
                     modifier = Modifier.size(22.dp)
                 )
@@ -100,7 +103,7 @@ fun BottomNavBar(navController: NavController) {
                     text = label,
                     color = tint,
                     fontSize = 10.sp,
-                    fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal
+                    fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
                 )
             }
         }

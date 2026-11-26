@@ -25,10 +25,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Favorite
-import androidx.compose.material.icons.rounded.FavoriteBorder
-import androidx.compose.material.icons.rounded.Pause
-import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.rounded.SkipNext
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,20 +46,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.player.ui.PlayerState
 import com.davidsimba.vintbeats.core.designsystem.components.track.TrackInfo
-import com.davidsimba.vintbeats.core.designsystem.components.background.Background
+import com.davidsimba.vintbeats.core.designsystem.components.background.rememberPaletteColor
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageRedLight
+import com.davidsimba.vintbeats.core.designsystem.theme.colorAcento
+import com.davidsimba.vintbeats.feature.player.R
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -95,7 +97,7 @@ fun MiniPlayer(
     Box(
         modifier = modifier
             .onSizeChanged { componentWidth = it.width.toFloat() }
-            .padding(start = 6.dp, end = 6.dp, bottom = 8.dp)
+            .padding(start = 6.dp, end = 6.dp)
             .clip(RoundedCornerShape(12.dp))
             .pointerInput(Unit) {
                 awaitEachGesture {
@@ -145,16 +147,10 @@ fun MiniPlayer(
                 }
             }
     ) {
-        Background(
-            thumbnailUrl = thumbnailUrl,
-            horizontal = true,
-            artColorsOnly = true,
-            modifier = Modifier.matchParentSize()
-        )
         Box(
             modifier = Modifier
                 .matchParentSize()
-                .background(Color.Black.copy(alpha = 0.25f))
+                .background(rememberPaletteColor(thumbnailUrl))
         )
 
         Column {
@@ -227,33 +223,37 @@ fun MiniPlayer(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(
                         onClick = onToggleFavorite,
-                        modifier = Modifier.size(36.dp)
+                        modifier = Modifier.size(44.dp)
                     ) {
                         Icon(
-                            imageVector = if (isFavorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
-                            contentDescription = "Favorite",
-                            tint = if (isFavorite) VintageRedLight else VintageWhite,
+                            imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                            contentDescription = stringResource(
+                                if (isFavorite) R.string.mini_player_unlike else R.string.mini_player_like
+                            ),
+                            tint = if (isFavorite) colorAcento else VintageWhite,
                             modifier = Modifier.size(24.dp)
                         )
                     }
                     IconButton(
                         onClick = onTogglePlayPause,
-                        modifier = Modifier.size(36.dp)
+                        modifier = Modifier.size(44.dp)
                     ) {
                         Icon(
-                            imageVector = if (isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
-                            contentDescription = if (isPlaying) "Pause" else "Play",
+                            imageVector = if (isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
+                            contentDescription = stringResource(
+                                if (isPlaying) R.string.mini_player_pause else R.string.mini_player_play
+                            ),
                             tint = VintageWhite,
-                            modifier = Modifier.size(26.dp)
+                            modifier = Modifier.size(28.dp)
                         )
                     }
                     IconButton(
                         onClick = onSkipNext,
-                        modifier = Modifier.size(36.dp)
+                        modifier = Modifier.size(44.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.SkipNext,
-                            contentDescription = "Next",
+                            contentDescription = stringResource(R.string.mini_player_next),
                             tint = VintageWhite,
                             modifier = Modifier.size(24.dp)
                         )

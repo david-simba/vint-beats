@@ -5,4 +5,9 @@
     <string name="player_option_equalizer_hide">Ocultar ecualizador</string>
     <string name="player_option_equalizer_show">Mostrar ecualizador</string>
     <string name="playing_from_label">Reproduciéndose desde</string>
+    <string name="mini_player_like">Añadir a Me gusta</string>
+    <string name="mini_player_unlike">Quitar de Me gusta</string>
+    <string name="mini_player_play">Reproducir</string>
+    <string name="mini_player_pause">Pausar</string>
+    <string name="mini_player_next">Siguiente</string>
 </resources>

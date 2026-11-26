@@ -43,6 +43,9 @@ val VintageBlueLight = Color(0xFF7799DD)
 
 // Tokens del rediseño (Home, barra inferior y mini player)
 val colorAcento = VintageRed
+
+// Provisional: acento de la barra inferior hasta que se defina el color de acento definitivo.
+val colorAcentoBarra = Color(0XFFFFFFFF)
 val Fondo = Color(0xFF0E0E10)
 val Superficie = Color(0xFF1C1C1F)
 val TextoPrincipal = Color(0xFFF4F4F5)
