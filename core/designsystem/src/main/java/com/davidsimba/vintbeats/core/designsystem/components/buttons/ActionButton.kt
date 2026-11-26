@@ -1,4 +1,4 @@
-package com.davidsimba.vintbeats.core.designsystem.components
+package com.davidsimba.vintbeats.core.designsystem.components.buttons
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
 
 @Composable
-fun VintActionButton(
+fun ActionButton(
     label: String,
     icon: ImageVector,
     onClick: () -> Unit,

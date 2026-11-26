@@ -1,4 +1,4 @@
-package com.davidsimba.vintbeats.core.designsystem.components
+package com.davidsimba.vintbeats.core.designsystem.components.track
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

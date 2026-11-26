@@ -31,8 +31,8 @@ import androidx.compose.ui.res.stringResource
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.shared.SnackbarController
 import com.davidsimba.vintbeats.shared.SnackbarEvent
-import com.davidsimba.vintbeats.core.designsystem.components.SnackbarPosition
-import com.davidsimba.vintbeats.core.designsystem.components.VintSnackbar
+import com.davidsimba.vintbeats.core.designsystem.components.feedback.SnackbarPosition
+import com.davidsimba.vintbeats.core.designsystem.components.feedback.Snackbar
 import kotlinx.coroutines.delay
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -634,7 +634,7 @@ fun NavGraph(
                 }
             }
 
-            VintSnackbar(
+            Snackbar(
                 message = when (snackbarEvent) {
                     is SnackbarEvent.DownloadStarted -> downloadStartedMsg
                     is SnackbarEvent.DownloadSuccess -> downloadSuccessMsg

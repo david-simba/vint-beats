@@ -50,8 +50,8 @@ import com.davidsimba.vintbeats.feature.search.domain.RecentSearch
 import com.davidsimba.vintbeats.feature.search.ui.components.AlbumRow
 import com.davidsimba.vintbeats.feature.search.ui.components.ArtistRow
 import com.davidsimba.vintbeats.feature.search.ui.components.SearchField
-import com.davidsimba.vintbeats.core.designsystem.components.TrackInfo
-import com.davidsimba.vintbeats.core.designsystem.components.cards.TrackCard
+import com.davidsimba.vintbeats.core.designsystem.components.track.TrackInfo
+import com.davidsimba.vintbeats.core.designsystem.components.track.TrackCard
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgDark
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGray
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid

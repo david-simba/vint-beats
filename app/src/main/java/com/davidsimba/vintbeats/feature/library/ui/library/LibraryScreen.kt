@@ -41,8 +41,8 @@ import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.feature.library.ui.components.LibraryCardGrid
 import com.davidsimba.vintbeats.feature.library.ui.components.LibraryCardList
 import com.davidsimba.vintbeats.feature.library.ui.components.LibraryItem
-import com.davidsimba.vintbeats.core.designsystem.components.ImageShape
-import com.davidsimba.vintbeats.core.designsystem.components.VintFilterChip
+import com.davidsimba.vintbeats.core.designsystem.components.layout.ImageShape
+import com.davidsimba.vintbeats.core.designsystem.components.buttons.FilterChip
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageBlueLight
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageOrangeLight
@@ -174,7 +174,7 @@ fun LibraryScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             items(LibraryFilter.entries) { item ->
-                VintFilterChip(
+                FilterChip(
                     label = when (item) {
                         LibraryFilter.User -> stringResource(R.string.library_filter_yours)
                         LibraryFilter.Albums -> stringResource(R.string.library_filter_albums)

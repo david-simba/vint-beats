@@ -28,8 +28,8 @@ import com.davidsimba.vintbeats.feature.profile.ui.components.ProfileAvatar
 import com.davidsimba.vintbeats.feature.profile.ui.components.SettingNavRow
 import com.davidsimba.vintbeats.feature.profile.ui.components.SettingRow
 import com.davidsimba.vintbeats.feature.profile.ui.components.SettingSectionHeader
-import com.davidsimba.vintbeats.core.designsystem.components.Header
-import com.davidsimba.vintbeats.core.designsystem.components.VintSwitch
+import com.davidsimba.vintbeats.core.designsystem.components.layout.Header
+import com.davidsimba.vintbeats.core.designsystem.components.inputs.Switch
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhiteWarm
 import com.davidsimba.vintbeats.core.designsystem.theme.vintageBgGradient
@@ -95,7 +95,7 @@ fun ProfileScreen(
             title = stringResource(R.string.profile_auto_download_title),
             subtitle = stringResource(R.string.profile_auto_download_subtitle),
             end = {
-                VintSwitch(
+                Switch(
                     checked = autoDownload,
                     onCheckedChange = { viewModel.setAutoDownloadFavorites(it) },
                 )
@@ -106,7 +106,7 @@ fun ProfileScreen(
             title = stringResource(R.string.profile_equalizer_title),
             subtitle = stringResource(R.string.profile_equalizer_subtitle),
             end = {
-                VintSwitch(
+                Switch(
                     checked = equalizerEnabled,
                     onCheckedChange = { viewModel.setEqualizerEnabled(it) },
                 )

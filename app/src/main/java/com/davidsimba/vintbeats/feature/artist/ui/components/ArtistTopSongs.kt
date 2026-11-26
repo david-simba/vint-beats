@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.core.model.Track
-import com.davidsimba.vintbeats.core.designsystem.components.TrackInfo
+import com.davidsimba.vintbeats.core.designsystem.components.track.TrackInfo
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid
 

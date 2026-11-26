@@ -46,15 +46,15 @@ import com.davidsimba.vintbeats.shared.AddToPlaylistController
 import com.davidsimba.vintbeats.shared.CollectionPlaybackState
 import com.davidsimba.vintbeats.shared.QueueController
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
-import com.davidsimba.vintbeats.core.designsystem.components.BottomSheet
-import com.davidsimba.vintbeats.core.designsystem.components.BottomSheetMenuItem
-import com.davidsimba.vintbeats.core.designsystem.components.CollectionAppBar
-import com.davidsimba.vintbeats.core.designsystem.components.CollectionHeader
-import com.davidsimba.vintbeats.core.designsystem.components.TrackOptionsBottomSheet
-import com.davidsimba.vintbeats.core.designsystem.components.VintActionButton
-import com.davidsimba.vintbeats.core.designsystem.components.VintAlertDialog
-import com.davidsimba.vintbeats.core.designsystem.components.cards.TrackCard
-import com.davidsimba.vintbeats.core.designsystem.components.rememberScrollAppBarAlpha
+import com.davidsimba.vintbeats.core.designsystem.components.feedback.BottomSheet
+import com.davidsimba.vintbeats.core.designsystem.components.feedback.BottomSheetMenuItem
+import com.davidsimba.vintbeats.core.designsystem.components.collection.CollectionAppBar
+import com.davidsimba.vintbeats.core.designsystem.components.collection.CollectionHeader
+import com.davidsimba.vintbeats.core.designsystem.components.track.TrackOptionsBottomSheet
+import com.davidsimba.vintbeats.core.designsystem.components.buttons.ActionButton
+import com.davidsimba.vintbeats.core.designsystem.components.feedback.AlertDialog
+import com.davidsimba.vintbeats.core.designsystem.components.track.TrackCard
+import com.davidsimba.vintbeats.core.designsystem.components.collection.rememberScrollAppBarAlpha
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgDark
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.core.designsystem.theme.vintageBgGradient
@@ -140,7 +140,7 @@ fun UserPlaylistScreen(
                                 tint = VintageGrayDeep,
                                 modifier = Modifier.size(48.dp),
                             )
-                            VintActionButton(
+                            ActionButton(
                                 label = stringResource(R.string.action_add_songs),
                                 icon = Icons.Rounded.Add,
                                 onClick = onAddSongsClick,
@@ -152,12 +152,12 @@ fun UserPlaylistScreen(
                             modifier = Modifier.padding(horizontal = 16.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            VintActionButton(
+                            ActionButton(
                                 label = stringResource(R.string.action_add_songs),
                                 icon = Icons.Rounded.Add,
                                 onClick = onAddSongsClick,
                             )
-                            VintActionButton(
+                            ActionButton(
                                 label = stringResource(R.string.action_edit_playlist),
                                 icon = Icons.Rounded.Edit,
                                 onClick = onEditClick,
@@ -265,7 +265,7 @@ fun UserPlaylistScreen(
     }
 
     if (showDeleteAlert) {
-        VintAlertDialog(
+        AlertDialog(
             title = stringResource(R.string.alert_delete_playlist_title),
             message = stringResource(R.string.alert_delete_playlist_message),
             confirmLabel = stringResource(R.string.action_delete),

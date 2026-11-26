@@ -1,4 +1,4 @@
-package com.davidsimba.vintbeats.core.designsystem.components
+package com.davidsimba.vintbeats.core.designsystem.components.feedback
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode

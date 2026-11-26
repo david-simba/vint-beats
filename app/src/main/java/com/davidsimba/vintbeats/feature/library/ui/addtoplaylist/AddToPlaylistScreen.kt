@@ -42,8 +42,8 @@ import com.davidsimba.vintbeats.feature.library.domain.playlist.Playlist
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgDark
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageOrangeLight
-import com.davidsimba.vintbeats.core.designsystem.components.VintCheckbox
-import com.davidsimba.vintbeats.core.designsystem.components.VintPrimaryButton
+import com.davidsimba.vintbeats.core.designsystem.components.inputs.Checkbox
+import com.davidsimba.vintbeats.core.designsystem.components.buttons.PrimaryButton
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhiteWarm
 
@@ -90,7 +90,7 @@ fun AddToPlaylistScreen(
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.weight(1f)
                     )
-                    VintPrimaryButton(
+                    PrimaryButton(
                         label = stringResource(R.string.save_playlist_action),
                         onClick = viewModel::save,
                         enabled = selectedIds.isNotEmpty()
@@ -173,7 +173,7 @@ private fun PlaylistPickerRow(
             modifier = Modifier.weight(1f)
         )
 
-        VintCheckbox(
+        Checkbox(
             checked = selected,
             onCheckedChange = { onToggle() }
         )

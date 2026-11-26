@@ -20,7 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.davidsimba.vintbeats.core.designsystem.components.shimmerBrush
+import com.davidsimba.vintbeats.core.designsystem.components.feedback.shimmerBrush
 
 @Composable
 fun QuickMixSkeleton() {

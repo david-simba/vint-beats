@@ -1,4 +1,4 @@
-package com.davidsimba.vintbeats.core.designsystem.components
+package com.davidsimba.vintbeats.core.designsystem.components.layout
 
 sealed class ImageShape {
     object Square : ImageShape()

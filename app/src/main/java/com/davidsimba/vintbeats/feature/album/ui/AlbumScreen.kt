@@ -42,10 +42,10 @@ import com.davidsimba.vintbeats.shared.AddToPlaylistController
 import com.davidsimba.vintbeats.shared.CollectionPlaybackState
 import com.davidsimba.vintbeats.shared.QueueController
 import com.davidsimba.vintbeats.shared.TrackActionsViewModel
-import com.davidsimba.vintbeats.core.designsystem.components.CollectionAppBar
-import com.davidsimba.vintbeats.core.designsystem.components.CollectionHeader
-import com.davidsimba.vintbeats.core.designsystem.components.TrackOptionsBottomSheet
-import com.davidsimba.vintbeats.core.designsystem.components.rememberScrollAppBarAlpha
+import com.davidsimba.vintbeats.core.designsystem.components.collection.CollectionAppBar
+import com.davidsimba.vintbeats.core.designsystem.components.collection.CollectionHeader
+import com.davidsimba.vintbeats.core.designsystem.components.track.TrackOptionsBottomSheet
+import com.davidsimba.vintbeats.core.designsystem.components.collection.rememberScrollAppBarAlpha
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgDark
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGray
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid

@@ -17,7 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.davidsimba.vintbeats.R
-import com.davidsimba.vintbeats.core.designsystem.components.VintClickableText
+import com.davidsimba.vintbeats.core.designsystem.components.inputs.ClickableText
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
 
 @Composable
@@ -50,7 +50,7 @@ fun PlayerTopBar(
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Normal,
                 )
-                VintClickableText(
+                ClickableText(
                     text = playingFromName,
                     onClick = onPlayingFromClick,
                     color = VintageWhite,

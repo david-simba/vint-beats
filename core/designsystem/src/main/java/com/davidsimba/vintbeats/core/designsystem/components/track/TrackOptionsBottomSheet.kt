@@ -1,4 +1,4 @@
-package com.davidsimba.vintbeats.core.designsystem.components
+package com.davidsimba.vintbeats.core.designsystem.components.track
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.PlaylistAdd
@@ -10,6 +10,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.davidsimba.vintbeats.core.designsystem.R
+import com.davidsimba.vintbeats.core.designsystem.components.feedback.BottomSheet
+import com.davidsimba.vintbeats.core.designsystem.components.feedback.BottomSheetMenuItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -1,4 +1,4 @@
-package com.davidsimba.vintbeats.core.designsystem.components
+package com.davidsimba.vintbeats.core.designsystem.components.buttons
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -13,7 +13,7 @@ import com.davidsimba.vintbeats.core.designsystem.theme.VintageRedLight
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
 
 @Composable
-fun VintPrimaryButton(
+fun PrimaryButton(
     label: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,

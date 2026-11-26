@@ -21,7 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.davidsimba.vintbeats.core.designsystem.components.VintClickableText
+import com.davidsimba.vintbeats.core.designsystem.components.inputs.ClickableText
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageRedLight
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
 
@@ -51,7 +51,7 @@ fun PlayerTrackInfo(
                 overflow = TextOverflow.Ellipsis
             )
             Spacer(Modifier.height(2.dp))
-            VintClickableText(
+            ClickableText(
                 text = artist,
                 onClick = onArtistClick,
                 color = VintageWhite.copy(alpha = if (onArtistClick != null) 1f else 0.7f),

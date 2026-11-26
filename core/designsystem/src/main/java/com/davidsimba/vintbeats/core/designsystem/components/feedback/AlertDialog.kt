@@ -1,7 +1,7 @@
-package com.davidsimba.vintbeats.core.designsystem.components
+package com.davidsimba.vintbeats.core.designsystem.components.feedback
 
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AlertDialog as MaterialAlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -16,7 +16,7 @@ import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhiteWarm
 
 @Composable
-fun VintAlertDialog(
+fun AlertDialog(
     title: String,
     message: String? = null,
     confirmLabel: String,
@@ -25,7 +25,7 @@ fun VintAlertDialog(
     onDismiss: () -> Unit,
     confirmColor: Color = VintageRedLight,
 ) {
-    AlertDialog(
+    MaterialAlertDialog(
         onDismissRequest = onDismiss,
         containerColor = VintageBgBase,
         shape = RoundedCornerShape(16.dp),

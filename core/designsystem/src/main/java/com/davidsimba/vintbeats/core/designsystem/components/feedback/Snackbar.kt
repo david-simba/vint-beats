@@ -1,4 +1,4 @@
-package com.davidsimba.vintbeats.core.designsystem.components
+package com.davidsimba.vintbeats.core.designsystem.components.feedback
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -29,7 +29,7 @@ import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
 enum class SnackbarPosition { TOP, BOTTOM }
 
 @Composable
-fun VintSnackbar(
+fun Snackbar(
     message: String,
     icon: ImageVector,
     visible: Boolean,

@@ -1,6 +1,6 @@
-package com.davidsimba.vintbeats.core.designsystem.components
+package com.davidsimba.vintbeats.core.designsystem.components.inputs
 
-import androidx.compose.material3.Switch
+import androidx.compose.material3.Switch as MaterialSwitch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -10,12 +10,12 @@ import com.davidsimba.vintbeats.core.designsystem.theme.VintageRedLight
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
 
 @Composable
-fun VintSwitch(
+fun Switch(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Switch(
+    MaterialSwitch(
         checked = checked,
         onCheckedChange = onCheckedChange,
         modifier = modifier,

@@ -1,4 +1,4 @@
-package com.davidsimba.vintbeats.core.designsystem.components
+package com.davidsimba.vintbeats.core.designsystem.components.buttons
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,7 +14,7 @@ import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgBase
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
 
 @Composable
-fun VintFilterChip(
+fun FilterChip(
     label: String,
     selected: Boolean,
     onClick: () -> Unit,

@@ -1,4 +1,4 @@
-package com.davidsimba.vintbeats.core.designsystem.components
+package com.davidsimba.vintbeats.core.designsystem.components.layout
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

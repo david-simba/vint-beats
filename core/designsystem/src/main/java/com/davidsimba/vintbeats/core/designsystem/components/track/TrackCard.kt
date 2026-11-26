@@ -1,4 +1,4 @@
-package com.davidsimba.vintbeats.core.designsystem.components.cards
+package com.davidsimba.vintbeats.core.designsystem.components.track
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,8 +22,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.davidsimba.vintbeats.core.designsystem.components.EqualizerBars
-import com.davidsimba.vintbeats.core.designsystem.components.TrackInfo
+import com.davidsimba.vintbeats.core.designsystem.components.layout.EqualizerBars
+import com.davidsimba.vintbeats.core.designsystem.components.track.TrackInfo
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
 

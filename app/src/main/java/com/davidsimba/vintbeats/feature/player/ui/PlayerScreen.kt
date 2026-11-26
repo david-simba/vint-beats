@@ -45,8 +45,8 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import androidx.activity.compose.BackHandler
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.davidsimba.vintbeats.core.designsystem.components.BottomSheetMenuItem
-import com.davidsimba.vintbeats.core.designsystem.components.BottomSheet
+import com.davidsimba.vintbeats.core.designsystem.components.feedback.BottomSheetMenuItem
+import com.davidsimba.vintbeats.core.designsystem.components.feedback.BottomSheet
 import com.davidsimba.vintbeats.shared.AddToPlaylistController
 import kotlinx.coroutines.launch
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerBackground
@@ -60,7 +60,7 @@ import com.davidsimba.vintbeats.core.model.Track
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.graphics.ColorUtils
-import com.davidsimba.vintbeats.core.designsystem.components.EqualizerBars
+import com.davidsimba.vintbeats.core.designsystem.components.layout.EqualizerBars
 import com.davidsimba.vintbeats.core.designsystem.components.background.rememberPaletteColor
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageRedLight
 

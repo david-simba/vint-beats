@@ -35,7 +35,7 @@ import com.davidsimba.vintbeats.feature.search.domain.ExploreCategory
 import com.davidsimba.vintbeats.feature.search.domain.PlaylistSummary
 import com.davidsimba.vintbeats.feature.search.ui.CategorySheetState
 import androidx.compose.material3.CircularProgressIndicator
-import com.davidsimba.vintbeats.core.designsystem.components.TrackInfo
+import com.davidsimba.vintbeats.core.designsystem.components.track.TrackInfo
 import com.davidsimba.vintbeats.core.designsystem.components.cards.CategoryCard
 import com.davidsimba.vintbeats.core.designsystem.components.cards.CategoryCardSkeleton
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgDark
