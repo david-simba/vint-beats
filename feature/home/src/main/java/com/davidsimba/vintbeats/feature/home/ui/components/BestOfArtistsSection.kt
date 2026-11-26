@@ -45,6 +45,7 @@ fun BestOfArtistsSection(
                         id = artist.id,
                         name = name,
                         thumbnailUrl = artist.thumbnailUrl,
+                        cornerRadius = 6.dp,
                         onClick = {
                             onPlaylistSelected(artist.id, artist.thumbnailUrl, artist.artistId, artist.artistName)
                         },

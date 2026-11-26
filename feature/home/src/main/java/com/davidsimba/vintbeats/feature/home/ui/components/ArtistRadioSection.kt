@@ -5,8 +5,6 @@ import com.davidsimba.vintbeats.core.designsystem.R as DsR
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
@@ -20,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.davidsimba.vintbeats.feature.home.domain.ArtistRadioItem
 import com.davidsimba.vintbeats.core.designsystem.components.cards.RadioCard
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhiteWarm
+import com.davidsimba.vintbeats.core.designsystem.theme.TextoPrincipal
 
 @Composable
 fun ArtistRadioSection(
@@ -30,12 +28,11 @@ fun ArtistRadioSection(
     Column(modifier = Modifier.padding(bottom = 28.dp)) {
         Text(
             text = stringResource(DsR.string.home_radio),
-            color = VintageWhiteWarm,
-            fontSize = 17.sp,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+            color = TextoPrincipal,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.ExtraBold,
+            modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 12.dp)
         )
-        Spacer(Modifier.height(10.dp))
         LazyRow(
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)

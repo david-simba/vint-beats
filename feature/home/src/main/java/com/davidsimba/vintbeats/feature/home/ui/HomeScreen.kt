@@ -167,10 +167,6 @@ fun HomeScreen(
                                     artists = section.playlists,
                                     onPlaylistSelected = openPlaylist,
                                 )
-                                ArtistsSection(
-                                    artists = section.playlists,
-                                    onArtistClick = onArtistClick,
-                                )
                             } else {
                                 PlaylistSection(
                                     section = section,
@@ -183,6 +179,14 @@ fun HomeScreen(
                                 RecentAlbumsSection(
                                     albums = recentAlbums,
                                     onAlbumClick = { album -> onAlbumSelected(album.albumId) }
+                                )
+                            }
+                        }
+                        if (index == 0 && section.isPrimary) {
+                            item(key = "tus_artistas") {
+                                ArtistsSection(
+                                    artists = section.playlists,
+                                    onArtistClick = onArtistClick,
                                 )
                             }
                         }

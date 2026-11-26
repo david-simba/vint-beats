@@ -26,6 +26,7 @@ import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.core.model.RecentAlbum
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid
+import com.davidsimba.vintbeats.core.designsystem.theme.TextoPrincipal
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhiteWarm
 import com.davidsimba.vintbeats.feature.home.R
 
@@ -37,12 +38,11 @@ fun RecentAlbumsSection(
     Column(modifier = Modifier.padding(bottom = 28.dp)) {
         Text(
             text = stringResource(R.string.home_albumes_recientes),
-            color = VintageWhiteWarm,
-            fontSize = 17.sp,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+            color = TextoPrincipal,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.ExtraBold,
+            modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 12.dp)
         )
-        Spacer(Modifier.height(10.dp))
         LazyRow(
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
