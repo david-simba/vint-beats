@@ -43,8 +43,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.R
-import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
-import com.davidsimba.vintbeats.feature.library.domain.track.subtitle
+import com.davidsimba.vintbeats.core.model.SavedTrack
+import com.davidsimba.vintbeats.core.model.subtitle
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.core.designsystem.theme.vintageBgGradient
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid

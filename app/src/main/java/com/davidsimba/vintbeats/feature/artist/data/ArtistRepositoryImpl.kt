@@ -1,8 +1,9 @@
 package com.davidsimba.vintbeats.feature.artist.data
 
 import com.davidsimba.vintbeats.core.model.Track
-import com.davidsimba.vintbeats.core.youtube.YouTubeArtistService
+import com.davidsimba.vintbeats.core.network.YouTubeArtistService
 import javax.inject.Inject
+import com.davidsimba.vintbeats.core.model.ArtistDetail
 
 class ArtistRepositoryImpl @Inject constructor(
     private val artistService: YouTubeArtistService

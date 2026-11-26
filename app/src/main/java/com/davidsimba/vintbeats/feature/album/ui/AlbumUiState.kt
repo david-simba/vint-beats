@@ -1,6 +1,6 @@
 package com.davidsimba.vintbeats.feature.album.ui
 
-import com.davidsimba.vintbeats.feature.album.data.AlbumDetail
+import com.davidsimba.vintbeats.core.model.AlbumDetail
 
 sealed interface AlbumUiState {
     data object Loading : AlbumUiState

@@ -44,8 +44,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
-import com.davidsimba.vintbeats.core.util.VintCropImageContract
-import com.davidsimba.vintbeats.core.util.VintCropImageContractOptions
+import com.davidsimba.vintbeats.core.common.VintCropImageContract
+import com.davidsimba.vintbeats.core.common.VintCropImageContractOptions
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.feature.profile.ui.components.ProfileAvatar
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayDeep

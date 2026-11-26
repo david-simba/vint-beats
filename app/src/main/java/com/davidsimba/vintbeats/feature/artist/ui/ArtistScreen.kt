@@ -50,7 +50,7 @@ import com.davidsimba.vintbeats.core.designsystem.components.layout.SectionLabel
 import com.davidsimba.vintbeats.core.designsystem.components.track.TrackOptionsBottomSheet
 import com.davidsimba.vintbeats.core.designsystem.components.collection.rememberScrollAppBarAlpha
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgDark
-import com.davidsimba.vintbeats.core.util.toHighRes
+import com.davidsimba.vintbeats.core.common.toHighRes
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGray
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageRedLight
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
@@ -153,8 +153,9 @@ fun ArtistScreen(
                                     radioImages = state.radio?.artistImages ?: emptyList(),
                                     onMixClick = {
                                         val mix = state.mix ?: return@MixRadioRow
-                                        if (mix.playlistId != null) {
-                                            onMixPlaylistSelected(mix.playlistId)
+                                        val mixPlaylistId = mix.playlistId
+                                        if (mixPlaylistId != null) {
+                                            onMixPlaylistSelected(mixPlaylistId)
                                         } else if (mix.tracks.isNotEmpty()) {
                                             onPlayMixTrack(mix.tracks.first(), mix.tracks.drop(1))
                                         }

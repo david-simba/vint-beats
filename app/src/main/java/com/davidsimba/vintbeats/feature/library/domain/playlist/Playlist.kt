@@ -1,6 +1,6 @@
 package com.davidsimba.vintbeats.feature.library.domain.playlist
 
-import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
+import com.davidsimba.vintbeats.core.model.SavedTrack
 
 data class Playlist(
     val id: Int,

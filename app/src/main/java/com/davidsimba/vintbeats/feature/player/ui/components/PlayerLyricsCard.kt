@@ -41,7 +41,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.davidsimba.vintbeats.feature.player.ui.LyricLine
+import com.davidsimba.vintbeats.core.model.LyricLine
 import com.davidsimba.vintbeats.core.designsystem.components.cards.Card
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgBase
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite

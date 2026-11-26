@@ -6,7 +6,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.home.domain.ArtistRadioItem
-import com.davidsimba.vintbeats.feature.home.domain.HomeSectionPlaylists
+import com.davidsimba.vintbeats.core.model.HomeSectionPlaylists
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.qualifiers.ApplicationContext

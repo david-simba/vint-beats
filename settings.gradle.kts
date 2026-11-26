@@ -26,3 +26,6 @@ rootProject.name = "Vint Beats"
 include(":app")
 include(":core:model")
 include(":core:designsystem")
+include(":core:common")
+include(":core:network")
+include(":core:database")

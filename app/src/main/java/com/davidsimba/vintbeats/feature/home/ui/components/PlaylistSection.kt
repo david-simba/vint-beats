@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.davidsimba.vintbeats.feature.home.domain.HomeSectionPlaylists
+import com.davidsimba.vintbeats.core.model.HomeSectionPlaylists
 import com.davidsimba.vintbeats.core.designsystem.components.cards.PlaylistCard
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhiteWarm
 

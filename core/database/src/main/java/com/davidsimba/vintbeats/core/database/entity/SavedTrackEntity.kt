@@ -1,0 +1,32 @@
+package com.davidsimba.vintbeats.core.database.entity
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.davidsimba.vintbeats.core.model.SavedTrack
+
+@Entity(tableName = "saved_tracks")
+data class SavedTrackEntity(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val trackId: String,
+    val trackTitle: String,
+    val trackArtist: String,
+    val trackThumbnailUrl: String?,
+    val trackDurationText: String,
+    val savedAt: Long = System.currentTimeMillis(),
+    val audioFilePath: String? = null,
+    val isFavorite: Boolean = false,
+    val isDownloading: Boolean = false
+) {
+    fun toDomain() = SavedTrack(
+        id = id,
+        trackId = trackId,
+        trackTitle = trackTitle,
+        trackArtist = trackArtist,
+        trackThumbnailUrl = trackThumbnailUrl,
+        trackDurationText = trackDurationText,
+        savedAt = savedAt,
+        audioFilePath = audioFilePath,
+        isFavorite = isFavorite,
+        isDownloading = isDownloading
+    )
+}

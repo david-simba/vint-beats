@@ -19,11 +19,11 @@ import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.shared.QueueController
 import com.davidsimba.vintbeats.shared.SnackbarController
 import com.davidsimba.vintbeats.shared.SnackbarEvent
-import com.davidsimba.vintbeats.core.youtube.LrcLibService
-import com.davidsimba.vintbeats.core.youtube.YouTubeQueueService
-import com.davidsimba.vintbeats.core.youtube.YouTubeStreamService
+import com.davidsimba.vintbeats.core.network.LrcLibService
+import com.davidsimba.vintbeats.core.network.YouTubeQueueService
+import com.davidsimba.vintbeats.stream.YouTubeStreamService
 import com.davidsimba.vintbeats.feature.home.data.RecentlyPlayedRepository
-import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
+import com.davidsimba.vintbeats.core.model.SavedTrack
 import com.davidsimba.vintbeats.feature.player.widget.NowPlayingWidgetUpdater
 import com.davidsimba.vintbeats.feature.library.domain.track.TrackRepository
 import com.davidsimba.vintbeats.feature.onboarding.OnboardingPreferences
@@ -46,13 +46,14 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
+import com.davidsimba.vintbeats.core.model.LyricLine
 
 @HiltViewModel
 class PlaybackViewModel @OptIn(UnstableApi::class)
 @Inject constructor(
     private val repository: TrackRepository,
     private val streamService: YouTubeStreamService,
-    private val backendService: com.davidsimba.vintbeats.core.youtube.BackendService,
+    private val backendService: com.davidsimba.vintbeats.core.network.BackendService,
     private val lrcLibService: LrcLibService,
     private val queueService: YouTubeQueueService,
     private val sessionPreferences: PlayerSessionPreferences,

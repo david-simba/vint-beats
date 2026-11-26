@@ -3,8 +3,8 @@ package com.davidsimba.vintbeats.feature.search.data
 import com.davidsimba.vintbeats.core.model.Album
 import com.davidsimba.vintbeats.core.model.Artist
 import com.davidsimba.vintbeats.core.model.Track
-import com.davidsimba.vintbeats.core.youtube.YouTubeArtistService
-import com.davidsimba.vintbeats.core.youtube.YouTubeSearchService
+import com.davidsimba.vintbeats.core.network.YouTubeArtistService
+import com.davidsimba.vintbeats.core.network.YouTubeSearchService
 import com.davidsimba.vintbeats.feature.search.domain.SearchRepository
 import javax.inject.Inject
 

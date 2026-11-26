@@ -1,12 +1,14 @@
 package com.davidsimba.vintbeats.feature.home.data
 
 import com.davidsimba.vintbeats.core.model.Track
-import com.davidsimba.vintbeats.feature.home.domain.RecentTrack
-import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
+import com.davidsimba.vintbeats.core.model.RecentTrack
+import com.davidsimba.vintbeats.core.model.SavedTrack
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
+import com.davidsimba.vintbeats.core.database.dao.RecentlyPlayedDao
+import com.davidsimba.vintbeats.core.database.entity.RecentlyPlayedEntity
 
 @Singleton
 class RecentlyPlayedRepository @Inject constructor(

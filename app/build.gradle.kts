@@ -65,6 +65,9 @@ android {
 dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:designsystem"))
+    implementation(project(":core:common"))
+    implementation(project(":core:network"))
+    implementation(project(":core:database"))
     implementation(libs.androidx.core.ktx)
     implementation("androidx.core:core-splashscreen:1.0.1")
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -85,8 +88,6 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.datastore.preferences)
     implementation(libs.security.crypto)
-    implementation(libs.room.runtime)
-    implementation(libs.room.ktx)
     implementation(libs.coil.compose)
     implementation(libs.image.cropper)
     implementation(libs.androidx.media3.exoplayer)
@@ -105,6 +106,5 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-    ksp(libs.room.compiler)
     ksp(libs.hilt.compiler)
 }

@@ -34,9 +34,9 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.R
-import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
-import com.davidsimba.vintbeats.feature.library.domain.track.subtitle
-import com.davidsimba.vintbeats.feature.library.domain.track.toTrack
+import com.davidsimba.vintbeats.core.model.SavedTrack
+import com.davidsimba.vintbeats.core.model.subtitle
+import com.davidsimba.vintbeats.core.model.toTrack
 import com.davidsimba.vintbeats.shared.AddToPlaylistController
 import com.davidsimba.vintbeats.shared.CollectionPlaybackState
 import com.davidsimba.vintbeats.shared.QueueController

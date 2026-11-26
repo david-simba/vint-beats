@@ -61,8 +61,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
-import com.davidsimba.vintbeats.core.util.VintCropImageContract
-import com.davidsimba.vintbeats.core.util.VintCropImageContractOptions
+import com.davidsimba.vintbeats.core.common.VintCropImageContract
+import com.davidsimba.vintbeats.core.common.VintCropImageContractOptions
 import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.core.model.Artist
 import com.davidsimba.vintbeats.feature.search.ui.components.SearchField

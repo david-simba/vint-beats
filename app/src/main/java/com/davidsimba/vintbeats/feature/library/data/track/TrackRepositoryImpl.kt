@@ -1,12 +1,14 @@
 package com.davidsimba.vintbeats.feature.library.data.track
 
-import com.davidsimba.vintbeats.feature.library.domain.track.SavedTrack
+import com.davidsimba.vintbeats.core.model.SavedTrack
 import com.davidsimba.vintbeats.feature.library.domain.track.TrackRepository
 import com.davidsimba.vintbeats.core.model.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.io.File
 import javax.inject.Inject
+import com.davidsimba.vintbeats.core.database.dao.TrackDao
+import com.davidsimba.vintbeats.core.database.entity.SavedTrackEntity
 
 class TrackRepositoryImpl @Inject constructor(
     private val dao: TrackDao

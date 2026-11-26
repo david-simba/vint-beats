@@ -5,8 +5,8 @@ import com.davidsimba.vintbeats.core.designsystem.R as DsR
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import com.davidsimba.vintbeats.core.util.VintCropImageContract
-import com.davidsimba.vintbeats.core.util.VintCropImageContractOptions
+import com.davidsimba.vintbeats.core.common.VintCropImageContract
+import com.davidsimba.vintbeats.core.common.VintCropImageContractOptions
 import com.canhub.cropper.CropImageOptions
 import com.canhub.cropper.CropImageView
 import androidx.compose.foundation.background

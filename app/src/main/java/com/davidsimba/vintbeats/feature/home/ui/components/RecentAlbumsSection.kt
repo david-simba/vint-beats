@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.R
-import com.davidsimba.vintbeats.feature.home.domain.RecentAlbum
+import com.davidsimba.vintbeats.core.model.RecentAlbum
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayDeep
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhiteWarm

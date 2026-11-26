@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.davidsimba.vintbeats.core.model.Track
-import com.davidsimba.vintbeats.core.youtube.YouTubeStreamService
+import com.davidsimba.vintbeats.stream.YouTubeStreamService
 import com.davidsimba.vintbeats.feature.library.domain.track.TrackRepository
 import com.davidsimba.vintbeats.feature.onboarding.OnboardingPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel

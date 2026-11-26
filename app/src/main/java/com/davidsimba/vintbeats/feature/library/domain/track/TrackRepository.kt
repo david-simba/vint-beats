@@ -2,6 +2,7 @@ package com.davidsimba.vintbeats.feature.library.domain.track
 
 import com.davidsimba.vintbeats.core.model.Track
 import kotlinx.coroutines.flow.Flow
+import com.davidsimba.vintbeats.core.model.SavedTrack
 
 interface TrackRepository {
     fun getAllTracks(): Flow<List<SavedTrack>>

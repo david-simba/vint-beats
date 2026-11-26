@@ -4,12 +4,16 @@ import com.davidsimba.vintbeats.feature.library.domain.playlist.Playlist
 import com.davidsimba.vintbeats.feature.library.domain.playlist.PlaylistInfo
 import com.davidsimba.vintbeats.feature.library.domain.playlist.PlaylistRepository
 import com.davidsimba.vintbeats.feature.library.domain.playlist.PlaylistWithTracks
-import com.davidsimba.vintbeats.feature.library.data.track.SavedTrackEntity
+import com.davidsimba.vintbeats.core.database.entity.SavedTrackEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
+import com.davidsimba.vintbeats.core.database.dao.PlaylistDao
+import com.davidsimba.vintbeats.core.database.entity.PlaylistEntity
+import com.davidsimba.vintbeats.core.database.entity.PlaylistTrackCrossRef
+import com.davidsimba.vintbeats.core.database.entity.PlaylistWithTracksEntity
 
 @Singleton
 class PlaylistRepositoryImpl @Inject constructor(

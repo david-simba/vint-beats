@@ -1,6 +1,7 @@
 package com.davidsimba.vintbeats.feature.library.domain.artist
 
 import kotlinx.coroutines.flow.Flow
+import com.davidsimba.vintbeats.core.model.SavedArtist
 
 interface SavedArtistRepository {
     fun getSavedArtists(): Flow<List<SavedArtist>>

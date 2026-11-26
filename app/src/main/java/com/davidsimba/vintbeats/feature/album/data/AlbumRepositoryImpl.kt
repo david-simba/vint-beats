@@ -1,7 +1,8 @@
 package com.davidsimba.vintbeats.feature.album.data
 
-import com.davidsimba.vintbeats.core.youtube.YouTubeAlbumService
+import com.davidsimba.vintbeats.core.network.YouTubeAlbumService
 import javax.inject.Inject
+import com.davidsimba.vintbeats.core.model.AlbumDetail
 
 class AlbumRepositoryImpl @Inject constructor(
     private val albumService: YouTubeAlbumService

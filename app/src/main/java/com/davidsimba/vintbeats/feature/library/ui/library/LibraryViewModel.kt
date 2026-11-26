@@ -5,9 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.davidsimba.vintbeats.feature.library.data.LibraryPreferences
 import com.davidsimba.vintbeats.feature.library.domain.playlist.Playlist
 import com.davidsimba.vintbeats.feature.library.domain.playlist.PlaylistRepository
-import com.davidsimba.vintbeats.feature.library.domain.album.SavedAlbum
+import com.davidsimba.vintbeats.core.model.SavedAlbum
 import com.davidsimba.vintbeats.feature.library.domain.album.SavedAlbumRepository
-import com.davidsimba.vintbeats.feature.library.domain.artist.SavedArtist
+import com.davidsimba.vintbeats.core.model.SavedArtist
 import com.davidsimba.vintbeats.feature.library.domain.artist.SavedArtistRepository
 import com.davidsimba.vintbeats.feature.library.domain.track.TrackRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

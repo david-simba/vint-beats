@@ -1,7 +1,7 @@
 package com.davidsimba.vintbeats
 
 import android.app.Application
-import com.davidsimba.vintbeats.core.youtube.NewPipeDownloader
+import com.davidsimba.vintbeats.stream.NewPipeDownloader
 import com.davidsimba.vintbeats.feature.library.domain.track.TrackRepository
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
