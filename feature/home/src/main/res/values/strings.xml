@@ -16,4 +16,5 @@
     <string name="home_ver_perfil">View %1$s’s profile</string>
     <string name="home_fans_tambien_escuchan">Fans also listen to</string>
     <string name="home_descubre">Discover</string>
+    <string name="home_open_profile">Open profile</string>
 </resources>

@@ -6,15 +6,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.Image
 import androidx.compose.material.icons.rounded.Tune
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,7 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.feature.profile.R
-import com.davidsimba.vintbeats.feature.profile.ui.components.ProfileAvatar
+import com.davidsimba.vintbeats.core.designsystem.components.avatar.Avatar
 import com.davidsimba.vintbeats.feature.profile.ui.components.ProfileCard
 import com.davidsimba.vintbeats.feature.profile.ui.components.ProfileEditPill
 import com.davidsimba.vintbeats.feature.profile.ui.components.ProfileNavRow
@@ -43,6 +48,7 @@ import com.davidsimba.vintbeats.feature.profile.ui.components.ProfileToggleRow
 
 @Composable
 fun ProfileScreen(
+    onBack: () -> Unit,
     onNavigateToEdit: () -> Unit,
     onNavigateToAbout: () -> Unit,
     onNavigateToTerms: () -> Unit,
@@ -71,18 +77,30 @@ fun ProfileScreen(
             .padding(horizontal = 20.dp)
             .padding(bottom = 120.dp),
     ) {
-        Text(
-            text = stringResource(R.string.profile_title),
-            color = Color(0xFFF4F4F5),
-            fontSize = 28.sp,
-            fontWeight = FontWeight.ExtraBold,
-            modifier = Modifier.padding(top = 16.dp),
-        )
+        Row(
+            modifier = Modifier.padding(top = 4.dp).offset(x = (-12).dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            IconButton(onClick = onBack, modifier = Modifier.size(44.dp)) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                    contentDescription = stringResource(R.string.profile_back),
+                    tint = Color(0xFFF4F4F5),
+                    modifier = Modifier.size(24.dp),
+                )
+            }
+            Text(
+                text = stringResource(R.string.profile_title),
+                color = Color(0xFFF4F4F5),
+                fontSize = 28.sp,
+                fontWeight = FontWeight.ExtraBold,
+            )
+        }
 
         Spacer(Modifier.height(24.dp))
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            ProfileAvatar(
+            Avatar(
                 photoPath = photoPath,
                 photoVersion = photoVersion,
                 size = 72.dp,

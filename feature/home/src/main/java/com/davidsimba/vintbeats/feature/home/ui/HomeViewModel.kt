@@ -85,6 +85,12 @@ class HomeViewModel @Inject constructor(
         return true
     }
 
+    val photoPath: StateFlow<String?> = onboardingPreferences.photoUri
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+
+    val photoVersion: StateFlow<Long> = onboardingPreferences.photoVersion
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0L)
+
     val userName: StateFlow<String> = onboardingPreferences.userName
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
 

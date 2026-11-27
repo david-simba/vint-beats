@@ -54,7 +54,7 @@ import com.davidsimba.vintbeats.core.common.VintCropImageContract
 import com.davidsimba.vintbeats.core.common.VintCropImageContractOptions
 import com.davidsimba.vintbeats.core.designsystem.components.inputs.TextField
 import com.davidsimba.vintbeats.feature.profile.R
-import com.davidsimba.vintbeats.feature.profile.ui.components.ProfileAvatar
+import com.davidsimba.vintbeats.core.designsystem.components.avatar.Avatar
 
 private const val NAME_MAX_LENGTH = 30
 
@@ -187,7 +187,7 @@ fun EditProfileScreen(
                 .padding(top = 32.dp, bottom = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            ProfileAvatar(
+            Avatar(
                 photoPath = photoPath,
                 photoVersion = photoVersion,
                 size = 120.dp,

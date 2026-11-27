@@ -59,12 +59,15 @@ fun HomeScreen(
     onFavoritesClick: () -> Unit = {},
     onArtistClick: (artistId: String) -> Unit = {},
     onQuickMixClick: () -> Unit = {},
+    onProfileClick: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel(),
     trackActionsViewModel: TrackActionsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val needsOnboarding by viewModel.needsOnboarding.collectAsStateWithLifecycle()
     val userName by viewModel.userName.collectAsStateWithLifecycle()
+    val photoPath by viewModel.photoPath.collectAsStateWithLifecycle()
+    val photoVersion by viewModel.photoVersion.collectAsStateWithLifecycle()
     val quickAccess by viewModel.quickAccess.collectAsStateWithLifecycle()
     val recentAlbums by viewModel.recentAlbums.collectAsStateWithLifecycle()
 
@@ -97,7 +100,12 @@ fun HomeScreen(
                     contentPadding = PaddingValues(bottom = 100.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    item { HomeHeader(userName = userName) }
+                    item { HomeHeader(
+                            userName = userName,
+                            photoPath = photoPath,
+                            photoVersion = photoVersion,
+                            onProfileClick = onProfileClick,
+                        ) }
                     item { QuickMixSkeleton() }
                     item { HomeSectionSkeleton() }
                     item { ArtistRadioSkeleton() }
@@ -121,7 +129,12 @@ fun HomeScreen(
                     contentPadding = PaddingValues(bottom = 100.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    item { HomeHeader(userName = userName) }
+                    item { HomeHeader(
+                            userName = userName,
+                            photoPath = photoPath,
+                            photoVersion = photoVersion,
+                            onProfileClick = onProfileClick,
+                        ) }
 
                     item(key = "accesos_rapidos") {
                         QuickAccessSection(

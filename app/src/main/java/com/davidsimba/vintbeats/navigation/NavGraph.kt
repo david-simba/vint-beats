@@ -47,6 +47,7 @@ import com.davidsimba.vintbeats.feature.album.ui.AlbumScreen
 import com.davidsimba.vintbeats.feature.artist.ui.ArtistScreen
 import com.davidsimba.vintbeats.feature.profile.ui.AboutScreen
 import com.davidsimba.vintbeats.feature.profile.ui.EditProfileScreen
+import com.davidsimba.vintbeats.dj.DjScreen
 import com.davidsimba.vintbeats.feature.profile.ui.ProfileScreen
 import com.davidsimba.vintbeats.feature.profile.ui.TermsScreen
 import com.davidsimba.vintbeats.feature.library.ui.addsongs.AddSongsScreen
@@ -82,6 +83,7 @@ private val bottomNavRoutes = setOf(
     Screen.Search.route,
     Screen.SearchActive.route,
     Screen.Library.route,
+    Screen.Dj.route,
     Screen.Artist.route,
     Screen.Album.route,
     Screen.Playlist.route,
@@ -91,7 +93,6 @@ private val bottomNavRoutes = setOf(
     Screen.AddSongs.route,
     Screen.EditPlaylist.route,
     Screen.AddToPlaylist.route,
-    Screen.Profile.route,
 )
 
 @Composable
@@ -217,6 +218,7 @@ fun NavGraph(
                         },
                         onFavoritesClick = { navController.navigate(Screen.Favorites.route) },
                         onQuickMixClick = { navController.navigate(Screen.QuickMix.route) },
+                        onProfileClick = { navController.navigate(Screen.Profile.route) { launchSingleTop = true } },
                         onArtistClick = { id -> navController.navigate(Screen.Artist.route(id)) }
                     )
                 }
@@ -563,11 +565,15 @@ fun NavGraph(
                         ),
                     )
                 }
+                composable(route = Screen.Dj.route) {
+                    DjScreen()
+                }
                 composable(
                     route = Screen.Profile.route,
                     popExitTransition = { fadeOut(animationSpec = tween(180)) }
                 ) {
                     ProfileScreen(
+                        onBack = { navController.popBackStack() },
                         onNavigateToEdit = { navController.navigate(Screen.EditProfile.route) },
                         onNavigateToAbout = { navController.navigate(Screen.About.route) },
                         onNavigateToTerms = { navController.navigate(Screen.Terms.route) },

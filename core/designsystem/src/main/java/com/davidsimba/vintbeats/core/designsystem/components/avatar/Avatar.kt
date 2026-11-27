@@ -1,4 +1,4 @@
-package com.davidsimba.vintbeats.feature.profile.ui.components
+package com.davidsimba.vintbeats.core.designsystem.components.avatar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,12 +37,14 @@ import java.io.File
  * Con [showCameraBadge] todo el avatar es un botón (con descripción [clickLabel]) y lleva la insignia de cámara.
  */
 @Composable
-fun ProfileAvatar(
+fun Avatar(
     photoPath: String?,
     photoVersion: Long,
     size: Dp = 100.dp,
     name: String = "",
     showCameraBadge: Boolean = false,
+    clickable: Boolean = showCameraBadge,
+    initialSizeFraction: Float = 0.4f,
     clickLabel: String = "",
     onClick: () -> Unit = {},
 ) {
@@ -52,7 +54,7 @@ fun ProfileAvatar(
         modifier = Modifier
             .size(size)
             .then(
-                if (showCameraBadge) {
+                if (clickable) {
                     // Sin recorte ni ripple rectangular: la insignia sobresale del círculo.
                     Modifier
                         .clickable(
@@ -89,7 +91,7 @@ fun ProfileAvatar(
                     Text(
                         text = initial,
                         color = Color(0xFF0E0E10),
-                        fontSize = (size.value * 0.4f).sp,
+                        fontSize = (size.value * initialSizeFraction).sp,
                         fontWeight = FontWeight.ExtraBold,
                     )
                 }

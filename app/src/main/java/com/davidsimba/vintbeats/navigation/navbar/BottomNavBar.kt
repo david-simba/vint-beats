@@ -1,5 +1,6 @@
 package com.davidsimba.vintbeats.navigation.navbar
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,7 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.LibraryMusic
-import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
@@ -42,14 +43,15 @@ import com.davidsimba.vintbeats.core.designsystem.R as DsR
 data class BottomNavBarItem(
     val screen: Screen,
     @StringRes val label: Int,
-    val icon: ImageVector
+    val icon: ImageVector? = null,
+    @DrawableRes val iconRes: Int? = null,
 )
 
 val bottomNavItems = listOf(
     BottomNavBarItem(Screen.Home, DsR.string.nav_home, Icons.Outlined.Home),
     BottomNavBarItem(Screen.Search, R.string.nav_search, Icons.Outlined.Search),
+    BottomNavBarItem(Screen.Dj, R.string.nav_dj, iconRes = R.drawable.ic_dj),
     BottomNavBarItem(Screen.Library, R.string.nav_library, Icons.Outlined.LibraryMusic),
-    BottomNavBarItem(Screen.Profile, R.string.nav_profile, Icons.Outlined.Person),
 )
 
 @Composable
@@ -90,15 +92,24 @@ fun BottomNavBar(navController: NavController) {
                             }
                         }
                     }
-                    .padding(horizontal = 24.dp),
+                    .weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Icon(
-                    imageVector = item.icon,
-                    contentDescription = null,
-                    tint = tint,
-                    modifier = Modifier.size(22.dp)
-                )
+                if (item.iconRes != null) {
+                    Icon(
+                        painter = painterResource(item.iconRes),
+                        contentDescription = null,
+                        tint = tint,
+                        modifier = Modifier.size(22.dp)
+                    )
+                } else if (item.icon != null) {
+                    Icon(
+                        imageVector = item.icon,
+                        contentDescription = null,
+                        tint = tint,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
                 Text(
                     text = label,
                     color = tint,

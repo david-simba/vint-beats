@@ -44,4 +44,5 @@
     <string name="edit_profile_change_photo_description">Cambiar foto de perfil</string>
     <string name="edit_profile_name_help">Así te saludaremos en el Inicio</string>
     <string name="edit_profile_name_help_empty">Escribe un nombre</string>
+    <string name="profile_back">Volver</string>
 </resources>

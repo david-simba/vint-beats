@@ -4,6 +4,7 @@
 
     <!-- Bottom navigation -->
     <string name="nav_search">Buscar</string>
+    <string name="nav_dj">DJ</string>
     <string name="nav_library">Biblioteca</string>
     <string name="nav_profile">Perfil</string>
 
