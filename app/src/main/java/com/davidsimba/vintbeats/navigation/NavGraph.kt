@@ -149,7 +149,7 @@ fun NavGraph(
         bottomBar = {
             val positionMs by playbackViewModel.positionMs.collectAsStateWithLifecycle()
             val durationMs by playbackViewModel.durationMs.collectAsStateWithLifecycle()
-            Column(modifier = if (!showBottomBar) Modifier.navigationBarsPadding() else Modifier) {
+            Column(modifier = if (!showBottomBar && currentRoute != Screen.Player.route) Modifier.navigationBarsPadding() else Modifier) {
                 if (showMiniPlayer && miniTitle != null) {
                     MiniPlayer(
                         title = miniTitle,

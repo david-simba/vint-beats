@@ -12,4 +12,19 @@
     <string name="mini_player_next">Siguiente</string>
     <string name="player_option_cover_square">Mostrar portada en cuadro</string>
     <string name="player_option_cover_background">Mostrar portada de fondo</string>
+    <string name="lyrics_label">LETRA</string>
+    <string name="lyrics_close">Cerrar letra</string>
+    <string name="lyrics_more_options">Más opciones</string>
+    <string name="lyrics_none">Esta canción no tiene letra disponible</string>
+    <string name="lyrics_go_to_line">Ir a esta línea</string>
+    <string name="lyrics_back_to_current">Volver a la línea actual</string>
+    <string name="lyrics_like">Añadir a canciones que te gustan</string>
+    <string name="lyrics_unlike">Quitar de canciones que te gustan</string>
+    <string name="lyrics_previous">Anterior</string>
+    <string name="lyrics_next">Siguiente</string>
+    <string name="lyrics_play">Reproducir</string>
+    <string name="lyrics_pause">Pausar</string>
+    <string name="lyrics_queue">Cola de reproducción</string>
+    <string name="lyrics_progress">Progreso de reproducción</string>
+    <string name="lyrics_progress_state">%1$s de %2$s</string>
 </resources>

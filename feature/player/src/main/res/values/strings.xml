@@ -13,4 +13,19 @@
     <string name="mini_player_next">Next</string>
     <string name="player_option_cover_square">Show cover as a square</string>
     <string name="player_option_cover_background">Show cover as background</string>
+    <string name="lyrics_label">LYRICS</string>
+    <string name="lyrics_close">Close lyrics</string>
+    <string name="lyrics_more_options">More options</string>
+    <string name="lyrics_none">This song has no lyrics available</string>
+    <string name="lyrics_go_to_line">Go to this line</string>
+    <string name="lyrics_back_to_current">Back to current line</string>
+    <string name="lyrics_like">Add to liked songs</string>
+    <string name="lyrics_unlike">Remove from liked songs</string>
+    <string name="lyrics_previous">Previous</string>
+    <string name="lyrics_next">Next</string>
+    <string name="lyrics_play">Play</string>
+    <string name="lyrics_pause">Pause</string>
+    <string name="lyrics_queue">Playback queue</string>
+    <string name="lyrics_progress">Playback progress</string>
+    <string name="lyrics_progress_state">%1$s of %2$s</string>
 </resources>

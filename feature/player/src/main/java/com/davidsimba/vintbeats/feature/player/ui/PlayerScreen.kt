@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -138,6 +139,18 @@ fun PlayerScreen(
         ColorUtils.colorToHSL(paletteColor.toArgb(), hsl)
         hsl[2] = (hsl[2] + 0.06f).coerceAtMost(0.35f)
         Color(ColorUtils.HSLToColor(hsl))
+    }
+
+    // Fondo de la letra: el de la portada, oscurecido si hace falta para que el texto blanco cumpla 4.5:1.
+    val lyricsBackground = remember(cardBgColor) {
+        val hsl = FloatArray(3)
+        ColorUtils.colorToHSL(cardBgColor.toArgb(), hsl)
+        var color = cardBgColor
+        while (ColorUtils.calculateContrast(Color.White.toArgb(), color.toArgb()) < 4.5 && hsl[2] > 0.05f) {
+            hsl[2] -= 0.02f
+            color = Color(ColorUtils.HSLToColor(hsl))
+        }
+        color
     }
 
     val currentLyricIndex by remember(syncedLyrics) {
@@ -277,7 +290,8 @@ fun PlayerScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .statusBarsPadding(),
+                            .statusBarsPadding()
+                            .navigationBarsPadding(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Box(modifier = Modifier.graphicsLayer { alpha = if (coverAsBackground) 1f else 0f }) {
@@ -417,24 +431,25 @@ fun PlayerScreen(
             enter = slideInVertically(initialOffsetY = { it }),
             exit = slideOutVertically(targetOffsetY = { it })
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(cardBgColor)
-            ) {
-                PlayerLyricsScreen(
-                    lines = syncedLyrics,
-                    isLoading = isLoadingLyrics,
-                    positionMs = positionMs,
-                    durationMs = durationMs,
-                    isPlaying = isPlaying,
-                    currentIndex = currentLyricIndex,
-                    track = trackForCard,
-                    onClose = { showLyricsScreen = false },
-                    onSeek = viewModel::seekTo,
-                    onTogglePlayPause = viewModel::togglePlayPause
-                )
-            }
+            PlayerLyricsScreen(
+                lines = syncedLyrics,
+                isLoading = isLoadingLyrics,
+                positionMs = positionMs,
+                durationMs = durationMs,
+                isPlaying = isPlaying,
+                isFavorite = isFavorite,
+                currentIndex = currentLyricIndex,
+                track = trackForCard,
+                backgroundColor = lyricsBackground,
+                onClose = { showLyricsScreen = false },
+                onMoreOptions = { showOptionsSheet = true },
+                onSeek = viewModel::seekTo,
+                onTogglePlayPause = viewModel::togglePlayPause,
+                onToggleFavorite = viewModel::toggleFavorite,
+                onSkipPrevious = viewModel::skipToPrevious,
+                onSkipNext = viewModel::skipToNext,
+                onOpenQueue = { showQueueSheet = true },
+            )
         }
 
         if (showOptionsSheet) {
