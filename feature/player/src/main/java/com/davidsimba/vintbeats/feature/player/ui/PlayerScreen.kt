@@ -56,7 +56,6 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.CancellationException
@@ -76,6 +75,8 @@ import com.davidsimba.vintbeats.feature.player.ui.components.PlayerBackground
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerCover
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerControls
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerQueueCard
+import com.davidsimba.vintbeats.feature.player.ui.components.PlayerStickyBar
+import com.davidsimba.vintbeats.feature.player.ui.components.PlayerStickyBarHeight
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerTopBar
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerTrackInfo
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerLyricsCard
@@ -176,7 +177,11 @@ fun PlayerScreen(
     var queueTopPx by remember { mutableFloatStateOf(0f) }
     val statusTopPx = WindowInsets.statusBars.getTop(density)
     val navBottomPx = WindowInsets.navigationBars.getBottom(density)
-    val sectionMarginPx = with(density) { 16.dp.toPx() }
+    val sectionMarginPx = with(density) { (16.dp + PlayerStickyBarHeight).toPx() }
+    var controlsBottomPx by remember { mutableFloatStateOf(Float.MAX_VALUE) }
+    val stickyBarVisible by remember {
+        derivedStateOf { outerScrollState.value >= controlsBottomPx - statusTopPx - with(density) { PlayerStickyBarHeight.toPx() } }
+    }
     val scrollToSection: (Float) -> Unit = { contentTop ->
         scope.launch {
             outerScrollState.animateScrollTo(
@@ -194,17 +199,38 @@ fun PlayerScreen(
         if (end <= 1f) 0f else (outerScrollState.value / end).coerceIn(0f, 1f)
     }
 
-    // Al soltar el scroll, la portada se fija en uno de los dos estados: cuadrada o header completo.
+    // Al soltar el scroll se fija en una etapa: cuadrada, portada como header o barra fija con la letra debajo.
     LaunchedEffect(outerScrollState, coverAsBackground) {
+        var gestureStart = outerScrollState.value
         snapshotFlow { outerScrollState.isScrollInProgress }
-            .filter { inProgress -> !inProgress }
-            .collect {
+            .collect { inProgress ->
+                if (inProgress) {
+                    gestureStart = outerScrollState.value
+                    return@collect
+                }
                 val value = outerScrollState.value
-                val end = growEnd()
-                if (!coverAsBackground && end > 1f && value > 0 && value < end) {
+                val grow = growEnd()
+                // 24dp extra: la tarjeta de letra queda un poco más arriba, más cerca de la barra.
+                val stickyStart = (controlsBottomPx - statusTopPx - with(density) { (PlayerStickyBarHeight - 24.dp).toPx() })
+                    .coerceAtMost(outerScrollState.maxValue.toFloat())
+                val stages = buildList {
+                    add(0f)
+                    if (!coverAsBackground && grow > 1f) add(grow)
+                    if (stickyStart > last() + 1f) add(stickyStart)
+                }
+                val hi = stages.firstOrNull { it > value }
+                val lo = stages.lastOrNull { it <= value }
+                if (hi != null && lo != null && value > lo) {
+                    // Un gesto hacia abajo avanza a la siguiente etapa con poco recorrido; hacia arriba, retrocede igual.
+                    val span = hi - lo
+                    val target = if (value >= gestureStart) {
+                        if (value - lo > span * 0.1f) hi else lo
+                    } else {
+                        if (hi - value > span * 0.1f) lo else hi
+                    }
                     try {
                         outerScrollState.animateScrollTo(
-                            if (value < end * 0.25f) 0 else end.toInt(),
+                            target.roundToInt(),
                             tween(250),
                         )
                     } catch (e: CancellationException) {
@@ -396,7 +422,11 @@ fun PlayerScreen(
                                 onSkipNext = viewModel::skipToNext,
                                 onToggleRepeat = viewModel::toggleRepeatMode,
                                 onToggleShuffle = viewModel::toggleShuffle,
-                                modifier = Modifier.padding(horizontal = 24.dp)
+                                modifier = Modifier
+                                    .onGloballyPositioned {
+                                        controlsBottomPx = it.positionInRoot().y + outerScrollState.value + it.size.height
+                                    }
+                                    .padding(horizontal = 24.dp)
                             )
 
                             Spacer(Modifier.height(32.dp))
@@ -457,6 +487,25 @@ fun PlayerScreen(
                     onMoreOptions = { showOptionsSheet = true },
                     playingFromName = playingFrom?.name,
                     onPlayingFromClick = onPlayingFromClick
+                )
+            }
+        }
+
+        AnimatedVisibility(
+            visible = stickyBarVisible && trackForCard != null,
+            enter = fadeIn(tween(200)) + slideInVertically(tween(200)) { -it / 2 },
+            exit = fadeOut(tween(150)) + slideOutVertically(tween(150)) { -it / 2 },
+        ) {
+            trackForCard?.let { track ->
+                PlayerStickyBar(
+                    coverUrl = track.albumImageUrl,
+                    title = track.title,
+                    artist = track.artist,
+                    isPlaying = isPlaying,
+                    isLoading = isLoading,
+                    backgroundColor = paletteColor,
+                    onClick = { scope.launch { outerScrollState.animateScrollTo(0, tween(400)) } },
+                    onTogglePlayPause = viewModel::togglePlayPause,
                 )
             }
         }
