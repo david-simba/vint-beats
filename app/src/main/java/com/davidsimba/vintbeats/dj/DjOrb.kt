@@ -131,7 +131,7 @@ fun DjOrb(
                     painter = painterResource(R.drawable.ic_dj),
                     contentDescription = null,
                     tint = if (live) Color.White else colorAcento,
-                    modifier = Modifier.size(84.dp),
+                    modifier = Modifier.size(84.dp).graphicsLayer { alpha = if (busy) 0.55f + 0.45f * t else 1f },
                 )
             }
         }

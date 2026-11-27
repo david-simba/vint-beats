@@ -127,7 +127,7 @@ fun DjScreen(
                 ),
                 onClick = { if (live) djViewModel.changeCourse() else startSession() },
             )
-            if (live && !loading) {
+            if (live && !loading && !state.changing) {
                 Text(
                     text = stringResource(R.string.dj_change_hint),
                     color = Muted,
@@ -139,6 +139,7 @@ fun DjScreen(
             Spacer(Modifier.height(if (live) 20.dp else 40.dp))
             when {
                 loading -> Subtitle(stringResource(R.string.dj_preparing))
+                state.changing -> Subtitle(stringResource(R.string.dj_changing))
                 live -> key(state.caption) { Subtitle("“${state.caption}”") }
                 else -> IdleText(userName = userName, error = state.error)
             }

@@ -78,4 +78,5 @@
     <string name="dj_default_prompt">A mix of what I like</string>
     <string name="dj_prompt_label">What do you want to hear?</string>
     <string name="dj_prompt_placeholder">Old school reggaeton for a party</string>
+    <string name="dj_changing">Changing vibes…</string>
 </resources>

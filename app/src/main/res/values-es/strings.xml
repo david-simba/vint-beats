@@ -81,4 +81,5 @@
     <string name="dj_default_prompt">Una mezcla de lo que me gusta</string>
     <string name="dj_prompt_label">¿Qué quieres escuchar?</string>
     <string name="dj_prompt_placeholder">Reguetón viejo para fiesta</string>
+    <string name="dj_changing">Cambiando vibras…</string>
 </resources>
