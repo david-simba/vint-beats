@@ -366,7 +366,7 @@ fun PlayerScreen(
                                 isLoading = isLoading,
                                 positionMs = positionMs,
                                 durationMs = durationMs,
-                                accentColor = VintageRedLight,
+                                backgroundColor = paletteColor,
                                 repeatMode = repeatMode,
                                 shuffleEnabled = shuffleEnabled,
                                 onSeek = viewModel::seekTo,

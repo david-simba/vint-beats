@@ -1,21 +1,13 @@
 package com.davidsimba.vintbeats.feature.player.ui.components
 
-import androidx.compose.animation.core.InfiniteRepeatableSpec
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -26,237 +18,118 @@ import androidx.compose.material.icons.rounded.RepeatOne
 import androidx.compose.material.icons.rounded.Shuffle
 import androidx.compose.material.icons.rounded.SkipNext
 import androidx.compose.material.icons.rounded.SkipPrevious
-import androidx.media3.common.Player
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayDeep
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageRedLight
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
+import androidx.media3.common.Player
+import com.davidsimba.vintbeats.feature.player.R
 
+/**
+ * Controles del reproductor, con el mismo diseño que los de la pantalla de letras:
+ * barra blanca arrastrable, tiempos al 75% y botón de play blanco de 64dp.
+ */
 @Composable
 fun PlayerControls(
-    modifier: Modifier = Modifier,
     isPlaying: Boolean,
     isLoading: Boolean,
     positionMs: Long,
     durationMs: Long,
-    accentColor: Color = VintageRedLight,
-    repeatMode: Int = Player.REPEAT_MODE_OFF,
-    shuffleEnabled: Boolean = false,
+    backgroundColor: Color,
     onSeek: (Long) -> Unit,
     onTogglePlayPause: () -> Unit,
     onSkipPrevious: () -> Unit,
     onSkipNext: () -> Unit,
+    modifier: Modifier = Modifier,
+    repeatMode: Int = Player.REPEAT_MODE_OFF,
+    shuffleEnabled: Boolean = false,
     onToggleRepeat: () -> Unit = {},
     onToggleShuffle: () -> Unit = {},
 ) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            SeekBar(
-                positionMs = positionMs,
-                durationMs = durationMs,
-                isLoading = isLoading,
-                accentColor = accentColor,
-                onSeek = onSeek,
-                modifier = Modifier.fillMaxWidth()
+    val inactive = Color.White.copy(alpha = 0.5f)
+    Column(modifier = modifier.fillMaxWidth()) {
+        LyricsProgressBar(
+            positionMs = if (isLoading) 0L else positionMs,
+            durationMs = if (isLoading) 0L else durationMs,
+            onSeek = onSeek,
+        )
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = if (isLoading) "--:--" else formatTime(positionMs),
+                color = Color.White.copy(alpha = 0.75f),
+                fontSize = 12.sp,
+                modifier = Modifier.weight(1f),
             )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = if (isLoading) "--:--" else formatMs(positionMs),
-                    color = VintageGrayMid,
-                    fontSize = 12.sp
-                )
-                Text(
-                    text = if (isLoading) "--:--" else formatMs(durationMs),
-                    color = VintageGrayMid,
-                    fontSize = 12.sp
-                )
-            }
+            Text(
+                text = if (isLoading) "--:--" else formatTime(durationMs),
+                color = Color.White.copy(alpha = 0.75f),
+                fontSize = 12.sp,
+            )
         }
-
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconButton(modifier = Modifier.size(40.dp), onClick = onToggleShuffle) {
+            IconButton(onClick = onToggleShuffle, modifier = Modifier.size(44.dp)) {
                 Icon(
                     imageVector = Icons.Rounded.Shuffle,
-                    contentDescription = "Shuffle",
-                    tint = if (shuffleEnabled) accentColor else VintageWhite.copy(alpha = 0.5f),
-                    modifier = Modifier.size(if (shuffleEnabled) 25.dp else 22.dp)
+                    contentDescription = stringResource(R.string.player_shuffle),
+                    tint = if (shuffleEnabled) Color.White else inactive,
+                    modifier = Modifier.size(24.dp),
                 )
             }
-
-            IconButton(modifier = Modifier.size(48.dp), onClick = onSkipPrevious) {
+            IconButton(onClick = onSkipPrevious, modifier = Modifier.size(48.dp)) {
                 Icon(
                     imageVector = Icons.Rounded.SkipPrevious,
-                    contentDescription = "Previous",
-                    tint = VintageWhite,
-                    modifier = Modifier.size(32.dp)
+                    contentDescription = stringResource(R.string.lyrics_previous),
+                    tint = Color.White,
+                    modifier = Modifier.size(34.dp),
                 )
             }
-
             Box(
-                contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .size(72.dp)
-                    .border(1.5.dp, VintageWhite.copy(alpha = 0.3f), CircleShape)
+                    .size(64.dp)
+                    .clip(CircleShape)
+                    .background(Color.White)
+                    .clickable(role = Role.Button, onClick = onTogglePlayPause),
+                contentAlignment = Alignment.Center,
             ) {
-                IconButton(
-                    onClick = onTogglePlayPause,
-                    modifier = Modifier.size(72.dp)
-                ) {
-                    Icon(
-                        imageVector = if (isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
-                        contentDescription = if (isPlaying) "Pause" else "Play",
-                        tint = VintageWhite,
-                        modifier = Modifier.size(40.dp)
-                    )
-                }
+                Icon(
+                    imageVector = if (isPlaying) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
+                    contentDescription = stringResource(
+                        if (isPlaying) R.string.lyrics_pause else R.string.lyrics_play
+                    ),
+                    tint = backgroundColor,
+                    modifier = Modifier.size(36.dp),
+                )
             }
-
-            IconButton(modifier = Modifier.size(48.dp), onClick = onSkipNext) {
+            IconButton(onClick = onSkipNext, modifier = Modifier.size(48.dp)) {
                 Icon(
                     imageVector = Icons.Rounded.SkipNext,
-                    contentDescription = "Next",
-                    tint = VintageWhite,
-                    modifier = Modifier.size(32.dp)
+                    contentDescription = stringResource(R.string.lyrics_next),
+                    tint = Color.White,
+                    modifier = Modifier.size(34.dp),
                 )
             }
-
-            IconButton(modifier = Modifier.size(40.dp), onClick = onToggleRepeat) {
+            IconButton(onClick = onToggleRepeat, modifier = Modifier.size(44.dp)) {
                 Icon(
-                    imageVector = if (repeatMode == Player.REPEAT_MODE_ONE)
-                        Icons.Rounded.RepeatOne else Icons.Rounded.Repeat,
-                    contentDescription = "Repeat",
-                    tint = if (repeatMode == Player.REPEAT_MODE_OFF)
-                        VintageWhite.copy(alpha = 0.5f) else accentColor,
-                    modifier = Modifier.size(if (repeatMode == Player.REPEAT_MODE_OFF) 22.dp else 25.dp)
+                    imageVector = if (repeatMode == Player.REPEAT_MODE_ONE) Icons.Rounded.RepeatOne else Icons.Rounded.Repeat,
+                    contentDescription = stringResource(R.string.player_repeat),
+                    tint = if (repeatMode == Player.REPEAT_MODE_OFF) inactive else Color.White,
+                    modifier = Modifier.size(24.dp),
                 )
             }
         }
     }
-}
-
-@Composable
-internal fun SeekBar(
-    positionMs: Long,
-    durationMs: Long,
-    isLoading: Boolean,
-    accentColor: Color,
-    onSeek: (Long) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    var isDragging by remember { mutableStateOf(false) }
-    var dragFraction by remember { mutableFloatStateOf(0f) }
-
-    val fraction = if (durationMs > 0) (positionMs.toFloat() / durationMs).coerceIn(0f, 1f) else 0f
-    val displayFraction = if (isDragging) dragFraction else fraction
-
-    val shimmerTransition = rememberInfiniteTransition(label = "seekbar_shimmer")
-    val shimmerOffset by shimmerTransition.animateFloat(
-        initialValue = -0.4f,
-        targetValue = 1.1f,
-        animationSpec = InfiniteRepeatableSpec(
-            animation = tween(durationMillis = 1200, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "shimmer_offset"
-    )
-
-    Canvas(
-        modifier = modifier
-            .height(20.dp)
-            .pointerInput(durationMs, isLoading) {
-                if (isLoading) return@pointerInput
-                awaitEachGesture {
-                    val down = awaitFirstDown(requireUnconsumed = false)
-                    isDragging = true
-                    dragFraction = (down.position.x / size.width.toFloat()).coerceIn(0f, 1f)
-                    down.consume()
-                    while (true) {
-                        val event = awaitPointerEvent()
-                        val change = event.changes.firstOrNull() ?: break
-                        if (!change.pressed) break
-                        dragFraction = (change.position.x / size.width.toFloat()).coerceIn(0f, 1f)
-                        change.consume()
-                    }
-                    isDragging = false
-                    onSeek((dragFraction * durationMs).toLong().coerceIn(0L, durationMs))
-                }
-            }
-    ) {
-        val w = size.width
-        val cy = size.height / 2f
-        val trackH = 3.dp.toPx()
-        val thumbR = 5.dp.toPx()
-
-        drawRoundRect(
-            color = VintageGrayDeep,
-            topLeft = Offset(0f, cy - trackH / 2),
-            size = Size(w, trackH),
-            cornerRadius = CornerRadius(trackH / 2)
-        )
-
-        if (isLoading) {
-            val segmentW = w * 0.35f
-            val segmentStart = w * shimmerOffset
-            val drawStart = maxOf(segmentStart, 0f)
-            val drawEnd = minOf(segmentStart + segmentW, w)
-            val drawWidth = drawEnd - drawStart
-            if (drawWidth > 0f) {
-                drawRoundRect(
-                    color = VintageGrayMid.copy(alpha = 0.55f),
-                    topLeft = Offset(drawStart, cy - trackH / 2),
-                    size = Size(drawWidth, trackH),
-                    cornerRadius = CornerRadius(trackH / 2)
-                )
-            }
-        } else {
-            val thumbX = (w * displayFraction).coerceIn(thumbR, w - thumbR)
-            if (displayFraction > 0f) {
-                drawRoundRect(
-                    color = accentColor,
-                    topLeft = Offset(0f, cy - trackH / 2),
-                    size = Size(thumbX, trackH),
-                    cornerRadius = CornerRadius(trackH / 2)
-                )
-            }
-            drawCircle(color = accentColor, radius = thumbR, center = Offset(thumbX, cy))
-        }
-    }
-}
-
-private fun formatMs(ms: Long): String {
-    val totalSeconds = ms / 1000
-    val minutes = totalSeconds / 60
-    val seconds = totalSeconds % 60
-    return "%d:%02d".format(minutes, seconds)
 }

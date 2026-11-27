@@ -28,4 +28,6 @@
     <string name="lyrics_queue">Playback queue</string>
     <string name="lyrics_progress">Playback progress</string>
     <string name="lyrics_progress_state">%1$s of %2$s</string>
+    <string name="player_shuffle">Shuffle</string>
+    <string name="player_repeat">Repeat</string>
 </resources>

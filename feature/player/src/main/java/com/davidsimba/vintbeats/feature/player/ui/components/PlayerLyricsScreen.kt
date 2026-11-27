@@ -255,7 +255,7 @@ private fun LyricsList(
         LazyColumn(
             state = listState,
             verticalArrangement = Arrangement.spacedBy(18.dp),
-            contentPadding = PaddingValues(top = 10.dp, bottom = 120.dp),
+            contentPadding = PaddingValues(top = 16.dp, bottom = 120.dp),
             modifier = Modifier
                 .fillMaxSize()
                 .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
@@ -296,7 +296,7 @@ private fun LyricsList(
                     color = Color.White,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    lineHeight = 34.sp,
+                    lineHeight = 24.sp,
                     textAlign = TextAlign.Start,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -457,7 +457,7 @@ private fun LyricsControls(
 
 /** Barra de progreso blanca: pista al 25%, relleno y punto de 14dp. Se puede arrastrar. */
 @Composable
-private fun LyricsProgressBar(
+internal fun LyricsProgressBar(
     positionMs: Long,
     durationMs: Long,
     onSeek: (Long) -> Unit,
@@ -521,7 +521,7 @@ private fun LyricsProgressBar(
     )
 }
 
-private fun formatTime(ms: Long): String {
+internal fun formatTime(ms: Long): String {
     val totalSeconds = (ms / 1000).coerceAtLeast(0)
     return "%d:%02d".format(totalSeconds / 60, totalSeconds % 60)
 }
