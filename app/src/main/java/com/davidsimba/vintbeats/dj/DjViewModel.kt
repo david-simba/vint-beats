@@ -61,8 +61,11 @@ class DjViewModel @Inject constructor(
     private val _state = MutableStateFlow(DjUiState())
     val state: StateFlow<DjUiState> = _state.asStateFlow()
 
-    private val say = mutableMapOf<String, String>()
-    private val spoken = mutableSetOf<String>()
+    // Canciones que puso el DJ, y los textos de enlace entre sets.
+    private val djTrackIds = mutableSetOf<String>()
+    private val outroAfter = mutableMapOf<String, String>()
+    private val introBefore = mutableMapOf<String, String>()
+    private var lastPlayedId: String? = null
     private var prompt = ""
     private var playback: PlaybackViewModel? = null
     private var sessionJob: Job? = null
@@ -92,7 +95,8 @@ class DjViewModel @Inject constructor(
     }
 
     private suspend fun goLive(session: DjSession, playbackViewModel: PlaybackViewModel) {
-        register(session)
+        register(session, isFirstSet = true)
+        lastPlayedId = null
         playbackViewModel.beforePlayHook = ::beforePlay
         _state.value = DjUiState(phase = DjPhase.Live, caption = session.intro)
         if (session.intro.isNotBlank()) {
@@ -106,18 +110,28 @@ class DjViewModel @Inject constructor(
         monitorQueue(playbackViewModel)
     }
 
-    private fun register(session: DjSession) {
-        session.items.forEach { say[it.track.id] = it.say }
+    /**
+     * Registra un set: su cierre se dice tras su última canción y, si no es el primero,
+     * su apertura (un enlace corto) antes de su primera canción. La apertura del primer set se dice al empezar.
+     */
+    private fun register(session: DjSession, isFirstSet: Boolean = false) {
+        val ids = session.items.map { it.track.id }
+        djTrackIds += ids
+        if (session.outro.isNotBlank()) ids.lastOrNull()?.let { outroAfter[it] = session.outro }
+        if (!isFirstSet && session.intro.isNotBlank()) ids.firstOrNull()?.let { introBefore[it] = session.intro }
     }
 
-    /** Antes de cada canción del DJ: se pausa lo que suene, el DJ habla y luego arranca el tema. */
+    /** Antes de cada canción: si cambia de set, se pausa y el DJ dice el cierre del anterior y la apertura del nuevo. */
     private suspend fun beforePlay(track: Track) {
-        val line = say[track.id]?.takeIf { it.isNotBlank() } ?: return
-        if (!spoken.add(track.id)) return
+        val lines = listOfNotNull(lastPlayedId?.let { outroAfter.remove(it) }, introBefore.remove(track.id))
+        lastPlayedId = track.id
+        if (lines.isEmpty()) return
         playback?.pausePlayback()
-        _state.value = _state.value.copy(caption = line, speaking = true)
         try {
-            speaker.speak(line)
+            for (line in lines) {
+                _state.value = _state.value.copy(caption = line, speaking = true)
+                speaker.speak(line)
+            }
         } finally {
             _state.value = _state.value.copy(speaking = false)
         }
@@ -129,7 +143,7 @@ class DjViewModel @Inject constructor(
         monitorJob = viewModelScope.launch {
             playbackViewModel.queue.collect { queue ->
                 val current = playbackViewModel.currentTrack.value
-                if (current?.id !in say || queue.size > EXTEND_WHEN_QUEUE_AT_MOST || fetchingMore) return@collect
+                if (current?.id !in djTrackIds || queue.size > EXTEND_WHEN_QUEUE_AT_MOST || fetchingMore) return@collect
                 fetchingMore = true
                 try {
                     val recent = (playbackViewModel.history.value + listOfNotNull(current))
@@ -162,6 +176,9 @@ class DjViewModel @Inject constructor(
                 val favorites = savedArtists.getSavedArtists().first().map { it.name }.take(FAVORITES_LIMIT)
                 val result = backend.djSession(CHANGE_COURSE_PROMPT, language, recent, favorites, next = true)
                 if (result is DjResult.Success) {
+                    // El rumbo anterior queda atrás: se descartan sus cierres pendientes.
+                    outroAfter.clear()
+                    introBefore.clear()
                     register(result.session)
                     val tracks = result.session.items.map { it.track }
                     pb.playTrack(tracks.first(), newQueue = tracks.drop(1), preserveHistory = true)
@@ -181,8 +198,10 @@ class DjViewModel @Inject constructor(
         monitorJob?.cancel()
         speaker.stop()
         playback?.beforePlayHook = null
-        say.clear()
-        spoken.clear()
+        djTrackIds.clear()
+        outroAfter.clear()
+        introBefore.clear()
+        lastPlayedId = null
         fetchingMore = false
         prompt = ""
         _state.value = DjUiState()

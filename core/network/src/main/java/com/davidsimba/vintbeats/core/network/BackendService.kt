@@ -232,14 +232,15 @@ class BackendService @Inject constructor(
                 }
                 val root = JsonParser.parseString(response.body?.string()).asJsonObject
                 val items = root.getAsJsonArray("items").mapNotNull { el ->
-                    val obj = el.asJsonObject
-                    val track = gson.fromJson(obj.get("track"), Track::class.java) ?: return@mapNotNull null
-                    DjItem(track, obj.get("say")?.takeIf { !it.isJsonNull }?.asString.orEmpty())
+                    val track = gson.fromJson(el.asJsonObject.get("track"), Track::class.java)
+                        ?: return@mapNotNull null
+                    DjItem(track)
                 }
                 if (items.isEmpty()) return@withContext DjResult.NotFound
                 DjResult.Success(
                     DjSession(
                         intro = root.get("intro")?.takeIf { !it.isJsonNull }?.asString.orEmpty(),
+                        outro = root.get("outro")?.takeIf { !it.isJsonNull }?.asString.orEmpty(),
                         items = items,
                         fallback = root.get("fallback")?.takeIf { !it.isJsonNull }?.asBoolean ?: false,
                     )
