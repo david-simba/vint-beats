@@ -1,5 +1,13 @@
 package com.davidsimba.vintbeats.feature.player.ui
 
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.util.lerp
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
+import kotlin.math.abs
 import com.davidsimba.vintbeats.core.designsystem.R as DsR
 
 import androidx.compose.animation.AnimatedVisibility
@@ -22,6 +30,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.PlaylistAdd
 import androidx.compose.material.icons.rounded.Download
@@ -39,7 +48,13 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.CancellationException
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -60,6 +75,7 @@ import com.davidsimba.vintbeats.feature.player.ui.components.PlayerTrackInfo
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerLyricsCard
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerLyricsScreen
 import com.davidsimba.vintbeats.core.model.Track
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.graphics.ColorUtils
@@ -133,11 +149,54 @@ fun PlayerScreen(
 
     val outerScrollState = rememberScrollState()
 
+    // Portada cuadrada: crece hasta ser un header de ancho completo mientras se hace scroll; después sube con el contenido.
+    val density = LocalDensity.current
+    var coverX by remember { mutableFloatStateOf(0f) }
+    var coverY0 by remember { mutableFloatStateOf(0f) } // posición con el scroll en 0
+    var coverSide by remember { mutableFloatStateOf(0f) }
+    // Distancia de scroll que dura el crecimiento; si el recorrido es corto, se usa todo.
+    var rootHeight by remember { mutableFloatStateOf(0f) }
+    var lyricsBlockPx by remember { mutableFloatStateOf(0f) }
+    var groupPx by remember { mutableFloatStateOf(0f) }
+    var infoPx by remember { mutableFloatStateOf(0f) }
+    // Recorrido hasta que la portada es header y el reproductor queda debajo de ella.
+    // Solo el título/artista sube sobre la imagen; progreso y controles quedan justo debajo de ella.
+    val growDistance: () -> Float = { maxOf(rootHeight - componentWidth - (groupPx - infoPx), 1f) }
+    val growEnd: () -> Float = { minOf(growDistance(), outerScrollState.maxValue.toFloat()) }
+    val growProgress: () -> Float = {
+        val end = growEnd()
+        if (end <= 1f) 0f else (outerScrollState.value / end).coerceIn(0f, 1f)
+    }
+
+    // Al soltar el scroll, la portada se fija en uno de los dos estados: cuadrada o header completo.
+    LaunchedEffect(outerScrollState, coverAsBackground) {
+        snapshotFlow { outerScrollState.isScrollInProgress }
+            .filter { inProgress -> !inProgress }
+            .collect {
+                val value = outerScrollState.value
+                val end = growEnd()
+                if (!coverAsBackground && end > 1f && value > 0 && value < end) {
+                    try {
+                        outerScrollState.animateScrollTo(
+                            if (value < end * 0.25f) 0 else end.toInt(),
+                            tween(250),
+                        )
+                    } catch (e: CancellationException) {
+                        // Un gesto del usuario interrumpió la animación: solo se cancela ese salto, no el efecto.
+                        currentCoroutineContext().ensureActive()
+                    }
+                }
+            }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(paletteColor)
-            .onSizeChanged { componentWidth = it.width.toFloat() }
+            .onSizeChanged {
+                componentWidth = it.width.toFloat()
+                rootHeight = it.height.toFloat()
+            }
             .playerSwipeGesture(
                 offsetX = offsetX,
                 componentWidth = componentWidth,
@@ -149,6 +208,49 @@ fun PlayerScreen(
                 onSkipPrevious = { viewModel.skipToPrevious(force = true) },
             )
     ) {
+        if (!coverAsBackground && coverSide > 0f) {
+            PlayerCover(
+                currentImageUrl = trackForCard?.albumImageUrl,
+                nextImageUrl = nextTrack?.albumImageUrl,
+                previousImageUrl = previousTrack?.albumImageUrl,
+                offsetX = offsetX.value,
+                componentWidth = componentWidth,
+                shape = RectangleShape,
+                elevated = false,
+                modifier = Modifier
+                    .size(with(density) { coverSide.toDp() })
+                    .graphicsLayer {
+                        val f = growProgress()
+                        val size = lerp(coverSide, componentWidth, f)
+                        val scale = size / coverSide
+                        // Pasado el crecimiento, la portada sube con el resto del contenido.
+                        val extraScroll = maxOf(0f, outerScrollState.value - growEnd())
+                        transformOrigin = TransformOrigin(0f, 0f)
+                        scaleX = scale
+                        scaleY = scale
+                        translationX = lerp(coverX, 0f, f)
+                        translationY = lerp(coverY0, 0f, f) - extraScroll
+                        // Esquinas: 12dp en reposo, rectas en el header (en coordenadas locales).
+                        shape = RoundedCornerShape(lerp(12.dp.toPx(), 0f, f))
+                        clip = true
+                    }
+            )
+            // Degradado al final de la imagen, que aparece al crecer, para fundirla con el fondo.
+            val fadeHeightPx = componentWidth * 0.4f
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(with(density) { fadeHeightPx.toDp() })
+                    .graphicsLayer {
+                        val f = growProgress()
+                        val bottom = lerp(coverY0 + coverSide, componentWidth, f)
+                        translationY = bottom - fadeHeightPx - maxOf(0f, outerScrollState.value - growEnd())
+                        alpha = f
+                    }
+                    .background(Brush.verticalGradient(listOf(Color.Transparent, paletteColor)))
+            )
+        }
+
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
             val screenHeight = maxHeight
             Column(
@@ -178,12 +280,14 @@ fun PlayerScreen(
                             .statusBarsPadding(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        PlayerTopBar(
-                            onBack = onBack,
-                            onMoreOptions = { showOptionsSheet = true },
-                            playingFromName = playingFrom?.name,
-                            onPlayingFromClick = onPlayingFromClick
-                        )
+                        Box(modifier = Modifier.graphicsLayer { alpha = if (coverAsBackground) 1f else 0f }) {
+                            PlayerTopBar(
+                                onBack = onBack,
+                                onMoreOptions = { showOptionsSheet = true },
+                                playingFromName = playingFrom?.name,
+                                onPlayingFromClick = onPlayingFromClick
+                            )
+                        }
 
                         if (coverAsBackground) {
                             Spacer(Modifier.weight(1f))
@@ -195,61 +299,73 @@ fun PlayerScreen(
                                     .padding(horizontal = 24.dp, vertical = 12.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                PlayerCover(
-                                    currentImageUrl = trackForCard?.albumImageUrl,
-                                    nextImageUrl = nextTrack?.albumImageUrl,
-                                    previousImageUrl = previousTrack?.albumImageUrl,
-                                    offsetX = offsetX.value,
-                                    componentWidth = componentWidth,
-                                    modifier = Modifier.size(minOf(maxWidth, maxHeight))
+                                Spacer(
+                                    Modifier
+                                        .size(minOf(maxWidth, maxHeight))
+                                        .onGloballyPositioned { coords ->
+                                            val pos = coords.positionInRoot()
+                                            val y0 = pos.y + outerScrollState.value
+                                            if (abs(coverX - pos.x) > 1f) coverX = pos.x
+                                            if (abs(coverY0 - y0) > 1f) coverY0 = y0
+                                            if (abs(coverSide - coords.size.width) > 1f) coverSide = coords.size.width.toFloat()
+                                        }
                                 )
                             }
                         }
 
-                        trackForCard?.let {
-                            PlayerTrackInfo(
-                                title = it.title,
-                                artist = it.artist,
-                                isFavorite = isFavorite,
-                                onToggleFavorite = viewModel::toggleFavorite,
-                                onQueueOpen = { showQueueSheet = true },
-                                onArtistClick = it.artistId?.let { id -> { onArtistSelected(id) } }
-                            )
-                        }
-
-                        AnimatedVisibility(
-                            visible = showEqualizer,
-                            enter = fadeIn(tween(300)),
-                            exit = fadeOut(tween(300))
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .onSizeChanged { groupPx = it.height.toFloat() },
+                            horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
-                            Spacer(Modifier.height(12.dp))
-                            EqualizerBars(
+                            trackForCard?.let {
+                                Box(Modifier.onSizeChanged { infoPx = it.height.toFloat() }) {
+                                PlayerTrackInfo(
+                                    title = it.title,
+                                    artist = it.artist,
+                                    isFavorite = isFavorite,
+                                    onToggleFavorite = viewModel::toggleFavorite,
+                                    onQueueOpen = { showQueueSheet = true },
+                                    onArtistClick = it.artistId?.let { id -> { onArtistSelected(id) } }
+                                )
+                                }
+                            }
+
+                            AnimatedVisibility(
+                                visible = showEqualizer,
+                                enter = fadeIn(tween(300)),
+                                exit = fadeOut(tween(300))
+                            ) {
+                                Spacer(Modifier.height(12.dp))
+                                EqualizerBars(
+                                    isPlaying = isPlaying,
+                                    barCount = 16,
+                                    color = VintageRedLight.copy(alpha = 0.8f),
+                                    maxHeight = 18.dp,
+                                    modifier = Modifier.padding(horizontal = 24.dp)
+                                )
+                            }
+
+                            PlayerControls(
                                 isPlaying = isPlaying,
-                                barCount = 16,
-                                color = VintageRedLight.copy(alpha = 0.8f),
-                                maxHeight = 18.dp,
+                                isLoading = isLoading,
+                                positionMs = positionMs,
+                                durationMs = durationMs,
+                                accentColor = VintageRedLight,
+                                repeatMode = repeatMode,
+                                shuffleEnabled = shuffleEnabled,
+                                onSeek = viewModel::seekTo,
+                                onTogglePlayPause = viewModel::togglePlayPause,
+                                onSkipPrevious = viewModel::skipToPrevious,
+                                onSkipNext = viewModel::skipToNext,
+                                onToggleRepeat = viewModel::toggleRepeatMode,
+                                onToggleShuffle = viewModel::toggleShuffle,
                                 modifier = Modifier.padding(horizontal = 24.dp)
                             )
+
+                            Spacer(Modifier.height(32.dp))
                         }
-
-                        PlayerControls(
-                            isPlaying = isPlaying,
-                            isLoading = isLoading,
-                            positionMs = positionMs,
-                            durationMs = durationMs,
-                            accentColor = VintageRedLight,
-                            repeatMode = repeatMode,
-                            shuffleEnabled = shuffleEnabled,
-                            onSeek = viewModel::seekTo,
-                            onTogglePlayPause = viewModel::togglePlayPause,
-                            onSkipPrevious = viewModel::skipToPrevious,
-                            onSkipNext = viewModel::skipToNext,
-                            onToggleRepeat = viewModel::toggleRepeatMode,
-                            onToggleShuffle = viewModel::toggleShuffle,
-                            modifier = Modifier.padding(horizontal = 24.dp)
-                        )
-
-                        Spacer(Modifier.height(32.dp))
                     }
                 }
 
@@ -257,6 +373,7 @@ fun PlayerScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(paletteColor)
+                        .onSizeChanged { lyricsBlockPx = it.height.toFloat() }
                 ) {
                     PlayerLyricsCard(
                         lines = syncedLyrics,
@@ -269,6 +386,29 @@ fun PlayerScreen(
                             .padding(top = 16.dp, bottom = 40.dp)
                     )
                 }
+                if (!coverAsBackground) {
+                    // Completa el recorrido para que el scroll termine con las letras pegadas bajo la portada.
+                    Spacer(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(with(density) { (growDistance() - lyricsBlockPx).coerceAtLeast(0f).toDp() })
+                    )
+                }
+            }
+        }
+
+        if (!coverAsBackground) {
+            Box(
+                modifier = Modifier
+                    .statusBarsPadding()
+                    .graphicsLayer { translationY = -maxOf(0f, outerScrollState.value - growEnd()) }
+            ) {
+                PlayerTopBar(
+                    onBack = onBack,
+                    onMoreOptions = { showOptionsSheet = true },
+                    playingFromName = playingFrom?.name,
+                    onPlayingFromClick = onPlayingFromClick
+                )
             }
         }
 

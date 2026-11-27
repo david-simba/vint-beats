@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -28,11 +29,12 @@ fun PlayerCover(
     offsetX: Float,
     componentWidth: Float,
     modifier: Modifier = Modifier,
+    shape: Shape = RoundedCornerShape(12.dp),
+    elevated: Boolean = true,
 ) {
-    val shape = RoundedCornerShape(12.dp)
     Box(
         modifier = modifier
-            .shadow(16.dp, shape)
+            .then(if (elevated) Modifier.shadow(16.dp, shape) else Modifier)
             .clip(shape)
             .background(Superficie)
     ) {
