@@ -149,7 +149,7 @@ fun DjScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp)
-                .padding(bottom = if (live) 80.dp else 120.dp),
+                .padding(bottom = if (live) 24.dp else 120.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             if (!live) {

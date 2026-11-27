@@ -112,7 +112,6 @@ fun NavGraph(
     }
     val currentEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentEntry?.destination?.route
-    val showBottomBar = currentRoute in bottomNavRoutes
 
     var snackbarEvent by remember { mutableStateOf<SnackbarEvent?>(null) }
     val downloadStartedMsg = stringResource(R.string.download_started)
@@ -130,6 +129,9 @@ fun NavGraph(
     val playbackViewModel: PlaybackViewModel = hiltViewModel()
     val djViewModel: DjViewModel = hiltViewModel()
     val djState by djViewModel.state.collectAsStateWithLifecycle()
+    // Con el DJ al aire se oculta el mini player (la pantalla del DJ ocupa su espacio); la barra inferior se queda.
+    val djImmersive = currentRoute == Screen.Dj.route && djState.phase != DjPhase.Idle
+    val showBottomBar = currentRoute in bottomNavRoutes
     val currentTrack by playbackViewModel.currentTrack.collectAsStateWithLifecycle()
     val playbackState by playbackViewModel.playerState.collectAsStateWithLifecycle()
     val queue by playbackViewModel.queue.collectAsStateWithLifecycle()
@@ -143,7 +145,7 @@ fun NavGraph(
 
     val hasActivePlayback = currentTrack != null
     val showMiniPlayer = hasActivePlayback && currentRoute != Screen.Player.route && currentRoute != Screen.EditProfile.route && currentRoute != Screen.About.route && currentRoute != Screen.Terms.route && currentRoute != Screen.CreatePlaylist.route &&
-        !(currentRoute == Screen.Dj.route && djState.phase != DjPhase.Idle)
+        !djImmersive
 
     val miniTitle: String? = currentTrack?.title
     val miniArtist: String = currentTrack?.artist ?: ""
