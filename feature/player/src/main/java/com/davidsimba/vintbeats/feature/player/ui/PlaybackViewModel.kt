@@ -140,6 +140,24 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
 
     fun setPlayingFrom(source: PlayingFrom?) { _playingFrom.value = source }
 
+    /**
+     * Se ejecuta con la canción ya resuelta y justo antes de reproducirla (lo usa el DJ para hablar antes de cada tema).
+     * Si el usuario salta de canción mientras corre, la corrutina se cancela.
+     */
+    var beforePlayHook: (suspend (Track) -> Unit)? = null
+
+    /** Pausa lo que esté sonando (el DJ lo usa para hablar sin música debajo). */
+    suspend fun pausePlayback() = withContext(Dispatchers.Main) { mediaController?.pause() }
+
+    /** Agrega canciones al final de la cola, sin repetir las que ya están. */
+    fun appendToQueue(tracks: List<Track>) {
+        val known = (_queue.value + listOfNotNull(_currentTrack.value) + _history.value).map { it.id }.toSet()
+        val fresh = tracks.filter { it.id !in known }
+        if (fresh.isEmpty()) return
+        _queue.value = _queue.value + fresh
+        if (_originalQueue.value.isNotEmpty()) _originalQueue.value = _originalQueue.value + fresh
+    }
+
     private val lyricsCache = mutableMapOf<String, List<LyricLine>>()
     private var prefetchJob: Job? = null
     private var progressJob: Job? = null
@@ -301,6 +319,7 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
                 streamUrl
             }
             val mediaItem = buildMediaItem(uri, track.title, track.artist, track.albumImageUrl)
+            beforePlayHook?.invoke(track)
             withContext(Dispatchers.Main) {
                 val controller = mediaController ?: run {
                     _playerState.value = PlayerState.Error("Player not ready")

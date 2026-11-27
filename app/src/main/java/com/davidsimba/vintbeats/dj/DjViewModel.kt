@@ -1,0 +1,156 @@
+package com.davidsimba.vintbeats.dj
+
+import android.content.Context
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.davidsimba.vintbeats.core.data.library.SavedArtistRepository
+import com.davidsimba.vintbeats.core.model.DjSession
+import com.davidsimba.vintbeats.core.model.Track
+import com.davidsimba.vintbeats.core.network.BackendService
+import com.davidsimba.vintbeats.core.network.DjRecent
+import com.davidsimba.vintbeats.core.network.DjResult
+import com.davidsimba.vintbeats.feature.player.ui.PlaybackViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import java.util.Locale
+import javax.inject.Inject
+
+enum class DjPhase { Idle, Loading, Live }
+
+enum class DjError { RateLimited, NotFound, Generic }
+
+data class DjUiState(
+    val phase: DjPhase = DjPhase.Idle,
+    val error: DjError? = null,
+    /** Lo último que dijo el DJ. */
+    val caption: String = "",
+    val speaking: Boolean = false,
+)
+
+private const val EXTEND_WHEN_QUEUE_AT_MOST = 2
+private const val RECENT_LIMIT = 10
+private const val FAVORITES_LIMIT = 10
+
+@HiltViewModel
+class DjViewModel @Inject constructor(
+    @ApplicationContext context: Context,
+    private val backend: BackendService,
+    private val savedArtists: SavedArtistRepository,
+) : ViewModel() {
+
+    private val speaker = DjSpeaker(context)
+    private val _state = MutableStateFlow(DjUiState())
+    val state: StateFlow<DjUiState> = _state.asStateFlow()
+
+    private val say = mutableMapOf<String, String>()
+    private val spoken = mutableSetOf<String>()
+    private var prompt = ""
+    private var playback: PlaybackViewModel? = null
+    private var sessionJob: Job? = null
+    private var monitorJob: Job? = null
+    private var fetchingMore = false
+
+    private val language: String
+        get() = if (Locale.getDefault().language == "es") "Spanish" else "English"
+
+    fun start(userPrompt: String, playbackViewModel: PlaybackViewModel) {
+        val text = userPrompt.trim()
+        if (text.isEmpty() || _state.value.phase == DjPhase.Loading) return
+        stop(keepIdleError = false)
+        prompt = text
+        playback = playbackViewModel
+        _state.value = DjUiState(phase = DjPhase.Loading)
+        sessionJob = viewModelScope.launch {
+            val favorites = savedArtists.getSavedArtists().first().map { it.name }.take(FAVORITES_LIMIT)
+            when (val result = backend.djSession(text, language, favoriteArtists = favorites)) {
+                is DjResult.Success -> goLive(result.session, playbackViewModel)
+                DjResult.RateLimited -> fail(DjError.RateLimited)
+                DjResult.NotFound -> fail(DjError.NotFound)
+                DjResult.Failure -> fail(DjError.Generic)
+            }
+        }
+    }
+
+    private suspend fun goLive(session: DjSession, playbackViewModel: PlaybackViewModel) {
+        register(session)
+        playbackViewModel.beforePlayHook = ::beforePlay
+        _state.value = DjUiState(phase = DjPhase.Live, caption = session.intro)
+        if (session.intro.isNotBlank()) {
+            _state.value = _state.value.copy(speaking = true)
+            speaker.speak(session.intro)
+            _state.value = _state.value.copy(speaking = false)
+        }
+        val tracks = session.items.map { it.track }
+        playbackViewModel.setPlayingFrom(null)
+        playbackViewModel.playTrack(tracks.first(), newQueue = tracks.drop(1))
+        monitorQueue(playbackViewModel)
+    }
+
+    private fun register(session: DjSession) {
+        session.items.forEach { say[it.track.id] = it.say }
+    }
+
+    /** Antes de cada canción del DJ: se pausa lo que suene, el DJ habla y luego arranca el tema. */
+    private suspend fun beforePlay(track: Track) {
+        val line = say[track.id]?.takeIf { it.isNotBlank() } ?: return
+        if (!spoken.add(track.id)) return
+        playback?.pausePlayback()
+        _state.value = _state.value.copy(caption = line, speaking = true)
+        try {
+            speaker.speak(line)
+        } finally {
+            _state.value = _state.value.copy(speaking = false)
+        }
+    }
+
+    /** Cuando quedan pocas canciones por sonar, pide otra tanda con lo ya reproducido. */
+    private fun monitorQueue(playbackViewModel: PlaybackViewModel) {
+        monitorJob?.cancel()
+        monitorJob = viewModelScope.launch {
+            playbackViewModel.queue.collect { queue ->
+                val current = playbackViewModel.currentTrack.value
+                if (current?.id !in say || queue.size > EXTEND_WHEN_QUEUE_AT_MOST || fetchingMore) return@collect
+                fetchingMore = true
+                try {
+                    val recent = (playbackViewModel.history.value + listOfNotNull(current))
+                        .takeLast(RECENT_LIMIT)
+                        .map { DjRecent(it.artist, it.title) }
+                    val favorites = savedArtists.getSavedArtists().first().map { it.name }.take(FAVORITES_LIMIT)
+                    val result = backend.djSession(prompt, language, recent, favorites, next = true)
+                    if (result is DjResult.Success) {
+                        register(result.session)
+                        playbackViewModel.appendToQueue(result.session.items.map { it.track })
+                    }
+                } finally {
+                    fetchingMore = false
+                }
+            }
+        }
+    }
+
+    private fun fail(error: DjError) {
+        _state.value = DjUiState(phase = DjPhase.Idle, error = error)
+    }
+
+    fun stop(keepIdleError: Boolean = false) {
+        sessionJob?.cancel()
+        monitorJob?.cancel()
+        speaker.stop()
+        playback?.beforePlayHook = null
+        say.clear()
+        spoken.clear()
+        fetchingMore = false
+        if (!keepIdleError) _state.value = DjUiState()
+    }
+
+    override fun onCleared() {
+        stop()
+        speaker.shutdown()
+    }
+}

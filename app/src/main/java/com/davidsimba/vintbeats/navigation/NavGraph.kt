@@ -48,6 +48,7 @@ import com.davidsimba.vintbeats.feature.artist.ui.ArtistScreen
 import com.davidsimba.vintbeats.feature.profile.ui.AboutScreen
 import com.davidsimba.vintbeats.feature.profile.ui.EditProfileScreen
 import com.davidsimba.vintbeats.dj.DjScreen
+import com.davidsimba.vintbeats.dj.DjViewModel
 import com.davidsimba.vintbeats.feature.profile.ui.ProfileScreen
 import com.davidsimba.vintbeats.feature.profile.ui.TermsScreen
 import com.davidsimba.vintbeats.feature.library.ui.addsongs.AddSongsScreen
@@ -126,6 +127,7 @@ fun NavGraph(
     }
 
     val playbackViewModel: PlaybackViewModel = hiltViewModel()
+    val djViewModel: DjViewModel = hiltViewModel()
     val currentTrack by playbackViewModel.currentTrack.collectAsStateWithLifecycle()
     val playbackState by playbackViewModel.playerState.collectAsStateWithLifecycle()
     val queue by playbackViewModel.queue.collectAsStateWithLifecycle()
@@ -566,7 +568,7 @@ fun NavGraph(
                     )
                 }
                 composable(route = Screen.Dj.route) {
-                    DjScreen()
+                    DjScreen(djViewModel = djViewModel, playbackViewModel = playbackViewModel)
                 }
                 composable(
                     route = Screen.Profile.route,

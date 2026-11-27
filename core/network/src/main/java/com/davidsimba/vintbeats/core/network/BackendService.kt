@@ -7,6 +7,8 @@ import com.davidsimba.vintbeats.core.model.AlbumDetail
 import com.davidsimba.vintbeats.core.model.ArtistDetail
 import com.davidsimba.vintbeats.core.model.ArtistMix
 import com.davidsimba.vintbeats.core.model.ArtistRadio
+import com.davidsimba.vintbeats.core.model.DjItem
+import com.davidsimba.vintbeats.core.model.DjSession
 import com.davidsimba.vintbeats.core.model.HomeSectionPlaylists
 import com.davidsimba.vintbeats.core.model.LyricLine
 import com.davidsimba.vintbeats.core.model.PlaylistDetail
@@ -22,6 +24,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.net.URLEncoder
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
@@ -33,12 +36,24 @@ data class CategoryPlaylistsResult(
     val playlists: List<PlaylistSummary>
 )
 
+data class DjRecent(val artist: String, val title: String)
+
+sealed interface DjResult {
+    data class Success(val session: DjSession) : DjResult
+    data object RateLimited : DjResult
+    data object NotFound : DjResult
+    data object Failure : DjResult
+}
+
 @Singleton
 class BackendService @Inject constructor(
     @Named("backend") private val client: OkHttpClient,
     @Named("backendUrl") private val baseUrl: String
 ) {
     private val gson = Gson()
+
+    // La IA con modelos gratuitos puede tardar bastante más que el resto de endpoints.
+    private val djClient: OkHttpClient by lazy { client.newBuilder().readTimeout(45, TimeUnit.SECONDS).build() }
 
     @Volatile private var categoriesCache: List<ExploreCategory>? = null
 
@@ -187,6 +202,51 @@ class BackendService @Inject constructor(
                 }
             } catch (_: Exception) { emptyList() }
         }
+
+    /** Pide al DJ una tanda de canciones. [next] = true usa `/dj/next` (continuar con lo ya sonado en [recent]). */
+    suspend fun djSession(
+        prompt: String,
+        language: String,
+        recent: List<DjRecent> = emptyList(),
+        favoriteArtists: List<String> = emptyList(),
+        count: Int = 10,
+        next: Boolean = false,
+    ): DjResult = withContext(Dispatchers.IO) {
+        try {
+            val body = gson.toJson(
+                mapOf(
+                    "prompt" to prompt,
+                    "count" to count,
+                    "language" to language,
+                    "recent" to recent,
+                    "favoriteArtists" to favoriteArtists,
+                )
+            ).toRequestBody("application/json".toMediaType())
+            val path = if (next) "/dj/next" else "/dj/session"
+            val request = Request.Builder().url("$baseUrl$path").post(body).build()
+            djClient.newCall(request).execute().use { response ->
+                when {
+                    response.code == 429 -> return@withContext DjResult.RateLimited
+                    response.code == 404 -> return@withContext DjResult.NotFound
+                    !response.isSuccessful -> return@withContext DjResult.Failure
+                }
+                val root = JsonParser.parseString(response.body?.string()).asJsonObject
+                val items = root.getAsJsonArray("items").mapNotNull { el ->
+                    val obj = el.asJsonObject
+                    val track = gson.fromJson(obj.get("track"), Track::class.java) ?: return@mapNotNull null
+                    DjItem(track, obj.get("say")?.takeIf { !it.isJsonNull }?.asString.orEmpty())
+                }
+                if (items.isEmpty()) return@withContext DjResult.NotFound
+                DjResult.Success(
+                    DjSession(
+                        intro = root.get("intro")?.takeIf { !it.isJsonNull }?.asString.orEmpty(),
+                        items = items,
+                        fallback = root.get("fallback")?.takeIf { !it.isJsonNull }?.asBoolean ?: false,
+                    )
+                )
+            }
+        } catch (_: Exception) { DjResult.Failure }
+    }
 
     private fun String.encode(): String = URLEncoder.encode(this, "UTF-8")
 }

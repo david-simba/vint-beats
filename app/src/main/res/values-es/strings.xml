@@ -56,4 +56,21 @@
     <!-- Common -->
 
     <!-- Home sections -->
+    <string name="dj_title">DJ</string>
+    <string name="dj_subtitle">Dile al DJ qué te apetece y él elegirá y presentará las canciones.</string>
+    <string name="dj_prompt_label">¿Qué quieres escuchar?</string>
+    <string name="dj_prompt_placeholder">Reguetón viejo para fiesta</string>
+    <string name="dj_start">Empezar el DJ</string>
+    <string name="dj_loading">El DJ está eligiendo canciones…</string>
+    <string name="dj_stop">Detener el DJ</string>
+    <string name="dj_speaking">EL DJ ESTÁ HABLANDO</string>
+    <string name="dj_on_air">EN EL AIRE</string>
+    <string name="dj_now_playing">SONANDO AHORA</string>
+    <string name="dj_error_generic">El DJ no pudo empezar. Inténtalo de nuevo.</string>
+    <string name="dj_error_rate_limit">Demasiadas solicitudes. Espera un minuto e inténtalo de nuevo.</string>
+    <string name="dj_error_not_found">El DJ no encontró canciones para eso. Prueba otra cosa.</string>
+    <string name="dj_suggestion_1">Reguetón viejo para fiesta</string>
+    <string name="dj_suggestion_2">Algo tranquilo para estudiar</string>
+    <string name="dj_suggestion_3">Música para entrenar</string>
+    <string name="dj_suggestion_4">Para un viaje en carretera</string>
 </resources>
