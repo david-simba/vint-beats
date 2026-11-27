@@ -446,7 +446,7 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
         viewModelScope.launch {
             val last = sessionPreferences.lastTrack.firstOrNull() ?: return@launch
             if (_currentTrack.value != null) return@launch
-            _currentTrack.value = Track(
+            val restored = Track(
                 id = last.trackId,
                 title = last.title,
                 artist = last.artist,
@@ -454,6 +454,24 @@ class PlaybackViewModel @OptIn(UnstableApi::class)
                 previewUrl = null,
                 durationText = ""
             )
+            _currentTrack.value = restored
+            loadRestoredExtras(restored)
+        }
+    }
+
+    /** La canción restaurada aún no suena, pero su letra y "A continuación" deben verse ya. */
+    private fun loadRestoredExtras(track: Track) {
+        _isLoadingLyrics.value = true
+        viewModelScope.launch {
+            val lines = lyricsProvider.syncedLyrics(track.title, track.artist)
+            if (_currentTrack.value?.id == track.id) _syncedLyrics.value = lines
+            _isLoadingLyrics.value = false
+        }
+        _isQueueLoading.value = true
+        queueFetchJob = viewModelScope.launch {
+            val upNext = upNextProvider.upNext(track.id)
+            if (_currentTrack.value?.id == track.id && _queue.value.isEmpty()) _queue.value = upNext
+            _isQueueLoading.value = false
         }
     }
 
