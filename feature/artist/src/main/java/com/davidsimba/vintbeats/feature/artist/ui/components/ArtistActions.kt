@@ -1,6 +1,5 @@
 package com.davidsimba.vintbeats.feature.artist.ui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Shuffle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,23 +25,21 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.davidsimba.vintbeats.core.designsystem.theme.Fondo
 import com.davidsimba.vintbeats.feature.artist.R
 
-/** Fila bajo la foto: Seguir a la izquierda; Aleatorio y Reproducir a la derecha. */
+/** Fila bajo la foto: Seguir y, a su lado, Aleatorio. */
 @Composable
 fun ArtistActionRow(
-    artistName: String,
     isFollowing: Boolean,
     onToggleFollow: () -> Unit,
     onShuffle: () -> Unit,
-    onPlay: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
@@ -68,34 +64,13 @@ fun ArtistActionRow(
                 )
             }
         }
-        Row(
-            modifier = Modifier.weight(1f),
-            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            IconButton(onClick = onShuffle, modifier = Modifier.size(44.dp)) {
-                Icon(
-                    imageVector = Icons.Rounded.Shuffle,
-                    contentDescription = stringResource(R.string.artist_shuffle),
-                    tint = Color.White,
-                    modifier = Modifier.size(26.dp),
-                )
-            }
-            Box(
-                modifier = Modifier
-                    .size(56.dp)
-                    .clip(CircleShape)
-                    .background(Color.White)
-                    .clickable(role = Role.Button, onClick = onPlay),
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.PlayArrow,
-                    contentDescription = stringResource(R.string.artist_play, artistName),
-                    tint = Fondo,
-                    modifier = Modifier.size(32.dp),
-                )
-            }
+        IconButton(onClick = onShuffle, modifier = Modifier.size(44.dp)) {
+            Icon(
+                imageVector = Icons.Rounded.Shuffle,
+                contentDescription = stringResource(R.string.artist_shuffle),
+                tint = Color.White,
+                modifier = Modifier.size(26.dp),
+            )
         }
     }
 }

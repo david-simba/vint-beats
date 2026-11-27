@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,6 +43,7 @@ fun ArtistHeader(
     name: String,
     imageUrl: String?,
     onBack: () -> Unit,
+    onPlay: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -65,10 +67,28 @@ fun ArtistHeader(
                 .background(Brush.verticalGradient(listOf(Color.Transparent, Fondo)))
         )
         ArtistBackButton(onBack = onBack, modifier = Modifier.align(Alignment.TopStart))
+        // Reproducir: a la derecha, a la altura del final del nombre.
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 20.dp, bottom = 12.dp)
+                .size(56.dp)
+                .clip(CircleShape)
+                .background(Color.White)
+                .clickable(role = Role.Button, onClick = onPlay),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.PlayArrow,
+                contentDescription = stringResource(R.string.artist_play, name),
+                tint = Fondo,
+                modifier = Modifier.size(32.dp),
+            )
+        }
         Column(
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(start = 20.dp, end = 20.dp, bottom = 12.dp)
+                .padding(start = 20.dp, end = 88.dp, bottom = 12.dp)
         ) {
             Text(
                 text = stringResource(R.string.artist_label),

@@ -84,11 +84,15 @@ fun ArtistScreen(
                             name = state.artist.name,
                             imageUrl = state.artist.thumbnailUrl.toHighRes(),
                             onBack = onBack,
+                            onPlay = {
+                                if (state.topTracks.isNotEmpty() && !isLoadingPlay) {
+                                    viewModel.loadPlayQueue { tracks -> onPlayArtist(tracks) }
+                                }
+                            },
                         )
                     }
                     item {
                         ArtistActionRow(
-                            artistName = state.artist.name,
                             isFollowing = isSaved,
                             onToggleFollow = viewModel::toggleSave,
                             onShuffle = {
@@ -99,12 +103,16 @@ fun ArtistScreen(
                                     viewModel.loadPlayQueue { tracks -> onPlayArtist(tracks.shuffled()) }
                                 }
                             },
-                            onPlay = {
-                                if (state.topTracks.isNotEmpty() && !isLoadingPlay) {
-                                    viewModel.loadPlayQueue { tracks -> onPlayArtist(tracks) }
-                                }
-                            },
                         )
+                    }
+                    if (state.albums.isNotEmpty()) {
+                        item {
+                            ArtistDiscographySection(
+                                albums = state.albums,
+                                onAlbumClick = onAlbumSelected,
+                                modifier = Modifier.padding(top = 24.dp),
+                            )
+                        }
                     }
                     if (state.topTracks.isNotEmpty()) {
                         item {
@@ -113,15 +121,6 @@ fun ArtistScreen(
                                 tracks = state.topTracks,
                                 onTrackClick = onTrackSelected,
                                 onTrackLongClick = { selectedTrack = it },
-                                modifier = Modifier.padding(top = 24.dp),
-                            )
-                        }
-                    }
-                    if (state.albums.isNotEmpty()) {
-                        item {
-                            ArtistDiscographySection(
-                                albums = state.albums,
-                                onAlbumClick = onAlbumSelected,
                                 modifier = Modifier.padding(top = 32.dp),
                             )
                         }
