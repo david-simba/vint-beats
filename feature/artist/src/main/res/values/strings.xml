@@ -1,7 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="artist_label">Artist</string>
+    <string name="artist_back">Back</string>
+    <string name="artist_follow">Follow</string>
+    <string name="artist_following">Following</string>
+    <string name="artist_shuffle">Shuffle</string>
+    <string name="artist_play">Play %1$s</string>
+    <string name="artist_track_options">More options for %1$s</string>
+    <string name="artist_listen">Listen</string>
+    <string name="artist_radio_with_one">With %1$s and more</string>
+    <string name="artist_radio_with_two">With %1$s, %2$s and more</string>
+    <string name="artist_discography">Discography</string>
+    <string name="artist_singles">Singles &amp; EPs</string>
+    <string name="artist_collaborations">Collaborations</string>
+    <string name="artist_type_album">Album</string>
+    <string name="artist_type_single">Single</string>
+    <string name="artist_type_ep">EP</string>
+    <string name="artist_type_year">%1$s · %2$s</string>
     <string name="artist_albums">Albums</string>
-    <string name="artist_discover_more">Discover more</string>
-    <string name="artist_no_songs">No songs available.</string>
-    <string name="artist_top_songs">Top Songs</string>
+    <string name="artist_see_all">See all</string>
+    <string name="artist_no_singles">No singles or EPs available yet.</string>
+    <string name="artist_top5_title">Top 5 of %1$s</string>
+    <string name="artist_top5_item">Number %1$d, %2$s, %3$s. Play</string>
 </resources>

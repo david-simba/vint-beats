@@ -1,7 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="artist_albums">Álbums</string>
-    <string name="artist_discover_more">Descubre más</string>
-    <string name="artist_no_songs">No hay canciones disponibles.</string>
-    <string name="artist_top_songs">Top Canciones</string>
+    <string name="artist_label">Artista</string>
+    <string name="artist_back">Volver</string>
+    <string name="artist_follow">Seguir</string>
+    <string name="artist_following">Siguiendo</string>
+    <string name="artist_shuffle">Aleatorio</string>
+    <string name="artist_play">Reproducir %1$s</string>
+    <string name="artist_track_options">Más opciones de %1$s</string>
+    <string name="artist_listen">Para escuchar</string>
+    <string name="artist_radio_with_one">Con %1$s y más</string>
+    <string name="artist_radio_with_two">Con %1$s, %2$s y más</string>
+    <string name="artist_discography">Discografía</string>
+    <string name="artist_singles">Sencillos y EP</string>
+    <string name="artist_collaborations">Colaboraciones</string>
+    <string name="artist_type_album">Álbum</string>
+    <string name="artist_type_single">Sencillo</string>
+    <string name="artist_type_ep">EP</string>
+    <string name="artist_type_year">%1$s · %2$s</string>
+    <string name="artist_albums">Álbumes</string>
+    <string name="artist_see_all">Ver todo</string>
+    <string name="artist_no_singles">Aún no hay sencillos ni EP disponibles.</string>
+    <string name="artist_top5_title">Top 5 de %1$s</string>
+    <string name="artist_top5_item">Número %1$d, %2$s, %3$s. Reproducir</string>
 </resources>

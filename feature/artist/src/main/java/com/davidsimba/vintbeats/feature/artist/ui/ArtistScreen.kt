@@ -2,24 +2,14 @@ package com.davidsimba.vintbeats.feature.artist.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Favorite
-import androidx.compose.material.icons.rounded.FavoriteBorder
-import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,33 +18,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davidsimba.vintbeats.core.model.Album
 import com.davidsimba.vintbeats.core.model.Track
-import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistAlbumsList
-import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistTopSongItem
-import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistTopSongsEmpty
-import com.davidsimba.vintbeats.core.designsystem.components.collection.MixRadioRow
+import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistActionRow
+import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistDiscographySection
+import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistListenSection
+import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistTop5Section
+import com.davidsimba.vintbeats.feature.artist.ui.components.ArtistHeader
 import com.davidsimba.vintbeats.core.ui.AddToPlaylistController
 import com.davidsimba.vintbeats.core.common.QueueController
 import com.davidsimba.vintbeats.core.ui.TrackActionsViewModel
-import com.davidsimba.vintbeats.core.designsystem.components.collection.CollectionAppBar
-import com.davidsimba.vintbeats.core.designsystem.components.collection.CollectionHeader
-import com.davidsimba.vintbeats.core.designsystem.components.layout.SectionLabel
 import com.davidsimba.vintbeats.core.designsystem.components.track.TrackOptionsBottomSheet
-import com.davidsimba.vintbeats.core.designsystem.components.collection.rememberScrollAppBarAlpha
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgDark
 import com.davidsimba.vintbeats.core.common.toHighRes
+import com.davidsimba.vintbeats.core.designsystem.theme.Fondo
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGray
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageRedLight
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
-import com.davidsimba.vintbeats.core.designsystem.R as DsR
-import com.davidsimba.vintbeats.feature.artist.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,12 +57,10 @@ fun ArtistScreen(
     val downloadedTrackIds by trackActionsViewModel.downloadedTrackIds.collectAsStateWithLifecycle()
     val downloadingTrackIds by trackActionsViewModel.downloadingTrackIds.collectAsStateWithLifecycle()
     val lazyListState = rememberLazyListState()
-    val appBarAlpha = rememberScrollAppBarAlpha(lazyListState)
-    val artistName = (uiState as? ArtistUiState.Success)?.artist?.name.orEmpty()
 
     var selectedTrack by remember { mutableStateOf<Track?>(null) }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().background(Fondo)) {
         when (val state = uiState) {
             is ArtistUiState.Loading -> {
                 CircularProgressIndicator(
@@ -99,101 +78,85 @@ fun ArtistScreen(
             }
 
             is ArtistUiState.Success -> {
-                LazyColumn(state = lazyListState, modifier = Modifier.fillMaxSize().background(VintageBgDark)) {
+                LazyColumn(state = lazyListState, modifier = Modifier.fillMaxSize().background(Fondo)) {
                     item {
-                        CollectionHeader(
-                            title = state.artist.name,
-                            subtitle = stringResource(DsR.string.label_artist),
+                        ArtistHeader(
+                            name = state.artist.name,
                             imageUrl = state.artist.thumbnailUrl.toHighRes(),
-                            placeholderIcon = Icons.Rounded.Person,
-                            imageAlignment = Alignment.TopCenter,
-                            onPlayAll = if (state.topTracks.isNotEmpty() && !isLoadingPlay) {
-                                { viewModel.loadPlayQueue { tracks -> onPlayArtist(tracks) } }
-                            } else null
+                            onBack = onBack,
                         )
                     }
                     item {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-                                .background(VintageBgDark)
-                        ) {
-                            if (state.topTracks.isNotEmpty()) {
-                                Spacer(Modifier.height(6.dp))
-                                SectionLabel(stringResource(R.string.artist_top_songs))
-                                state.topTracks.forEachIndexed { index, track ->
-                                    ArtistTopSongItem(
-                                        index = index + 1,
-                                        track = track,
-                                        onClick = { onTrackSelected(track) },
-                                        onMenuClick = { selectedTrack = track }
-                                    )
+                        ArtistActionRow(
+                            artistName = state.artist.name,
+                            isFollowing = isSaved,
+                            onToggleFollow = viewModel::toggleSave,
+                            onShuffle = {
+                                val mixTracks = state.mix?.tracks.orEmpty()
+                                if (mixTracks.isNotEmpty()) {
+                                    onPlayArtist(mixTracks.shuffled())
+                                } else if (!isLoadingPlay) {
+                                    viewModel.loadPlayQueue { tracks -> onPlayArtist(tracks.shuffled()) }
                                 }
-                            } else {
-                                ArtistTopSongsEmpty()
-                            }
-
-                            if (state.albums.isNotEmpty()) {
-                                Spacer(Modifier.height(12.dp))
-                                SectionLabel(stringResource(R.string.artist_albums))
-                                ArtistAlbumsList(
-                                    albums = state.albums,
-                                    onAlbumClick = { album -> onAlbumSelected(album) }
-                                )
-                            }
-
-                            if (state.mix != null || state.radio != null) {
-                                Spacer(Modifier.height(12.dp))
-                                SectionLabel(stringResource(R.string.artist_discover_more))
-                                Spacer(Modifier.height(8.dp))
-                                MixRadioRow(
-                                    artistId = state.artist.id,
-                                    artistName = state.artist.name,
-                                    mixThumbnailUrl = state.mix?.thumbnailUrl.toHighRes(),
-                                    radioImages = state.radio?.artistImages ?: emptyList(),
-                                    onMixClick = {
-                                        val mix = state.mix ?: return@MixRadioRow
-                                        val mixPlaylistId = mix.playlistId
-                                        if (mixPlaylistId != null) {
-                                            onMixPlaylistSelected(mixPlaylistId)
-                                        } else if (mix.tracks.isNotEmpty()) {
-                                            onPlayMixTrack(mix.tracks.first(), mix.tracks.drop(1))
-                                        }
-                                    },
-                                    onRadioClick = {
-                                        state.radio?.tracks?.let { tracks ->
-                                            if (tracks.isNotEmpty()) onPlayMixTrack(tracks.first(), tracks.drop(1))
-                                        }
-                                    },
-                                )
-                            }
-
-                            Spacer(Modifier.height(100.dp))
+                            },
+                            onPlay = {
+                                if (state.topTracks.isNotEmpty() && !isLoadingPlay) {
+                                    viewModel.loadPlayQueue { tracks -> onPlayArtist(tracks) }
+                                }
+                            },
+                        )
+                    }
+                    if (state.topTracks.isNotEmpty()) {
+                        item {
+                            ArtistTop5Section(
+                                artistName = state.artist.name,
+                                tracks = state.topTracks,
+                                onTrackClick = onTrackSelected,
+                                onTrackLongClick = { selectedTrack = it },
+                                modifier = Modifier.padding(top = 24.dp),
+                            )
                         }
                     }
+                    if (state.albums.isNotEmpty()) {
+                        item {
+                            ArtistDiscographySection(
+                                albums = state.albums,
+                                onAlbumClick = onAlbumSelected,
+                                modifier = Modifier.padding(top = 32.dp),
+                            )
+                        }
+                    }
+                    if (state.mix != null || state.radio != null) {
+                        item {
+                            ArtistListenSection(
+                                artist = state.artist,
+                                mix = state.mix,
+                                mixThumbnailUrl = state.mix?.thumbnailUrl.toHighRes(),
+                                radio = state.radio,
+                                onMixClick = {
+                                    val mix = state.mix ?: return@ArtistListenSection
+                                    val mixPlaylistId = mix.playlistId
+                                    if (mixPlaylistId != null) {
+                                        onMixPlaylistSelected(mixPlaylistId)
+                                    } else if (mix.tracks.isNotEmpty()) {
+                                        onPlayMixTrack(mix.tracks.first(), mix.tracks.drop(1))
+                                    }
+                                },
+                                onRadioClick = {
+                                    state.radio?.tracks?.let { tracks ->
+                                        if (tracks.isNotEmpty()) onPlayMixTrack(tracks.first(), tracks.drop(1))
+                                    }
+                                },
+                                modifier = Modifier.padding(top = 32.dp),
+                            )
+                        }
+                    }
+                    // Espacio para que el mini player y la barra no tapen la última sección.
+                    item { Spacer(Modifier.height(120.dp)) }
                 }
             }
         }
 
-        CollectionAppBar(
-            title = artistName,
-            alpha = appBarAlpha,
-            onBack = onBack,
-            modifier = Modifier.align(Alignment.TopStart).zIndex(1f),
-            trailingContent = {
-                if (uiState is ArtistUiState.Success) {
-                    IconButton(onClick = viewModel::toggleSave) {
-                        Icon(
-                            imageVector = if (isSaved) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
-                            contentDescription = null,
-                            tint = if (isSaved) VintageRedLight else VintageWhite,
-                            modifier = Modifier.size(22.dp)
-                        )
-                    }
-                }
-            }
-        )
     }
 
     selectedTrack?.let { track ->
