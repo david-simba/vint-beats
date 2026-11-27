@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,67 +27,57 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.davidsimba.vintbeats.core.model.Album
-import com.davidsimba.vintbeats.core.model.Artist
 import com.davidsimba.vintbeats.core.model.ExploreCategory
 import com.davidsimba.vintbeats.core.model.PlaylistSummary
 import com.davidsimba.vintbeats.feature.search.ui.CategorySheetState
 import androidx.compose.material3.CircularProgressIndicator
 import com.davidsimba.vintbeats.core.designsystem.components.track.TrackInfo
-import com.davidsimba.vintbeats.core.designsystem.components.cards.CategoryCard
-import com.davidsimba.vintbeats.core.designsystem.components.cards.CategoryCardSkeleton
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgDark
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageBlue
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageBrownLight
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGray
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageGreen
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageOrange
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageRed
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageTeal
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageYellow
 import com.davidsimba.vintbeats.feature.search.R
-import com.davidsimba.vintbeats.core.designsystem.R as DsR
-
-private val categoryColors = listOf(
-    VintageRed, VintageOrange, VintageYellow,
-    VintageGreen, VintageTeal, VintageBlue,
-    VintageBrownLight, VintageTeal, VintageRed, VintageGreen
-)
 
 fun LazyListScope.exploreGrid(
     categories: List<ExploreCategory>,
     onCategoryClick: (ExploreCategory) -> Unit
 ) {
+    item(key = "explorar_titulo") {
+        SearchSectionTitle(
+            text = stringResource(R.string.search_explore_title),
+            modifier = Modifier.padding(top = 12.dp),
+        )
+    }
     if (categories.isEmpty()) {
         items(3) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 12.dp, top = 6.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    .padding(horizontal = 20.dp)
+                    .padding(bottom = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                CategoryCardSkeleton(modifier = Modifier.weight(1f))
-                CategoryCardSkeleton(modifier = Modifier.weight(1f))
+                ExploreCardSkeleton(modifier = Modifier.weight(1f))
+                ExploreCardSkeleton(modifier = Modifier.weight(1f))
             }
         }
         return
     }
 
-    val rows = categories.chunked(2)
-    items(rows) { row ->
+    val ordered = categories.seasonalLast()
+    items(ordered.chunked(2)) { row ->
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 12.dp, top = 6.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(horizontal = 20.dp)
+                .padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             row.forEach { category ->
-                CategoryCard(
-                    title = category.title,
-                    color = categoryColors[categories.indexOf(category) % categoryColors.size],
+                val index = ordered.indexOf(category)
+                val title = category.nameRes()?.let { stringResource(it) } ?: category.title
+                ExploreCard(
+                    title = title,
+                    color = exploreCardColors[index % exploreCardColors.size],
                     modifier = Modifier.weight(1f),
                     onClick = { onCategoryClick(category) }
                 )
@@ -165,66 +154,6 @@ fun PlaylistRow(playlist: PlaylistSummary, onClick: () -> Unit) {
             title = playlist.title,
             artist = playlist.subtitle,
             titleSize = 14.sp,
-            titleWeight = FontWeight.SemiBold
-        )
-    }
-}
-
-@Composable
-fun ArtistRow(artist: Artist, onClick: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        AsyncImage(
-            model = artist.thumbnailUrl,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(44.dp)
-                .clip(CircleShape)
-                .background(VintageBgDark)
-        )
-        Spacer(Modifier.width(14.dp))
-        TrackInfo(
-            title = artist.name,
-            artist = stringResource(DsR.string.label_artist),
-            titleSize = 15.sp,
-            titleWeight = FontWeight.SemiBold
-        )
-    }
-}
-
-@Composable
-fun AlbumRow(album: Album, onClick: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        AsyncImage(
-            model = album.thumbnailUrl,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(44.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(VintageBgDark)
-        )
-        Spacer(Modifier.width(14.dp))
-        val albumLabel = stringResource(R.string.label_album)
-        TrackInfo(
-            title = album.title,
-            artist = buildString {
-                append(albumLabel)
-                if (!album.year.isNullOrBlank()) append("  •  ${album.year}")
-            },
-            titleSize = 15.sp,
             titleWeight = FontWeight.SemiBold
         )
     }
