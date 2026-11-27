@@ -106,7 +106,7 @@ class HomeViewModel @Inject constructor(
         val trackItems = tracks.map { QuickAccessItem.Track(it.trackId, it.title, it.artist, it.thumbnailUrl) }
         val lists = listOf<List<QuickAccessItem>>(albumItems, trackItems, playlistItems)
         val interleaved = (0 until lists.maxOf { it.size }).flatMap { i -> lists.mapNotNull { it.getOrNull(i) } }
-        (listOf(QuickAccessItem.Favorites) + interleaved).distinctBy { it.key }.take(6)
+        (listOf(QuickAccessItem.Favorites) + interleaved).distinctBy { it.key }.take(8)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), listOf(QuickAccessItem.Favorites))
 
     fun recordPlaylist(id: String, thumbnailUrl: String?, artistId: String?, artistName: String?) {

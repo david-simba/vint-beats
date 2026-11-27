@@ -33,7 +33,7 @@ import com.davidsimba.vintbeats.core.designsystem.theme.colorAcento
 import com.davidsimba.vintbeats.feature.home.R
 import com.davidsimba.vintbeats.feature.home.domain.QuickAccessItem
 
-private const val MAX_ITEMS = 6
+private const val MAX_ITEMS = 8
 
 @Composable
 fun QuickAccessSection(
@@ -73,7 +73,7 @@ private fun QuickAccessTile(
     val title = item.title ?: stringResource(R.string.home_canciones_que_te_gustan)
     Row(
         modifier = modifier
-            .height(56.dp)
+            .height(48.dp)
             .clip(RoundedCornerShape(8.dp))
             .background(Superficie)
             .clickable(onClick = onClick),
@@ -81,7 +81,7 @@ private fun QuickAccessTile(
     ) {
         if (item is QuickAccessItem.Favorites) {
             Box(
-                modifier = Modifier.size(56.dp).background(colorAcento),
+                modifier = Modifier.size(48.dp).background(colorAcento),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
@@ -96,7 +96,7 @@ private fun QuickAccessTile(
                 model = item.thumbnailUrl,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.size(56.dp).background(Superficie),
+                modifier = Modifier.size(48.dp).background(Superficie),
             )
         }
         Text(
