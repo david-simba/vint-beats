@@ -7,20 +7,23 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CameraAlt
-import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgDark
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayDeep
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid
+import com.davidsimba.vintbeats.core.designsystem.theme.colorAcento
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
 import java.io.File
 
@@ -29,6 +32,7 @@ fun ProfileAvatar(
     photoPath: String?,
     photoVersion: Long,
     size: androidx.compose.ui.unit.Dp = 100.dp,
+    name: String = "",
     showCameraBadge: Boolean = false,
     onClick: () -> Unit = {},
 ) {
@@ -39,7 +43,7 @@ fun ProfileAvatar(
             modifier = Modifier
                 .matchParentSize()
                 .clip(CircleShape)
-                .background(VintageGrayDeep)
+                .background(if (photoPath != null) VintageGrayDeep else colorAcento)
                 .then(if (showCameraBadge) Modifier.clickable { onClick() } else Modifier),
             contentAlignment = Alignment.Center,
         ) {
@@ -55,12 +59,15 @@ fun ProfileAvatar(
                     modifier = Modifier.matchParentSize(),
                 )
             } else {
-                Icon(
-                    imageVector = Icons.Rounded.Person,
-                    contentDescription = null,
-                    tint = VintageGrayMid,
-                    modifier = Modifier.size(50.dp),
-                )
+                val initial = name.trim().firstOrNull()?.uppercase().orEmpty()
+                if (initial.isNotEmpty()) {
+                    Text(
+                        text = initial,
+                        color = Color(0xFF0E0E10),
+                        fontSize = (size.value * 0.42f).sp,
+                        fontWeight = FontWeight.ExtraBold,
+                    )
+                }
             }
         }
         if (showCameraBadge) {

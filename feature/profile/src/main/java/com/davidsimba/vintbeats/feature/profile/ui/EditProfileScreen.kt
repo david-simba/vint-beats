@@ -147,6 +147,7 @@ fun EditProfileScreen(
             photoPath = photoPath,
             photoVersion = photoVersion,
             size = 100.dp,
+            name = name,
             showCameraBadge = true,
             onClick = {
                 imagePicker.launch(
