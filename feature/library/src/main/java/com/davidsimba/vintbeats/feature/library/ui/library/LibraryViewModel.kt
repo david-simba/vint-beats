@@ -49,11 +49,12 @@ class LibraryViewModel @Inject constructor(
     val isGridView: StateFlow<Boolean> = preferences.isGridView
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
-    private val _filter = MutableStateFlow(LibraryFilter.User)
-    val filter: StateFlow<LibraryFilter> = _filter.asStateFlow()
+    /** null = sin filtro (se ve todo). Tocar el filtro activo lo desmarca. */
+    private val _filter = MutableStateFlow<LibraryFilter?>(null)
+    val filter: StateFlow<LibraryFilter?> = _filter.asStateFlow()
 
     fun setFilter(filter: LibraryFilter) {
-        _filter.value = filter
+        _filter.value = if (_filter.value == filter) null else filter
     }
 
     fun toggleGridView() {

@@ -8,13 +8,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,47 +23,40 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.core.designsystem.components.layout.ImageShape
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgDark
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhiteWarm
 
+/** Fila de 64dp: portada de 52dp (circular para artistas), título y subtítulo. */
 @Composable
 internal fun LibraryCardList(
     modifier: Modifier = Modifier,
     icon: ImageVector,
-    iconTint: Color,
-    iconBg: Color,
     title: String,
     subtitle: String,
     onClick: () -> Unit,
     imageUrl: String? = null,
     imageShape: ImageShape = ImageShape.Square,
 ) {
-    val clipShape = when (imageShape) {
-        ImageShape.Circle -> CircleShape
-        ImageShape.Square -> RoundedCornerShape(10.dp)
-    }
+    val clipShape = if (imageShape == ImageShape.Circle) CircleShape else RoundedCornerShape(6.dp)
 
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
-            .background(VintageBgDark)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .height(64.dp)
+            .clickable(role = Role.Button, onClick = onClick)
+            .padding(horizontal = 20.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
             modifier = Modifier
-                .size(44.dp)
+                .size(52.dp)
                 .clip(clipShape)
-                .background(iconBg),
+                .background(LibraryCardColor),
             contentAlignment = Alignment.Center,
         ) {
             if (imageUrl != null) {
@@ -72,36 +64,38 @@ internal fun LibraryCardList(
                     model = imageUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize().clip(clipShape),
+                    modifier = Modifier.fillMaxSize(),
                 )
             } else {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = iconTint,
-                    modifier = Modifier.size(22.dp),
+                    tint = LibrarySecondary,
+                    modifier = Modifier.size(24.dp),
                 )
             }
         }
-        Spacer(Modifier.width(12.dp))
+        Spacer(Modifier.width(14.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
-                color = VintageWhiteWarm,
+                color = LibraryPrimary,
                 fontSize = 15.sp,
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
             Text(
                 text = subtitle,
-                color = VintageGrayMid,
-                fontSize = 12.sp,
+                color = LibrarySecondary,
+                fontSize = 13.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
-        Icon(
-            imageVector = Icons.Rounded.ChevronRight,
-            contentDescription = null,
-            tint = VintageWhite.copy(alpha = 0.3f),
-            modifier = Modifier.size(20.dp),
-        )
     }
 }
+
+internal val LibraryCardColor = Color(0xFF1C1C1F)
+internal val LibraryPrimary = Color(0xFFF4F4F5)
+internal val LibrarySecondary = Color(0xFFA1A1AA)

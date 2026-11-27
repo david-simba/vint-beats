@@ -36,4 +36,6 @@
     <string name="terms_service_body">Vint is a personal music app that lets you discover, save and listen to music. Audio content is streamed from third-party sources and Vint does not host any music files.</string>
     <string name="terms_service_title">2. Description of Service</string>
     <string name="terms_title">Terms &amp; Conditions</string>
+    <string name="profile_cover_background_title">Cover as background</string>
+    <string name="profile_cover_background_subtitle">The cover fills the player background</string>
 </resources>

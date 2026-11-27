@@ -37,6 +37,13 @@ class ProfileViewModel @Inject constructor(
     val equalizerEnabled: StateFlow<Boolean> = prefs.showEqualizer
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
+    val coverAsBackground: StateFlow<Boolean> = prefs.coverAsBackground
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+    fun setCoverAsBackground(enabled: Boolean) {
+        viewModelScope.launch { prefs.setCoverAsBackground(enabled) }
+    }
+
     fun setAutoDownloadFavorites(enabled: Boolean) {
         viewModelScope.launch { prefs.setAutoDownloadFavorites(enabled) }
     }

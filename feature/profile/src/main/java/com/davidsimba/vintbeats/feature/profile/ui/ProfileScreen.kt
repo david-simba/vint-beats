@@ -13,6 +13,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Download
+import androidx.compose.material.icons.rounded.Image
 import androidx.compose.material.icons.rounded.Tune
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -52,6 +53,7 @@ fun ProfileScreen(
     val photoVersion by viewModel.photoVersion.collectAsStateWithLifecycle()
     val autoDownload by viewModel.autoDownloadFavorites.collectAsStateWithLifecycle()
     val equalizerEnabled by viewModel.equalizerEnabled.collectAsStateWithLifecycle()
+    val coverAsBackground by viewModel.coverAsBackground.collectAsStateWithLifecycle()
     val uriHandler = LocalUriHandler.current
     val context = LocalContext.current
     val versionName = remember {
@@ -129,6 +131,14 @@ fun ProfileScreen(
                 subtitle = stringResource(R.string.profile_equalizer_subtitle),
                 checked = equalizerEnabled,
                 onCheckedChange = viewModel::setEqualizerEnabled,
+            )
+            ProfileRowDivider()
+            ProfileToggleRow(
+                icon = Icons.Rounded.Image,
+                title = stringResource(R.string.profile_cover_background_title),
+                subtitle = stringResource(R.string.profile_cover_background_subtitle),
+                checked = coverAsBackground,
+                onCheckedChange = viewModel::setCoverAsBackground,
             )
         }
 

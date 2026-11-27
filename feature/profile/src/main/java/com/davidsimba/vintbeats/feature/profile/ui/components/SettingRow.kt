@@ -39,6 +39,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.davidsimba.vintbeats.core.designsystem.theme.VintRed
 import com.davidsimba.vintbeats.core.designsystem.theme.colorAcento
 
 private val CardColor = Color(0xFF1C1C1F)
@@ -189,7 +190,7 @@ fun ProfileToggleRow(
 @Composable
 private fun ProfileSwitch(checked: Boolean) {
     val track by animateColorAsState(
-        if (checked) colorAcento else Color(0xFF3F3F46),
+        if (checked) VintRed else Color(0xFF3F3F46),
         tween(200),
         label = "switch_track",
     )

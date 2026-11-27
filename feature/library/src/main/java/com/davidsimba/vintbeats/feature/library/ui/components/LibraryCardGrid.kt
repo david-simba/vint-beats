@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,50 +18,40 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.core.designsystem.components.layout.ImageShape
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgDark
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageGrayMid
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhiteWarm
 
+/** Celda de la vista en cuadrícula: mismos textos y radios que la fila de lista. */
 @Composable
 internal fun LibraryCardGrid(
     modifier: Modifier = Modifier,
     icon: ImageVector,
-    iconTint: Color,
-    iconBg: Color,
     title: String,
     subtitle: String,
     onClick: () -> Unit,
     imageUrl: String? = null,
     imageShape: ImageShape = ImageShape.Square,
 ) {
-    val clipShape = when (imageShape) {
-        ImageShape.Circle -> CircleShape
-        ImageShape.Square -> RoundedCornerShape(8.dp)
-    }
+    val clipShape = if (imageShape == ImageShape.Circle) CircleShape else RoundedCornerShape(6.dp)
 
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(14.dp))
-            .background(VintageBgDark)
-            .clickable(onClick = onClick)
-            .padding(vertical = 10.dp, horizontal = 6.dp),
-        horizontalAlignment = Alignment.Start,
+            .clickable(role = Role.Button, onClick = onClick),
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f)
                 .clip(clipShape)
-                .background(iconBg),
+                .background(LibraryCardColor),
             contentAlignment = Alignment.Center,
         ) {
             if (imageUrl != null) {
@@ -70,28 +59,32 @@ internal fun LibraryCardGrid(
                     model = imageUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize().clip(clipShape),
+                    modifier = Modifier.fillMaxSize(),
                 )
             } else {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = iconTint,
+                    tint = LibrarySecondary,
                     modifier = Modifier.size(36.dp),
                 )
             }
         }
-        Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(8.dp))
         Text(
             text = title,
-            color = VintageWhiteWarm,
+            color = LibraryPrimary,
             fontSize = 14.sp,
-            fontWeight = FontWeight.SemiBold,
+            fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
         Text(
             text = subtitle,
-            color = VintageGrayMid,
-            fontSize = 11.sp,
+            color = LibrarySecondary,
+            fontSize = 12.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }

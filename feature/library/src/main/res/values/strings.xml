@@ -25,9 +25,9 @@
     <string name="library_filter_artists">Artists</string>
     <string name="library_filter_artists_empty">No saved artists yet</string>
     <string name="library_filter_yours">100% You</string>
-    <string name="library_title">Library</string>
+    <string name="library_title">Your library</string>
     <string name="playlist_add_photo">Add photo</string>
     <string name="playlist_empty_short">No songs yet</string>
     <string name="playlist_name_hint">Playlist name</string>
     <string name="save_playlist_action">Save</string>
-</resources>
+    <string name="library_filter_playlists">Playlists</string>\n    <string name="library_recent">Recent</string>\n    <string name="library_liked_title">Liked songs</string>\n    <string name="library_songs_one">%d song</string>\n    <string name="library_songs_many">%d songs</string>\n    <string name="library_downloads_one">%d song · offline</string>\n    <string name="library_downloads_many">%d songs · offline</string>\n    <string name="library_subtitle_playlist_one">Playlist · %d song</string>\n    <string name="library_subtitle_playlist_many">Playlist · %d songs</string>\n    <string name="library_subtitle_album">Album · %s</string>\n    <string name="library_view_list">Switch to list view</string>\n    <string name="library_view_grid">Switch to grid view</string>\n    <string name="library_create_playlist">Create playlist</string>\n    <string name="library_empty_all_title">Create your first playlist</string>\n    <string name="library_empty_all_text">Keep your songs in one place. Albums and artists you save will show up here too.</string>\n    <string name="library_empty_playlists_title">No playlists yet</string>\n    <string name="library_empty_playlists_text">Create one and add songs from any song menu.</string>\n    <string name="library_empty_albums_title">No saved albums yet</string>\n    <string name="library_empty_albums_text">Tap the heart on an album to keep it here.</string>\n    <string name="library_empty_artists_title">You are not following artists yet</string>\n    <string name="library_empty_artists_text">Tap Follow on an artist profile to see them here.</string>\n</resources>
