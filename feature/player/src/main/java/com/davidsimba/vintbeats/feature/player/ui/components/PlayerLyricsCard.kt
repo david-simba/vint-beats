@@ -1,6 +1,7 @@
 package com.davidsimba.vintbeats.feature.player.ui.components
 
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
@@ -64,10 +65,10 @@ fun PlayerLyricsCard(
     LaunchedEffect(currentIndex) {
         if (currentIndex < 0) return@LaunchedEffect
         if (!initialScrollDone) {
-            listState.scrollToItem(maxOf(0, currentIndex - 2))
+            listState.scrollToItem(maxOf(0, currentIndex - 1))
             initialScrollDone = true
         } else if (!listState.isScrollInProgress) {
-            listState.animateScrollToItem(maxOf(0, currentIndex - 2))
+            listState.animateScrollToItem(maxOf(0, currentIndex - 1))
         }
     }
 
@@ -123,6 +124,12 @@ fun PlayerLyricsCard(
                             animationSpec = tween(400),
                             label = "lyric_alpha"
                         )
+                        // La línea actual (blanca) respira: más espacio arriba y abajo.
+                        val verticalPadding by animateDpAsState(
+                            targetValue = if (index == currentIndex) 16.dp else 5.dp,
+                            animationSpec = tween(400),
+                            label = "lyric_padding"
+                        )
                         Text(
                             text = line.text,
                             color = Color.White,
@@ -131,7 +138,7 @@ fun PlayerLyricsCard(
                             lineHeight = 26.sp,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 5.dp)
+                                .padding(vertical = verticalPadding)
                                 .padding(end = 8.dp)
                                 .graphicsLayer { this.alpha = alpha }
                         )

@@ -29,7 +29,7 @@ fun QuickMixSkeleton() {
     Column(modifier = Modifier.padding(bottom = 12.dp)) {
         Box(
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 4.dp)
+                .padding(horizontal = 20.dp, vertical = 4.dp)
                 .width(110.dp)
                 .height(18.dp)
                 .clip(RoundedCornerShape(6.dp))
@@ -40,7 +40,7 @@ fun QuickMixSkeleton() {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                    .padding(horizontal = 20.dp, vertical = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(14.dp)
             ) {
@@ -87,7 +87,7 @@ fun HomeSectionSkeleton() {
     Column(modifier = Modifier.padding(bottom = 28.dp)) {
         Box(
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 4.dp)
+                .padding(horizontal = 20.dp, vertical = 4.dp)
                 .width(130.dp)
                 .height(18.dp)
                 .clip(RoundedCornerShape(6.dp))
@@ -95,7 +95,7 @@ fun HomeSectionSkeleton() {
         )
         Spacer(Modifier.height(10.dp))
         LazyRow(
-            contentPadding = PaddingValues(horizontal = 16.dp),
+            contentPadding = PaddingValues(horizontal = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             userScrollEnabled = false
         ) {
@@ -172,7 +172,7 @@ fun ArtistRadioSkeleton() {
     Column(modifier = Modifier.padding(bottom = 28.dp)) {
         Box(
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 4.dp)
+                .padding(horizontal = 20.dp, vertical = 4.dp)
                 .width(60.dp)
                 .height(18.dp)
                 .clip(RoundedCornerShape(6.dp))
@@ -180,7 +180,7 @@ fun ArtistRadioSkeleton() {
         )
         Spacer(Modifier.height(10.dp))
         LazyRow(
-            contentPadding = PaddingValues(horizontal = 16.dp),
+            contentPadding = PaddingValues(horizontal = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             userScrollEnabled = false
         ) {
