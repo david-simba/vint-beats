@@ -87,7 +87,6 @@ private val bottomNavRoutes = setOf(
     Screen.Playlist.route,
     Screen.Favorites.route,
     Screen.Downloads.route,
-    Screen.CreatePlaylist.route,
     Screen.UserPlaylist.route,
     Screen.AddSongs.route,
     Screen.EditPlaylist.route,
@@ -138,7 +137,7 @@ fun NavGraph(
     val playingFrom by playbackViewModel.playingFrom.collectAsStateWithLifecycle()
 
     val hasActivePlayback = currentTrack != null
-    val showMiniPlayer = hasActivePlayback && currentRoute != Screen.Player.route && currentRoute != Screen.EditProfile.route && currentRoute != Screen.About.route && currentRoute != Screen.Terms.route
+    val showMiniPlayer = hasActivePlayback && currentRoute != Screen.Player.route && currentRoute != Screen.EditProfile.route && currentRoute != Screen.About.route && currentRoute != Screen.Terms.route && currentRoute != Screen.CreatePlaylist.route
 
     val miniTitle: String? = currentTrack?.title
     val miniArtist: String = currentTrack?.artist ?: ""

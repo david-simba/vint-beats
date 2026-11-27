@@ -11,7 +11,7 @@
     <string name="alert_delete_playlist_message">This action cannot be undone.</string>
     <string name="alert_delete_playlist_title">Delete playlist?</string>
     <string name="create_playlist_action">Create</string>
-    <string name="create_playlist_title">New Playlist</string>
+    <string name="create_playlist_title">New playlist</string>
     <string name="downloads_count">%d songs</string>
     <string name="downloads_empty">No downloaded songs yet</string>
     <string name="downloads_empty_short">No songs downloaded yet</string>
@@ -28,6 +28,34 @@
     <string name="library_title">Your library</string>
     <string name="playlist_add_photo">Add photo</string>
     <string name="playlist_empty_short">No songs yet</string>
-    <string name="playlist_name_hint">Playlist name</string>
+    <string name="playlist_name_hint">My playlist</string>
     <string name="save_playlist_action">Save</string>
-    <string name="library_filter_playlists">Playlists</string>\n    <string name="library_recent">Recent</string>\n    <string name="library_liked_title">Liked songs</string>\n    <string name="library_songs_one">%d song</string>\n    <string name="library_songs_many">%d songs</string>\n    <string name="library_downloads_one">%d song · offline</string>\n    <string name="library_downloads_many">%d songs · offline</string>\n    <string name="library_subtitle_playlist_one">Playlist · %d song</string>\n    <string name="library_subtitle_playlist_many">Playlist · %d songs</string>\n    <string name="library_subtitle_album">Album · %s</string>\n    <string name="library_view_list">Switch to list view</string>\n    <string name="library_view_grid">Switch to grid view</string>\n    <string name="library_create_playlist">Create playlist</string>\n    <string name="library_empty_all_title">Create your first playlist</string>\n    <string name="library_empty_all_text">Keep your songs in one place. Albums and artists you save will show up here too.</string>\n    <string name="library_empty_playlists_title">No playlists yet</string>\n    <string name="library_empty_playlists_text">Create one and add songs from any song menu.</string>\n    <string name="library_empty_albums_title">No saved albums yet</string>\n    <string name="library_empty_albums_text">Tap the heart on an album to keep it here.</string>\n    <string name="library_empty_artists_title">You are not following artists yet</string>\n    <string name="library_empty_artists_text">Tap Follow on an artist profile to see them here.</string>\n</resources>
+    <string name="library_filter_playlists">Playlists</string>
+    <string name="library_recent">Recent</string>
+    <string name="library_liked_title">Liked songs</string>
+    <string name="library_songs_one">%d song</string>
+    <string name="library_songs_many">%d songs</string>
+    <string name="library_downloads_one">%d song · offline</string>
+    <string name="library_downloads_many">%d songs · offline</string>
+    <string name="library_subtitle_playlist_one">Playlist · %d song</string>
+    <string name="library_subtitle_playlist_many">Playlist · %d songs</string>
+    <string name="library_subtitle_album">Album · %s</string>
+    <string name="library_view_list">Switch to list view</string>
+    <string name="library_view_grid">Switch to grid view</string>
+    <string name="library_create_playlist">Create playlist</string>
+    <string name="library_empty_all_title">Create your first playlist</string>
+    <string name="library_empty_all_text">Keep your songs in one place. Albums and artists you save will show up here too.</string>
+    <string name="library_empty_playlists_title">No playlists yet</string>
+    <string name="library_empty_playlists_text">Create one and add songs from any song menu.</string>
+    <string name="library_empty_albums_title">No saved albums yet</string>
+    <string name="library_empty_albums_text">Tap the heart on an album to keep it here.</string>
+    <string name="library_empty_artists_title">You are not following artists yet</string>
+    <string name="library_empty_artists_text">Tap Follow on an artist profile to see them here.</string>
+    <string name="playlist_cancel">Cancel</string>
+    <string name="playlist_cover_add">Add cover</string>
+    <string name="playlist_cover_optional">Optional</string>
+    <string name="playlist_cover_description">Add cover, optional</string>
+    <string name="playlist_cover_change">Change cover</string>
+    <string name="playlist_name_label">Name</string>
+    <string name="playlist_add_songs_later">You can add songs later</string>
+</resources>

@@ -28,6 +28,34 @@
     <string name="library_title">Tu biblioteca</string>
     <string name="playlist_add_photo">Añadir foto</string>
     <string name="playlist_empty_short">Sin canciones aún</string>
-    <string name="playlist_name_hint">Nombre de la playlist</string>
+    <string name="playlist_name_hint">Mi playlist</string>
     <string name="save_playlist_action">Guardar</string>
-    <string name="library_filter_playlists">Playlists</string>\n    <string name="library_recent">Recientes</string>\n    <string name="library_liked_title">Me gusta</string>\n    <string name="library_songs_one">%d canción</string>\n    <string name="library_songs_many">%d canciones</string>\n    <string name="library_downloads_one">%d canción · sin conexión</string>\n    <string name="library_downloads_many">%d canciones · sin conexión</string>\n    <string name="library_subtitle_playlist_one">Playlist · %d canción</string>\n    <string name="library_subtitle_playlist_many">Playlist · %d canciones</string>\n    <string name="library_subtitle_album">Álbum · %s</string>\n    <string name="library_view_list">Cambiar a vista de lista</string>\n    <string name="library_view_grid">Cambiar a vista de cuadrícula</string>\n    <string name="library_create_playlist">Crear playlist</string>\n    <string name="library_empty_all_title">Crea tu primera playlist</string>\n    <string name="library_empty_all_text">Junta tus canciones en un solo lugar. Los álbumes y artistas que guardes también aparecerán aquí.</string>\n    <string name="library_empty_playlists_title">Aún no tienes playlists</string>\n    <string name="library_empty_playlists_text">Crea una y agrégale canciones desde el menú de cualquier canción.</string>\n    <string name="library_empty_albums_title">Aún no guardas álbumes</string>\n    <string name="library_empty_albums_text">Toca el corazón en un álbum para tenerlo aquí.</string>\n    <string name="library_empty_artists_title">Aún no sigues artistas</string>\n    <string name="library_empty_artists_text">Toca Seguir en el perfil de un artista para verlo aquí.</string>\n</resources>
+    <string name="library_filter_playlists">Playlists</string>
+    <string name="library_recent">Recientes</string>
+    <string name="library_liked_title">Me gusta</string>
+    <string name="library_songs_one">%d canción</string>
+    <string name="library_songs_many">%d canciones</string>
+    <string name="library_downloads_one">%d canción · sin conexión</string>
+    <string name="library_downloads_many">%d canciones · sin conexión</string>
+    <string name="library_subtitle_playlist_one">Playlist · %d canción</string>
+    <string name="library_subtitle_playlist_many">Playlist · %d canciones</string>
+    <string name="library_subtitle_album">Álbum · %s</string>
+    <string name="library_view_list">Cambiar a vista de lista</string>
+    <string name="library_view_grid">Cambiar a vista de cuadrícula</string>
+    <string name="library_create_playlist">Crear playlist</string>
+    <string name="library_empty_all_title">Crea tu primera playlist</string>
+    <string name="library_empty_all_text">Junta tus canciones en un solo lugar. Los álbumes y artistas que guardes también aparecerán aquí.</string>
+    <string name="library_empty_playlists_title">Aún no tienes playlists</string>
+    <string name="library_empty_playlists_text">Crea una y agrégale canciones desde el menú de cualquier canción.</string>
+    <string name="library_empty_albums_title">Aún no guardas álbumes</string>
+    <string name="library_empty_albums_text">Toca el corazón en un álbum para tenerlo aquí.</string>
+    <string name="library_empty_artists_title">Aún no sigues artistas</string>
+    <string name="library_empty_artists_text">Toca Seguir en el perfil de un artista para verlo aquí.</string>
+    <string name="playlist_cancel">Cancelar</string>
+    <string name="playlist_cover_add">Añadir portada</string>
+    <string name="playlist_cover_optional">Opcional</string>
+    <string name="playlist_cover_description">Añadir portada, opcional</string>
+    <string name="playlist_cover_change">Cambiar portada</string>
+    <string name="playlist_name_label">Nombre</string>
+    <string name="playlist_add_songs_later">Podrás agregar canciones después</string>
+</resources>
