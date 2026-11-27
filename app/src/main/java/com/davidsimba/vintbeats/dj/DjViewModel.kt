@@ -3,7 +3,9 @@ package com.davidsimba.vintbeats.dj
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.core.data.library.SavedArtistRepository
+import com.davidsimba.vintbeats.core.data.preferences.OnboardingPreferences
 import com.davidsimba.vintbeats.core.model.DjSession
 import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.core.network.BackendService
@@ -16,7 +18,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Locale
 import javax.inject.Inject
@@ -31,18 +35,27 @@ data class DjUiState(
     /** Lo último que dijo el DJ. */
     val caption: String = "",
     val speaking: Boolean = false,
+    /** El DJ está preparando un cambio de rumbo. */
+    val changing: Boolean = false,
 )
 
 private const val EXTEND_WHEN_QUEUE_AT_MOST = 2
 private const val RECENT_LIMIT = 10
 private const val FAVORITES_LIMIT = 10
+private const val CHANGE_COURSE_PROMPT = "Change the mood: something clearly different from the recent songs"
 
 @HiltViewModel
 class DjViewModel @Inject constructor(
     @ApplicationContext context: Context,
     private val backend: BackendService,
     private val savedArtists: SavedArtistRepository,
+    onboardingPreferences: OnboardingPreferences,
 ) : ViewModel() {
+
+    private val defaultPrompt = context.getString(R.string.dj_default_prompt)
+
+    val userName: StateFlow<String> = onboardingPreferences.userName
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
 
     private val speaker = DjSpeaker(context)
     private val _state = MutableStateFlow(DjUiState())
@@ -59,10 +72,11 @@ class DjViewModel @Inject constructor(
     private val language: String
         get() = if (Locale.getDefault().language == "es") "Spanish" else "English"
 
-    fun start(userPrompt: String, playbackViewModel: PlaybackViewModel) {
-        val text = userPrompt.trim()
-        if (text.isEmpty() || _state.value.phase == DjPhase.Loading) return
-        stop(keepIdleError = false)
+    /** Empieza una sesión. Sin [userPrompt] usa el último pedido (reintento) o una mezcla general. */
+    fun start(playbackViewModel: PlaybackViewModel, userPrompt: String? = null) {
+        if (_state.value.phase == DjPhase.Loading) return
+        val text = userPrompt?.trim()?.takeIf { it.isNotEmpty() } ?: prompt.ifBlank { defaultPrompt }
+        stop()
         prompt = text
         playback = playbackViewModel
         _state.value = DjUiState(phase = DjPhase.Loading)
@@ -134,11 +148,35 @@ class DjViewModel @Inject constructor(
         }
     }
 
+    /** Cambia de rumbo: pide otra tanda con un mood distinto y la reproduce de inmediato. */
+    fun changeCourse() {
+        val pb = playback ?: return
+        val current = _state.value
+        if (current.phase != DjPhase.Live || current.changing) return
+        _state.value = current.copy(changing = true)
+        viewModelScope.launch {
+            try {
+                val recent = (pb.history.value + listOfNotNull(pb.currentTrack.value))
+                    .takeLast(RECENT_LIMIT)
+                    .map { DjRecent(it.artist, it.title) }
+                val favorites = savedArtists.getSavedArtists().first().map { it.name }.take(FAVORITES_LIMIT)
+                val result = backend.djSession(CHANGE_COURSE_PROMPT, language, recent, favorites, next = true)
+                if (result is DjResult.Success) {
+                    register(result.session)
+                    val tracks = result.session.items.map { it.track }
+                    pb.playTrack(tracks.first(), newQueue = tracks.drop(1), preserveHistory = true)
+                }
+            } finally {
+                _state.value = _state.value.copy(changing = false)
+            }
+        }
+    }
+
     private fun fail(error: DjError) {
         _state.value = DjUiState(phase = DjPhase.Idle, error = error)
     }
 
-    fun stop(keepIdleError: Boolean = false) {
+    fun stop() {
         sessionJob?.cancel()
         monitorJob?.cancel()
         speaker.stop()
@@ -146,7 +184,8 @@ class DjViewModel @Inject constructor(
         say.clear()
         spoken.clear()
         fetchingMore = false
-        if (!keepIdleError) _state.value = DjUiState()
+        prompt = ""
+        _state.value = DjUiState()
     }
 
     override fun onCleared() {

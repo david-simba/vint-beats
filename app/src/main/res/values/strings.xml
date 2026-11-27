@@ -53,21 +53,29 @@
     <!-- Home -->
 
     <!-- Common -->
-    <string name="dj_title">DJ</string>
-    <string name="dj_subtitle">Tell the DJ what you feel like and it will pick and introduce the songs.</string>
-    <string name="dj_prompt_label">What do you want to hear?</string>
-    <string name="dj_prompt_placeholder">Old school reggaeton for a party</string>
-    <string name="dj_start">Start the DJ</string>
-    <string name="dj_loading">The DJ is picking songs…</string>
-    <string name="dj_stop">Stop the DJ</string>
-    <string name="dj_speaking">THE DJ IS SPEAKING</string>
-    <string name="dj_on_air">ON AIR</string>
-    <string name="dj_now_playing">NOW PLAYING</string>
-    <string name="dj_error_generic">The DJ could not start. Try again.</string>
-    <string name="dj_error_rate_limit">Too many requests. Wait a minute and try again.</string>
-    <string name="dj_error_not_found">The DJ found no songs for that. Try something else.</string>
     <string name="dj_suggestion_1">Old school reggaeton for a party</string>
     <string name="dj_suggestion_2">Something calm to study</string>
     <string name="dj_suggestion_3">Music for working out</string>
     <string name="dj_suggestion_4">For a road trip</string>
+    <string name="dj_title">DJ AI</string>
+    <string name="dj_live_badge">ON AIR</string>
+    <string name="dj_greeting">Hi, %1$s. I\'m your DJ.</string>
+    <string name="dj_greeting_no_name">Hi. I\'m your DJ.</string>
+    <string name="dj_intro">I build a session from what you like and introduce every song. Tap the hummingbird to start.</string>
+    <string name="dj_start_session">Start session</string>
+    <string name="dj_ask_link">Or tell it what you want to hear</string>
+    <string name="dj_ask_button">Ask for something</string>
+    <string name="dj_stop_button">Stop</string>
+    <string name="dj_orb_start_desc">Start a session with the DJ</string>
+    <string name="dj_orb_change_desc">Change the direction of the session</string>
+    <string name="dj_change_hint">Tap the hummingbird to change direction</string>
+    <string name="dj_preparing">Preparing your session…</string>
+    <string name="dj_error_retry">Could not connect. Tap the hummingbird to try again.</string>
+    <string name="dj_error_rate_limit">Too many requests. Wait a minute and tap the hummingbird to try again.</string>
+    <string name="dj_send">Send</string>
+    <string name="dj_pause">Pause</string>
+    <string name="dj_play">Play</string>
+    <string name="dj_default_prompt">A mix of what I like</string>
+    <string name="dj_prompt_label">What do you want to hear?</string>
+    <string name="dj_prompt_placeholder">Old school reggaeton for a party</string>
 </resources>

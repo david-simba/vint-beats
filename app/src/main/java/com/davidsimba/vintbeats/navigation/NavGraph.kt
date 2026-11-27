@@ -47,6 +47,7 @@ import com.davidsimba.vintbeats.feature.album.ui.AlbumScreen
 import com.davidsimba.vintbeats.feature.artist.ui.ArtistScreen
 import com.davidsimba.vintbeats.feature.profile.ui.AboutScreen
 import com.davidsimba.vintbeats.feature.profile.ui.EditProfileScreen
+import com.davidsimba.vintbeats.dj.DjPhase
 import com.davidsimba.vintbeats.dj.DjScreen
 import com.davidsimba.vintbeats.dj.DjViewModel
 import com.davidsimba.vintbeats.feature.profile.ui.ProfileScreen
@@ -128,6 +129,7 @@ fun NavGraph(
 
     val playbackViewModel: PlaybackViewModel = hiltViewModel()
     val djViewModel: DjViewModel = hiltViewModel()
+    val djState by djViewModel.state.collectAsStateWithLifecycle()
     val currentTrack by playbackViewModel.currentTrack.collectAsStateWithLifecycle()
     val playbackState by playbackViewModel.playerState.collectAsStateWithLifecycle()
     val queue by playbackViewModel.queue.collectAsStateWithLifecycle()
@@ -140,7 +142,8 @@ fun NavGraph(
     val playingFrom by playbackViewModel.playingFrom.collectAsStateWithLifecycle()
 
     val hasActivePlayback = currentTrack != null
-    val showMiniPlayer = hasActivePlayback && currentRoute != Screen.Player.route && currentRoute != Screen.EditProfile.route && currentRoute != Screen.About.route && currentRoute != Screen.Terms.route && currentRoute != Screen.CreatePlaylist.route
+    val showMiniPlayer = hasActivePlayback && currentRoute != Screen.Player.route && currentRoute != Screen.EditProfile.route && currentRoute != Screen.About.route && currentRoute != Screen.Terms.route && currentRoute != Screen.CreatePlaylist.route &&
+        !(currentRoute == Screen.Dj.route && djState.phase != DjPhase.Idle)
 
     val miniTitle: String? = currentTrack?.title
     val miniArtist: String = currentTrack?.artist ?: ""

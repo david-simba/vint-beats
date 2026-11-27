@@ -56,21 +56,29 @@
     <!-- Common -->
 
     <!-- Home sections -->
-    <string name="dj_title">DJ</string>
-    <string name="dj_subtitle">Dile al DJ qué te apetece y él elegirá y presentará las canciones.</string>
-    <string name="dj_prompt_label">¿Qué quieres escuchar?</string>
-    <string name="dj_prompt_placeholder">Reguetón viejo para fiesta</string>
-    <string name="dj_start">Empezar el DJ</string>
-    <string name="dj_loading">El DJ está eligiendo canciones…</string>
-    <string name="dj_stop">Detener el DJ</string>
-    <string name="dj_speaking">EL DJ ESTÁ HABLANDO</string>
-    <string name="dj_on_air">EN EL AIRE</string>
-    <string name="dj_now_playing">SONANDO AHORA</string>
-    <string name="dj_error_generic">El DJ no pudo empezar. Inténtalo de nuevo.</string>
-    <string name="dj_error_rate_limit">Demasiadas solicitudes. Espera un minuto e inténtalo de nuevo.</string>
-    <string name="dj_error_not_found">El DJ no encontró canciones para eso. Prueba otra cosa.</string>
     <string name="dj_suggestion_1">Reguetón viejo para fiesta</string>
     <string name="dj_suggestion_2">Algo tranquilo para estudiar</string>
     <string name="dj_suggestion_3">Música para entrenar</string>
     <string name="dj_suggestion_4">Para un viaje en carretera</string>
+    <string name="dj_title">DJ IA</string>
+    <string name="dj_live_badge">AL AIRE</string>
+    <string name="dj_greeting">Hola, %1$s. Soy tu DJ.</string>
+    <string name="dj_greeting_no_name">Hola. Soy tu DJ.</string>
+    <string name="dj_intro">Armo una sesión con lo que te gusta y te presento cada canción. Toca el colibrí para empezar.</string>
+    <string name="dj_start_session">Empezar sesión</string>
+    <string name="dj_ask_link">O dile qué quieres escuchar</string>
+    <string name="dj_ask_button">Pedir algo</string>
+    <string name="dj_stop_button">Detener</string>
+    <string name="dj_orb_start_desc">Empezar sesión con el DJ</string>
+    <string name="dj_orb_change_desc">Cambiar el rumbo de la sesión</string>
+    <string name="dj_change_hint">Toca el colibrí para cambiar el rumbo</string>
+    <string name="dj_preparing">Preparando tu sesión…</string>
+    <string name="dj_error_retry">No pude conectar. Toca el colibrí para intentar de nuevo.</string>
+    <string name="dj_error_rate_limit">Demasiadas solicitudes. Espera un minuto y toca el colibrí para intentar de nuevo.</string>
+    <string name="dj_send">Enviar</string>
+    <string name="dj_pause">Pausar</string>
+    <string name="dj_play">Reproducir</string>
+    <string name="dj_default_prompt">Una mezcla de lo que me gusta</string>
+    <string name="dj_prompt_label">¿Qué quieres escuchar?</string>
+    <string name="dj_prompt_placeholder">Reguetón viejo para fiesta</string>
 </resources>

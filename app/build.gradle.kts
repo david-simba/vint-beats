@@ -80,6 +80,7 @@ dependencies {
     implementation(project(":feature:onboarding"))
     implementation(project(":feature:playlist"))
     implementation(libs.androidx.core.ktx)
+    implementation(libs.coil.compose)
     implementation("androidx.core:core-splashscreen:1.0.1")
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
