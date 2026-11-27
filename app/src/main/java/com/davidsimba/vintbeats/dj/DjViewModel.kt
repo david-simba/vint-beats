@@ -141,6 +141,12 @@ class DjViewModel @Inject constructor(
     private fun monitorQueue(playbackViewModel: PlaybackViewModel) {
         monitorJob?.cancel()
         monitorJob = viewModelScope.launch {
+            // Si el usuario pone una canción que no es del DJ (desde otra pantalla), el DJ se apaga.
+            launch {
+                playbackViewModel.currentTrack.collect { track ->
+                    if (track != null && track.id !in djTrackIds) stop()
+                }
+            }
             playbackViewModel.queue.collect { queue ->
                 val current = playbackViewModel.currentTrack.value
                 if (current?.id !in djTrackIds || queue.size > EXTEND_WHEN_QUEUE_AT_MOST || fetchingMore) return@collect

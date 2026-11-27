@@ -60,7 +60,7 @@
     <string name="dj_suggestion_2">Algo tranquilo para estudiar</string>
     <string name="dj_suggestion_3">Música para entrenar</string>
     <string name="dj_suggestion_4">Para un viaje en carretera</string>
-    <string name="dj_title">DJ IA</string>
+    <string name="dj_title">Vint Radio</string>
     <string name="dj_live_badge">AL AIRE</string>
     <string name="dj_greeting">Hola, %1$s. Soy tu DJ.</string>
     <string name="dj_greeting_no_name">Hola. Soy tu DJ.</string>
@@ -82,4 +82,6 @@
     <string name="dj_prompt_label">¿Qué quieres escuchar?</string>
     <string name="dj_prompt_placeholder">Reguetón viejo para fiesta</string>
     <string name="dj_changing">Cambiando vibras…</string>
+    <string name="nav_dj_live">DJ, al aire</string>
+    <string name="dj_mini_label">Vint al aire</string>
 </resources>

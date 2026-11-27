@@ -35,4 +35,5 @@
     <string name="queue_show_less">Ver menos</string>
     <string name="queue_empty">No hay más canciones en la cola</string>
     <string name="queue_reorder">Reordenar</string>
+    <string name="mini_player_dj_live_description">%1$s. Abrir reproductor</string>
 </resources>

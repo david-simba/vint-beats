@@ -81,6 +81,7 @@ private val Soft = Color(0xFFD4D4D8)
 fun DjScreen(
     djViewModel: DjViewModel,
     playbackViewModel: PlaybackViewModel,
+    onOpenPlayer: () -> Unit = {},
 ) {
     val state by djViewModel.state.collectAsStateWithLifecycle()
     val userName by djViewModel.userName.collectAsStateWithLifecycle()
@@ -198,6 +199,7 @@ fun DjScreen(
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(16.dp))
                             .background(Color.White.copy(alpha = 0.06f))
+                            .clickable(role = Role.Button, onClick = onOpenPlayer)
                             .padding(10.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {

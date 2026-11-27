@@ -57,7 +57,7 @@
     <string name="dj_suggestion_2">Something calm to study</string>
     <string name="dj_suggestion_3">Music for working out</string>
     <string name="dj_suggestion_4">For a road trip</string>
-    <string name="dj_title">DJ AI</string>
+    <string name="dj_title">Vint Radio</string>
     <string name="dj_live_badge">ON AIR</string>
     <string name="dj_greeting">Hi, %1$s. I\'m your DJ.</string>
     <string name="dj_greeting_no_name">Hi. I\'m your DJ.</string>
@@ -79,4 +79,6 @@
     <string name="dj_prompt_label">What do you want to hear?</string>
     <string name="dj_prompt_placeholder">Old school reggaeton for a party</string>
     <string name="dj_changing">Changing vibes…</string>
+    <string name="nav_dj_live">DJ, on air</string>
+    <string name="dj_mini_label">Vint on air</string>
 </resources>

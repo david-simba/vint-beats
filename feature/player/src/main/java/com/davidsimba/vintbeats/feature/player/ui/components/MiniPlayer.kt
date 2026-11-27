@@ -1,6 +1,11 @@
 package com.davidsimba.vintbeats.feature.player.ui.components
 
+import android.provider.Settings
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.InfiniteRepeatableSpec
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -9,6 +14,8 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,11 +25,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -32,9 +42,11 @@ import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.rounded.SkipNext
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
@@ -46,6 +58,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -82,6 +101,8 @@ fun MiniPlayer(
     onTogglePlayPause: () -> Unit,
     onSkipNext: () -> Unit,
     onSkipPrevious: () -> Unit,
+    /** Con el DJ al aire: texto de la franja superior (p. ej. "Vint al aire"). Null = sin franja. */
+    djLiveLabel: String? = null,
     onTap: () -> Unit
 ) {
     val isPlaying = playerState is PlayerState.Playing
@@ -154,6 +175,7 @@ fun MiniPlayer(
         )
 
         Column {
+            DjLiveStrip(label = djLiveLabel, onClick = onTap)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -265,6 +287,49 @@ fun MiniPlayer(
                 isLoading = isLoading,
                 progress = progress,
                 modifier = Modifier.fillMaxWidth().height(4.dp)
+            )
+        }
+    }
+}
+
+/** Franja de 28dp sobre el mini player cuando el DJ está al aire; entra y sale con una animación de altura de ~200ms. */
+@Composable
+private fun DjLiveStrip(label: String?, onClick: () -> Unit) {
+    val context = LocalContext.current
+    val reduceMotion = remember {
+        Settings.Global.getFloat(context.contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f
+    }
+    var lastLabel by remember { mutableStateOf("") }
+    if (label != null) lastLabel = label
+    // Si el mini player aparece con el DJ ya al aire (al volver de otra pantalla), la franja nace visible, sin deslizarse.
+    val visibleState = remember { MutableTransitionState(label != null) }
+    visibleState.targetState = label != null
+    AnimatedVisibility(
+        visibleState = visibleState,
+        enter = if (reduceMotion) EnterTransition.None else expandVertically(tween(200)),
+        exit = if (reduceMotion) ExitTransition.None else shrinkVertically(tween(200)),
+    ) {
+        val description = stringResource(R.string.mini_player_dj_live_description, lastLabel)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(28.dp)
+                .background(colorAcento)
+                .clickable(onClick = onClick)
+                .semantics { contentDescription = description }
+                .padding(horizontal = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(Modifier.size(6.dp).background(Color.White, CircleShape))
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = lastLabel.uppercase(),
+                color = Color.White,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.ExtraBold,
+                letterSpacing = 0.6.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }

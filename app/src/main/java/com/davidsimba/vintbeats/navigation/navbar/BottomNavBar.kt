@@ -5,13 +5,16 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
@@ -28,6 +31,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,6 +42,7 @@ import com.davidsimba.vintbeats.R
 import com.davidsimba.vintbeats.navigation.Screen
 import com.davidsimba.vintbeats.core.designsystem.theme.Fondo
 import com.davidsimba.vintbeats.core.designsystem.theme.TextoSecundario
+import com.davidsimba.vintbeats.core.designsystem.theme.colorAcento
 import com.davidsimba.vintbeats.core.designsystem.theme.colorAcentoBarra
 import com.davidsimba.vintbeats.core.designsystem.R as DsR
 
@@ -55,7 +61,7 @@ val bottomNavItems = listOf(
 )
 
 @Composable
-fun BottomNavBar(navController: NavController) {
+fun BottomNavBar(navController: NavController, djLive: Boolean = false) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
@@ -72,6 +78,8 @@ fun BottomNavBar(navController: NavController) {
             val selected = currentRoute == item.screen.route
             val tint = if (selected) colorAcentoBarra else TextoSecundario
             val label = stringResource(item.label)
+            val onAir = djLive && item.screen == Screen.Dj
+            val onAirDescription = if (onAir) stringResource(R.string.nav_dj_live) else null
 
             Column(
                 modifier = Modifier
@@ -92,9 +100,11 @@ fun BottomNavBar(navController: NavController) {
                             }
                         }
                     }
-                    .weight(1f),
+                    .weight(1f)
+                    .semantics { onAirDescription?.let { contentDescription = it } },
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
+                Box {
                 if (item.iconRes != null) {
                     Icon(
                         painter = painterResource(item.iconRes),
@@ -109,6 +119,19 @@ fun BottomNavBar(navController: NavController) {
                         tint = tint,
                         modifier = Modifier.size(22.dp)
                     )
+                }
+                if (onAir) {
+                    // Punto "al aire": 8dp en colorAcento con borde de 2dp del color de la barra.
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .offset(x = 10.dp, y = 4.dp)
+                            .size(12.dp)
+                            .background(Fondo, CircleShape)
+                            .padding(2.dp)
+                            .background(colorAcento, CircleShape)
+                    )
+                }
                 }
                 Text(
                     text = label,

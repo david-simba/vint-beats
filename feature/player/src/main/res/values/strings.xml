@@ -36,4 +36,5 @@
     <string name="queue_show_less">Show less</string>
     <string name="queue_empty">No more songs in the queue</string>
     <string name="queue_reorder">Reorder</string>
+    <string name="mini_player_dj_live_description">%1$s. Open player</string>
 </resources>

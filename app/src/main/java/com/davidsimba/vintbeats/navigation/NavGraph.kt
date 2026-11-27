@@ -130,6 +130,7 @@ fun NavGraph(
     val djViewModel: DjViewModel = hiltViewModel()
     val djState by djViewModel.state.collectAsStateWithLifecycle()
     // Con el DJ al aire se oculta el mini player (la pantalla del DJ ocupa su espacio); la barra inferior se queda.
+    val djLive = djState.phase == DjPhase.Live
     val djImmersive = currentRoute == Screen.Dj.route && djState.phase != DjPhase.Idle
     val showBottomBar = currentRoute in bottomNavRoutes
     val currentTrack by playbackViewModel.currentTrack.collectAsStateWithLifecycle()
@@ -172,10 +173,11 @@ fun NavGraph(
                         onTogglePlayPause = playbackViewModel::togglePlayPause,
                         onSkipNext = playbackViewModel::skipToNext,
                         onSkipPrevious = playbackViewModel::skipToPrevious,
+                        djLiveLabel = if (djLive) stringResource(R.string.dj_mini_label) else null,
                         onTap = { navController.navigate(Screen.Player.route) { launchSingleTop = true } }
                     )
                 }
-                if (showBottomBar) BottomNavBar(navController)
+                if (showBottomBar) BottomNavBar(navController, djLive = djLive)
             }
         }
     ) { innerPadding ->
@@ -572,8 +574,18 @@ fun NavGraph(
                         ),
                     )
                 }
-                composable(route = Screen.Dj.route) {
-                    DjScreen(djViewModel = djViewModel, playbackViewModel = playbackViewModel)
+                composable(
+                    route = Screen.Dj.route,
+                    enterTransition = { fadeIn(animationSpec = tween(180)) },
+                    exitTransition = { fadeOut(animationSpec = tween(180)) },
+                    popEnterTransition = { fadeIn(animationSpec = tween(180)) },
+                    popExitTransition = { fadeOut(animationSpec = tween(180)) }
+                ) {
+                    DjScreen(
+                        djViewModel = djViewModel,
+                        playbackViewModel = playbackViewModel,
+                        onOpenPlayer = { navController.navigate(Screen.Player.route) { launchSingleTop = true } },
+                    )
                 }
                 composable(
                     route = Screen.Profile.route,
