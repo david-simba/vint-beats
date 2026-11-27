@@ -262,7 +262,7 @@ fun PlayerScreen(
                     }
             )
             // Degradado al final de la imagen, que aparece al crecer, para fundirla con el fondo.
-            val fadeHeightPx = componentWidth * 0.4f
+            val fadeHeightPx = componentWidth * 0.55f
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -273,7 +273,14 @@ fun PlayerScreen(
                         translationY = bottom - fadeHeightPx - maxOf(0f, outerScrollState.value - growEnd())
                         alpha = f
                     }
-                    .background(Brush.verticalGradient(listOf(Color.Transparent, paletteColor)))
+                    .background(
+                        Brush.verticalGradient(
+                            0f to Color.Transparent,
+                            0.45f to paletteColor.copy(alpha = 0.55f),
+                            0.8f to paletteColor.copy(alpha = 0.92f),
+                            1f to paletteColor,
+                        )
+                    )
             )
         }
 

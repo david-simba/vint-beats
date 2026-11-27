@@ -79,6 +79,7 @@ import com.davidsimba.vintbeats.core.model.Track
 import com.davidsimba.vintbeats.feature.player.R
 import kotlinx.coroutines.delay
 import kotlin.math.abs
+import kotlin.time.Duration.Companion.milliseconds
 
 private val ActiveLineOffset = 120.dp
 private val TopFade = 56.dp
@@ -226,7 +227,7 @@ private fun LyricsList(
     }
     LaunchedEffect(paused, listState.isScrollInProgress) {
         if (paused && !listState.isScrollInProgress) {
-            delay(3000)
+            delay(3000.milliseconds)
             paused = false
         }
     }
