@@ -38,4 +38,10 @@
     <string name="terms_title">Terms &amp; Conditions</string>
     <string name="profile_cover_background_title">Cover as background</string>
     <string name="profile_cover_background_subtitle">The cover fills the player background</string>
+    <string name="edit_profile_name_hint">Your name</string>
+    <string name="edit_profile_cancel">Cancel</string>
+    <string name="edit_profile_change_photo">Change photo</string>
+    <string name="edit_profile_change_photo_description">Change profile photo</string>
+    <string name="edit_profile_name_help">This is how we will greet you on Home</string>
+    <string name="edit_profile_name_help_empty">Enter a name</string>
 </resources>

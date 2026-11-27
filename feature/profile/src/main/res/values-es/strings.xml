@@ -38,4 +38,10 @@
     <string name="terms_title">Términos y condiciones</string>
     <string name="profile_cover_background_title">Portada como fondo</string>
     <string name="profile_cover_background_subtitle">La portada ocupa el fondo del reproductor</string>
+    <string name="edit_profile_name_hint">Tu nombre</string>
+    <string name="edit_profile_cancel">Cancelar</string>
+    <string name="edit_profile_change_photo">Cambiar foto</string>
+    <string name="edit_profile_change_photo_description">Cambiar foto de perfil</string>
+    <string name="edit_profile_name_help">Así te saludaremos en el Inicio</string>
+    <string name="edit_profile_name_help_empty">Escribe un nombre</string>
 </resources>
