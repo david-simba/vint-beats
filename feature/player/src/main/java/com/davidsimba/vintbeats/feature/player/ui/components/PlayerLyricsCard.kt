@@ -1,6 +1,5 @@
 package com.davidsimba.vintbeats.feature.player.ui.components
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
@@ -36,16 +35,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.davidsimba.vintbeats.core.model.LyricLine
-import com.davidsimba.vintbeats.core.designsystem.components.cards.Card
+import androidx.compose.ui.res.stringResource
+import com.davidsimba.vintbeats.feature.player.R
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageBgBase
 import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhite
-import com.davidsimba.vintbeats.core.designsystem.theme.VintageWhiteWarm
 
 @Composable
 fun PlayerLyricsCard(
@@ -66,83 +64,76 @@ fun PlayerLyricsCard(
     LaunchedEffect(currentIndex) {
         if (currentIndex < 0) return@LaunchedEffect
         if (!initialScrollDone) {
-            listState.scrollToItem(maxOf(0, currentIndex - 1))
+            listState.scrollToItem(maxOf(0, currentIndex - 2))
             initialScrollDone = true
         } else if (!listState.isScrollInProgress) {
-            listState.animateScrollToItem(maxOf(0, currentIndex - 1))
+            listState.animateScrollToItem(maxOf(0, currentIndex - 2))
         }
     }
 
-    Card(modifier = modifier, backgroundColor = cardBgColor) {
+    PlayerSectionCard(backgroundColor = cardBgColor, modifier = modifier) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 14.dp),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Lyrics",
-                color = VintageWhiteWarm,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold
+                text = stringResource(R.string.player_lyrics_title),
+                color = Color.White,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.ExtraBold
             )
             IconButton(
                 onClick = onExpand,
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier.size(44.dp)
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Fullscreen,
-                    contentDescription = "Expand lyrics",
-                    tint = VintageWhite.copy(alpha = 0.45f),
-                    modifier = Modifier.size(20.dp)
+                    contentDescription = stringResource(R.string.player_expand_lyrics),
+                    tint = Color.White.copy(alpha = 0.7f),
+                    modifier = Modifier.size(22.dp)
                 )
             }
         }
+        Spacer(Modifier.height(4.dp))
 
         if (isLoading) {
             LyricsSkeleton()
         } else if (lines.isEmpty()) {
             Text(
-                text = "No lyrics available for this song.",
-                color = VintageWhite.copy(alpha = 0.4f),
-                fontSize = 14.sp,
+                text = stringResource(R.string.lyrics_none),
+                color = Color.White.copy(alpha = 0.6f),
+                fontSize = 15.sp,
                 lineHeight = 22.sp
             )
         } else {
-            Box(modifier = Modifier.fillMaxWidth().height(250.dp)) {
+            Box(modifier = Modifier.fillMaxWidth().height(260.dp)) {
                 LazyColumn(
                     state = listState,
                     modifier = Modifier.fillMaxWidth(),
                     userScrollEnabled = false,
                 ) {
                     itemsIndexed(lines, key = { index, _ -> index }) { index, line ->
-                        val isCurrent = index == currentIndex
-                        val color by animateColorAsState(
-                            targetValue = if (isCurrent) VintageWhite else VintageWhite.copy(alpha = 0.32f),
-                            animationSpec = tween(250),
-                            label = "lyric_color"
-                        )
-                        val scale by animateFloatAsState(
-                            targetValue = if (isCurrent) 1.06f else 1f,
-                            animationSpec = tween(250),
-                            label = "lyric_scale"
+                        val alpha by animateFloatAsState(
+                            targetValue = when {
+                                index == currentIndex -> 1f
+                                index > currentIndex -> 0.55f
+                                else -> 0.3f
+                            },
+                            animationSpec = tween(400),
+                            label = "lyric_alpha"
                         )
                         Text(
                             text = line.text,
-                            color = color,
-                            fontSize = 18.sp,
+                            color = Color.White,
+                            fontSize = 20.sp,
                             fontWeight = FontWeight.ExtraBold,
-                            lineHeight = 22.sp,
+                            lineHeight = 26.sp,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = if (isCurrent) 12.dp else 6.dp)
-                                .padding(end = 12.dp)
-                                .graphicsLayer {
-                                    scaleX = scale
-                                    scaleY = scale
-                                    transformOrigin = TransformOrigin(0f, 0.5f)
-                                }
+                                .padding(vertical = 5.dp)
+                                .padding(end = 8.dp)
+                                .graphicsLayer { this.alpha = alpha }
                         )
                     }
                     item { Spacer(Modifier.height(60.dp)) }

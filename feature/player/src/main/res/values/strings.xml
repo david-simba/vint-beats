@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="queue_up_next">Up Next</string>
+    <string name="queue_up_next">Up next</string>
     <string name="queue_loading">Loading up next tracks…</string>
     <string name="player_option_equalizer_hide">Hide equalizer</string>
     <string name="player_option_equalizer_show">Show equalizer</string>
@@ -30,4 +30,10 @@
     <string name="lyrics_progress_state">%1$s of %2$s</string>
     <string name="player_shuffle">Shuffle</string>
     <string name="player_repeat">Repeat</string>
+    <string name="player_lyrics_title">Lyrics</string>
+    <string name="player_expand_lyrics">Open lyrics full screen</string>
+    <string name="queue_view_full">View full queue</string>
+    <string name="queue_show_less">Show less</string>
+    <string name="queue_empty">No more songs in the queue</string>
+    <string name="queue_reorder">Reorder</string>
 </resources>

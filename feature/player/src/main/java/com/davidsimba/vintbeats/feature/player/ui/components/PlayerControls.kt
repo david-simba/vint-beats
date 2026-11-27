@@ -54,7 +54,7 @@ fun PlayerControls(
     onToggleRepeat: () -> Unit = {},
     onToggleShuffle: () -> Unit = {},
 ) {
-    val inactive = Color.White.copy(alpha = 0.5f)
+    val inactive = Color(0xFFA1A1AA)
     Column(modifier = modifier.fillMaxWidth()) {
         LyricsProgressBar(
             positionMs = if (isLoading) 0L else positionMs,

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="queue_up_next">A continuación</string>
-    <string name="queue_loading">Cargando canciones…</string>
+    <string name="queue_loading">Cargando las siguientes canciones…</string>
     <string name="player_option_equalizer_hide">Ocultar ecualizador</string>
     <string name="player_option_equalizer_show">Mostrar ecualizador</string>
     <string name="playing_from_label">Reproduciéndose desde</string>
@@ -29,4 +29,10 @@
     <string name="lyrics_progress_state">%1$s de %2$s</string>
     <string name="player_shuffle">Aleatorio</string>
     <string name="player_repeat">Repetir</string>
+    <string name="player_lyrics_title">Letra</string>
+    <string name="player_expand_lyrics">Abrir letra en pantalla completa</string>
+    <string name="queue_view_full">Ver cola completa</string>
+    <string name="queue_show_less">Ver menos</string>
+    <string name="queue_empty">No hay más canciones en la cola</string>
+    <string name="queue_reorder">Reordenar</string>
 </resources>

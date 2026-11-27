@@ -22,6 +22,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import kotlin.math.roundToInt
+import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -70,7 +75,7 @@ import kotlinx.coroutines.launch
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerBackground
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerCover
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerControls
-import com.davidsimba.vintbeats.feature.player.ui.components.PlayerQueueSheet
+import com.davidsimba.vintbeats.feature.player.ui.components.PlayerQueueCard
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerTopBar
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerTrackInfo
 import com.davidsimba.vintbeats.feature.player.ui.components.PlayerLyricsCard
@@ -107,7 +112,6 @@ fun PlayerScreen(
     val playingFrom by viewModel.playingFrom.collectAsStateWithLifecycle()
 
     var showOptionsSheet by remember { mutableStateOf(false) }
-    var showQueueSheet by remember { mutableStateOf(false) }
     var showLyricsScreen by remember { mutableStateOf(false) }
     val showEqualizer by viewModel.equalizerEnabled.collectAsStateWithLifecycle()
     val coverAsBackground by viewModel.coverAsBackground.collectAsStateWithLifecycle()
@@ -116,7 +120,6 @@ fun PlayerScreen(
     val isFavorite by viewModel.isFavorite.collectAsStateWithLifecycle()
 
     val sheetState = rememberModalBottomSheetState()
-    val queueSheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
 
     val offsetX = remember { Animatable(0f) }
@@ -134,12 +137,8 @@ fun PlayerScreen(
     val previousTrack = history.lastOrNull()
 
     val paletteColor = rememberPaletteColor(trackForCard?.albumImageUrl)
-    val cardBgColor = remember(paletteColor) {
-        val hsl = FloatArray(3)
-        ColorUtils.colorToHSL(paletteColor.toArgb(), hsl)
-        hsl[2] = (hsl[2] + 0.06f).coerceAtMost(0.35f)
-        Color(ColorUtils.HSLToColor(hsl))
-    }
+    // Tarjetas (Letra, A continuación): blanco al 8% sobre el fondo del reproductor.
+    val cardBgColor = remember(paletteColor) { Color.White.copy(alpha = 0.08f).compositeOver(paletteColor) }
 
     // Fondo de la letra: el de la portada, oscurecido si hace falta para que el texto blanco cumpla 4.5:1.
     val lyricsBackground = remember(cardBgColor) {
@@ -172,6 +171,20 @@ fun PlayerScreen(
     var lyricsBlockPx by remember { mutableFloatStateOf(0f) }
     var groupPx by remember { mutableFloatStateOf(0f) }
     var infoPx by remember { mutableFloatStateOf(0f) }
+    // Posición (en el contenido con scroll) de las tarjetas, para saltar a ellas desde los botones.
+    var lyricsTopPx by remember { mutableFloatStateOf(0f) }
+    var queueTopPx by remember { mutableFloatStateOf(0f) }
+    val statusTopPx = WindowInsets.statusBars.getTop(density)
+    val navBottomPx = WindowInsets.navigationBars.getBottom(density)
+    val sectionMarginPx = with(density) { 16.dp.toPx() }
+    val scrollToSection: (Float) -> Unit = { contentTop ->
+        scope.launch {
+            outerScrollState.animateScrollTo(
+                (contentTop - statusTopPx - sectionMarginPx).roundToInt().coerceAtLeast(0),
+                tween(400),
+            )
+        }
+    }
     // Recorrido hasta que la portada es header y el reproductor queda debajo de ella.
     // Solo el título/artista sube sobre la imagen; progreso y controles quedan justo debajo de ella.
     val growDistance: () -> Float = { maxOf(rootHeight - componentWidth - (groupPx - infoPx), 1f) }
@@ -340,7 +353,8 @@ fun PlayerScreen(
                                     artist = it.artist,
                                     isFavorite = isFavorite,
                                     onToggleFavorite = viewModel::toggleFavorite,
-                                    onQueueOpen = { showQueueSheet = true },
+                                    onLyricsClick = { scrollToSection(lyricsTopPx) },
+                                    onQueueClick = { scrollToSection(queueTopPx) },
                                     onArtistClick = it.artistId?.let { id -> { onArtistSelected(id) } }
                                 )
                                 }
@@ -383,11 +397,12 @@ fun PlayerScreen(
                     }
                 }
 
-                Box(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(paletteColor)
                         .onSizeChanged { lyricsBlockPx = it.height.toFloat() }
+                        .padding(horizontal = 16.dp)
                 ) {
                     PlayerLyricsCard(
                         lines = syncedLyrics,
@@ -396,9 +411,22 @@ fun PlayerScreen(
                         cardBgColor = cardBgColor,
                         onExpand = { showLyricsScreen = true },
                         modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .padding(top = 16.dp, bottom = 40.dp)
+                            .padding(top = 16.dp)
+                            .onGloballyPositioned { lyricsTopPx = it.positionInRoot().y + outerScrollState.value }
                     )
+                    PlayerQueueCard(
+                        queue = queue,
+                        isQueueLoading = isQueueLoading,
+                        backgroundColor = cardBgColor,
+                        onTrackClick = viewModel::skipToQueueTrack,
+                        onReorder = viewModel::reorderQueue,
+                        onRemove = viewModel::removeFromQueue,
+                        modifier = Modifier
+                            .padding(top = 16.dp)
+                            .onGloballyPositioned { queueTopPx = it.positionInRoot().y + outerScrollState.value }
+                    )
+                    // Abajo: 40dp más la barra de gestos.
+                    Spacer(Modifier.height(40.dp + with(density) { navBottomPx.toDp() }))
                 }
                 if (!coverAsBackground) {
                     // Completa el recorrido para que el scroll termine con las letras pegadas bajo la portada.
@@ -448,7 +476,10 @@ fun PlayerScreen(
                 onToggleFavorite = viewModel::toggleFavorite,
                 onSkipPrevious = viewModel::skipToPrevious,
                 onSkipNext = viewModel::skipToNext,
-                onOpenQueue = { showQueueSheet = true },
+                onOpenQueue = {
+                    showLyricsScreen = false
+                    scrollToSection(queueTopPx)
+                },
             )
         }
 
@@ -521,28 +552,6 @@ fun PlayerScreen(
                             viewModel.toggleEqualizer()
                         }
                     }
-                )
-            }
-        }
-
-        if (showQueueSheet) {
-            BottomSheet(
-                onDismiss = { showQueueSheet = false },
-                sheetState = queueSheetState
-            ) {
-                PlayerQueueSheet(
-                    currentTrack = trackForCard,
-                    queue = queue,
-                    isPlaying = isPlaying,
-                    isQueueLoading = isQueueLoading,
-                    onTrackClick = { track ->
-                        scope.launch { queueSheetState.hide() }.invokeOnCompletion {
-                            showQueueSheet = false
-                            viewModel.skipToQueueTrack(track)
-                        }
-                    },
-                    onReorder = viewModel::reorderQueue,
-                    onRemove = viewModel::removeFromQueue,
                 )
             }
         }
