@@ -77,6 +77,7 @@ import com.davidsimba.vintbeats.feature.search.ui.SearchViewModel
 import com.davidsimba.vintbeats.feature.player.ui.components.MiniPlayer
 import com.davidsimba.vintbeats.core.designsystem.components.background.Background
 import com.davidsimba.vintbeats.navigation.navbar.BottomNavBar
+import kotlin.time.Duration.Companion.milliseconds
 import com.davidsimba.vintbeats.core.designsystem.R as DsR
 
 private val bottomNavRoutes = setOf(
@@ -121,7 +122,7 @@ fun NavGraph(
     LaunchedEffect(Unit) {
         SnackbarController.events.collect { event ->
             snackbarEvent = event
-            delay(3000)
+            delay(3000.milliseconds)
             snackbarEvent = null
         }
     }
