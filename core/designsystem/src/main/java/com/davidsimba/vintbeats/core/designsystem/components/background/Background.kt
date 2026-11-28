@@ -46,6 +46,36 @@ fun rememberPaletteColor(thumbnailUrl: String?): Color {
     return animateColorAsState(raw, animationSpec = tween(600), label = "paletteColor").value
 }
 
+/**
+ * Color claro y vivo de la portada, para teñir fondos con un degradado suave.
+ * La saturación y la luminosidad se limitan para que el resultado no sea ni grisáceo ni deslumbrante;
+ * sin portada o sin color útil devuelve [fallback]. El cambio se anima en 600 ms.
+ */
+@Composable
+fun rememberLightPaletteColor(thumbnailUrl: String?, fallback: Color): Color {
+    val context = LocalContext.current
+    val raw by produceState(fallback, thumbnailUrl, fallback) {
+        val url = thumbnailUrl ?: run { value = fallback; return@produceState }
+        val request = ImageRequest.Builder(context)
+            .data(url)
+            .allowHardware(false)
+            .size(100, 100)
+            .build()
+        val result = context.imageLoader.execute(request) as? SuccessResult ?: return@produceState
+        val bitmap = (result.drawable as? BitmapDrawable)?.bitmap ?: return@produceState
+        val palette = withContext(Dispatchers.Default) { Palette.from(bitmap).generate() }
+        val swatch = palette.lightVibrantSwatch ?: palette.vibrantSwatch
+            ?: palette.lightMutedSwatch ?: palette.mutedSwatch ?: palette.dominantSwatch
+        val rgb = swatch?.rgb ?: run { value = fallback; return@produceState }
+        val hsl = FloatArray(3)
+        ColorUtils.colorToHSL(rgb, hsl)
+        hsl[1] = hsl[1].coerceIn(0.35f, 0.85f)
+        hsl[2] = hsl[2].coerceIn(0.5f, 0.65f)
+        value = Color(ColorUtils.HSLToColor(hsl))
+    }
+    return animateColorAsState(raw, animationSpec = tween(600), label = "lightPaletteColor").value
+}
+
 @Composable
 fun Background(
     modifier: Modifier = Modifier,

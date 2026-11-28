@@ -50,6 +50,8 @@ private val HaloSize = 480.dp
 fun DjOrb(
     live: Boolean,
     busy: Boolean,
+    /** Color del halo (en vivo toma el de la portada). El círculo y los anillos mantienen el color de marca. */
+    haloTint: Color = colorAcento,
     contentDescription: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -75,7 +77,7 @@ fun DjOrb(
     val t = if (reduceMotion) 0.5f else breathe
     val haloScale = if (live) 1f + 0.08f * t else 1f + 0.04f * t
     val haloAlpha = if (live) 1f else 0.5f + 0.25f * t
-    val haloColor = colorAcento.copy(alpha = if (live) 0.33f else 0.19f)
+    val haloColor = haloTint.copy(alpha = if (live) 0.42f else 0.19f)
 
     Box(modifier = modifier.size(OrbSize), contentAlignment = Alignment.Center) {
         Box(

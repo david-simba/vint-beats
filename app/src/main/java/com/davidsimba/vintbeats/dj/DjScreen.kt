@@ -1,6 +1,7 @@
 package com.davidsimba.vintbeats.dj
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.core.tween
@@ -49,6 +50,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
@@ -65,6 +67,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.davidsimba.vintbeats.R
+import com.davidsimba.vintbeats.core.designsystem.components.background.rememberLightPaletteColor
 import com.davidsimba.vintbeats.core.designsystem.components.inputs.TextField
 import com.davidsimba.vintbeats.core.designsystem.theme.Fondo
 import com.davidsimba.vintbeats.core.designsystem.theme.Superficie
@@ -93,10 +96,20 @@ fun DjScreen(
     val live = state.phase != DjPhase.Idle
     val startSession = { djViewModel.start(playbackViewModel) }
 
+    // En vivo, el fondo se tiñe con el color claro de la portada actual (degradado suave hacia el fondo oscuro).
+    val tint = rememberLightPaletteColor(if (live) currentTrack?.albumImageUrl else null, colorAcento)
+    val tintAlpha by animateFloatAsState(if (live) 0.4f else 0f, tween(600), label = "dj_bg_tint")
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Fondo)
+            .background(
+                Brush.verticalGradient(
+                    0f to tint.copy(alpha = tintAlpha),
+                    0.75f to Color.Transparent,
+                )
+            )
             .statusBarsPadding(),
     ) {
         Row(
@@ -123,6 +136,7 @@ fun DjScreen(
             DjOrb(
                 live = live,
                 busy = loading || state.changing,
+                haloTint = tint,
                 contentDescription = stringResource(
                     if (live) R.string.dj_orb_change_desc else R.string.dj_orb_start_desc
                 ),
